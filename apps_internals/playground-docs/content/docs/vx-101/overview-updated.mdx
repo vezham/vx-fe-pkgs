@@ -1,0 +1,1766 @@
+---
+title: Overview Updated
+description: This provides a overview on Vx 101 by vezham.
+icon: document-text
+---
+
+# Vezham Engineering Architecture
+
+## Canonical GitHub, Repository, Package, Documentation & Deployment Baseline
+
+**Company:** Vezham Technologies Private Limited  
+**Domain:** `vezham.com`  
+**Production App Domain:** `vezham.app`
+
+---
+
+# 1. Engineering Model
+
+Vezham follows a domain-oriented engineering architecture across three GitHub organizations:
+
+```text
+                         VEZHAM
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+       vezham          vezham-labs       vezham-oss
+          │                 │                 │
+      Production         Research          OSS/Forks
+      Engineering        Experiments
+          │
+   ┌──────┼─────────────────────────────────────────┐
+   │      │             │          │                │
+  FE     RN           BE         SDKs          Docs / AI
+   │      │             │          │                │
+ Apps   Apps         Services   Language      Docs / MCP / Skills
+ Packages             APIs       SDKs
+   │
+   ├── General Apps
+   └── Business Apps
+```
+
+### Core principles
+
+1. **Application = Product Boundary**
+2. **Workspace = Data / Access Boundary**
+3. **Environment ≠ Release Channel**
+4. **Build Once, Promote Many**
+5. **Production-like Testing Before Production**
+6. **Canary/Beta Do Not Require Separate Infrastructure**
+7. **GitHub Handles the Initial Deployment Ledger**
+8. **`vx-deployer` Owns Promotion and Release Orchestration**
+9. **Own Abstractions Only When Necessary**
+10. **Official Infrastructure Belongs in `vezham`**
+11. **OSS Forks Stay in `vezham-oss`**
+12. **Every Build Has an Immutable Commit-SHA Identity**
+13. **TVA Represents the Individual Timeline Variant of a Commit**
+
+---
+
+# 2. GitHub Organizations
+
+Exactly three GitHub organizations are used.
+
+| Organization  | Purpose                                                 | Description                                                |
+| ------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| `vezham`      | Production engineering/products/platform/infrastructure | **Building software for people and businesses. 🚀**        |
+| `vezham-labs` | Experiments/templates/playgrounds/POCs/references       | **Exploring ideas, experiments, and new technologies. 🧪** |
+| `vezham-oss`  | OSS projects and maintained forks                       | **Open-source software maintained by Vezham. 🧩**          |
+
+### Classification
+
+```text
+vezham
+└── Official production Vezham engineering
+
+vezham-labs
+└── Experimental / evolving / reference
+
+vezham-oss
+└── Maintained OSS / forks
+```
+
+An OSS fork remains in `vezham-oss` even when used in production.
+
+A completely new Vezham rewrite of an OSS project becomes a separate production repository under `vezham`.
+
+---
+
+# 3. Company-Controlled Identities
+
+## Source Code
+
+```text
+Username: vezham-code
+Display:  Vezham Code
+Email:    code@vezham.com
+```
+
+Used for source-code and repository ownership.
+
+It should **not** be the sole organization owner.
+
+## Deployment
+
+```text
+Username: vezham-deployer
+Display:  Vezham Deployer
+Email:    deployer@vezham.com
+```
+
+Responsible for:
+
+- frontend releases
+- backend releases
+- mobile releases
+- desktop releases
+- SDK releases
+- MCP releases
+- Skills releases
+- CI/CD
+- cloud providers
+- CDN/edge hosting
+- production releases
+- regional deployments
+
+## Regional DC identities
+
+```text
+us-dc@vezham.com
+eu-dc@vezham.com
+in-dc@vezham.com
+au-dc@vezham.com
+sg-dc@vezham.com
+```
+
+Convention:
+
+```text
+<region>-dc@vezham.com
+```
+
+`deployer@vezham.com` remains the global deployment/release identity.
+
+---
+
+# 4. Repository Naming
+
+Engineering infrastructure uses the `vx-*` convention.
+
+Examples:
+
+```text
+vx-fe-*
+vx-rn-*
+vx-be-*
+vx-sdks-*
+vx-mcp
+vx-skills
+vx-desktop-*
+vx-deployer
+```
+
+---
+
+# 5. Frontend Applications
+
+## General Applications
+
+```text
+vezham/vx-fe-apps
+```
+
+For cross-context applications such as:
+
+- Notes
+- Chat
+- Drive
+- Contacts
+- Calendar
+- Tasks
+- other general-purpose applications
+
+Structure:
+
+```text
+vx-fe-apps/
+├── products/
+│   ├── notes/
+│   ├── chat/
+│   ├── drive/
+│   ├── contacts/
+│   ├── calendar/
+│   ├── tasks/
+│   └── ...
+├── packages/
+├── e2e/
+├── mocks/
+├── docs/
+├── pocs/
+└── tooling/
+```
+
+## Business Applications
+
+```text
+vezham/vx-fe-apps-business
+```
+
+Examples:
+
+- SchoolOS
+- Books
+- Invoice
+- Inventory
+- Payroll
+- CRM
+- other business-domain applications
+
+Structure:
+
+```text
+vx-fe-apps-business/
+├── products/
+│   ├── school-os/
+│   ├── books/
+│   ├── invoice/
+│   ├── inventory/
+│   ├── payroll/
+│   ├── crm/
+│   └── ...
+├── packages/
+├── e2e/
+├── mocks/
+├── docs/
+└── tooling/
+```
+
+Do **not** use:
+
+```text
+vx-fe-apps_b
+vx-fe-apps-people
+```
+
+General applications can operate inside both personal and business workspaces.
+
+---
+
+# 6. Frontend Package Collection
+
+```text
+vezham/vx-fe-pkgs
+```
+
+Canonical production frontend packages.
+
+Potential packages:
+
+```text
+@vezham/ui
+@vezham/layouts
+@vezham/templates
+@vezham/navigation
+@vezham/auth
+@vezham/workspace
+@vezham/context
+@vezham/local-first
+@vezham/storage
+@vezham/sync
+```
+
+Structure:
+
+```text
+vx-fe-pkgs/
+├── packages/
+│   ├── ui/
+│   ├── layouts/
+│   ├── templates/
+│   ├── navigation/
+│   ├── auth/
+│   ├── workspace/
+│   ├── context/
+│   ├── local-first/
+│   ├── storage/
+│   ├── sync/
+│   └── ...
+└── tooling/
+```
+
+Potential documentation packages:
+
+```text
+@vezham/docs-ui
+@vezham/docs-theme
+@vezham/docs-config
+@vezham/docs-components
+```
+
+---
+
+# 7. Frontend Kit
+
+Labs contains:
+
+```text
+vezham-labs/vx-fe-kit
+vezham-labs/vx-fe-kit-starter
+```
+
+### `vx-fe-kit`
+
+Playground/reference environment for:
+
+- configuration tests
+- implementation tests
+- integration experiments
+- template validation
+- component experimentation
+
+### `vx-fe-kit-starter`
+
+Canonical reusable frontend workspace starter intended to be forked/copied by Vezham.
+
+---
+
+# 8. React Native
+
+```text
+vezham/vx-rn-apps
+```
+
+Uses:
+
+- React Native
+- Expo
+- HeroUI Native
+- native Swift/Kotlin escape hatches
+
+Structure follows the frontend application model:
+
+```text
+vx-rn-apps/
+├── apps/
+├── packages/
+├── e2e/
+├── mocks/
+├── docs/
+└── tooling/
+```
+
+---
+
+# 9. Desktop
+
+```text
+vezham/vx-desktop-apps
+```
+
+Separate from web because of:
+
+- native APIs
+- filesystem access
+- packaging
+- signing
+- notarization
+- installers
+- auto-update
+- desktop CI
+- desktop runtime
+
+Possible technologies:
+
+- Tauri
+- Electron
+- Go/native
+
+Web frontend produces the application UI artifact.
+
+Desktop repository packages, signs, notarizes and publishes the application.
+
+Generated artifacts such as `dist/` and installers are not committed.
+
+---
+
+# 10. Backend
+
+Vezham uses service-oriented backend repositories where meaningful boundaries exist.
+
+Examples:
+
+```text
+vezham/vx-be-api
+vezham/vx-be-auth
+vezham/vx-be-billing
+vezham/vx-be-notifications
+...
+```
+
+Stack:
+
+- Go
+- PostgreSQL / Neon
+- Nx orchestration where useful
+
+Repository boundaries are determined by:
+
+- runtime
+- database ownership
+- security boundary
+- deployment lifecycle
+- team ownership
+- release cadence
+- operational requirements
+
+Not every backend component needs its own repository.
+
+---
+
+# 11. SDKs
+
+Language-specific SDK repositories:
+
+```text
+vezham/vx-sdks-ts
+vezham/vx-sdks-go
+vezham/vx-sdks-ruby
+```
+
+Potential future SDKs:
+
+```text
+vx-sdks-python
+vx-sdks-java
+vx-sdks-kotlin
+vx-sdks-swift
+```
+
+There is no universal SDK repository.
+
+CLI:
+
+```text
+vezham-labs/vx-sdk-cli
+@vx-cli/sdks
+```
+
+---
+
+# 12. MCP
+
+```text
+vezham/vx-mcp
+```
+
+Structure:
+
+```text
+vx-mcp/
+├── servers/
+│   ├── notes/
+│   ├── chat/
+│   ├── drive/
+│   ├── school-os/
+│   └── ...
+├── packages/
+│   ├── core/
+│   └── auth/
+├── examples/
+└── tooling/
+```
+
+CLI:
+
+```text
+vezham-labs/vx-mcp-cli
+@vx-cli/mcp
+```
+
+MCP represents tools/resources/actions.
+
+---
+
+# 13. Skills
+
+```text
+vezham/vx-skills
+```
+
+A Skill represents a workflow, instruction set or capability.
+
+MCP and Skills are separate concepts:
+
+```text
+MCP
+└── Tools / Resources / Actions
+
+Skills
+└── Workflows / Instructions / Capabilities
+```
+
+CLI:
+
+```text
+vezham-labs/vx-skills-cli
+@vx-cli/skills
+```
+
+---
+
+# 14. CLI Architecture
+
+Each engineering domain has its own CLI.
+
+| Repository      | Package                |
+| --------------- | ---------------------- |
+| `vx-fe-cli`     | `@vx-cli/react`        |
+| `vx-rn-cli`     | `@vx-cli/react-native` |
+| `vx-sdk-cli`    | `@vx-cli/sdks`         |
+| `vx-mcp-cli`    | `@vx-cli/mcp`          |
+| `vx-be-cli`     | `@vx-cli/server`       |
+| `vx-skills-cli` | `@vx-cli/skills`       |
+
+Reason:
+
+- different runtimes
+- different dependencies
+- different generators
+- different release cadence
+
+These can move into `vezham` when they become official production infrastructure.
+
+---
+
+# 15. Documentation
+
+Vezham uses two documentation repositories.
+
+```text
+vezham/vx-docs
+vezham/vx-docs-internal
+```
+
+Each repository contains **one Fumadocs application for its audience**.
+
+Do not create a separate Fumadocs deployment for every app.
+
+## Public
+
+```text
+vezham/vx-docs
+docs.vezham.com
+```
+
+Structure:
+
+```text
+vx-docs/
+├── apps/
+│   ├── notes/
+│   ├── drive/
+│   ├── chat/
+│   ├── contacts/
+│   ├── school-os/
+│   ├── books/
+│   └── ...
+├── platform/
+├── developers/
+├── api/
+├── sdks/
+└── guides/
+```
+
+Examples:
+
+```text
+docs.vezham.com/notes/
+docs.vezham.com/drive/
+docs.vezham.com/chat/
+docs.vezham.com/school-os/
+```
+
+## Internal
+
+```text
+vezham/vx-docs-internal
+docs.internal.vezham.com
+```
+
+Structure:
+
+```text
+vx-docs-internal/
+├── apps/
+│   ├── notes/
+│   ├── drive/
+│   ├── chat/
+│   ├── contacts/
+│   ├── school-os/
+│   ├── books/
+│   └── ...
+├── architecture/
+├── engineering/
+├── security/
+├── infrastructure/
+├── deployment/
+├── operations/
+└── runbooks/
+```
+
+---
+
+# 16. OSS Package Strategy
+
+Package scopes:
+
+```text
+@vezham/*
+```
+
+Vezham-owned production abstractions.
+
+```text
+@vx-cli/*
+```
+
+CLI tooling.
+
+```text
+@vx-labs/*
+```
+
+Experimental/evolving packages.
+
+```text
+@vx-oss/*
+```
+
+Maintained OSS/forked packages.
+
+Dependency strategy:
+
+1. Use upstream directly when no Vezham ownership/API boundary is required.
+2. Use `@vx-oss/*` for maintained OSS forks.
+3. Use `@vezham/*` only when Vezham owns a strategic abstraction.
+
+Do not alias everything simply for branding.
+
+---
+
+# 17. HeroUI Architecture
+
+```text
+vezham-oss/heroui
+        ↓
+@vx-oss/heroui
+        ↓
+@vezham/react-v3
+        ↓
+Vezham applications
+```
+
+`@vx-oss/heroui` is the maintained OSS/fork layer.
+
+`@vezham/react-v3` is the Vezham-facing abstraction with:
+
+- extensions
+- additional features
+- Vezham theme
+- tokens
+- compatibility layers
+
+Applications should consume `@vezham/react-v3` once the abstraction is established.
+
+---
+
+# 18. Fumadocs Architecture
+
+If Fumadocs is forked:
+
+```text
+vezham-oss/fumadocs
+        ↓
+@vx-oss/fumadocs-*
+        ↓
+@vezham/docs-*
+        ↓
+Vezham documentation
+```
+
+---
+
+# 19. Git Branch Strategy
+
+Default branch:
+
+```text
+timeline
+```
+
+Supported branches:
+
+```text
+feat/*
+fix/*
+refactor/*
+perf/*
+docs/*
+chore/*
+test/*
+build/*
+ci/*
+release/*
+hotfix/*
+```
+
+Examples:
+
+```text
+feat/workspace-sync
+fix/auth-redirect
+refactor/context-provider
+perf/notes-indexing
+docs/api-auth
+```
+
+Permanent deployment branches are **not used**.
+
+Do not create:
+
+```text
+dev.deploy
+qa.deploy
+preview.deploy
+live.deploy
+```
+
+Environment state is controlled through GitHub Environments and `vx-deployer`.
+
+---
+
+# 20. Environments
+
+The environment lifecycle is:
+
+```text
+local → dev → qa → preview → production
+```
+
+| Environment  | Purpose                             |
+| ------------ | ----------------------------------- |
+| `local`      | Developer machine/local development |
+| `dev`        | Active development                  |
+| `qa`         | Integration and QA validation       |
+| `preview`    | Production-like validation          |
+| `production` | Live production infrastructure      |
+
+URLs:
+
+```text
+play.vezham.local
+play.dev.vezham.com
+play.qa.vezham.com
+play.preview.vezham.com
+play.vezham.app
+```
+
+User-facing production applications use:
+
+```text
+*.vezham.app
+```
+
+Engineering/control-plane services use:
+
+```text
+*.vezham.com
+```
+
+---
+
+# 21. TVA — Time Variance Authority
+
+Vezham introduces a commit-specific deployment layer called **TVA — Time Variance Authority**.
+
+The name intentionally aligns with the `timeline` branch and Marvel's TVA concept.
+
+TVA represents an individual **timeline variant of a specific commit**.
+
+Every build can receive a commit-SHA-specific URL.
+
+Example:
+
+```text
+play.a81f92c.tva.vezham.com
+```
+
+This URL represents:
+
+```text
+Application: play
+Commit:      a81f92c
+Variant:     TVA
+```
+
+Multiple commit variants can coexist:
+
+```text
+play.a81f92c.tva.vezham.com
+play.b72c441.tva.vezham.com
+play.c91de20.tva.vezham.com
+```
+
+TVA is **not another promotion environment**.
+
+It is the immutable, commit-specific validation identity of an artifact.
+
+---
+
+# 22. SHA Preview URL
+
+Recommended format:
+
+```text
+<app>.<commit-sha>.tva.vezham.com
+```
+
+Example:
+
+```text
+play.a81f92c.tva.vezham.com
+```
+
+The SHA URL is generated when the build is created.
+
+It provides:
+
+- exact commit identification
+- immutable validation
+- PR review URL
+- visual/UI testing
+- integration testing
+- debugging
+- stakeholder review
+- reproducibility
+
+A GitHub PR can therefore expose:
+
+```text
+PR #142
+Commit: a81f92c
+
+TVA:
+https://play.a81f92c.tva.vezham.com
+```
+
+---
+
+# 23. Build Once, Promote the Same Artifact
+
+This is a fundamental Vezham deployment principle:
+
+> **Build once, promote the same artifact.**
+
+Example:
+
+```text
+Application: play
+Version:     1.8.0
+Commit:      a81f92c
+Artifact:    play-1.8.0-a81f92c
+```
+
+Build:
+
+```text
+timeline
+    ↓
+build
+    ↓
+immutable artifact
+    ↓
+TVA
+    ↓
+play.a81f92c.tva.vezham.com
+```
+
+The artifact is then promoted without rebuilding:
+
+```text
+TVA
+ ↓
+DEV
+ ↓
+QA
+ ↓
+PREVIEW
+ ↓
+PRODUCTION
+```
+
+The artifact must remain immutable throughout this process.
+
+---
+
+# 24. Promotion URLs
+
+Stable environment URLs represent the currently promoted artifact.
+
+```text
+play.dev.vezham.com
+play.qa.vezham.com
+play.preview.vezham.com
+play.vezham.app
+```
+
+Therefore:
+
+```text
+play.a81f92c.tva.vezham.com
+          │
+          │ promote
+          ▼
+play.dev.vezham.com
+          │
+          │ promote
+          ▼
+play.qa.vezham.com
+          │
+          │ promote
+          ▼
+play.preview.vezham.com
+          │
+          │ promote
+          ▼
+play.vezham.app
+```
+
+The stable environment URL changes which artifact it points to.
+
+The TVA URL remains tied to the original commit/artifact.
+
+---
+
+# 25. Environment vs TVA
+
+The distinction is:
+
+```text
+TVA
+└── Which exact commit/artifact?
+
+Environment
+└── Where is that artifact currently promoted?
+```
+
+Therefore:
+
+```text
+play.a81f92c.tva.vezham.com
+```
+
+means:
+
+> Run exactly commit `a81f92c`.
+
+Whereas:
+
+```text
+play.qa.vezham.com
+```
+
+means:
+
+> Run the artifact currently promoted to QA.
+
+---
+
+# 26. Release Channels
+
+Production has release channels:
+
+```text
+canary → beta → stable
+```
+
+| Channel  | Purpose                         |
+| -------- | ------------------------------- |
+| `canary` | Very limited production rollout |
+| `beta`   | Controlled early-access rollout |
+| `stable` | General production release      |
+
+Channels are not separate environments.
+
+Example:
+
+```text
+APP_ENV=production
+RELEASE_CHANNEL=beta
+```
+
+Then:
+
+```text
+APP_ENV=production
+RELEASE_CHANNEL=stable
+```
+
+Production can therefore contain:
+
+```text
+production
+    │
+    ├── canary
+    ├── beta
+    └── stable
+```
+
+Release targeting may use:
+
+- traffic splitting
+- feature flags
+- user targeting
+- workspace targeting
+- organization targeting
+- region targeting
+
+---
+
+# 27. Complete Deployment Lifecycle
+
+The canonical lifecycle is:
+
+```text
+feat/*
+fix/*
+refactor/*
+...
+   │
+   ▼
+timeline
+   │
+   ▼
+Build
+   │
+   ▼
+Immutable Artifact
+   │
+   ▼
+TVA
+   │
+   └── play.a81f92c.tva.vezham.com
+   │
+   ▼
+DEV
+   │
+   ▼
+QA
+   │
+   ▼
+PREVIEW
+   │
+   ▼
+PRODUCTION
+   │
+   ├── CANARY
+   ├── BETA
+   └── STABLE
+```
+
+---
+
+# 28. GitHub Commit Deployment Status
+
+Each commit acts as a visible timeline record.
+
+For example:
+
+```text
+Commit: a81f92c
+
+Deployment Status
+
+TVA       ✓ deployed
+DEV       ✓ promoted
+QA        ✓ promoted
+PREVIEW   ⏳ pending
+PROD      —
+```
+
+Each successful promotion can expose:
+
+```text
+Environment: QA
+Artifact:    play-1.8.0-a81f92c
+Commit:      a81f92c
+From:        DEV
+To:          QA
+Status:      SUCCESS
+```
+
+The commit's GitHub Checks/Deployments provide the authoritative deployment state.
+
+A human-readable commit comment can additionally summarize the promotion history.
+
+### Important rule
+
+The commit comment is **not the source of truth**.
+
+The authoritative state is:
+
+```text
+GitHub Deployments / Checks
+        ↓
+vx-deployer
+        ↓
+Deployment state
+```
+
+The comment is a convenient human-readable timeline.
+
+---
+
+# 29. GitHub Actions
+
+Initial workflow structure:
+
+```text
+.github/workflows/
+├── build.yml
+├── deploy.yml
+├── promote.yml
+└── rollback.yml
+```
+
+## `build.yml`
+
+Triggered by merge/push to `timeline`.
+
+Responsibilities:
+
+- install dependencies
+- lint
+- typecheck
+- test
+- build
+- create immutable artifact
+- publish artifact
+- generate TVA deployment
+- expose TVA URL
+- update GitHub commit status
+
+Example:
+
+```text
+timeline
+   ↓
+build.yml
+   ↓
+play-1.8.0-a81f92c
+   ↓
+play.a81f92c.tva.vezham.com
+```
+
+## `deploy.yml`
+
+Deploys a selected artifact to a selected environment.
+
+GitHub Environment example:
+
+```yaml
+jobs:
+  deploy:
+    environment:
+      name: preview
+      url: https://play.preview.vezham.com
+```
+
+GitHub records:
+
+- environment
+- commit
+- workflow
+- actor
+- deployment status
+- time
+- URL
+
+## `promote.yml`
+
+Promotes an existing artifact.
+
+Example:
+
+```text
+Artifact: play-1.8.0-a81f92c
+From:     QA
+To:       Preview
+```
+
+No rebuild occurs.
+
+## `rollback.yml`
+
+Redeploys an existing immutable artifact.
+
+Example:
+
+```text
+production
+v2.1.0
+   ↓
+problem
+   ↓
+rollback
+   ↓
+v2.0.4
+```
+
+No rebuild occurs.
+
+---
+
+# 30. Promotion Rules
+
+Canonical promotion path:
+
+```text
+DEV → QA → PREVIEW → PRODUCTION
+```
+
+`vx-deployer` validates:
+
+- source environment
+- target environment
+- artifact
+- version
+- commit
+- promotion path
+- authorization
+- environment protection
+- approval requirements
+
+A promotion does not create a new artifact.
+
+---
+
+# 31. GitHub Environments
+
+GitHub Environments:
+
+```text
+dev
+qa
+preview
+production
+```
+
+Each environment can contain:
+
+- secrets
+- variables
+- protection rules
+- required reviewers
+- deployment URL
+- deployment history
+
+Environment configuration changes between environments.
+
+The artifact itself does not.
+
+---
+
+# 32. Preview Environment
+
+Preview is a genuine production-like environment.
+
+Used for:
+
+- production-like validation
+- realistic/snapshot data
+- V1/V2 comparison
+- UI validation
+- integration validation
+- security audits
+- pre-production security verification
+- production configuration validation
+- release candidate verification
+
+Prefer production-like data rather than unrestricted direct production database access.
+
+```text
+Production DB
+      │
+      ├── sanitized snapshot
+      ├── replica
+      └── controlled read-only access
+                │
+                ▼
+             Preview
+```
+
+---
+
+# 33. V1 / V2 Validation
+
+Development can contain multiple product variants:
+
+```text
+dev
+├── V1
+└── V2
+```
+
+V2 can be promoted to preview for:
+
+- production-like validation
+- UI testing
+- integration testing
+- security auditing
+- release validation
+
+Then:
+
+```text
+preview
+   ↓
+production
+   ↓
+canary
+   ↓
+beta
+   ↓
+stable
+```
+
+---
+
+# 34. Deployment Control Plane
+
+Initial architecture:
+
+```text
+GitHub
+   ↓
+GitHub Actions
+   ↓
+GitHub Environments
+   ↓
+Provider
+```
+
+Vezham's deployment abstraction:
+
+```text
+GitHub Actions
+      ↓
+ vx-deployer
+      ↓
+domain deployer
+      ↓
+ provider
+```
+
+---
+
+# 35. Core Deployment Repository
+
+```text
+vezham/vx-deployer
+```
+
+Responsibilities:
+
+- deployment primitives
+- CI actions
+- release orchestration
+- provider integrations
+- environment handling
+- artifact management
+- credential abstractions
+- deployment workflows
+- regional deployment primitives
+- promotion logic
+- rollback primitives
+- release state
+
+---
+
+# 36. Domain Deployers
+
+```text
+vezham/vx-fe-deployer
+vezham/vx-be-deployer
+vezham/vx-rn-deployer
+vezham/vx-desktop-deployer
+vezham/vx-sdk-deployer
+vezham/vx-mcp-deployer
+vezham/vx-skills-deployer
+```
+
+Naming convention:
+
+```text
+vx-<domain>-deployer
+```
+
+Not:
+
+```text
+vx-deployer-fe
+```
+
+---
+
+# 37. Deployment Registry — Future
+
+Initially, GitHub provides sufficient deployment history.
+
+The initial ledger can answer:
+
+- What was deployed?
+- Where?
+- Which version?
+- Which commit?
+- Which channel?
+- Who deployed it?
+- What was there before?
+- Can it be rolled back?
+
+Later, `vx-deployer` can become the deployment control plane:
+
+```text
+GitHub
+   ↓
+vx-deployer
+   ↓
+Deployment Registry
+   ↓
+Dashboard / CLI / API
+```
+
+Future dashboard:
+
+```text
+Version
+Commit
+Artifact
+Environment
+Channel
+Actor
+Status
+Previous Release
+Rollback
+Promotion History
+TVA URL
+```
+
+---
+
+# 38. Rollback
+
+Rollback always uses an existing immutable artifact.
+
+```text
+production
+v2.1.0
+   ↓
+error
+   ↓
+rollback
+   ↓
+v2.0.4
+```
+
+No rebuild.
+
+The previous artifact is promoted back into production.
+
+---
+
+# 39. Overall Repository Map
+
+## `vezham`
+
+```text
+vezham/
+├── vx-fe-apps
+├── vx-fe-apps-business
+├── vx-fe-apps-cdns
+├── vx-fe-apps-internals
+├── vx-fe-apps-platforms
+├── vx-fe-apps-pods
+├── vx-fe-apps-widgets
+│
+├── vx-fe-pkgs
+├── vx-docs
+├── vx-docs-internal
+│
+├── vx-rn-apps
+├── vx-desktop-apps
+│
+├── vx-sdks-ts
+├── vx-sdks-go
+├── vx-sdks-ruby
+├── ...
+│
+├── vx-mcp
+├── vx-skills
+│
+├── vx-deployer
+├── vx-fe-deployer
+├── vx-be-deployer
+├── vx-rn-deployer
+├── vx-desktop-deployer
+├── vx-sdk-deployer
+├── vx-mcp-deployer
+├── vx-skills-deployer
+│
+└── vx-be-*
+```
+
+## `vezham-labs`
+
+```text
+vezham-labs/
+├── vx-fe-kit
+├── vx-fe-kit-starter
+├── vx-fe-cli
+├── vx-rn-cli
+├── vx-sdk-cli
+├── vx-mcp-cli
+├── vx-be-cli
+├── vx-skills-cli
+└── experiments / POCs / references
+```
+
+## `vezham-oss`
+
+```text
+vezham-oss/
+├── heroui
+├── payload
+├── reicon
+├── fumadocs
+└── ...
+```
+
+---
+
+# 40. Final Deployment Architecture
+
+```text
+Git
+────────────────────────────────
+feat/*
+fix/*
+refactor/*
+docs/*
+...
+   │
+   ▼
+timeline
+   │
+   ▼
+Build
+   │
+   ▼
+Immutable Artifact
+   │
+   ▼
+TVA
+   │
+   └── <app>.<sha>.tva.vezham.com
+   │
+   ▼
+DEV
+   │
+   ▼
+QA
+   │
+   ▼
+PREVIEW
+   │
+   ▼
+PRODUCTION
+   │
+   ├── CANARY
+   ├── BETA
+   └── STABLE
+```
+
+---
+
+# 41. Final Promotion Model
+
+```text
+                         COMMIT
+                           │
+                           ▼
+                      BUILD ONCE
+                           │
+                           ▼
+                  IMMUTABLE ARTIFACT
+                           │
+                           ▼
+                          TVA
+                           │
+              play.a81f92c.tva.vezham.com
+                           │
+                           │ promote
+                           ▼
+                    play.dev.vezham.com
+                           │
+                           │ promote
+                           ▼
+                    play.qa.vezham.com
+                           │
+                           │ promote
+                           ▼
+                 play.preview.vezham.com
+                           │
+                           │ promote
+                           ▼
+                     play.vezham.app
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+           CANARY         BETA        STABLE
+```
+
+---
+
+# 42. Final Commit Lifecycle
+
+Every commit can be viewed as a timeline variant:
+
+```text
+a81f92c
+│
+├── TVA
+│   └── play.a81f92c.tva.vezham.com
+│
+├── DEV ✓
+│
+├── QA ✓
+│
+├── PREVIEW ✓
+│
+└── PRODUCTION ✓
+    ├── Canary
+    ├── Beta
+    └── Stable
+```
+
+GitHub provides the visible deployment/check history.
+
+`vx-deployer` controls promotion and release orchestration.
+
+The commit SHA remains the identity of the artifact throughout its lifecycle.
+
+---
+
+# 43. Canonical Principles
+
+### 1. Application = Product Boundary
+
+Applications define product ownership and repository boundaries.
+
+### 2. Workspace = Data / Access Boundary
+
+Workspace determines context, access and data isolation.
+
+### 3. Environment ≠ Release Channel
+
+Environment determines **where/how** software runs.
+
+Channel determines **which release users receive**.
+
+### 4. Build Once, Promote Many
+
+Never rebuild an artifact merely because it moves environments.
+
+### 5. TVA = Timeline Variant
+
+Every build can have an immutable commit-SHA URL.
+
+```text
+<app>.<sha>.tva.vezham.com
+```
+
+### 6. GitHub Is the Initial Deployment Ledger
+
+GitHub Deployments, Checks, Actions, Environments and Artifacts provide the initial source of deployment history.
+
+### 7. Commit Comments Are Human-Friendly History
+
+Commit comments can display promotion status, but GitHub Deployments/Checks remain authoritative.
+
+### 8. Preview Before Production
+
+Production-like validation happens before production promotion.
+
+### 9. Canary/Beta/Stable Are Release Channels
+
+They do not require separate environments.
+
+### 10. Rollback Means Re-Promotion
+
+Rollback uses an existing immutable artifact.
+
+### 11. OSS Forks Stay OSS
+
+Maintained forks remain under `vezham-oss`.
+
+### 12. Official Infrastructure Belongs in `vezham`
+
+Production engineering infrastructure does not live in Labs.
+
+---
+
+# Final Canonical Flow
+
+```text
+                         timeline
+                            │
+                            ▼
+                         build.yml
+                            │
+                            ▼
+                    Immutable Artifact
+                            │
+                            ▼
+                           TVA
+                            │
+             play.<sha>.tva.vezham.com
+                            │
+                       promote.yml
+                            │
+                            ▼
+                           DEV
+                            │
+                       promote.yml
+                            │
+                            ▼
+                           QA
+                            │
+                       promote.yml
+                            │
+                            ▼
+                         PREVIEW
+                            │
+                  validation / security
+                            │
+                     approval/promotion
+                            │
+                            ▼
+                       PRODUCTION
+                            │
+              ┌─────────────┼─────────────┐
+              ▼             ▼             ▼
+           CANARY          BETA         STABLE
+```
+
+> **Vezham Engineering Standard:**  
+> **Every commit can become a timeline variant. Build once, validate through TVA, promote the same immutable artifact through Dev → QA → Preview → Production, and progressively release it through Canary → Beta → Stable.**

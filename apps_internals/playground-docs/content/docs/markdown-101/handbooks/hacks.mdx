@@ -1,0 +1,359 @@
+---
+title: Hacks
+description: Workarounds for things not officially supported by Markdown.
+icon: settings
+---
+
+| Element                                                       | Native Type       |
+| ------------------------------------------------------------- | ----------------- |
+| [Underline](#underline)                                       | HTML              |
+| [Align - Text Alignment](#align---text-alignment)             | HTML + CSS        |
+| [Color](#color)                                               | HTML + CSS        |
+| [Comments](#comments)                                         | MD                |
+| ❌ [Admonitions](#admonitions)                                | MD, MDX (Callout) |
+| [Image - Size](#image-size)                                   | HTML              |
+| [Image - Captions](#image-captions)                           | MD, HTML          |
+| [Videos](#videos)                                             | MD                |
+| [Link - Targets](#link---targets)                             | HTML              |
+| [Symbols](#symbols)                                           | MD/HTML           |
+| [Table - Formatting](#table---formatting)                     | HTML              |
+| [Table of Contents](#table-of-contents)                       | MD                |
+| [Definition List](/docs/markdown-101/handbooks/basic#heading) | ❌ MD, HTML       |
+
+## Underline
+
+```html
+Some of these words <ins>will be underlined</ins>.
+```
+
+Some of these words <ins>will be underlined</ins>.
+
+## Align - Text Alignment
+
+<mark>Note:</mark> [Learn More](https://tailwindcss.com/docs/text-align)
+
+```html
+<p class="text-left">Left this text</p>
+<p class="text-center">Center this text</p>
+<p class="text-right">Right this text</p>
+<p class="text-justify">Justify this text</p>
+<p class="text-start">Start this text</p>
+<p class="text-end">End this text</p>
+```
+
+<p class="text-center">Center this text</p>
+
+## Color
+
+<mark>Note:</mark> [TW Colors](https://tailwindcss.com/docs/colors), [For
+Text](https://tailwindcss.com/docs/color)
+
+```html
+<p class="text-red-500">This text is red!</p>
+```
+
+<p class="text-red-500">This text is red!</p>
+
+## Comments
+
+The comments are essentially hidden text. The text is viewable by the author of the document, but it's not printed on the webpage or PDF.
+
+To add a comment, place text inside brackets followed by a colon, a space, and a pound sign (e.g., `[comment]: #`). You should put blank lines before and after a comment.
+
+<mark>Note:</mark> from
+<a
+  href="https://stackoverflow.com/questions/4823468/comments-in-markdown"
+  rel="nofollow">
+  Stack Overflow
+</a>
+. It's been peer-reviewed and used by thousands of people!
+
+[//]: # 'This may be the most platform independent comment'
+[comment]: # 'This is a comment, it will not be included'
+[comment]: # 'in the output file unless you use it in'
+[comment]: # 'a reference style link.'
+
+```text
+Here's a paragraph that will be visible.
+
+[This is a comment that will be hidden.]: #
+
+-- OR --
+
+[//]: # (This may be the most platform independent comment)
+[comment]: # (This is a comment, it will not be included in the output file)
+
+And here's another paragraph that's visible.
+```
+
+Here's a paragraph that will be visible.
+
+[This is a comment that will be hidden.]: #
+[//]: # 'This may be the most platform independent comment'
+[comment]: # 'This is a comment, it will not be included in the output file'
+
+And here's another paragraph that's visible.
+
+## ❌ Admonitions
+
+Admonitions are frequently used in documentation to call attention to warnings, notes, and tips.
+
+However, if you need to add admonitions, you might be able to use [blockquotes](/docs/markdown-101/handbooks/basic#code-block) with [emoji](/docs/markdown-101/handbooks/extended#emoji) and [emphasis](/docs/markdown-101/handbooks/basic#emphasis) to create something that looks similar to the admonitions you see on other websites.
+
+<mark>Note:</mark> refer MDX - Callout
+
+```text
+> :warning: **Warning:** Do not push the big red button.
+
+> :memo: **Note:** Sunrises are beautiful.
+
+> :bulb: **Tip:** Remember to appreciate the little things in life.
+```
+
+> ⚠️ **Warning:** Do not push the big red button.
+
+> 📝 **Note:** Sunrises are beautiful.
+
+> 💡 **Tip:** Remember to appreciate the little things in life.
+
+## Image Size
+
+The Markdown syntax for [images](/docs/markdown-101/handbooks/basic#image) doesn't allow you to specify the width and height of images. Alternatively, you can use the `img` HTML tag with the `width` and `height` attributes to set the dimensions of an image in pixels.
+
+```html
+<img
+  src="https://static.cdn.vezham.com/images/logo-black.png"
+  width="100"
+  height="100" />
+```
+
+<img
+  src="https://static.cdn.vezham.com/images/logo-black.png"
+  width="100"
+  height="100"
+/>
+
+## Image Captions
+
+Markdown doesn't natively support image captions, but there are two possible workarounds.
+
+using MD, you could try placing the caption directly below the image and using [emphasis](/docs/markdown-101/handbooks/basic#emphasis).
+
+```text
+<img src="https://static.cdn.vezham.com/images/logo-black.png" alt="Albuquerque, New Mexico" width="100" height="100" />
+*A single track trail outside of Albuquerque, New Mexico.*
+```
+
+![Albuquerque, New Mexico](https://static.cdn.vezham.com/images/logo-black.png)
+_A single track trail outside of Albuquerque, New Mexico._
+
+using HTML, you can use the `figure` and `figcaption` HTML tags to add a caption for your image.
+
+```html
+<figure>
+  <img
+    src="https://static.cdn.vezham.com/images/logo-black.png"
+    width="100"
+    height="100"
+    alt="Vezham, Logo" />
+  <figcaption>
+    A single track trail outside of Albuquerque, New Mexico.
+  </figcaption>
+</figure>
+```
+
+<figure>
+  <img
+    src="https://static.cdn.vezham.com/images/logo-black.png"
+    width="100"
+    height="100"
+    alt="Vezham, Logo"
+  />
+  <figcaption>
+    A single track trail outside of Albuquerque, New Mexico.
+  </figcaption>
+</figure>
+
+## Videos
+
+If your Markdown application supports HTML, you should be able to embed a video in your Markdown file by copying and pasting the HTML code provided by a video website like YouTube or Vimeo. If your Markdown application doesn't support HTML, you can't embed a video, but you can come close by adding an [image](/docs/markdown-101/handbooks/basic#image) and a link to the video. You could do this with practically any video on any video service.
+
+Since YouTube makes this easy, we'll use them as an example. Take this video, for instance: `https://www.youtube.com/watch?v=8q2IjQOzVpE`. The last part of the URL (`8q2IjQOzVpE`) is the ID of the video. We can take that ID and put it in the following template:
+
+```
+[![Image alt text](https://img.youtube.com/vi/YOUTUBE-ID/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE-ID)
+```
+
+YouTube automatically generates an image for every video (`https://img.youtube.com/vi/YOUTUBE-ID/0.jpg`), so we can use that and [link the image](/docs/markdown-101/handbooks/basic#linking-images) to the video on YouTube. After we replace the image alt text and add the ID of the video, our example looks like this:
+
+```
+[![Less Than Jake — Scott Farcas Takes It On The Chin](https://img.youtube.com/vi/PYCxct2e0zI/0.jpg)](https://www.youtube.com/watch?v=PYCxct2e0zI)
+```
+
+<a href="https://www.youtube.com/watch?v=PYCxct2e0zI" rel="nofollow">
+  <img
+    src="https://img.youtube.com/vi/PYCxct2e0zI/0.jpg"
+    width="480"
+    height="360"
+    alt="Less Than Jake — Scott Farcas Takes It On The Chin"
+  />
+</a>
+
+## Link - Targets
+
+Some people like creating links that open in new tabs or windows.
+
+```html
+<a href="https://www.example.com" target="_blank">Learn More!</a>
+```
+
+<a href="https://www.example.com" target="_blank">
+  Learn More!
+</a>
+
+## Symbols
+
+<mark>Note:</mark> For a complete list of available HTML entities, refer to
+Wikipedia's page on [HTML
+entities](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references).
+
+| Element              | Symbol    | HTML entity |
+| -------------------- | --------- | ----------- |
+| Non-Breaking space   | (&nbsp;)  | `&nbsp;`    |
+| Copyright            | (&copy;)  | `&copy;`    |
+| Registered trademark | (&reg;)   | `&reg;`     |
+| Trademark            | (&trade;) | `&trade;`   |
+| Euro                 | (&euro;)  | `&euro;`    |
+| Left arrow           | (&larr;)  | `&larr;`    |
+| Up arrow             | (&uarr;)  | `&uarr;`    |
+| Right arrow          | (&rarr;)  | `&rarr;`    |
+| Down arrow           | (&darr;)  | `&darr;`    |
+| Degree               | (&#176;)  | `&#176;`    |
+| Pi                   | (&#960;)  | `&#960;`    |
+
+## Table - Formatting
+
+Markdown [tables](/docs/markdown-101/handbooks/extended#table) are notoriously finicky. You can't use many Markdown syntax elements to format the text in table cells. But there are workarounds for at least two common table issues: Line breaks and lists.
+
+### Line Breaks Within Table Cells
+
+You can separate paragraphs within a table cell by using one or more `<br/>` HTML tags.
+
+```
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title |
+| Paragraph   | First paragraph. <br/><br/> Second paragraph. |
+```
+
+<table class="table-bordered table">
+  <thead>
+    <tr>
+      <th>Syntax</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Header</td>
+      <td>Title</td>
+    </tr>
+    <tr>
+      <td>Paragraph</td>
+      <td>
+        First paragraph. <br />
+        <br /> Second paragraph.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Lists Within Table Cells
+
+You can add a list within a table cell by using HTML tags.
+
+```
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title |
+| List        | Here's a list! <ul><li>Item one.</li><li>Item two.</li></ul> |
+```
+
+<table class="table-bordered table">
+  <thead>
+    <tr>
+      <th>Syntax</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Header</td>
+      <td>Title</td>
+    </tr>
+    <tr>
+      <td>List</td>
+      <td>
+        Here's a list!{' '}
+        <ul>
+          <li>Item one.</li>
+          <li>Item two.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Table of Contents
+
+```html
+#### Table of Contents - [Underline](#underline) - [Indent](#indent) -
+[Center](#center) - [Color](#color)
+```
+
+<h4 class="no-anchor" data-toc-skip>
+  Table of Contents
+</h4>
+
+- [Underline](#underline)
+- [Indent](#indent)
+- [Center](#center)
+- [Color](#color)
+
+---
+
+## Definition List
+
+To create a definition list, type the term on the first line. On the next line, type a colon followed by a space and the definition.
+
+```html
+--- [❌ MD] ---
+term  
+: definition
+
+First Term
+: This is the definition of the first term.
+
+Second Term
+: This is one definition of the second term.
+: This is another definition of the second term.
+
+---
+
+[✅ HTML] ---
+<dl>
+  <dt>First Term</dt>
+  <dd>This is the definition of the first term.</dd>
+  <dt>Second Term</dt>
+  <dd>This is one definition of the second term.</dd>
+  <dd>This is another definition of the second term.</dd>
+</dl>
+```
+
+<dl>
+  <dt>First Term</dt>
+  <dd>This is the definition of the first term.</dd>
+  <dt>Second Term</dt>
+  <dd>This is one definition of the second term. </dd>
+  <dd>This is another definition of the second term.</dd>
+</dl>

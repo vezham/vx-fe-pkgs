@@ -12,6 +12,24 @@
       "path": "./packages/vx/system-utils"
     },
     {
+      "path": "./apps_internals/playground-e2e"
+    },
+    {
+      "path": "./apps_internals/playground"
+    },
+    {
+      "path": "./apps_internals/play-start-e2e"
+    },
+    {
+      "path": "./apps_internals/play-next-e2e"
+    },
+    {
+      "path": "./apps_internals/play-start"
+    },
+    {
+      "path": "./apps_internals/play-next"
+    },
+    {
       "path": "./packages/vx/template"
     },
     {
@@ -22,6 +40,36 @@
     },
     {
       "path": "./packages/vx/config"
+    },
+    {
+      "path": "./apps_internals/playground-docs"
+    },
+    {
+      "path": "./apps_internals/playground-cdn"
+    },
+    {
+      "path": "./apps_internals/playground-app"
+    },
+    {
+      "path": "./apps_internals/playground-docs-e2e"
+    },
+    {
+      "path": "./apps_internals/playground-app-e2e"
+    },
+    {
+      "path": "./apps_internals/playground-cdn-e2e"
+    },
+    {
+      "path": "./apps/school-os"
+    },
+    {
+      "path": "./apps/mail"
+    },
+    {
+      "path": "./apps/crm"
+    },
+    {
+      "path": "./apps/demo"
     },
     {
       "path": "./packages/vx/react"

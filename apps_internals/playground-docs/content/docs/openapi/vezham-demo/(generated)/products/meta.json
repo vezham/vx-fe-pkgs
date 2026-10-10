@@ -1,0 +1,5 @@
+{
+  "title": "Products",
+  "description": "Product discovery and statistics",
+  "pages": ["product_list_products_get", "product_stats_products_stats_get"]
+}

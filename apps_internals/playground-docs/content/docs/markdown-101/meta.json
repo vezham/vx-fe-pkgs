@@ -1,0 +1,7 @@
+{
+  "root": true,
+  "title": "Markdown 101",
+  "description": "Class on Markdown 101",
+  "icon": "text-format",
+  "pages": ["overview", "handbooks", "ref", "todo"]
+}

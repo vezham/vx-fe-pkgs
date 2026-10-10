@@ -1,0 +1,5 @@
+{
+  "title": "Docs",
+  "description": "Documentation assets generated at build time.",
+  "pages": ["getSearchIndex"]
+}

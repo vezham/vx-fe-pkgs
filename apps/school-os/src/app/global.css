@@ -1,0 +1,30 @@
+@import '../../../../packages/vx/styles';
+
+/* You can add global styles to this file, and also import other style files */
+
+/* stylelint-disable selector-class-pattern, declaration-property-unit-allowed-list, unit-allowed-list */
+[data-timetable-agenda] .agenda__event {
+  padding: 4px 6px !important;
+}
+
+[data-timetable-agenda] .agenda__event-title {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+[data-timetable-agenda] .agenda__event-time {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+[data-timetable-agenda] .agenda__month-cell {
+  min-height: 11rem;
+}
+
+[data-timetable-agenda] .agenda__month-event {
+  min-height: 54px;
+  padding-block: 4px;
+}
+/* stylelint-enable selector-class-pattern, declaration-property-unit-allowed-list, unit-allowed-list */

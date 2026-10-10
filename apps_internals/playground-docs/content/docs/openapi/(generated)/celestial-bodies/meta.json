@@ -1,0 +1,5 @@
+{
+  "title": "Celestial Bodies",
+  "description": "Celestial bodies are the planets and satellites in the Scalar Galaxy.",
+  "pages": ["createCelestialBody"]
+}

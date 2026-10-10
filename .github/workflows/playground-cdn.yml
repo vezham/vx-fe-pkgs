@@ -1,0 +1,51 @@
+# @vx/INFO: @vx/ci - trigger
+name: playground-cdn | bnd
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [timeline, next, feat/*]
+    paths:
+      - '.github/workflows/playground-cdn.yml'
+      - 'vx/handbooks/ci.md'
+      # - 'packages/**'
+      - 'apps_internals/playground-cdn/**'
+
+jobs:
+  run_if:
+    runs-on: ubuntu-latest
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+      deploy: ${{ steps.filter.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            all:
+              - '.github/workflows/playground-cdn.yml'
+              - 'vx/handbooks/ci.md'
+            deploy:
+              - 'apps_internals/playground-cdn/**'
+              - 'packages/**'
+
+  deploy:
+    needs: run_if
+    permissions:
+      contents: write # Publish the deployment URLs as a commit comment.
+    if: ${{ needs.run_if.outputs.all == 'true' || needs.run_if.outputs.deploy == 'true' }}
+    name: playground-cdn | ${{ github.ref_name }}
+    uses: vezham/vx-fe-deployer/.github/workflows/playground-cdn.yml@labs
+    # secrets: inherit
+    # Pass secrets explicitly to the reusable workflow in the vezham organization.
+    secrets:
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      PLAYGROUND_DOCS_TVA_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+      PLAYGROUND_CDN_DEV_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+      PLAYGROUND_CDN_QA_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+      PLAYGROUND_CDN_PREVIEW_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+      PLAYGROUND_CDN_LIVE_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+    with:
+      CALLER: ${{ github.ref_name }}

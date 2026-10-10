@@ -1,0 +1,5 @@
+{
+  "title": "Keys & Values",
+  "description": "Browse available keys and their possible values",
+  "pages": ["get_unique_values_values__k__get", "keys_list_keys_get"]
+}
