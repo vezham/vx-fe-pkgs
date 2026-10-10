@@ -15,8 +15,8 @@ catalog:
 # vx-bot/TODO: Remove these overrides when the published @vx-oss docs packages use
 # @vx-oss package names in their imports and peer dependencies.
 overrides:
-  fumadocs-core: npm:@vx-oss/docs-core@1.0.15
-  fumadocs-ui: npm:@vx-oss/docs-base-ui@1.0.15
+  fumadocs-core: npm:@vx-oss/docs-core@1.0.17
+  fumadocs-ui: npm:@vx-oss/docs-base-ui@1.0.17
 
   # vx-bot/NOTE: Pin patched transitive dependencies until upstream ranges include the fixes.
   # vx-bot/TODO: Codex should review these security overrides when updating dependencies.
