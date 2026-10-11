@@ -2,7 +2,7 @@
   "name": "playground-cdn",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps_internals/playground-cdn/src",
+  "sourceRoot": "apps-internals/playground-cdn/src",
   "targets": {
     "build": {
       "dependsOn": ["metadata:generate", "deploy:generate", "^build"]
