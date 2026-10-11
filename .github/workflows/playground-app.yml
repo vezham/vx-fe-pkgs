@@ -37,15 +37,7 @@ jobs:
       contents: write # Publish the deployment URLs as a commit comment.
     if: ${{ needs.run_if.outputs.all == 'true' || needs.run_if.outputs.deploy == 'true' }}
     name: playground-app | ${{ github.ref_name }}
-    uses: vezham/vx-fe-deployer/.github/workflows/playground-app.yml@labs
-    # secrets: inherit
-    # Pass secrets explicitly to the reusable workflow in the vezham organization.
-    secrets:
-      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
-      PLAYGROUND_DOCS_TVA_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
-      PLAYGROUND_APP_DEV_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
-      PLAYGROUND_APP_QA_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
-      PLAYGROUND_APP_PREVIEW_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
-      PLAYGROUND_APP_LIVE_GCP_SA_KEY: ${{ secrets.PLAYGROUND_TVA_GCP_SA_KEY }}
+    uses: vezham/vx-fe-deployer/.github/workflows/playground-app.yml@timeline
+    secrets: inherit
     with:
       CALLER: ${{ github.ref_name }}
