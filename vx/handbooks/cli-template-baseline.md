@@ -167,3 +167,18 @@ See [App layout](./ui/app-layout.md) for the shared props and app route examples
 Keep the filename `vx.nav.yaml`. Its required top-level `navigation` array
 defines visible destinations; `items` is not accepted as a legacy alias. Generated
 React exports retain the name `navigationItems`.
+
+## Package library templates
+
+Buildable package templates use `@vx/config/vite-lib` for ESM library output,
+workspace cache defaults, and declarations from `tsconfig.lib.json`. The default
+entry is `src/index.ts` and output is `dist/index.js`; packages can override the
+entry, formats, and output through Vite config. Keep framework plugins and
+external dependencies in framework presets or package overrides. React library
+templates use `@vx/config/vite-lib/react`, which adds the React SWC plugin and
+externalizes `react`, `react-dom`, and `react/jsx-runtime`. Library mode does not require a global name
+for ESM output. Test configs remain separate and use the shared Vitest preset.
+
+Declare the unpublished `@vx/config` tooling package in workspace-root
+`devDependencies`, rather than in publishable package manifests. Package builds
+and tests use the workspace installation.

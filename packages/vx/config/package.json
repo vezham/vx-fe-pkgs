@@ -69,6 +69,16 @@
       "types": "./src/lib/deploy/index.ts",
       "import": "./src/lib/deploy/index.ts",
       "default": "./src/lib/deploy/index.ts"
+    },
+    "./vite-lib": {
+      "types": "./src/lib/integrations/vite-lib/index.ts",
+      "import": "./src/lib/integrations/vite-lib/index.ts",
+      "default": "./src/lib/integrations/vite-lib/index.ts"
+    },
+    "./vite-lib/react": {
+      "types": "./src/lib/integrations/vite-lib/react.ts",
+      "import": "./src/lib/integrations/vite-lib/react.ts",
+      "default": "./src/lib/integrations/vite-lib/react.ts"
     }
   },
   "dependencies": {

@@ -25,6 +25,9 @@
     },
     {
       "path": "./packages/vx/react"
+    },
+    {
+      "path": "./packages/core/react"
     }
   ],
   "compilerOptions": {

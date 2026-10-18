@@ -272,7 +272,7 @@
         "style": "tailwind"
       },
       "library": {
-        "style": "tailwind",
+        "style": "css",
         "linter": "eslint",
         "unitTestRunner": "vitest"
       }

@@ -180,6 +180,20 @@ export default [
     }
   },
   {
+    files: ['**/vite.config.{ts,mts}', '**/vitest.config.{ts,mts}'],
+    rules: {
+      // vx-bot/NOTE: Build and test presets are tooling dependencies, outside published library source.
+      '@nx/enforce-module-boundaries': [
+        'error',
+        {
+          enforceBuildableLibDependency: true,
+          allow: ['^@vx/config/(vite-lib/react|vitest/vite)$'],
+          depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }]
+        }
+      ]
+    }
+  },
+  {
     files: [
       '**/*.ts',
       '**/*.tsx',
