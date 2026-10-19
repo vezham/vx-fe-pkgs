@@ -544,6 +544,192 @@ importers:
         specifier: 17.7.3
         version: 17.7.3
 
+  apps-internals/play-next:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/play-next-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps-internals/play-start:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/play-start-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps-internals/playground:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/playground-app:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/playground-app-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps-internals/playground-cdn:
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/playground-cdn-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps-internals/playground-docs:
+    dependencies:
+      '@vx/react':
+        specifier: workspace:*
+        version: link:../../packages/vx/react
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps-internals/playground-docs-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps-internals/playground-e2e:
+    devDependencies:
+      '@vx/config':
+        specifier: workspace:*
+        version: link:../../packages/vx/config
+
+  apps/crm:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps/demo:
+    dependencies:
+      '@vx/react':
+        specifier: workspace:*
+        version: link:../../packages/vx/react
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  apps/mail:
+    dependencies:
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
+  apps/school-os:
+    dependencies:
+      '@internationalized/date':
+        specifier: 'catalog:'
+        version: 3.12.4
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vx/react':
+        specifier: workspace:*
+        version: link:../../packages/vx/react
+      '@vx/system-utils':
+        specifier: workspace:*
+        version: link:../../packages/vx/system-utils
+      '@vx/template':
+        specifier: workspace:*
+        version: link:../../packages/vx/template
+    devDependencies:
+      '@vx/env':
+        specifier: workspace:*
+        version: link:../../packages/vx/env
+      '@vx/start':
+        specifier: workspace:*
+        version: link:../../packages/vx/start
+
   packages/vx/config:
     dependencies:
       yaml:

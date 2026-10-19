@@ -291,6 +291,8 @@ export const navigationItems = [
             "href": "/academic/classes/allclasses",
             "icon": "vx:list",
             "toolbar": {
+              "filter": false,
+              "sort": false,
               "primaryAction": {
                 "key": "create",
                 "label": "Add Class",
@@ -1190,56 +1192,6 @@ export const controlCenter = {
       "id": "mirroring",
       "type": "preview-mirroring",
       "span": "full"
-    },
-    {
-      "id": "demo-appearance-lite",
-      "type": "appearance-toggle",
-      "span": "compact"
-    },
-    {
-      "id": "demo-appearance",
-      "type": "appearance",
-      "span": "wide"
-    },
-    {
-      "id": "appearance-wide",
-      "type": "appearance",
-      "span": "wide"
-    },
-    {
-      "id": "appearance-lite1",
-      "type": "appearance-toggle",
-      "span": "compact"
-    },
-    {
-      "id": "appearance-23",
-      "type": "appearance",
-      "span": "standard"
-    },
-    {
-      "id": "appearance-12",
-      "type": "appearance",
-      "span": "full"
-    },
-    {
-      "id": "appearance-lite2",
-      "type": "appearance-toggle",
-      "span": "compact"
-    },
-    {
-      "id": "appearance-lite3",
-      "type": "appearance-toggle",
-      "span": "compact"
-    },
-    {
-      "id": "appearance-lite4",
-      "type": "appearance-toggle",
-      "span": "compact"
-    },
-    {
-      "id": "appearance-lite5",
-      "type": "appearance-toggle",
-      "span": "compact"
     }
   ]
 } satisfies ControlCenterConfig
