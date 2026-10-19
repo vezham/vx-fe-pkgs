@@ -1,5 +1,5 @@
 # @vx/INFO: @vx/ci
-name: QA
+name: 🧪 QA
 
 on:
   schedule:
