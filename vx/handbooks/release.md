@@ -151,3 +151,37 @@ V_APP_ID=play-start-e2e
 
 They do not need `V_APP_NAME`; the id is enough for logs, health responses, and
 test tooling.
+
+## Package release workflow
+
+The active `.github/workflows/release.yml` owns scheduled and manual npm releases.
+It does not run on `release: published`, because the release command itself creates
+the version commit, tag and GitHub release. Normal publishing runs only from the
+default branch; manual dry runs may use other branches. Releases share a single
+concurrency group across refs so two runs cannot publish the same package concurrently.
+
+The shared npm setup selects Node from root `package.json` (`engines.node` or
+`volta.node`), unless a runtime override or matrix version is provided. pnpm uses
+the manifest `packageManager` version. Publishable package repository metadata must
+match the actual source repository for npm provenance.
+
+The Nx `release.version.preVersionCommand` is the only release build stage. Both
+`@vx-ws/release` and the workflow delegate to it. `test:release` verifies orchestration
+using mocked Nx release APIs, without authenticating or publishing.
+
+For the initial release, manually enable **firstRelease** and provide an explicit
+version, for example `0.0.1`. Preview with **dryRun** first. Subsequent runs use
+conventional commits and the release tags; leave **firstRelease** disabled. The
+schedule cannot bootstrap an untagged repository. The next scheduled run can release
+after the initial release is completed.
+
+```sh
+pnpm nx run @vx:test:release
+pnpm nx run @vx:@vx-ws/release -- --version=0.0.1 --firstRelease --dryRun
+```
+
+A dry run previews Nx operations; its pre-version build hook is not executed. Run
+`pnpm nx run @vx:@vx-ci/build` separately to validate compilation before releasing.
+Shared action changes must reach `vezham/vx-deployer@timeline` before running the
+caller. Existing npm token permissions, repository visibility, branch protection
+and GitHub Actions secrets still determine whether the live publish succeeds.

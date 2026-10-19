@@ -212,21 +212,14 @@
       "command": "nx run-many -t build"
     },
     "@vx-ci/nx:release": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["nx run @vx:@vx-ci/build", "nx release -d"],
-        "parallel": false
-      }
+      "command": "nx release -d",
+      "cache": false
     },
     "@vx-ws/release": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
-        "commands": [
-          { "command": "nx run @vx:@vx-ci/build", "forwardAllArgs": false },
-          "tsx vx/tools/release/index.ts"
-        ],
-        "// commands": ["tsx vx/tools/release/index.ts -d --fr"],
-        "parallel": false
+        "command": "tsx vx/tools/release/index.ts"
       }
     },
     "local-registry": {
@@ -236,6 +229,10 @@
         "config": ".verdaccio/config.yml",
         "storage": "tmp/local-registry/storage"
       }
+    },
+    "test:release": {
+      "command": "tsx --test vx/tools/release/run-release.test.ts",
+      "cache": false
     }
   }
 }

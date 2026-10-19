@@ -1,21 +1,27 @@
 {
   "name": "@vezham/react",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
+    "directory": "packages/core/react"
+  },
   "type": "module",
   "exports": {
-    "./package.json": "./package.json",
     ".": {
       "@vx/fe-kit": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "!**/*.tsbuildinfo",
     "dist",
-    "!**/*.tsbuildinfo"
+    "LICENSE"
   ]
 }
