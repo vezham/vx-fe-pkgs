@@ -1,0 +1,181 @@
+---
+title: Extended Syntax
+icon: code-square
+---
+
+## Heading ID
+
+Adding custom IDs allows you to link directly to headings and modify them with CSS. To add a custom heading ID, enclose the custom ID in curly braces on the same line as the heading.
+
+```html
+### ❌ My Great Heading {#custom-id}
+```
+
+### Linking to Heading IDs
+
+You can link to headings with custom IDs in the file by creating a [standard link](/docs/markdown-101/handbooks/basic#link) with a number sign (#) followed by the custom heading ID. These are commonly referred to as anchor links.
+
+```html
+[Heading IDs](#heading-ids) [Heading IDs](https://www.example.com/docs#handbook)
+```
+
+[Heading IDs](/docs)
+
+<mark>Note:</mark> Other websites can link to the heading by adding the custom
+heading ID to the full URL of the webpage (e.g, [Heading
+IDs](https://www.markdownguide.org/extended-syntax#heading-ids)).
+
+---
+
+## Table
+
+To add a table, use `three or more hyphens (---)` to create each column’s header, and use `pipes (|)` to separate each column. For compatibility, you should also add a pipe on either end of the row.
+
+<mark>Note:</mark> Cell widths can vary, as shown below. The rendered output
+will look the same.
+
+```html
+| Label | Description | | --- | ----------- | | Header | Title | | Paragraph |
+Text |
+```
+
+| Label     | Description |
+| --------- | ----------- |
+| Header    | Title       |
+| Paragraph | Text        |
+
+### Alignment
+
+You can align text in the columns to the left, right, or center by adding a `colon (:)` to the left, right, or on both side of the hyphens within the header row.
+
+```html
+| Left-aligned | Center-aligned | Right-aligned | | :--- | :---: | ---: | | git
+status | git status | git status | | git diff | git diff | git diff |
+```
+
+| Left-aligned | Center-aligned | Right-aligned |
+| :----------- | :------------: | ------------: |
+| git status   |   git status   |    git status |
+| git diff     |    git diff    |      git diff |
+
+## Task List
+
+Task lists (also referred to as _checklists_ and _todo_ lists) allow you to create a list of items with checkboxes.
+
+To create a task list, add dashes (`-`) and brackets with a space (`[ ]`) in front of task list items. To select a checkbox, add an `x` in between the brackets (`[x]`).
+
+```html
+- [x] @mentions, #refs, [links](), **formatting**, _and_
+<del>tags</del> supported - [x] list syntax required (any unordered or ordered
+list supported) - [x] this is a complete item - [ ] this is an incomplete item -
+[ ] See for your self!...
+```
+
+- [x] @mentions, #refs, [links](), **formatting**, _and_ <del>tags</del> supported
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
+- [ ] See for your self!...
+
+## Footnote
+
+Footnotes allow you to add notes and references without cluttering the body of the document. When you create a footnote, a superscript number with a link appears where you added the footnote reference. Readers can click the link to jump to the content of the footnote at the bottom of the page.
+
+To create a footnote reference, add a caret and an identifier inside brackets (`[^1]`). Identifiers can be numbers or words, but they can't contain spaces or tabs. Identifiers only correlate the footnote reference with the footnote itself — in the output, footnotes are numbered sequentially.
+
+Add the footnote using another caret and number inside brackets with a colon and text (`[^1]: My footnote.`). You don't have to put footnotes at the end of the document. You can put them anywhere except inside other elements like lists, block quotes, and tables.
+
+```html
+Here's a simple footnote,[^1] and here's a longer one.[^bignote] [^1]: This is
+the first footnote. [^bignote]: Here's one with multiple paragraphs and code.
+Indent paragraphs to include them in the footnote. `{ my code }` Add as many
+paragraphs as you like.
+```
+
+Here's a simple footnote,[^1] and here's a longer one.[^bignote]
+
+[^1]: This is the first footnote.
+
+[^bignote]: Here's one with multiple paragraphs and code.
+
+    Indent paragraphs to include them in the footnote.
+
+    `{ my code }`
+
+    Add as many paragraphs as you like.
+
+## Emoji
+
+There are two ways to add emoji to Markdown files: copy and paste the emoji into your Markdown-formatted text, or type emoji shortcodes.
+
+<mark>Note:</mark> [Emoji
+cheatsheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#smileys--emotion),
+[Emoji cheatsheet - webfx](https://www.webfx.com/tools/emoji-cheat-sheet)
+
+### Copying and Pasting Emoji
+
+In most cases, you can simply copy an emoji from a source like [Emojipedia](https://emojipedia.org/) and paste it into your document. Many Markdown applications will automatically display the emoji in the Markdown-formatted text. The HTML and PDF files you export from your Markdown application should display the emoji.
+
+### ❌ Using Emoji Shortcodes
+
+Some Markdown applications allow you to insert emoji by typing emoji shortcodes. These begin and end with a colon and include the name of an emoji.
+
+<mark>Note:</mark> [list of emoji
+shortcodes](https://gist.github.com/rxaviers/7360908) ```html Gone camping!
+:tent: Be back soon. That is so funny! :joy: ```
+
+Gone camping! ⛺ Be back soon.  
+That is so funny! 😂
+
+## Highlight
+
+To highlight words, use `two equal signs (==)` before and after the words.
+
+```html
+--- [❌ MD] ---
+I need to highlight these ==very important words==.
+
+---
+
+[✅ HTML] --- I need to highlight these <mark>very important words</mark>.
+```
+
+I need to highlight these <mark>very important words</mark>.
+
+## Subscript
+
+To create a subscript, use `one tilde symbol (~)` before and after the characters.
+
+```html
+--- [❌ MD] ---
+H~2~O
+
+---
+
+[✅ HTML] --- H<sub>2</sub>O
+```
+
+H<sub>2</sub>O
+
+## Superscript
+
+To create a superscript, use `one caret symbol (^)` before and after the characters.
+
+```html
+--- [❌ MD] ---
+X^2^
+
+---
+
+[✅ HTML] --- X<sup>2</sup>
+```
+
+X<sup>2</sup>
+
+```
+http://www.example.com
+```
+
+http://www.example.com
+
+`http://www.example.com`

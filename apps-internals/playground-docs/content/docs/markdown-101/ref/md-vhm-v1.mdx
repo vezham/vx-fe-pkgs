@@ -1,0 +1,162 @@
+---
+title: MD - vezham V1
+icon: vezham-logo
+---
+
+https://www.markdownguide.org
+
+https://en.wikipedia.org/wiki/Markdown
+
+https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github
+
+---
+
+—TODO—
+
+    1.	Unordered List + nesting
+    2.	List | status (todo)
+    3.	Tables
+    4.	Emojis
+
+https://www.markdownguide.org/extended-syntax/#overview
+https://gist.github.com/rxaviers/7360908
+https://uibakery.io/regex-library/street-address
+
+Emoji:
+
+https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#smileys--emotion
+
+https://www.webfx.com/tools/emoji-cheat-sheet/
+
+Chat
+`{ @all @channel @here } | { #channel:_id #thread:_id } | { @user:_id @team:_id @mailto:_id } `
+
+---
+
+## ✅ Headers
+
+## ✅ Emphasis
+
+✅ ❌ _Bold_ `*Hello there*` -> `**Hello there**`
+
+_Italics_ `_Hello there_`
+
+~Strike~ `~Hello there~`
+
+❌ **Underline** `__Hello there__`
+
+✅ ❌ `monospace` -> Quote Re-Design
+
+```text
+`Hello there`
+```
+
+> ✅ ❌ Blockquote `!Hello there` -> `>Hello there`
+
+[Hyperlink](https://www.vezham.com) `[Hello there](URL)`
+
+`Code snippet`
+
+````text
+```Hello there```
+````
+
+Horizontal line
+
+---
+
+Syntax Cheatsheet:
+
+**bold | Hello there**
+
+_italic | Hello there_
+
+~strike | Hello there~
+
+Links
+
+Inline:
+
+An [example](http://url.com/ 'Title') Reference-style labels (titles are optional):
+
+An [example][id]. Then, anywhere else in the doc, define the link: [id]: http://example.com/ "Title"
+
+Images
+
+```
+![example](https://static.cdn.vezham.com/images/logo-black.png)
+
+Inline (titles are optional): ![alt text](https://static.cdn.vezham.com/images/logo-black.png "Title")
+```
+
+Headers
+
+# Hello There
+
+### Hello There
+
+Lists
+
+Ordered, without paragraphs:
+
+1.  Foo
+2.  Bar
+
+Unordered, with paragraphs:
+
+- A list item.
+  With multiple paragraphs.
+- Bar
+
+You can nest them:
+
+- Abacus
+  - answer
+- Bubbles
+  1.  bunk
+  2.  bupkis
+      - BELITTLER
+  3.  burper
+- Cunning
+
+Blockquotes
+
+> Email-style angle brackets
+> are used for blockquotes.
+
+> > And, they can be nested.
+
+> #### Headers in blockquotes
+>
+> - You can quote a list.
+> - Etc.
+
+Code Spans
+
+`<code>` spans are delimited by backticks.
+
+You can include literal backticks
+like `` `this` ``.
+Preformatted Code Blocks
+Indent every line of a code block by at least 4 spaces or 1 tab.
+
+Horizontal
+
+---
+
+- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
+
+tables:
+
+| Command    | Description                                    |
+| ---------- | ---------------------------------------------- |
+| git status | List all new or modified files                 |
+| git diff   | Show file differences that haven't been staged |
+
+| Left-aligned | Center-aligned | Right-aligned |
+| :----------- | :------------: | ------------: |
+| git status   |   git status   |    git status |
+| git diff     |    git diff    |      git diff |

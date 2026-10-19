@@ -1,0 +1,45 @@
+---
+title: Overview
+description: This provides a quick overview of all the Markdown syntax elements supported by vezham.
+icon: document-text
+---
+
+## Basic Syntax
+
+These are the elements outlined in [John Gruber](https://daringfireball.net/projects/markdown)’s 2004 original design document.
+
+<mark>Note:</mark> All Markdown applications support these elements*.
+
+| Element                                                                                           | Markdown Syntax                              | Preview                                                                                                   | Short-Hand Syntax    |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------- |
+| [Heading](/docs/markdown-101/handbooks/basic#heading)                                             | # H1<br/>## H2<br/>### H3                    |
+| [Bold](/docs/markdown-101/handbooks/basic#bold)                                                   | `**Hello World**`                            | **Hello World**                                                                                           | ❌ `*Hello World*`   |
+| [Italic](/docs/markdown-101/handbooks/basic#italic)                                               | `_Hello World_`                              | _Hello World_                                                                                             |
+| 🔼 [Underline](/docs/markdown-101/handbooks/basic#underline)                                      | `<ins>Hello World</ins>`                     | <ins>Hello World</ins>                                                                                    | ❌ `__Hello World__` |
+| 🔼 [Strike](/docs/markdown-101/handbooks/basic#strike) / Strikethrough                            | `~Hello World~`                              | ~Hello World~                                                                                             |
+| [Link](/docs/markdown-101/handbooks/basic#link) / Hyperlink                                       | `[title](https://www.example.com)`           | [Hello World](https://www.example.com)                                                                    |
+| [Image](/docs/markdown-101/handbooks/basic#image)                                                 | `![alt text](image.jpg)`                     | <img src="https://static.cdn.vezham.com/images/logo-black.png" alt="alt text" width="100" height="100" /> |
+| [Quote](/docs/markdown-101/handbooks/basic#quote) / monospace                                     | 'Hello World' - use `                        | `Hello World`                                                                                             |
+| 🔼 [Code Block](/docs/markdown-101/handbooks/basic#code-block) / Fenced Code Block / Code Snippet | ``js<br/>console.log('Hello World');<br/>` ` |
+| [Blockquote](/docs/markdown-101/handbooks/basic#blockquote)                                       | > Hello World                                |
+| [Horizontal Line](/docs/markdown-101/handbooks/basic#horizontal-line) / Rule                      | ---                                          |
+| [Ordered List](/docs/markdown-101/handbooks/basic#ordered-list)                                   | 1. Item 1<br/>2. Item 2<br/>3. Item 3        |
+| [Unordered List](/docs/markdown-101/handbooks/basic#unordered-list)                               | - Item 1<br/>- Item 2<br/>- Item 3           |
+
+## Extended Syntax
+
+These elements extend the basic syntax by adding additional features.
+
+<mark>Note:</mark> Not all Markdown applications support these elements*.
+
+| Element [❌ 4]                                               | Markdown Syntax         | Preview               |
+| ------------------------------------------------------------ | ----------------------- | --------------------- |
+| [Heading ID](/docs/markdown-101/handbooks/basic#heading)     | `[Heading IDs](#table)` | [Heading IDs](#table) |
+| ---                                                          |
+| [Table](/docs/markdown-101/handbooks/basic#heading)          |
+| [Task List](/docs/markdown-101/handbooks/basic#heading)      |
+| [Footnote](/docs/markdown-101/handbooks/basic#heading)       |
+| ❌ [Emoji](/docs/markdown-101/handbooks/basic#heading)       |
+| ❌ [Highlight](/docs/markdown-101/handbooks/basic#heading)   |
+| ❌ [Subscript](/docs/markdown-101/handbooks/basic#heading)   |
+| ❌ [Superscript](/docs/markdown-101/handbooks/basic#heading) |

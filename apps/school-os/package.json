@@ -1,0 +1,17 @@
+{
+  "name": "school-os",
+  "version": "26.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@internationalized/date": "catalog:",
+    "@tanstack/react-hotkeys": "catalog:",
+    "@vx/react": "workspace:*",
+    "@vx/system-utils": "workspace:*",
+    "@vx/template": "workspace:*"
+  },
+  "devDependencies": {
+    "@vx/env": "workspace:*",
+    "@vx/start": "workspace:*"
+  }
+}

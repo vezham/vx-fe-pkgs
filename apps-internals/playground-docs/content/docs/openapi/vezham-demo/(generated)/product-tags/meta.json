@@ -1,0 +1,12 @@
+{
+  "title": "Product Tags",
+  "description": "CRUD operations for product tags and properties",
+  "pages": [
+    "product_tag_add_product_post",
+    "product_tag_delete_product__product___k__delete",
+    "product_tag_list_versions_product__product___k__versions_get",
+    "product_tag_product__product___k__get",
+    "product_tag_update_product_put",
+    "product_tags_list_product__product__get"
+  ]
+}

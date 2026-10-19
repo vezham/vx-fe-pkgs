@@ -1,0 +1,559 @@
+---
+title: Basic Syntax
+icon: text-square
+iconColor: 'green'
+---
+
+## Heading
+
+To create a heading, add number signs (`#`) in front of a word or phrase. The number of number signs you use should correspond to the heading level. For example, to create a heading level three (`<h3>`), use three number signs (e.g., `### My Header`).
+
+```html
+# H1 - Heading level 1 ## H2 - Heading level 2 ### H3 - Heading level 3 #### H4
+- Heading level 4 ##### H5 - Heading level 5 ###### H6 - Heading level 6
+```
+
+# H1 - Heading level 1
+
+## H2 - Heading level 2
+
+### H3 - Heading level 3
+
+#### H4 - Heading level 4
+
+##### H5 - Heading level 5
+
+###### H6 - Heading level 6
+
+## Paragraphs
+
+To create paragraphs, use a `blank line` to separate one or more lines of text. You should not indent paragraphs with spaces or tabs.
+
+```html
+I really like using Markdown. I think I'll use it to format all of my documents
+from now on.
+```
+
+I really like using Markdown.
+
+I think I'll use it to format all of my documents from now on.
+
+## Line Breaks
+
+To create a line break or new line (`<br/>`), end a line with `two or more spaces`, and then type return.
+
+```html
+First line with two spaces after. And the next line. First line with the HTML
+tag after.<br />
+And the next line.
+```
+
+First line with two spaces after.  
+And the next line.
+
+First line with the HTML tag after.<br/>
+And the next line.
+
+## Emphasis
+
+You can add emphasis by making text **bold** or **italic**.
+
+### Bold
+
+To bold text, add `two asterisks (*)` before and after a word or phrase. To bold the middle of a word for emphasis, add `two asterisks (*) without spaces` around the letters.
+
+```html
+I just love **bold text**. Love**is**bold
+```
+
+I just love **bold text**.  
+Love**is**bold
+
+### Italic
+
+To italicize text, add `one underscore (_)` before and after a word or phrase. To italicize the middle of a word for emphasis, add `one asterisk (*) without spaces` around the letters.
+
+```
+Italicized text is the _cat's meow_.
+A*cat*meow
+```
+
+Italicized text is the _cat's meow_.  
+A*cat*meow.
+
+#### Bold & Italic
+
+To emphasize text with bold and italics at the same time, add `three asterisks (*)` before and after a word or phrase. To bold and italicize the middle of a word for emphasis, add `three asterisks (*) without spaces` around the letters.
+
+[This text is ___really important___. ]: #
+[This text is __*really important*__.]: #
+
+```html
+This is really***very***important text. This text is ***really important***.
+This text is **_really important_**.
+```
+
+This is really***very***important text.  
+This text is **_really important_**.  
+This text is **_really important_**.
+
+## Underline
+
+```html
+<ins>Hello World</ins>
+```
+
+<ins>Hello World</ins>
+
+## Strike
+
+You can strikethrough words by putting a horizontal line through the center of them. The result looks ~like this~. This feature allows you to indicate that certain words are a mistake not meant for inclusion in the document.
+
+To strikethrough words, use a tilde symbols (`~`) before and after the words.
+
+```html
+~The world is flat.~
+```
+
+~The world is flat.~
+
+## Link
+
+To create a link, enclose the link text in brackets (e.g., `[Duck Duck Go]`) and then follow it immediately with the URL in parentheses (e.g., `(https://duckduckgo.com)`). You can optionally add a title after the URL in the parentheses.
+
+```html
+My favorite search engine is [Duck Duck Go](https://duckduckgo.com "The best
+search engine for privacy") then [Google](https://google.com).
+```
+
+My favorite search engine is [Duck Duck Go](https://duckduckgo.com 'The best search engine for privacy') then [Google](https://google.com).
+
+### Adding Titles
+
+You can optionally add a title for a link. This will appear as a tooltip when the user hovers over the link. To add a title, enclose it in `quotation marks` after the URL.
+
+```html
+[Duck Duck Go](https://duckduckgo.com "The best search engine for privacy").
+```
+
+### Formatting Links
+
+```
+I love supporting the **[EFF](https://eff.org)**.
+This is the _[Demo Site](https://www.example.com)_.
+```
+
+I love supporting the **[EFF](https://eff.org)**.
+This is the _[Demo Site](https://www.example.com)_.
+
+### Best Practices
+
+For compatibility, try to URL encode any spaces with `%20`. Alternatively, you could use the `a` HTML tag.
+
+```html
+--- [MD] ---
+[link - MD](https://www.example.com/my%20great%20page)
+
+---
+
+[HTML] --- <a href="https://www.example.com/my great page">link - HTML</a>
+```
+
+[link - MD](https://www.example.com/my%20great%20page)
+
+<a href="https://www.example.com/my great page">link - HTML</a>
+
+Parentheses in the middle of a URL can also be problematic. For compatibility, try to URL encode the opening parenthesis (`(`) with `%28` and the closing parenthesis (`)`) with `%29`. Alternatively, you could use the `a` HTML tag.
+
+```html
+[a novel -
+MD](https://en.wikipedia.org/wiki/The_Milagro_Beanfield_War_%28novel%29)
+
+<a href="https://en.wikipedia.org/wiki/The_Milagro_Beanfield_War_(novel)"
+  >a novel - HTML</a
+>
+```
+
+[a novel - MD](https://en.wikipedia.org/wiki/The_Milagro_Beanfield_War_%28novel%29)
+
+<a href="https://en.wikipedia.org/wiki/The_Milagro_Beanfield_War_(novel)">
+  a novel - HTML
+</a>
+
+## Image
+
+To add an image, add an exclamation mark (!), followed by alt text in brackets, and the path or URL to the image asset in parentheses. You can optionally add a title in quotation marks after the path or URL.
+
+```html
+![alt text](https://static.cdn.vezham.com/images/logo-black.png)
+```
+
+<img
+  src="https://static.cdn.vezham.com/images/logo-black.png"
+  alt="alt text"
+  width="100"
+  height="100"
+/>
+
+### Linking Images
+
+To add a link to an image, enclose the Markdown for the image in brackets, and then add the link in parentheses.
+
+```html
+[![An old rock in the
+desert](https://static.cdn.vezham.com/images/logo-black.png "Shiprock, New
+Mexico by Beau Rogers")](https://www.google.com)
+```
+
+<a href="https://www.google.com">
+  <img
+    src="https://static.cdn.vezham.com/images/logo-black.png"
+    alt="An old rock in the desert"
+    title="Shiprock, New Mexico by Beau Rogers"
+    width="100"
+    height="100"
+  />
+</a>
+
+## Quote
+
+To denote a word or phrase as code/quote, enclose it in ``backticks (`)``.
+
+```html
+At the command prompt, type `nano`.
+```
+
+At the command prompt, type `nano`.
+
+### Escaping Backticks
+
+If the word or phrase you want to denote as quote includes `one or more backticks`, you can escape it by enclosing the word or phrase in double backticks (``).
+
+```html
+``Use `code` in your Markdown file.``
+```
+
+``Use `code` in your Markdown file.``
+
+## Code Block
+
+To create code blocks, use `three backticks (```)` on the lines before and after the code block.
+
+````
+```\
+<html>
+  <head>
+  </head>
+</html>
+```\
+```\
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```\
+````
+
+<mark>Output:</mark>
+```
+<html>
+  <head></head>
+</html>
+```
+
+```
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```
+
+#### Syntax Highlighting
+
+To add syntax highlighting, specify a `language` next to the backticks before the fenced code block.
+
+````
+```html
+<html>
+  <head>
+  </head>
+</html>
+```\
+```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```\
+````
+
+<mark>Output:</mark>
+```html
+<html>
+  <head></head>
+</html>
+```
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```
+
+## Blockquote
+
+To create a blockquote, add a `>` in front of a paragraph.
+
+```html
+> Dorothy followed her through many of the beautiful rooms in her castle.
+```
+
+> Dorothy followed her through many of the beautiful rooms in her castle.
+
+```html
+> Dorothy followed her through many of the beautiful rooms in her castle. > >
+The Witch bade her clean the pots and kettles and sweep the floor and keep the
+fire fed with wood.
+```
+
+> Dorothy followed her through many of the beautiful rooms in her castle.
+>
+> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
+
+### Nested Blockquotes
+
+```html
+> Dorothy followed her through many of the beautiful rooms in her castle. > >>
+The Witch bade her clean the pots and kettles and sweep the floor and keep the
+fire fed with wood.
+```
+
+> Dorothy followed her through many of the beautiful rooms in her castle.
+>
+> > The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
+
+### Blockquotes with Other Elements
+
+```html
+> #### The quarterly results look great! > > - Revenue was off the chart. > -
+Profits were higher than ever. > > ❌ _Everything_ is going according to
+**plan**.
+```
+
+> #### The quarterly results look great!
+>
+> - Revenue was off the chart.
+> - Profits were higher than ever.
+>
+> ❌ _Everything_ is going according to **plan**.
+
+## Horizontal Line
+
+To create a horizontal line, use `three dashes (---)`, other support `asterisks (***), underscores (___)` on a line by themselves.
+
+```html
+---
+```
+
+<mark>Output:</mark>
+
+---
+
+## Lists
+
+You can organize items into ordered and unordered lists.
+
+### Ordered List
+
+To create an ordered list, add line items with `numbers followed by periods`. The numbers don’t have to be in numerical order, but the list should start with the number one.
+
+```html
+1. First item 2. Second item 3. Third item 4. Fourth item 1. First item 1.
+Second item 1. Third item 1. Fourth item 10. First item 8. Second item 3. Third
+item 5. Fourth item 1. First item 2. Second item 3. Third item 1. Indented item
+2. Indented item 4. Fourth item
+```
+
+1. First item
+2. Second item
+3. Third item
+4. Fourth item
+
+---
+
+1. First item
+1. Second item
+1. Third item
+1. Fourth item
+
+---
+
+10. First item
+11. Second item
+12. Third item
+13. Fourth item
+
+---
+
+1. First item
+2. Second item
+3. Third item
+   1. Indented item
+   2. Indented item
+4. Fourth item
+
+### Unordered List
+
+To create an unordered list, add `dashes (-)`, other supports `asterisks (*), or plus signs (+)` in front of line items. Indent one or more items to create a nested list.
+
+```html
+- First item - Second item - Third item - Fourth item - First item - Second item
+- Third item - Indented item - Indented item - Fourth item
+```
+
+- First item
+- Second item
+- Third item
+- Fourth item
+
+---
+
+- First item
+- Second item
+- Third item
+  - Indented item
+  - Indented item
+- Fourth item
+
+### Best Practices
+
+If you need to start an unordered list item with a number followed by a period, you can use a `backslash (\)` to escape the period.
+
+```html
+- 1968\. A great year! - I think 1969 was second best.
+```
+
+- 1968\. A great year!
+- I think 1969 was second best.
+
+### Mix Match
+
+#### Paragraphs
+
+```html
+- This is the first list item. - Here's the second list item. I need to add
+another paragraph below the second list item. - And here's the third list item.
+```
+
+- This is the first list item.
+- Here's the second list item.
+
+  I need to add another paragraph below the second list item.
+
+- And here's the third list item.
+
+#### Blockquotes
+
+```html
+- This is the first list item. - Here's the second list item. > A blockquote
+would look great below the second list item. - And here's the third list item.
+```
+
+- This is the first list item.
+- Here's the second list item.
+
+  > A blockquote would look great below the second list item.
+
+- And here's the third list item.
+
+#### Image
+
+```html
+1. Open the file containing the Linux mascot. 2. Marvel at its beauty. ![Tux,
+the Linux mascot](https://static.cdn.vezham.com/images/logo-black.png) 3. Close
+the file.
+```
+
+1. Open the file containing the Linux mascot.
+2. Marvel at its beauty.
+   <img
+     src="https://static.cdn.vezham.com/images/logo-black.png"
+     alt="Tux, the Linux mascot"
+     width="100"
+     height="100"
+   />
+3. Close the file.
+
+#### Code Blocks
+
+````html
+1. Open the file. 2. Find the following code block on line 21: ```html
+<html>
+  <head>
+    <title>Test</title>
+  </head>
+  ```\ 3. Update the title to match the name of your website.
+</html>
+````
+
+1.  Open the file.
+2.  Find the following code block on line 21:
+
+        ```html
+        <html>
+          <head>
+            <title>Test</title>
+        </head>
+        ```
+
+3.  Update the title to match the name of your website.
+
+#### Nested List
+
+```html
+1. First item 2. Second item 3. Third item - Indented item - Indented item 4.
+Fourth item
+```
+
+1. First item
+2. Second item
+3. Third item
+   - Indented item
+   - Indented item
+4. Fourth item
+
+## Escaping Characters
+
+To display a literal character that would otherwise be used to format text in a Markdown document, add a backslash (`\`) in front of the character.
+
+```html
+\- Without the backslash, this would be a bullet in an unordered list.
+```
+
+\- Without the backslash, this would be a bullet in an unordered list.
+
+### Characters You Can Escape
+
+You can use a backslash to escape the following characters.
+
+| Character       | Name                |
+| --------------- | ------------------- |
+| \               | backslash           |
+| `               | backtick            |
+| \*              | asterisk            |
+| \_              | underscore          |
+| `{ }`           | curly braces        |
+| [ ]             | brackets            |
+| < >             | angle brackets      |
+| ( )             | parentheses         |
+| #               | pound sign          |
+| +               | plus sign           |
+| -               | minus sign (hyphen) |
+| .               | dot                 |
+| !               | exclamation mark    |
+| &#124; `&#124;` | pipe                |

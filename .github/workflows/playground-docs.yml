@@ -1,0 +1,43 @@
+# @vx/INFO: @vx/ci - trigger
+name: playground-docs | bnd
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [timeline, next, feat/*]
+    paths:
+      - '.github/workflows/playground-docs.yml'
+      - 'vx/handbooks/ci.md'
+      # - 'packages/**'
+      - 'apps-internals/playground-docs/**'
+
+jobs:
+  run_if:
+    runs-on: ubuntu-latest
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+      deploy: ${{ steps.filter.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            all:
+              - '.github/workflows/playground-docs.yml'
+              - 'vx/handbooks/ci.md'
+            deploy:
+              - 'apps-internals/playground-docs/**'
+              - 'packages/**'
+
+  deploy:
+    needs: run_if
+    permissions:
+      contents: write # Publish the deployment URLs as a commit comment.
+    if: ${{ needs.run_if.outputs.all == 'true' || needs.run_if.outputs.deploy == 'true' }}
+    name: playground-docs | ${{ github.ref_name }}
+    uses: vezham/vx-fe-deployer/.github/workflows/playground-docs.yml@timeline
+    secrets: inherit
+    with:
+      CALLER: ${{ github.ref_name }}

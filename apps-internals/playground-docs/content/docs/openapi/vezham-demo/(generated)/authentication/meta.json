@@ -1,0 +1,8 @@
+{
+  "title": "Authentication",
+  "description": "User authentication and authorization endpoints",
+  "pages": [
+    "authentication_auth_post",
+    "authentication_by_cookie_auth_by_cookie_post"
+  ]
+}
