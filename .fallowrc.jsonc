@@ -62,7 +62,8 @@
         "sort-package-json",
         "tslib",
         "typescript-eslint",
-        "verdaccio"
+        "verdaccio",
+        "vite-plugin-dts"
       ]
     }
   ],
