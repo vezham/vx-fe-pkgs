@@ -1,3 +1,4 @@
+import { createProjectGraphAsync } from '@nx/devkit'
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release'
 import yargs from 'yargs'
 
@@ -62,9 +63,22 @@ const main = async () => {
     firstRelease: options.firstRelease
   })
 
+  const graph = await createProjectGraphAsync()
+  const publishProjects = Object.keys(projectsVersionData).filter(
+    name => graph.nodes[name]?.data.targets?.['nx-release-publish']
+  )
+  if (publishProjects.length === 0) {
+    console.log(
+      NS,
+      'Skipping npm publishing: no release projects have a publish target'
+    )
+    return
+  }
+
   // vx-bot/NOTE: The returned number value from releasePublish will be zero if all projects are published successfully, non-zero if not
   console.log(NS, 'init releasePublish')
   const publishResult = await releasePublish({
+    projects: publishProjects,
     access: 'public',
     dryRun: options.dryRun,
     verbose: options.verbose,

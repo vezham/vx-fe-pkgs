@@ -287,7 +287,7 @@
   "release": {
     "projects": ["*", "!@vx/fe-kit"],
     "version": {
-      "preVersionCommand": "pnpm nx run-many -t build",
+      "preVersionCommand": "pnpm nx run @vx:@vx-ci/build",
       "conventionalCommits": true,
       "versionActions": "./vx/tools/release/version-actions.cjs"
     },

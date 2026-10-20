@@ -202,7 +202,7 @@
           "pnpm nx run @vx:@vx-ci/format-check",
           "pnpm nx run-many -t test --passWithNoTests --exclude=@vx/fe-kit",
           "pnpm nx run-many -t e2e",
-          "pnpm nx run-many -t build"
+          "pnpm nx run @vx:@vx-ci/build"
         ],
         "env": {
           "CI": "true",
@@ -213,22 +213,19 @@
       }
     },
     "@vx-ci/build": {
-      "command": "nx run-many -t build"
+      "command": "nx run-many -t build --parallel=4"
     },
     "@vx-ci/nx:release": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx run @vx:@vx-ci/build", "nx release -d"],
+        "commands": ["nx release -d"],
         "parallel": false
       }
     },
     "@vx-ws/release": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          { "command": "nx run @vx:@vx-ci/build", "forwardAllArgs": false },
-          "tsx vx/tools/release/index.ts"
-        ],
+        "commands": ["tsx vx/tools/release/index.ts"],
         "// commands": ["tsx vx/tools/release/index.ts -d --fr"],
         "parallel": false
       }
