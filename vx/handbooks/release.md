@@ -195,13 +195,18 @@ conventional commits and the release tags; leave **firstRelease** disabled. The
 schedule cannot bootstrap an untagged repository. The next scheduled run can release
 after the initial release is completed.
 
+The fixed workspace release train uses `releaseTag.strictPreid: false` so normal
+releases can resolve an existing alpha or beta tag even without a `preid` option.
+Nx's strict default otherwise searches only stable tags when no preid is given.
+
 ```sh
 pnpm nx run @vx:test:release
 pnpm nx run @vx:@vx-ws/release -- --version=0.0.1 --firstRelease --dryRun
 ```
 
-A dry run previews Nx operations; its pre-version build hook is not executed. Run
-`pnpm nx run @vx:@vx-ci/build` separately to validate compilation before releasing.
+A dry run previews Nx versioning and publishing operations, but Nx still executes
+the pre-version build hook with `NX_DRY_RUN=true`. That build can regenerate local
+app files; use a disposable checkout when previewing a release.
 Shared action changes must reach `vezham/vx-deployer@timeline` before running the
 caller. Existing npm token permissions, repository visibility, branch protection
 and GitHub Actions secrets still determine whether the live publish succeeds.
