@@ -1,3 +1,20 @@
+## 26.0.0-alpha.4 (2026-10-20)
+
+### 🏡 Chore
+
+- **repo:** upgrade pnpm to 12.14.0 ([20340db](https://github.com/vezham/vx-fe-pkgs/commit/20340db))
+- **repo:** rename manual QA label ([2da0855](https://github.com/vezham/vx-fe-pkgs/commit/2da0855))
+- **repo:** update release and lockfile ([b13f28b](https://github.com/vezham/vx-fe-pkgs/commit/b13f28b))
+
+### ✅ Tests
+
+- **demo:** reuse appearance toggle in test ([69bbb9e](https://github.com/vezham/vx-fe-pkgs/commit/69bbb9e))
+- **demo:** assert theme toggle labels ([65939e9](https://github.com/vezham/vx-fe-pkgs/commit/65939e9))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.3 (2026-10-20)
 
 ### 🚀 Features

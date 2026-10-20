@@ -1,6 +1,6 @@
 {
   "name": "playground-e2e",
-  "version": "26.0.0-alpha.3",
+  "version": "26.0.0-alpha.4",
   "private": true,
   "devDependencies": {
     "@vx/config": "workspace:*"

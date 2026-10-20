@@ -4,7 +4,7 @@ core:
   id: vezham-crm
   name: Vezham CRM
   shortName: CRM
-  version: 26.0.0-alpha.3
+  version: 26.0.0-alpha.4
   description: Single app to manage your Vezham CRM
   publisher:
     name: Vezham Technologies Private Limited
