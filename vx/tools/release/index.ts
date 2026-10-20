@@ -1,5 +1,5 @@
 import { createProjectGraphAsync } from '@nx/devkit'
-import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release'
+import { ReleaseClient, releaseChangelog, releaseVersion } from 'nx/release'
 import { hideBin } from 'yargs/helpers'
 import yargs from 'yargs/yargs'
 
@@ -42,7 +42,11 @@ const main = async () => {
   process.exitCode = await runRelease(options, {
     version: releaseVersion,
     changelog: releaseChangelog,
-    publish: releasePublish,
+    publish: async options => {
+      // vx-bot/NOTE: Publish from a separate group so fixed workspace versioning can include private projects.
+      const client = new ReleaseClient({ projects: options.projects }, true)
+      return client.releasePublish(options)
+    },
     getPublishProjects: async names => {
       const graph = await createProjectGraphAsync()
       return names.filter(
