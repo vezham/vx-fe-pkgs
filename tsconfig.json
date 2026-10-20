@@ -85,6 +85,18 @@
     },
     {
       "path": "./packages/core/utils"
+    },
+    {
+      "path": "./packages/core/env"
+    },
+    {
+      "path": "./packages/config"
+    },
+    {
+      "path": "./packages/start"
+    },
+    {
+      "path": "./packages/devtools"
     }
   ],
   "compilerOptions": {
