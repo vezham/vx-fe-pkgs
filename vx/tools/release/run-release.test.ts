@@ -13,6 +13,9 @@ const options: ReleaseOptions = {
 const fixture = () => {
   const calls: Array<{ operation: string; options: unknown }> = []
   const api = {
+    generateMetadata: async (names: string[]) => {
+      calls.push({ operation: 'metadata', options: names })
+    },
     getPublishProjects: async (names: string[]) => names,
     version: async (value: unknown) => {
       calls.push({ operation: 'version', options: value })
@@ -43,7 +46,7 @@ test('releases in order and lets conventional commits select the version', async
   assert.equal(await runRelease(options, api), 0)
   assert.deepEqual(
     calls.map(call => call.operation),
-    ['version', 'changelog', 'publish']
+    ['version', 'metadata', 'changelog', 'publish']
   )
   assert.equal(
     (calls[0].options as { specifier?: string }).specifier,
@@ -73,6 +76,15 @@ test('a bootstrap without an explicit version fails before changing anything', a
   assert.equal(calls.length, 0)
 })
 
+test('dry runs do not generate or stage metadata', async () => {
+  const { api, calls } = fixture()
+  await runRelease({ ...options, dryRun: true }, api)
+  assert.deepEqual(
+    calls.map(call => call.operation),
+    ['version', 'changelog', 'publish']
+  )
+})
+
 test('a failed version operation prevents changelog and publishing', async () => {
   const { api, calls } = fixture()
   api.version = async () => {
@@ -90,7 +102,7 @@ test('a failed changelog prevents publishing', async () => {
   await assert.rejects(runRelease(options, api), /changelog failed/)
   assert.deepEqual(
     calls.map(call => call.operation),
-    ['version']
+    ['version', 'metadata']
   )
 })
 
@@ -98,6 +110,41 @@ test('a failed package publish returns a failure exit code', async () => {
   const { api } = fixture()
   api.publish = async () => ({ react: { code: 1 } })
   assert.equal(await runRelease(options, api), 1)
+})
+
+test('metadata runs only for projects with a new version', async () => {
+  const { api, calls } = fixture()
+  const version = api.version
+  api.version = async value => {
+    const result = await version(value)
+    return {
+      ...result,
+      projectsVersionData: {
+        ...result.projectsVersionData,
+        unchanged: {
+          currentVersion: '0.0.1',
+          newVersion: null,
+          dependentProjects: []
+        }
+      }
+    }
+  }
+  await runRelease(options, api)
+  assert.deepEqual(calls.find(call => call.operation === 'metadata')?.options, [
+    'react'
+  ])
+})
+
+test('metadata failure prevents the release commit and publishing', async () => {
+  const { api, calls } = fixture()
+  api.generateMetadata = async () => {
+    throw new Error('metadata failed')
+  }
+  await assert.rejects(runRelease(options, api), /metadata failed/)
+  assert.deepEqual(
+    calls.map(call => call.operation),
+    ['version']
+  )
 })
 
 test('no changes skips changelog and publishing', async () => {
@@ -134,6 +181,6 @@ test('no eligible publish projects skips publishing after version and changelog'
   assert.equal(await runRelease(options, api), 0)
   assert.deepEqual(
     calls.map(call => call.operation),
-    ['version', 'changelog']
+    ['version', 'metadata', 'changelog']
   )
 })

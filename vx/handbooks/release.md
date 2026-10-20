@@ -181,6 +181,14 @@ The Nx `release.version.preVersionCommand` is the only release build stage. Both
 `@vx-ws/release` and the workflow delegate to it. `test:release` verifies orchestration
 using mocked Nx release APIs, without authenticating or publishing.
 
+After versioning and before changelog creation commits and tags the release, the
+runner regenerates metadata for changed projects that have `vx.app.yaml`.
+It invokes the metadata CLI with `generate <projectRoot> --json` to collect the
+generated file paths for staging.
+Tracked generated files are staged with the release changes; ignored and
+untracked local files are not added. Dry runs skip metadata writes. A metadata
+generation failure stops the release before the changelog commit and publishing.
+
 For the initial release, manually enable **firstRelease** and provide an explicit
 version, for example `0.0.1`. Preview with **dryRun** first. Subsequent runs use
 conventional commits and the release tags; leave **firstRelease** disabled. The

@@ -24,6 +24,7 @@ type ReleaseAPI = {
     options: Parameters<typeof releaseChangelog>[0]
   ) => Promise<unknown>
   getPublishProjects: (names: string[]) => Promise<string[]>
+  generateMetadata: (names: string[]) => Promise<void>
   publish: typeof releasePublish
 }
 
@@ -43,10 +44,14 @@ export const runRelease = async (
     ...common,
     specifier: options.version || undefined
   })
-  if (!Object.values(projectsVersionData).some(project => project.newVersion)) {
+  const changedProjects = Object.entries(projectsVersionData)
+    .filter(([, project]) => project.newVersion)
+    .map(([name]) => name)
+  if (changedProjects.length === 0) {
     console.log('[vezham] No version changes; nothing to publish.')
     return 0
   }
+  if (!options.dryRun) await api.generateMetadata(changedProjects)
   await api.changelog({
     ...common,
     versionData: projectsVersionData,

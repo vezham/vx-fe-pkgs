@@ -1,11 +1,16 @@
 import { generateMetadata, watchMetadata } from './index.ts'
 
-const [, , command = 'generate', projectRoot = process.cwd()] = process.argv
+const [, , command = 'generate', projectRoot = process.cwd(), output] =
+  process.argv
 
 if (command === 'generate') {
   const files = generateMetadata({ projectRoot })
 
-  console.log(`Generated ${files.length} metadata files for ${projectRoot}`)
+  console.log(
+    output === '--json'
+      ? JSON.stringify(files)
+      : `Generated ${files.length} metadata files for ${projectRoot}`
+  )
 } else if (command === 'watch') {
   watchMetadata({ projectRoot })
 } else {

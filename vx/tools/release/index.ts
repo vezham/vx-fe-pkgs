@@ -3,6 +3,7 @@ import { ReleaseClient, releaseChangelog, releaseVersion } from 'nx/release'
 import { hideBin } from 'yargs/helpers'
 import yargs from 'yargs/yargs'
 
+import { generateReleaseMetadata } from './generate-metadata'
 import { runRelease } from './run-release'
 
 const NS = '[vezham] TOOLS/release'
@@ -41,6 +42,7 @@ const main = async () => {
 
   process.exitCode = await runRelease(options, {
     version: releaseVersion,
+    generateMetadata: generateReleaseMetadata,
     changelog: releaseChangelog,
     publish: async options => {
       // vx-bot/NOTE: Publish from a separate group so fixed workspace versioning can include private projects.
