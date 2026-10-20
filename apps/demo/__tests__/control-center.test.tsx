@@ -97,19 +97,19 @@ describe('Demo Control Center', () => {
       expect(Boolean(dialog.closest('[data-slot="sheet-backdrop"]'))).toBe(
         mobile
       )
-      fireEvent.click(
-        within(dialog).getAllByRole('button', {
-          name: 'Switch to dark mode'
-        })[0]
-      )
-      await within(dialog).findAllByRole('button', {
-        name: 'Switch to light mode'
+      // vx-bot/NOTE: Demo includes multiple appearance tiles; exercise the same toggle in both directions.
+      const appearanceToggle = within(dialog).getAllByRole('button', {
+        name: 'Switch to dark mode'
+      })[0]
+      fireEvent.click(appearanceToggle)
+      await waitFor(() => {
+        expect(appearanceToggle).toHaveAccessibleName('Switch to light mode')
       })
       expect(document.documentElement.classList.contains('dark')).toBe(true)
-      fireEvent.click(
-        within(dialog).getByRole('button', { name: 'Switch to light mode' })
-      )
-      await within(dialog).findByRole('button', { name: 'Switch to dark mode' })
+      fireEvent.click(appearanceToggle)
+      await waitFor(() => {
+        expect(appearanceToggle).toHaveAccessibleName('Switch to dark mode')
+      })
       expect(document.documentElement.classList.contains('dark')).toBe(false)
 
       fireEvent.click(within(dialog).getByRole('button', { name: 'Direction' }))
