@@ -103,12 +103,16 @@ describe('Demo Control Center', () => {
       })[0]
       fireEvent.click(appearanceToggle)
       await waitFor(() => {
-        expect(appearanceToggle).toHaveAccessibleName('Switch to light mode')
+        expect(appearanceToggle.getAttribute('aria-label')).toBe(
+          'Switch to light mode'
+        )
       })
       expect(document.documentElement.classList.contains('dark')).toBe(true)
       fireEvent.click(appearanceToggle)
       await waitFor(() => {
-        expect(appearanceToggle).toHaveAccessibleName('Switch to dark mode')
+        expect(appearanceToggle.getAttribute('aria-label')).toBe(
+          'Switch to dark mode'
+        )
       })
       expect(document.documentElement.classList.contains('dark')).toBe(false)
 
