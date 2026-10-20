@@ -79,6 +79,9 @@
     },
     {
       "path": "./packages/core/system-utils"
+    },
+    {
+      "path": "./packages/template"
     }
   ],
   "compilerOptions": {
