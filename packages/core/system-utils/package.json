@@ -1,0 +1,27 @@
+{
+  "name": "@vezham/system-utils",
+  "version": "26.0.0-alpha.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
+    "directory": "packages/core/system-utils"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "LICENSE"
+  ]
+}

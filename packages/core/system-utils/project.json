@@ -1,0 +1,9 @@
+{
+  "name": "system-utils",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/core/system-utils/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project system-utils --web",
+  "targets": {}
+}

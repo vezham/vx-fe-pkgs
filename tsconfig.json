@@ -76,6 +76,9 @@
     },
     {
       "path": "./packages/core/react"
+    },
+    {
+      "path": "./packages/core/system-utils"
     }
   ],
   "compilerOptions": {
