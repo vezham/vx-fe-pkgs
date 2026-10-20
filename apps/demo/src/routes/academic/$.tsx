@@ -1,16 +1,22 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
-import NavigationDemoContent from '@pages/navigation-demo/content'
+import {
+  getClassFilterSearch,
+  getClassFiltersFromSearch
+} from '@pages/classes/classes-content/utils'
+import ClassesPageContent from '@pages/classes/content'
 import {
   getDefaultDestination,
   getNavigationPage
-} from '@pages/navigation-demo/navigation'
+} from '@pages/classes/navigation'
 
 export const Route = createFileRoute('/academic/$')({
+  validateSearch: (search: Record<string, unknown>) =>
+    getClassFilterSearch(getClassFiltersFromSearch(search)),
   beforeLoad: ({ location }) => {
     const { page } = getNavigationPage('academic', location.pathname)
     if (page.children?.length)
       throw redirect({ to: getDefaultDestination(page), replace: true })
   },
-  component: NavigationDemoContent
+  component: ClassesPageContent
 })

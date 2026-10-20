@@ -1,3 +1,4 @@
+import { createProjectGraphAsync } from '@nx/devkit'
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release'
 import { hideBin } from 'yargs/helpers'
 import yargs from 'yargs/yargs'
@@ -41,7 +42,13 @@ const main = async () => {
   process.exitCode = await runRelease(options, {
     version: releaseVersion,
     changelog: releaseChangelog,
-    publish: releasePublish
+    publish: releasePublish,
+    getPublishProjects: async names => {
+      const graph = await createProjectGraphAsync()
+      return names.filter(
+        name => graph.nodes[name]?.data.targets?.['nx-release-publish']
+      )
+    }
   })
 }
 

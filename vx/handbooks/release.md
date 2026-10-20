@@ -77,6 +77,13 @@ That action extends Nx's JavaScript release behavior:
 
 ## Release Commands
 
+The release runner versions workspace projects and generates the changelog, then
+publishes only versioned projects with an `nx-release-publish` target. When all
+release projects are private and have no publish target, npm publishing is
+skipped. Keep private packages private unless they are intentionally made public.
+
+Release builds use `@vx:@vx-ci/build`, with up to four build tasks running at once.
+
 Use explicit major bumps for yearly generation changes:
 
 ```sh

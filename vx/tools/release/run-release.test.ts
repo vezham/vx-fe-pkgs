@@ -13,6 +13,7 @@ const options: ReleaseOptions = {
 const fixture = () => {
   const calls: Array<{ operation: string; options: unknown }> = []
   const api = {
+    getPublishProjects: async (names: string[]) => names,
     version: async (value: unknown) => {
       calls.push({ operation: 'version', options: value })
       return {
@@ -116,4 +117,23 @@ test('no changes skips changelog and publishing', async () => {
   }
   assert.equal(await runRelease(options, unchanged), 0)
   assert.equal(calls.length, 0)
+})
+
+test('publishing uses only eligible projects', async () => {
+  const { api, calls } = fixture()
+  api.getPublishProjects = async () => ['react']
+  await runRelease(options, api)
+  assert.deepEqual((calls.at(-1)?.options as { projects: string[] }).projects, [
+    'react'
+  ])
+})
+
+test('no eligible publish projects skips publishing after version and changelog', async () => {
+  const { api, calls } = fixture()
+  api.getPublishProjects = async () => []
+  assert.equal(await runRelease(options, api), 0)
+  assert.deepEqual(
+    calls.map(call => call.operation),
+    ['version', 'changelog']
+  )
 })

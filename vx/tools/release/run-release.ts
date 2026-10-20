@@ -23,6 +23,7 @@ type ReleaseAPI = {
   changelog: (
     options: Parameters<typeof releaseChangelog>[0]
   ) => Promise<unknown>
+  getPublishProjects: (names: string[]) => Promise<string[]>
   publish: typeof releasePublish
 }
 
@@ -51,6 +52,15 @@ export const runRelease = async (
     versionData: projectsVersionData,
     version: workspaceVersion
   })
-  const results = await api.publish({ ...common, access: 'public' })
+  const projects = await api.getPublishProjects(
+    Object.keys(projectsVersionData)
+  )
+  if (projects.length === 0) {
+    console.log(
+      '[vezham] No release projects have a publish target; skipping npm publishing.'
+    )
+    return 0
+  }
+  const results = await api.publish({ ...common, projects, access: 'public' })
   return Object.values(results).every(result => result.code === 0) ? 0 : 1
 }
