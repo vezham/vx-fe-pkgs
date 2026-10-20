@@ -28,56 +28,65 @@ describe('Academic navigation', () => {
     Element.prototype.getAnimations = () => []
   })
 
-  it('opens Academic and switches between grouped and standalone pages', async () => {
-    await renderApp('/academic')
-    const sidebar = await screen.findByRole('navigation', {
-      name: 'Academic sections'
-    })
-    await screen.findByRole('tab', { name: 'All Classes' })
-    const toolbar = screen.getByRole('group', { name: 'Toolbar actions' })
-    fireEvent.click(screen.getByRole('tab', { name: 'Schedule' }))
-    await waitFor(() =>
-      expect(screen.getByRole('tabpanel').textContent).toContain(
-        '/academic/classes/schedule'
+  // vx-bot/NOTE: This multi-route integration scenario needs headroom when CI runs projects concurrently.
+  it(
+    'opens Academic and switches between grouped and standalone pages',
+    { timeout: 15_000 },
+    async () => {
+      await renderApp('/academic')
+      const sidebar = await screen.findByRole('navigation', {
+        name: 'Academic sections'
+      })
+      await screen.findByRole('tab', { name: 'All Classes' })
+      const toolbar = screen.getByRole('group', { name: 'Toolbar actions' })
+      fireEvent.click(screen.getByRole('tab', { name: 'Schedule' }))
+      await waitFor(() =>
+        expect(screen.getByRole('tabpanel').textContent).toContain(
+          '/academic/classes/schedule'
+        )
       )
-    )
 
-    fireEvent.click(
-      within(sidebar).getByRole('button', { name: 'Examinations' })
-    )
-    expect(screen.getByRole('link', { name: 'Exam Results' })).toBeTruthy()
-    fireEvent.click(within(sidebar).getByRole('link', { name: 'Class Room' }))
-    await screen.findByText('/academic/classroom')
-    expect(screen.getByRole('group', { name: 'Toolbar actions' })).toBe(toolbar)
-    expect(screen.queryByRole('tablist')).toBeNull()
-    expect(
-      screen.getByRole('searchbox', { name: 'Search content' })
-    ).toBeTruthy()
-
-    await screen.findByRole('link', { name: 'Exam' })
-    fireEvent.click(screen.getByRole('link', { name: 'Exam Results' }))
-    await waitFor(() =>
+      fireEvent.click(
+        within(sidebar).getByRole('button', { name: 'Examinations' })
+      )
+      expect(screen.getByRole('link', { name: 'Exam Results' })).toBeTruthy()
+      fireEvent.click(within(sidebar).getByRole('link', { name: 'Class Room' }))
+      await screen.findByText('/academic/classroom')
+      expect(screen.getByRole('group', { name: 'Toolbar actions' })).toBe(
+        toolbar
+      )
+      expect(screen.queryByRole('tablist')).toBeNull()
       expect(
-        screen.getByText('/academic/examinations/exam-results')
+        screen.getByRole('searchbox', { name: 'Search content' })
       ).toBeTruthy()
-    )
-    expect(
-      screen
-        .getByRole('link', { name: 'Exam Results' })
-        .getAttribute('aria-current')
-    ).toBe('page')
-    expect(screen.queryByRole('tablist')).toBeNull()
 
-    fireEvent.click(
-      within(
-        screen.getByRole('navigation', { name: 'Academic sections' })
-      ).getByRole('link', { name: 'Classes' })
-    )
-    const allClasses = await screen.findByRole('tab', { name: 'All Classes' })
-    expect(allClasses.getAttribute('aria-selected')).toBe('true')
-    expect(screen.getByRole('group', { name: 'Toolbar actions' })).toBe(toolbar)
-    expect(screen.queryByRole('tab', { name: 'Exam Results' })).toBeNull()
-  })
+      await screen.findByRole('link', { name: 'Exam' })
+      fireEvent.click(screen.getByRole('link', { name: 'Exam Results' }))
+      await waitFor(() =>
+        expect(
+          screen.getByText('/academic/examinations/exam-results')
+        ).toBeTruthy()
+      )
+      expect(
+        screen
+          .getByRole('link', { name: 'Exam Results' })
+          .getAttribute('aria-current')
+      ).toBe('page')
+      expect(screen.queryByRole('tablist')).toBeNull()
+
+      fireEvent.click(
+        within(
+          screen.getByRole('navigation', { name: 'Academic sections' })
+        ).getByRole('link', { name: 'Classes' })
+      )
+      const allClasses = await screen.findByRole('tab', { name: 'All Classes' })
+      expect(allClasses.getAttribute('aria-selected')).toBe('true')
+      expect(screen.getByRole('group', { name: 'Toolbar actions' })).toBe(
+        toolbar
+      )
+      expect(screen.queryByRole('tab', { name: 'Exam Results' })).toBeNull()
+    }
+  )
 
   it('loads an expanded sidebar child directly', async () => {
     await renderApp('/academic/examinations/grades')

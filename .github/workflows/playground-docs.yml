@@ -4,7 +4,7 @@ name: 🚀 Playground Docs
 run-name: >-
   ${{
     github.event_name == 'schedule' && '🚀 BnD • 🕒 Scheduled' ||
-    github.event_name == 'workflow_dispatch' && '🚀 BnD • ⚡ Trails' ||
+    github.event_name == 'workflow_dispatch' && '🚀 BnD • ▶️ On demand' ||
     ''
   }}
 

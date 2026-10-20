@@ -2,7 +2,7 @@
 name: 📦 Release
 
 run-name: >-
-  📦 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && inputs.version || '⚡ Trails' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
+  📦 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && inputs.version || '▶️ On demand' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
   - by @${{ github.actor || 'vx/ci' }}
 
 on:
