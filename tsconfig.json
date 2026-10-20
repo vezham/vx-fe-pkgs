@@ -78,7 +78,7 @@
       "path": "./packages/core/react"
     },
     {
-      "path": "./packages/core/system-utils"
+      "path": "./packages/core/hooks"
     },
     {
       "path": "./packages/template"

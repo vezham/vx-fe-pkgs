@@ -790,7 +790,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vx/start
 
+  packages/core/hooks: {}
+
   packages/core/react: {}
+
+  packages/core/utils: {}
+
+  packages/template: {}
 
   packages/vx/config:
     dependencies:
