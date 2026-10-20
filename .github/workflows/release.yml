@@ -2,7 +2,7 @@
 name: 📦 Release
 
 run-name: >-
-  📦 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && format('📦 {0}', inputs.version) || '⚡ Trails' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
+  📦 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && inputs.version || '⚡ Trails' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
   - by @${{ github.actor || 'vx/ci' }}
 
 on:
@@ -88,7 +88,7 @@ jobs:
         uses: vezham/vx-deployer/.github/actions/common/setup-checkout@timeline
         with:
           GIT_REPO: ${{ env.REPO }}
-          GIT_BRANCH: ${{ github.sha }}
+          GIT_BRANCH: ${{ env.BRANCH }}
 
       - name: 🟠 · 🧩 Setup Node & pnpm
         uses: vezham/vx-deployer/.github/actions/common/setup-install-npm@timeline
