@@ -1,6 +1,6 @@
 {
   "name": "play-next",
-  "version": "26.0.0-alpha.2",
+  "version": "26.0.0-alpha.3",
   "private": true,
   "dependencies": {
     "@vx/template": "workspace:*"

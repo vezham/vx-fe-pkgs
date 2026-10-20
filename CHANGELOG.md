@@ -1,3 +1,22 @@
+## 26.0.0-alpha.3 (2026-10-20)
+
+### 🚀 Features
+
+- **vx:** release, generate metadata before publishing ([b4467d2](https://github.com/vezham/vx-fe-pkgs/commit/b4467d2))
+
+### 🩹 Fixes
+
+- **vx:** release, match prerelease tags ([7f16c98](https://github.com/vezham/vx-fe-pkgs/commit/7f16c98))
+
+### 🏡 Chore
+
+- **repo:** clarify manual workflow runs ([c2dc6fd](https://github.com/vezham/vx-fe-pkgs/commit/c2dc6fd))
+- **vx:** release, document safe metadata execution ([06aa81d](https://github.com/vezham/vx-fe-pkgs/commit/06aa81d))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.2 (2026-10-20)
 
 ### 🚀 Features

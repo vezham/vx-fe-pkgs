@@ -4,7 +4,7 @@ core:
   id: vezham-demo
   name: Vezham Demo
   shortName: Demo
-  version: 26.0.0-alpha.2
+  version: 26.0.0-alpha.3
   description: Single app to manage your Vezham Demo
   publisher:
     name: Vezham Technologies Private Limited
