@@ -60,8 +60,8 @@ Main apps keep these files in sync:
 `@vx-cli/react`, such as `apps-internals`, `apps-cdns`, `apps`, or another
 workspace app grouping.
 
-The source release step is `nx release`. The workspace config uses a custom
-version action:
+The workspace release entry point is `pnpm nx run @vx:@vx-ws/release`. It uses
+Nx's release APIs and a custom version action configured in `nx.json`:
 
 ```json
 "versionActions": "./vx/tools/release/version-actions.cjs"
@@ -72,14 +72,16 @@ That action extends Nx's JavaScript release behavior:
 - Nx updates `package.json`.
 - Vx additionally updates `vx.app.yaml` at `core.version` when the project
   has a Vx config file.
-- `metadata:generate` then syncs `.env` keys such as `V_APP_VER` from
-  `vx.app.yaml`.
+- After versioning, the release runner invokes the metadata CLI to sync `.env`
+  keys such as `V_APP_VER` and other generated metadata from `vx.app.yaml`.
+  Tracked outputs are included in the changelog's release commit before tagging.
 
 ## Release Commands
 
-The release runner versions workspace projects and generates the changelog, then
-publishes only versioned projects with an `nx-release-publish` target. When all
-release projects are private and have no publish target, npm publishing is
+The release runner versions workspace projects, synchronizes metadata, and
+generates the changelog, then publishes projects in the version result that have
+an `nx-release-publish` target. When all release projects are private and have no
+publish target, npm publishing is
 skipped. Keep private packages private unless they are intentionally made public.
 
 Versioning and changelogs use the fixed workspace release group. Publishing uses
@@ -89,30 +91,46 @@ workspace's fixed group directly is rejected by Nx, even during a dry run.
 
 Release builds use `@vx:@vx-ci/build`, with up to four build tasks running at once.
 
+Use the workspace runner for complete releases, including metadata synchronization.
+Direct `pnpm nx release` commands use Nx's configured version action but bypass
+the runner's post-version metadata step and separate public-project publish group.
+
 Use explicit major bumps for yearly generation changes:
 
 ```sh
-pnpm nx release version major
+pnpm nx run @vx:@vx-ws/release -- --version=major
 ```
 
 Use conventional commits for normal minor/patch releases:
 
 ```sh
-pnpm nx release version
+pnpm nx run @vx:@vx-ws/release
 ```
 
-Use prerelease commands for alpha or beta trains:
+Use explicit prerelease versions for alpha or beta trains. For example, when the
+latest release is `26.0.0-alpha.3`:
 
 ```sh
-pnpm nx release version prerelease --preid alpha
-pnpm nx release version prerelease --preid beta
+pnpm nx run @vx:@vx-ws/release -- --version=26.0.0-alpha.4
+pnpm nx run @vx:@vx-ws/release -- --version=26.0.0-beta.1
 ```
 
-Preview changes before writing files:
+The runner accepts `version`, `firstRelease`, `dryRun`, and `verbose`; it does not
+expose Nx's `preid` option. The examples above are alternative release choices.
+
+Preview a release from a disposable checkout:
 
 ```sh
-pnpm nx release version prerelease --preid alpha --dry-run
+pnpm nx run @vx:@vx-ws/release -- --version=26.0.0-alpha.4 --dryRun
 ```
+
+Dry runs skip version/changelog writes, Git release operations, and npm uploads,
+but still execute the pre-version build hook. That build can write generated files.
+
+The runner publishes with `access: public` and does not select an npm dist-tag.
+With the current registry configuration, publishing uses `latest`, including for
+alpha and beta versions. The version suffix does not select a separate npm tag
+or runtime release channel.
 
 ## Conventional Commits
 
@@ -161,8 +179,9 @@ V_APP_ID=play-start-mock
 V_APP_ID=play-start-e2e
 ```
 
-They do not need `V_APP_NAME`; the id is enough for logs, health responses, and
-test tooling.
+An id alone is enough for standalone mock/e2e tooling that does not load `@vx/env`.
+Any support app using `@vx/env` must also supply `V_APP_NAME` and `V_APP_VER`, like
+other apps.
 
 ## Package release workflow
 
@@ -172,21 +191,44 @@ the version commit, tag and GitHub release. Normal publishing runs only from the
 default branch; manual dry runs may use other branches. Releases share a single
 concurrency group across refs so two runs cannot publish the same package concurrently.
 
+Non-dry runs require the latest QA run for the triggering SHA and branch to have
+succeeded. Checkout then uses the branch name so Nx can commit and push. The
+branch can advance after the SHA check; the workflow currently does not recheck
+QA against the checked-out HEAD.
+
 The shared npm setup selects Node from root `package.json` (`engines.node` or
 `volta.node`), unless a runtime override or matrix version is provided. pnpm uses
 the manifest `packageManager` version. Publishable package repository metadata must
 match the actual source repository for npm provenance.
 
+The shared `vx-deployer` Nx release action owns provenance configuration through
+its `NPM_PROVENANCE` input. It sets both `NPM_CONFIG_PROVENANCE` for npm-compatible
+publishers and `PNPM_CONFIG_PROVENANCE` for pnpm. pnpm 12 callers must use 12.14.0
+or newer; 12.3.4 ignores the publish setting. Packages retain Nx's default inferred
+publish target without a PATH adapter or package-specific wrapper. Nx preserves
+dry-run and publish options, and signing failures fail the release task. Provenance
+also requires a public source repository, a supported hosted runner, and
+`id-token: write`, which the workflow grants. A dry run cannot verify signing;
+after publishing, check the exact version with
+`npm view @vezham/react@<version> dist.attestations --json`. Registry signatures
+alone do not confirm build provenance. See the
+[shared action README](https://github.com/vezham/vx-deployer/blob/timeline/.github/actions/nx/release/README.md)
+for setup requirements and input details.
+
 The Nx `release.version.preVersionCommand` is the only release build stage. Both
 `@vx-ws/release` and the workflow delegate to it. `test:release` verifies orchestration
 using mocked Nx release APIs, without authenticating or publishing.
+The build runs before the version changes; post-version metadata synchronization
+does not rebuild compiled artifacts. Deployments must build from the release
+commit to embed the updated app metadata.
 
 After versioning and before changelog creation commits and tags the release, the
 runner regenerates metadata for changed projects that have `vx.app.yaml`.
 It invokes the metadata CLI with `generate <projectRoot> --json` to collect the
 generated file paths for staging.
-Tracked generated files are staged with the release changes; ignored and
-untracked local files are not added. Dry runs skip metadata writes. A metadata
+Tracked generated files are staged with the release changes; untracked files,
+including ignored local files, are not added. Dry runs skip this post-version
+metadata step; the pre-version build can still regenerate metadata. A metadata
 generation failure stops the release before the changelog commit and publishing.
 
 For the initial release, manually enable **firstRelease** and provide an explicit

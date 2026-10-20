@@ -98,8 +98,6 @@ jobs:
 
       - name: 🟠 · 📦 NX • NPM Release
         uses: vezham/vx-deployer/.github/actions/nx/release@timeline
-        env:
-          PNPM_CONFIG_PROVENANCE: 'true'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.VX_DEPLOYER_NPM }}
