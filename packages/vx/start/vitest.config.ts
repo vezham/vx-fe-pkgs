@@ -1,3 +1,3 @@
-import { defineConfig } from '@vx/config/vitest/vite'
+import { defineConfig } from '@vx/config/vitest/react'
 
-export default defineConfig({ root: __dirname })
+export default defineConfig({ root: import.meta.dirname })

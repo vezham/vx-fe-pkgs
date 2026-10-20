@@ -187,7 +187,7 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: ['^@vx/config/(vite-lib/react|vitest/vite)$'],
+          allow: ['^@vx/config/(vite-lib(/react)?|vitest(/react)?)$'],
           depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }]
         }
       ]

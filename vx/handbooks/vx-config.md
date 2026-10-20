@@ -44,7 +44,7 @@ tanstackStart({
       crawlLinks: true
     }
   },
-  pages: getPrerenderPages(__dirname)
+  pages: getPrerenderPages(import.meta.dirname)
 })
 ```
 
@@ -431,7 +431,7 @@ Use `defineAppConfig` from `@vx/config/vite` for apps.
 import { defineAppConfig } from '@vx/config/vite'
 
 export default defineAppConfig({
-  root: __dirname
+  root: import.meta.dirname
 })
 ```
 
@@ -496,7 +496,7 @@ When adding a future docs app:
 - Add extra prerender paths to top-level `routes`.
 - Use docs mirror globs with `source: "docs"` for alternate docs shells.
 - Keep LLMS routes in top-level `routes` when the app exposes them.
-- Use `getVxDocsPrerenderPages(__dirname)` in TanStack Start config.
+- Use `getVxDocsPrerenderPages(import.meta.dirname)` in TanStack Start config.
 - Use `defineAppConfig` in Vite config.
 - Keep app-local Vite config focused on app-only plugins and dedupe.
 - Verify typecheck, lint, and build through Nx.

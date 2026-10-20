@@ -6,7 +6,7 @@ import { nitro } from 'nitro/vite'
 import { defineConfig, getPrerenderPages } from '@vx/config/presets/app'
 
 export default defineConfig({
-  root: __dirname,
+  root: import.meta.dirname,
   plugins: [
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
@@ -18,7 +18,7 @@ export default defineConfig({
           crawlLinks: true
         }
       },
-      pages: getPrerenderPages(__dirname)
+      pages: getPrerenderPages(import.meta.dirname)
     }),
     react()
   ]

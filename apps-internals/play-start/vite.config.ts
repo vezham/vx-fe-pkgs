@@ -6,7 +6,7 @@ import { nitro } from 'nitro/vite'
 import { defineConfig } from '@vx/config/presets/app'
 
 export default defineConfig({
-  root: __dirname,
+  root: import.meta.dirname,
   plugins: [
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),

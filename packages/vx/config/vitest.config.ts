@@ -2,5 +2,5 @@
 import { defineConfig } from '@vx/config/vitest'
 
 export default defineConfig({
-  root: __dirname
+  root: import.meta.dirname
 })

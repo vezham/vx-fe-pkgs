@@ -41,7 +41,7 @@ This rule does not check class strings in JSX or Tailwind utilities.
 The root Vitest config supplies common defaults with a Node environment.
 App test presets are selected from the required `framework` in `vx.app.yaml`.
 Use an app-local `vitest.config.ts` only for additional overrides. Packages
-without app metadata can select `@vx/config/vitest/vite`, `/next`, or `/docs`
+without app metadata can select `@vx/config/vitest/react`, `/next`, or `/docs`
 explicitly; otherwise tests use the Node environment.
 
 Shared jsdom presets run test files sequentially within each project. Nx owns
@@ -70,6 +70,8 @@ allowing only the resource error associated with an actual main-document 404.
 - Keep configuration files minimal.
 - Prefer explicit configuration over implicit behaviour.
 - Use consistent naming across repositories.
+- Use `import.meta.dirname` for directory paths in ESM Vite and Vitest configs
+  on the Node 24 baseline. Reserve `__dirname` for CommonJS files.
 - Document non-obvious configuration with `NOTE` comments.
 
 ## Pull Requests
