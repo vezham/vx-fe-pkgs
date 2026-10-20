@@ -67,6 +67,31 @@ test('dry run and first release flags reach every operation', async () => {
   assert.equal((calls[0].options as { specifier: string }).specifier, '0.0.1')
 })
 
+for (const version of ['', 'patch', '0.0.2']) {
+  test(`reports the resolved version for ${version || 'automatic'} selection`, async () => {
+    const { api } = fixture()
+    const reported: string[] = []
+    assert.equal(
+      await runRelease(
+        { ...options, version },
+        { ...api, reportVersion: resolved => reported.push(resolved) }
+      ),
+      0
+    )
+    assert.deepEqual(reported, ['0.0.2'])
+  })
+}
+
+test('dry runs report the preview version', async () => {
+  const { api } = fixture()
+  const reported: string[] = []
+  await runRelease(
+    { ...options, dryRun: true },
+    { ...api, reportVersion: version => reported.push(version) }
+  )
+  assert.deepEqual(reported, ['0.0.2'])
+})
+
 test('a bootstrap without an explicit version fails before changing anything', async () => {
   const { api, calls } = fixture()
   await assert.rejects(
@@ -151,6 +176,9 @@ test('no changes skips changelog and publishing', async () => {
   const { api, calls } = fixture()
   const unchanged = {
     ...api,
+    reportVersion: (version: string) => {
+      calls.push({ operation: 'report', options: version })
+    },
     version: async () => ({
       workspaceVersion: null,
       projectsVersionData: {

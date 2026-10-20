@@ -1,4 +1,5 @@
 import { createProjectGraphAsync } from '@nx/devkit'
+import { appendFileSync } from 'node:fs'
 import { ReleaseClient, releaseChangelog, releaseVersion } from 'nx/release'
 import { hideBin } from 'yargs/helpers'
 import yargs from 'yargs/yargs'
@@ -42,6 +43,13 @@ const main = async () => {
 
   process.exitCode = await runRelease(options, {
     version: releaseVersion,
+    reportVersion: version => {
+      if (process.env.GITHUB_OUTPUT)
+        appendFileSync(
+          process.env.GITHUB_OUTPUT,
+          `release_version=${version}\n`
+        )
+    },
     generateMetadata: generateReleaseMetadata,
     changelog: releaseChangelog,
     publish: async options => {

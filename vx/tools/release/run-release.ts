@@ -25,6 +25,7 @@ type ReleaseAPI = {
   ) => Promise<unknown>
   getPublishProjects: (names: string[]) => Promise<string[]>
   generateMetadata: (names: string[]) => Promise<void>
+  reportVersion?: (version: string) => void
   publish: typeof releasePublish
 }
 
@@ -51,6 +52,7 @@ export const runRelease = async (
     console.log('[vezham] No version changes; nothing to publish.')
     return 0
   }
+  if (workspaceVersion) api.reportVersion?.(workspaceVersion)
   if (!options.dryRun) await api.generateMetadata(changedProjects)
   await api.changelog({
     ...common,

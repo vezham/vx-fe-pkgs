@@ -237,6 +237,13 @@ conventional commits and the release tags; leave **firstRelease** disabled. The
 schedule cannot bootstrap an untagged repository. The next scheduled run can release
 after the initial release is completed.
 
+The release runner writes Nx's resolved workspace version to `release_version`
+in `GITHUB_OUTPUT` when a version change is selected, including dry runs. The
+shared release action exposes it as `version`; the workflow passes that job output
+to the summary as `resolved_version`. Automatic selection displays the version
+with `(auto / detected)`, while increments display the resolved version and the
+requested increment. No version output is written when there are no changes.
+
 The fixed workspace release train uses `releaseTag.strictPreid: false` so normal
 releases can resolve an existing alpha or beta tag even without a `preid` option.
 Nx's strict default otherwise searches only stable tags when no preid is given.
