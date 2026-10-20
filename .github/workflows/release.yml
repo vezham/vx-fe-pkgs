@@ -1,8 +1,8 @@
 # @vx/INFO: @vx/ci
-name: 🚀 Release
+name: 📦 Release
 
 run-name: >
-  🚀 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && format('📦 {0}', inputs.version) || '⚡ Trails' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
+  📦 Release • ${{ github.event_name == 'schedule' && '🕒 Scheduled' || inputs.version != '' && format('📦 {0}', inputs.version) || '⚡ Trails' }}${{ inputs.dryRun && ' • 🧪 Dry run' || '' }}
   - by @${{ github.actor || 'vx/ci' }}
 
 on:

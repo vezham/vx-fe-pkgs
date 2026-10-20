@@ -1,10 +1,17 @@
 # @vx/INFO: @vx/ci - trigger
-name: playground-cdn | bnd
+name: 🚀 Playground CDN
+
+run-name: >-
+  ${{
+    github.event_name == 'schedule' && '🚀 BnD • 🕒 Scheduled' ||
+    github.event_name == 'workflow_dispatch' && '🚀 BnD • ⚡ Trails' ||
+    ''
+  }}
 
 on:
   workflow_dispatch:
   push:
-    branches: [timeline, next, feat/*]
+    branches: [timeline, next, next-*, feat/**]
     paths:
       - '.github/workflows/playground-cdn.yml'
       - 'vx/handbooks/ci.md'
@@ -19,7 +26,7 @@ jobs:
       deploy: ${{ steps.filter.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           base: ${{ github.ref }}
@@ -35,9 +42,11 @@ jobs:
     needs: run_if
     permissions:
       contents: write # Publish the deployment URLs as a commit comment.
+      statuses: write # Record deployment history for the shared commit tracker.
     if: ${{ needs.run_if.outputs.all == 'true' || needs.run_if.outputs.deploy == 'true' }}
     name: playground-cdn | ${{ github.ref_name }}
-    uses: vezham/vx-fe-deployer/.github/workflows/playground-cdn.yml@timeline
+    uses: vezham/vx-fe-deployer/.github/workflows/web-app.yml@timeline
     secrets: inherit
     with:
+      APP: playground-cdn
       CALLER: ${{ github.ref_name }}
