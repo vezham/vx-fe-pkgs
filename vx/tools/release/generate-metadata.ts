@@ -10,6 +10,8 @@ export const generateReleaseMetadata = async (
   for (const name of names) {
     const projectRoot = graph.nodes[name].data.root
     if (!existsSync(path.join(projectRoot, 'vx.app.yaml'))) continue
+    // vx-bot/NOTE: Execute the fixed repository CLI with argv; metadata contents are never evaluated as code.
+    // react-doctor-disable-next-line react-doctor/import-metadata-execution-risk
     const output = execFileSync(
       process.execPath,
       [
