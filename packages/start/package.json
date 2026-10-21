@@ -6,7 +6,9 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/start"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "type": "module",
   "exports": {
     "./vite": {
@@ -81,6 +83,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./styles/docs": "./dist/styles/docs/index.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",

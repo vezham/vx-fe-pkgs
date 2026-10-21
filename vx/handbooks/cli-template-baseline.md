@@ -207,10 +207,18 @@ transformer; published config remains ESM-only. TypeScript resolution applies
 only to the config import graph, without a global loader. Keep workspace runtime
 exports aligned with the source API. The obsolete private package adapters and
 manifests under `packages/vx` are removed.
-Workspace CSS remains under `packages/vx/styles`. Public library builds preserve
-ES modules, externalize package dependencies, and publish declarations for every
-export. Environment adapters defer app values to the consuming app build. Shared
-test setup and metadata HTML templates ship with `@vezham/config`.
+Workspace CSS remains under `packages/vx/styles`. Public UI packages expose
+`dist/index.css` through their root `style` export and top-level `style` field.
+Import the package name from CSS; JavaScript imports retain their runtime exports.
+These stylesheets register the packages' compiled JavaScript with Tailwind.
+The docs runtime uses `@vezham/start/styles/docs` for docs layouts and pages.
+Keep source paths inside each package's stylesheet rather than referring to
+workspace source directories from shared CSS. CSS exports remain side effects;
+JavaScript exports remain eligible for tree shaking.
+Public library builds preserve ES modules, externalize package dependencies, and
+publish declarations for every JavaScript export. Environment adapters defer app
+values to the consuming app build. Shared test setup and metadata HTML templates
+ship with `@vezham/config`.
 
 Keep component-owned state and hooks with their UI. Extract independent hooks
 into `@vezham/hooks` and plain utilities into `@vezham/utils`.

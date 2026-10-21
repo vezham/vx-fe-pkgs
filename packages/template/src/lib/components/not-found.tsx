@@ -39,7 +39,7 @@ export const NotFound = ({ app = 'Vx', homeUrl = '/', version }: Props) => {
           {imageSrc ? (
             <img
               alt="Page not found"
-              className="vx-not-found__image"
+              className="vx-not-found__image mb-3 h-auto max-h-64 w-[min(20rem,70vw)] max-w-full object-contain landscape:max-h-44 landscape:w-[min(14rem,30vw)]"
               src={imageSrc}
             />
           ) : null}
