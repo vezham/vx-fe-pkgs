@@ -1,6 +1,6 @@
 {
   "name": "@vx/env",
-  "version": "26.0.0-alpha.4",
+  "version": "26.0.0-alpha.5",
   "private": true,
   "exports": {
     "./package.json": "./package.json",

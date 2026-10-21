@@ -1,3 +1,25 @@
+## 26.0.0-alpha.5 (2026-10-21)
+
+### 🚀 Features
+
+- **system-utils:** add package scaffold ([a8f28d4](https://github.com/vezham/vx-fe-pkgs/commit/a8f28d4))
+- **template:** add template package ([8319725](https://github.com/vezham/vx-fe-pkgs/commit/8319725))
+- **utils:** add core utils package ([35191fc](https://github.com/vezham/vx-fe-pkgs/commit/35191fc))
+- **vx:** release, expose resolved version ([64bb9b9](https://github.com/vezham/vx-fe-pkgs/commit/64bb9b9))
+- **workspace:** scaffold packages ([aa5b057](https://github.com/vezham/vx-fe-pkgs/commit/aa5b057))
+
+### 🩹 Fixes
+
+- **template:** correct tsconfig base path ([1bbdb47](https://github.com/vezham/vx-fe-pkgs/commit/1bbdb47))
+
+### 💅 Refactors
+
+- **hooks:** rename system-utils package ([3cfeb04](https://github.com/vezham/vx-fe-pkgs/commit/3cfeb04))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.4 (2026-10-20)
 
 ### 🏡 Chore

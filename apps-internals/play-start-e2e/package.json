@@ -1,6 +1,6 @@
 {
   "name": "play-start-e2e",
-  "version": "26.0.0-alpha.4",
+  "version": "26.0.0-alpha.5",
   "private": true,
   "devDependencies": {
     "@vx/config": "workspace:*"
