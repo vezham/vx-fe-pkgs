@@ -235,10 +235,11 @@ succeeded. Checkout then uses the branch name so Nx can commit and push. The
 branch can advance after the SHA check; the workflow currently does not recheck
 QA against the checked-out HEAD.
 
-The shared npm setup selects Node from root `package.json` (`engines.node` or
-`volta.node`), unless a runtime override or matrix version is provided. pnpm uses
-the manifest `packageManager` version. Publishable package repository metadata must
-match the actual source repository for npm provenance.
+The shared npm setup selects Node from root `package.json`, matching
+[QA](./ci.md#node-runtime). `engines.node: "24.x"` keeps the runtime on Node 24;
+an explicit `NODE_VERSION` input or matrix version takes precedence. pnpm uses
+the manifest `packageManager` version. Publishable package repository metadata
+must match the actual source repository for npm provenance.
 
 The shared `vx-deployer` Nx release action owns provenance configuration through
 its `NPM_PROVENANCE` input. It sets both `NPM_CONFIG_PROVENANCE` for npm-compatible

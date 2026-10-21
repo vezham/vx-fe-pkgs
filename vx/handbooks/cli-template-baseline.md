@@ -215,6 +215,10 @@ The docs runtime uses `@vezham/start/styles/docs` for docs layouts and pages.
 Keep source paths inside each package's stylesheet rather than referring to
 workspace source directories from shared CSS. CSS exports remain side effects;
 JavaScript exports remain eligible for tree shaking.
+Apps importing the shared stylesheet declare `devtools`, `react`, and `template`
+as Nx project `implicitDependencies`, because Nx does not infer those CSS imports.
+Their existing `^build` dependency ordering ensures the package stylesheets exist
+before app builds. Dependency builds remain manual for local `serve` and `dev`.
 Public library builds preserve ES modules, externalize package dependencies, and
 publish declarations for every JavaScript export. Environment adapters defer app
 values to the consuming app build. Shared test setup and metadata HTML templates
