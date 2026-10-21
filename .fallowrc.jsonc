@@ -36,8 +36,8 @@
     // vx-bot/NOTE: For TanStack Docs app
     "**/content/**/*.mdx",
     // vx-bot/NOTE: Workspace CLI, release, and test files load outside the app import graph.
-    "packages/vx/config/src/lib/{metadata,deploy}/cli.ts",
-    "packages/vx/config/src/lib/presets/docs/cli.ts",
+    "packages/config/src/lib/{metadata,deploy}/cli.ts",
+    "packages/config/src/lib/presets/docs/cli.ts",
     "vx/tools/audit/index.mjs",
     "vx/tools/audit/*.test.mjs",
     "vx/tools/eslint/tests/*.test.mjs",

@@ -3,10 +3,8 @@
   "version": "26.0.0-alpha.5",
   "private": true,
   "dependencies": {
-    "@vx/template": "workspace:*"
-  },
-  "devDependencies": {
-    "@vx/env": "workspace:*",
-    "@vx/start": "workspace:*"
+    "@vezham/env": "workspace:*",
+    "@vezham/start": "workspace:*",
+    "@vezham/template": "workspace:*"
   }
 }

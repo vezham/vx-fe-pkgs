@@ -6,8 +6,27 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/core/env"
   },
+  "sideEffects": true,
   "type": "module",
   "exports": {
+    "./vite": {
+      "@vx/fe-kit": "./src/lib/vite/index.ts",
+      "types": "./dist/lib/vite/index.d.ts",
+      "import": "./dist/lib/vite/index.js",
+      "default": "./dist/lib/vite/index.js"
+    },
+    "./next/config": {
+      "@vx/fe-kit": "./src/lib/next/env.ts",
+      "types": "./dist/lib/next/env.d.ts",
+      "import": "./dist/lib/next/env.js",
+      "default": "./dist/lib/next/env.js"
+    },
+    "./next": {
+      "@vx/fe-kit": "./src/lib/next/index.ts",
+      "types": "./dist/lib/next/index.d.ts",
+      "import": "./dist/lib/next/index.js",
+      "default": "./dist/lib/next/index.js"
+    },
     ".": {
       "@vx/fe-kit": "./src/index.ts",
       "types": "./dist/index.d.ts",

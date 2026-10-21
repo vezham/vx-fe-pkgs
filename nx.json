@@ -107,9 +107,8 @@
         "default",
         "^production",
         "{workspaceRoot}/vitest.config.ts",
-        "{workspaceRoot}/vx/__tests__/**/*",
-        "{workspaceRoot}/packages/vx/config/src/lib/framework.ts",
-        "{workspaceRoot}/packages/vx/config/src/lib/integrations/vitest/**/*",
+        "{workspaceRoot}/packages/config/src/lib/framework.ts",
+        "{workspaceRoot}/packages/config/src/lib/integrations/vitest/**/*",
         {
           "externalDependencies": ["vitest"]
         },
@@ -165,7 +164,7 @@
       "cache": false,
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/vx/config/src/lib/metadata/cli.ts generate {projectRoot}"
+        "command": "tsx packages/config/src/lib/metadata/cli.ts generate {projectRoot}"
       }
     },
     "deploy:generate": {
@@ -174,8 +173,8 @@
       "inputs": [
         "{projectRoot}/vx.app.yaml",
         "{projectRoot}/vx.deploy.yaml",
-        "{workspaceRoot}/packages/vx/config/src/lib/yaml-config.ts",
-        "{workspaceRoot}/packages/vx/config/src/lib/deploy/**/*"
+        "{workspaceRoot}/packages/config/src/lib/yaml-config.ts",
+        "{workspaceRoot}/packages/config/src/lib/deploy/**/*"
       ],
       "outputs": [
         "{workspaceRoot}/vx/deploy/firebase/{projectRoot}.json",
@@ -183,7 +182,7 @@
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/vx/config/src/lib/deploy/cli.ts generate {projectRoot}"
+        "command": "tsx packages/config/src/lib/deploy/cli.ts generate {projectRoot}"
       }
     },
     "metadata:watch": {
@@ -191,7 +190,7 @@
       "continuous": true,
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/vx/config/src/lib/metadata/cli.ts watch {projectRoot}"
+        "command": "tsx packages/config/src/lib/metadata/cli.ts watch {projectRoot}"
       }
     },
     "openapi:generate": {
@@ -202,11 +201,11 @@
         "{projectRoot}/content/docs/**/*",
         "{projectRoot}/openapi.yaml",
         "{projectRoot}/openapi/**/*",
-        "{workspaceRoot}/packages/vx/config/src/lib/presets/docs/**/*"
+        "{workspaceRoot}/packages/config/src/lib/presets/docs/**/*"
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/vx/config/src/lib/presets/docs/cli.ts generate {projectRoot}"
+        "command": "tsx packages/config/src/lib/presets/docs/cli.ts generate {projectRoot}"
       }
     },
     "og:generate": {
@@ -218,13 +217,13 @@
         "{projectRoot}/content/**/*",
         "{projectRoot}/openapi.yaml",
         "{projectRoot}/openapi/**/*",
-        "{workspaceRoot}/packages/vx/config/src/lib/presets/docs/**/*",
-        "{workspaceRoot}/packages/vx/config/src/lib/presets/files.ts",
-        "{workspaceRoot}/packages/vx/config/src/lib/presets/route-files.ts",
+        "{workspaceRoot}/packages/config/src/lib/presets/docs/**/*",
+        "{workspaceRoot}/packages/config/src/lib/presets/files.ts",
+        "{workspaceRoot}/packages/config/src/lib/presets/route-files.ts",
         "{projectRoot}/public/**/*",
         "!{projectRoot}/public/og/**/*",
-        "{workspaceRoot}/packages/vx/config/src/lib/i18n.ts",
-        "{workspaceRoot}/packages/vx/config/src/lib/yaml-config.ts",
+        "{workspaceRoot}/packages/config/src/lib/i18n.ts",
+        "{workspaceRoot}/packages/config/src/lib/yaml-config.ts",
         {
           "externalDependencies": [
             "@vercel/og",
@@ -237,7 +236,7 @@
       "outputs": ["{projectRoot}/public/og"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/vx/config/src/lib/presets/docs/cli.ts og {projectRoot}"
+        "command": "tsx packages/config/src/lib/presets/docs/cli.ts og {projectRoot}"
       }
     },
     "serve:next": {

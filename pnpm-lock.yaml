@@ -456,6 +456,9 @@ importers:
       '@types/yargs':
         specifier: ^17.0.35
         version: 17.0.35
+      '@vezham/config':
+        specifier: workspace:*
+        version: link:packages/config
       '@vezham/icons-react':
         specifier: 1.0.7
         version: 1.0.7(react@19.2.7)
@@ -477,9 +480,6 @@ importers:
       '@vitest/ui':
         specifier: 4.1.11
         version: 4.1.11(vitest@4.1.11)
-      '@vx/config':
-        specifier: workspace:*
-        version: link:packages/vx/config
       axios:
         specifier: ^1.20.0
         version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
@@ -606,164 +606,130 @@ importers:
 
   apps-internals/play-next:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/config':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/config
-      '@vx/env':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
-        specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
-  apps-internals/play-next-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/play-next-e2e: {}
 
   apps-internals/play-start:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
-  apps-internals/play-start-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/play-start-e2e: {}
 
   apps-internals/playground:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
   apps-internals/playground-app:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
-  apps-internals/playground-app-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/playground-app-e2e: {}
 
   apps-internals/playground-cdn:
-    devDependencies:
-      '@vx/env':
+    dependencies:
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/start
 
-  apps-internals/playground-cdn-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/playground-cdn-e2e: {}
 
   apps-internals/playground-docs:
     dependencies:
-      '@vx/react':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/react
-      '@vx/template':
+        version: link:../../packages/core/env
+      '@vezham/react':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/react
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
-  apps-internals/playground-docs-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/playground-docs-e2e: {}
 
-  apps-internals/playground-e2e:
-    devDependencies:
-      '@vx/config':
-        specifier: workspace:*
-        version: link:../../packages/vx/config
+  apps-internals/playground-e2e: {}
 
   apps/crm:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
   apps/demo:
     dependencies:
-      '@vx/react':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/react
-      '@vx/template':
+        version: link:../../packages/core/env
+      '@vezham/react':
         specifier: workspace:*
-        version: link:../../packages/vx/template
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
     devDependencies:
-      '@vx/env':
-        specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
-        specifier: workspace:*
-        version: link:../../packages/vx/start
       react-aria-components:
         specifier: 'catalog:'
         version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   apps/mail:
     dependencies:
-      '@vx/template':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/core/env
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/template
 
   apps/school-os:
     dependencies:
@@ -773,73 +739,68 @@ importers:
       '@tanstack/react-hotkeys':
         specifier: 'catalog:'
         version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@vx/react':
+      '@vezham/env':
         specifier: workspace:*
-        version: link:../../packages/vx/react
-      '@vx/system-utils':
+        version: link:../../packages/core/env
+      '@vezham/react':
         specifier: workspace:*
-        version: link:../../packages/vx/system-utils
-      '@vx/template':
+        version: link:../../packages/core/react
+      '@vezham/start':
         specifier: workspace:*
-        version: link:../../packages/vx/template
-    devDependencies:
-      '@vx/env':
+        version: link:../../packages/start
+      '@vezham/template':
         specifier: workspace:*
-        version: link:../../packages/vx/env
-      '@vx/start':
+        version: link:../../packages/template
+      '@vezham/utils':
         specifier: workspace:*
-        version: link:../../packages/vx/start
+        version: link:../../packages/core/utils
 
-  packages/core/hooks: {}
-
-  packages/core/react: {}
-
-  packages/core/utils: {}
-
-  packages/template: {}
-
-  packages/vx/config:
+  packages/config:
     dependencies:
       yaml:
         specifier: 'catalog:'
         version: 2.9.1
 
-  packages/vx/devtools:
+  packages/core/env: {}
+
+  packages/core/hooks: {}
+
+  packages/core/react:
+    dependencies:
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  packages/core/utils: {}
+
+  packages/devtools:
     dependencies:
       '@tanstack/react-hotkeys-devtools':
         specifier: ^0.7.0
         version: 0.7.0(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
 
-  packages/vx/env: {}
-
-  packages/vx/react:
+  packages/start:
     dependencies:
-      '@tanstack/react-hotkeys':
-        specifier: 'catalog:'
-        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      react-aria-components:
-        specifier: 'catalog:'
-        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-
-  packages/vx/start:
-    dependencies:
-      '@vx/template':
+      '@vezham/devtools':
+        specifier: workspace:*
+        version: link:../devtools
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../core/env
+      '@vezham/template':
         specifier: workspace:*
         version: link:../template
       yaml:
         specifier: 'catalog:'
         version: 2.9.1
-    devDependencies:
-      '@vx/devtools':
-        specifier: workspace:*
-        version: link:../devtools
-      '@vx/env':
-        specifier: workspace:*
-        version: link:../env
 
-  packages/vx/system-utils: {}
-
-  packages/vx/template: {}
+  packages/template: {}
 
 packages:
 

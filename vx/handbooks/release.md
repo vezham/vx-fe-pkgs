@@ -34,7 +34,7 @@ V_RELEASE_CHANNEL=stable
 - `V_APP_ENV` identifies deployment: `local`, `dev`, `qa`, `preview`, or `production`.
 - `V_RELEASE_CHANNEL` selects the independent runtime channel: `canary`, `beta`, or `stable`.
 
-`V_APP_ID`, `V_APP_NAME`, and `V_APP_VER` are required by `@vx/env`.
+`V_APP_ID`, `V_APP_NAME`, and `V_APP_VER` are required by `@vezham/env`.
 Metadata generation supplies identity and version from `vx.app.yaml`.
 `V_APP_ENV` defaults to `local` when absent or empty, independently of build mode.
 Reference app configs omit it; deployments must explicitly set and validate their
@@ -137,7 +137,7 @@ or runtime release channel.
 Use `<type>(<scope>): <subject>` for every commit header. Scope rules:
 
 - Use the normalized Nx project name for a project-specific change, such as
-  `start` for `@vx/start`.
+  `start` for `@vezham/start`.
 - For changes affecting two or three projects, use distinct comma-separated
   scopes without spaces and sort them alphabetically, such as
   `fix(env,start): use generated app version`.
@@ -179,8 +179,8 @@ V_APP_ID=play-start-mock
 V_APP_ID=play-start-e2e
 ```
 
-An id alone is enough for standalone mock/e2e tooling that does not load `@vx/env`.
-Any support app using `@vx/env` must also supply `V_APP_NAME` and `V_APP_VER`, like
+An id alone is enough for standalone mock/e2e tooling that does not load `@vezham/env`.
+Any support app using `@vezham/env` must also supply `V_APP_NAME` and `V_APP_VER`, like
 other apps.
 
 ## Package release workflow

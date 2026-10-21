@@ -1,5 +1,5 @@
-import { defineConfig } from '@vx/config/vite-lib/react'
+import { definePackageConfig } from '@vezham/config/vite-lib/react'
 
-export default defineConfig({
+export default definePackageConfig({
   root: import.meta.dirname
 })

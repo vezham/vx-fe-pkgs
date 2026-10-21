@@ -6,8 +6,33 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/template"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
+    "./components": {
+      "@vx/fe-kit": "./src/lib/components/index.ts",
+      "types": "./dist/lib/components/index.d.ts",
+      "import": "./dist/lib/components/index.js",
+      "default": "./dist/lib/components/index.js"
+    },
+    "./pages": {
+      "@vx/fe-kit": "./src/lib/pages/index.ts",
+      "types": "./dist/lib/pages/index.d.ts",
+      "import": "./dist/lib/pages/index.js",
+      "default": "./dist/lib/pages/index.js"
+    },
+    "./store": {
+      "@vx/fe-kit": "./src/lib/store/index.ts",
+      "types": "./dist/lib/store/index.d.ts",
+      "import": "./dist/lib/store/index.js",
+      "default": "./dist/lib/store/index.js"
+    },
+    "./app": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
     ".": {
       "@vx/fe-kit": "./src/index.ts",
       "types": "./dist/index.d.ts",

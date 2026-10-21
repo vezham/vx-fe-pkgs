@@ -4,10 +4,10 @@ Use the shared ESLint configuration to check automated coding standards:
 
 ```bash
 # Check a project
-pnpm nx run @vx/template:lint
+pnpm nx run @vezham/template:lint
 
 # Apply supported lint autofixes
-pnpm nx run @vx/template:lint --fix
+pnpm nx run @vezham/template:lint --fix
 
 # Check all projects with a lint target
 pnpm nx run-many -t lint

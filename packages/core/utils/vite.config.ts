@@ -1,5 +1,5 @@
-import { defineConfig } from '@vx/config/vite-lib'
+import { definePackageConfig } from '@vezham/config/vite-lib'
 
-export default defineConfig({
+export default definePackageConfig({
   root: import.meta.dirname
 })

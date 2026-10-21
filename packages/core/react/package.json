@@ -6,6 +6,7 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/core/react"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -13,6 +14,84 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./control-center": {
+      "@vx/fe-kit": "./src/lib/components/panel/footer/control-center/index.tsx",
+      "types": "./dist/lib/components/panel/footer/control-center/index.d.ts",
+      "import": "./dist/lib/components/panel/footer/control-center/index.js",
+      "default": "./dist/lib/components/panel/footer/control-center/index.js"
+    },
+    "./actions-header": {
+      "@vx/fe-kit": "./src/lib/components/actions-header/index.tsx",
+      "types": "./dist/lib/components/actions-header/index.d.ts",
+      "import": "./dist/lib/components/actions-header/index.js",
+      "default": "./dist/lib/components/actions-header/index.js"
+    },
+    "./pagination": {
+      "@vx/fe-kit": "./src/lib/components/pagination/index.tsx",
+      "types": "./dist/lib/components/pagination/index.d.ts",
+      "import": "./dist/lib/components/pagination/index.js",
+      "default": "./dist/lib/components/pagination/index.js"
+    },
+    "./app-icon": {
+      "@vx/fe-kit": "./src/lib/components/app-icon/index.tsx",
+      "types": "./dist/lib/components/app-icon/index.d.ts",
+      "import": "./dist/lib/components/app-icon/index.js",
+      "default": "./dist/lib/components/app-icon/index.js"
+    },
+    "./date": {
+      "@vx/fe-kit": "./src/lib/utils/date.ts",
+      "types": "./dist/lib/utils/date.d.ts",
+      "import": "./dist/lib/utils/date.js",
+      "default": "./dist/lib/utils/date.js"
+    },
+    "./bookmarks/favorites": {
+      "@vx/fe-kit": "./src/lib/components/panel/header/bookmarks/favorites/index.tsx",
+      "types": "./dist/lib/components/panel/header/bookmarks/favorites/index.d.ts",
+      "import": "./dist/lib/components/panel/header/bookmarks/favorites/index.js",
+      "default": "./dist/lib/components/panel/header/bookmarks/favorites/index.js"
+    },
+    "./layouts/*": {
+      "@vx/fe-kit": "./src/lib/layouts/*/index.tsx",
+      "types": "./dist/lib/layouts/*/index.d.ts",
+      "import": "./dist/lib/layouts/*/index.js",
+      "default": "./dist/lib/layouts/*/index.js"
+    },
+    "./shortcut-key": {
+      "@vx/fe-kit": "./src/lib/components/shortcut-key/index.tsx",
+      "types": "./dist/lib/components/shortcut-key/index.d.ts",
+      "import": "./dist/lib/components/shortcut-key/index.js",
+      "default": "./dist/lib/components/shortcut-key/index.js"
+    },
+    "./user": {
+      "@vx/fe-kit": "./src/lib/store/users/useUserStore.tsx",
+      "types": "./dist/lib/store/users/useUserStore.d.ts",
+      "import": "./dist/lib/store/users/useUserStore.js",
+      "default": "./dist/lib/store/users/useUserStore.js"
+    },
+    "./workspace-navigation": {
+      "@vx/fe-kit": "./src/lib/components/workspace-navigation/index.tsx",
+      "types": "./dist/lib/components/workspace-navigation/index.d.ts",
+      "import": "./dist/lib/components/workspace-navigation/index.js",
+      "default": "./dist/lib/components/workspace-navigation/index.js"
+    },
+    "./toolbar-actions": {
+      "@vx/fe-kit": "./src/lib/components/toolbar-actions/index.tsx",
+      "types": "./dist/lib/components/toolbar-actions/index.d.ts",
+      "import": "./dist/lib/components/toolbar-actions/index.js",
+      "default": "./dist/lib/components/toolbar-actions/index.js"
+    },
+    "./mobile-controls": {
+      "@vx/fe-kit": "./src/lib/components/mobile-controls/index.tsx",
+      "types": "./dist/lib/components/mobile-controls/index.d.ts",
+      "import": "./dist/lib/components/mobile-controls/index.js",
+      "default": "./dist/lib/components/mobile-controls/index.js"
+    },
+    "./pages/settings": {
+      "@vx/fe-kit": "./src/lib/pages/settings/index.tsx",
+      "types": "./dist/lib/pages/settings/index.d.ts",
+      "import": "./dist/lib/pages/settings/index.js",
+      "default": "./dist/lib/pages/settings/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -23,5 +102,10 @@
     "!**/*.tsbuildinfo",
     "dist",
     "LICENSE"
-  ]
+  ],
+  "dependencies": {
+    "@tanstack/react-hotkeys": "catalog:",
+    "@vezham/hooks": "workspace:*",
+    "react-aria-components": "catalog:"
+  }
 }

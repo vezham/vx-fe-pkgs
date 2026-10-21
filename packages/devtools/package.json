@@ -6,6 +6,7 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/devtools"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -23,5 +24,8 @@
     "!**/*.tsbuildinfo",
     "dist",
     "LICENSE"
-  ]
+  ],
+  "dependencies": {
+    "@tanstack/react-hotkeys-devtools": "^0.7.0"
+  }
 }

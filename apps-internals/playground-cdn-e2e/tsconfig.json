@@ -27,7 +27,7 @@
   ],
   "references": [
     {
-      "path": "../../packages/vx/config"
+      "path": "../../packages/config"
     }
   ]
 }

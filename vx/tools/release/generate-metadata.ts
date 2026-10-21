@@ -17,7 +17,7 @@ export const generateReleaseMetadata = async (
       [
         '--import',
         'tsx',
-        'packages/vx/config/src/lib/metadata/cli.ts',
+        'packages/config/src/lib/metadata/cli.ts',
         'generate',
         projectRoot,
         '--json'

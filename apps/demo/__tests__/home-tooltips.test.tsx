@@ -1,10 +1,16 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { Home } from '@vx/template/pages'
+import { Home } from '@vezham/template/pages'
 
-vi.mock('../../../packages/vx/template/src/lib/pages/home/posts', () => ({
-  Posts: () => null
+vi.mock('@tanstack/react-query', async importOriginal => ({
+  ...(await importOriginal<typeof import('@tanstack/react-query')>()),
+  useQuery: () => ({
+    data: [],
+    isPending: false,
+    isError: false,
+    error: null
+  })
 }))
 
 describe('Home tooltips', () => {

@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@vx/react": "workspace:*",
-    "@vx/template": "workspace:*"
+    "@vezham/env": "workspace:*",
+    "@vezham/react": "workspace:*",
+    "@vezham/start": "workspace:*",
+    "@vezham/template": "workspace:*"
   },
   "devDependencies": {
-    "@vx/env": "workspace:*",
-    "@vx/start": "workspace:*",
     "react-aria-components": "catalog:"
   }
 }

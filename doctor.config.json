@@ -27,11 +27,11 @@
         "rules": ["react-doctor/duplicate-jsx-subtree"]
       },
       {
-        "files": ["packages/vx/config/src/lib/presets/docs/og.ts"],
+        "files": ["packages/config/src/lib/presets/docs/og.ts"],
         "rules": ["react-doctor/nextjs-no-vercel-og-import"]
       },
       {
-        "files": ["packages/vx/config/src/lib/metadata/templates/*.html"],
+        "files": ["packages/config/src/lib/metadata/templates/*.html"],
         "rules": ["react-doctor/no-unguarded-browser-global-at-module-scope"]
       }
     ]

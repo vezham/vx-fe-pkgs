@@ -7,9 +7,11 @@
       "vitest/importMeta",
       "vite/client",
       "node",
-      "vitest"
+      "vitest",
+      "@testing-library/jest-dom/vitest"
     ],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["es2022", "dom", "dom.iterable"]
   },
   "include": [
     "vite.config.ts",

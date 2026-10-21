@@ -4,12 +4,12 @@ import { fileURLToPath } from 'node:url'
 import { loadConfigFromFile, mergeConfig } from 'vite'
 import { parse } from 'yaml'
 
-import { type ViteConfig, getProjectPackageName } from '@vx/config/vite'
+import { type ViteConfig, getProjectPackageName } from '@vezham/config/vite'
 import {
   defineConfig,
   defineFrameworkTestConfig,
   validateFramework
-} from '@vx/config/vitest'
+} from '@vezham/config/vitest'
 
 const configFile = fileURLToPath(import.meta.url)
 

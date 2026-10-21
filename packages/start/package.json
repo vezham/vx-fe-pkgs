@@ -6,8 +6,75 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/start"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
+    "./vite": {
+      "@vx/fe-kit": "./src/lib/provider/vite/index.tsx",
+      "types": "./dist/lib/provider/vite/index.d.ts",
+      "import": "./dist/lib/provider/vite/index.js",
+      "default": "./dist/lib/provider/vite/index.js"
+    },
+    "./tanstack": {
+      "@vx/fe-kit": "./src/lib/provider/tanstack/index.tsx",
+      "types": "./dist/lib/provider/tanstack/index.d.ts",
+      "import": "./dist/lib/provider/tanstack/index.js",
+      "default": "./dist/lib/provider/tanstack/index.js"
+    },
+    "./tanstack-docs": {
+      "@vx/fe-kit": "./src/lib/provider/tanstack-docs/index.tsx",
+      "types": "./dist/lib/provider/tanstack-docs/index.d.ts",
+      "import": "./dist/lib/provider/tanstack-docs/index.js",
+      "default": "./dist/lib/provider/tanstack-docs/index.js"
+    },
+    "./next": {
+      "@vx/fe-kit": "./src/lib/provider/next/index.tsx",
+      "types": "./dist/lib/provider/next/index.d.ts",
+      "import": "./dist/lib/provider/next/index.js",
+      "default": "./dist/lib/provider/next/index.js"
+    },
+    "./router/tanstack": {
+      "@vx/fe-kit": "./src/lib/router/tanstack/index.tsx",
+      "types": "./dist/lib/router/tanstack/index.d.ts",
+      "import": "./dist/lib/router/tanstack/index.js",
+      "default": "./dist/lib/router/tanstack/index.js"
+    },
+    "./layouts/*": {
+      "@vx/fe-kit": "./src/lib/layouts/*/index.tsx",
+      "types": "./dist/lib/layouts/*/index.d.ts",
+      "import": "./dist/lib/layouts/*/index.js",
+      "default": "./dist/lib/layouts/*/index.js"
+    },
+    "./pages/docs/openapi": {
+      "@vx/fe-kit": "./src/lib/pages/docs/openapi/index.tsx",
+      "types": "./dist/lib/pages/docs/openapi/index.d.ts",
+      "import": "./dist/lib/pages/docs/openapi/index.js",
+      "default": "./dist/lib/pages/docs/openapi/index.js"
+    },
+    "./pages/docs/route": {
+      "@vx/fe-kit": "./src/lib/pages/docs/route/index.tsx",
+      "types": "./dist/lib/pages/docs/route/index.d.ts",
+      "import": "./dist/lib/pages/docs/route/index.js",
+      "default": "./dist/lib/pages/docs/route/index.js"
+    },
+    "./runtime/*": {
+      "@vx/fe-kit": "./src/lib/runtime/*/index.ts",
+      "types": "./dist/lib/runtime/*/index.d.ts",
+      "import": "./dist/lib/runtime/*/index.js",
+      "default": "./dist/lib/runtime/*/index.js"
+    },
+    "./mdx": {
+      "@vx/fe-kit": "./src/lib/mdx/index.tsx",
+      "types": "./dist/lib/mdx/index.d.ts",
+      "import": "./dist/lib/mdx/index.js",
+      "default": "./dist/lib/mdx/index.js"
+    },
+    "./story": {
+      "@vx/fe-kit": "./src/lib/story/index.ts",
+      "types": "./dist/lib/story/index.d.ts",
+      "import": "./dist/lib/story/index.js",
+      "default": "./dist/lib/story/index.js"
+    },
     ".": {
       "@vx/fe-kit": "./src/index.ts",
       "types": "./dist/index.d.ts",
@@ -23,5 +90,11 @@
     "!**/*.tsbuildinfo",
     "dist",
     "LICENSE"
-  ]
+  ],
+  "dependencies": {
+    "@vezham/devtools": "workspace:*",
+    "@vezham/env": "workspace:*",
+    "@vezham/template": "workspace:*",
+    "yaml": "catalog:"
+  }
 }

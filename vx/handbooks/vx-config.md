@@ -13,7 +13,7 @@ See the [Deployment handbook](./deploy.md) for provider setup and deployment
 preset selection.
 
 Keep the app's Vite config thin. App-specific route intent should live in
-`vx.app.yaml`; shared behavior should live in `@vx/config` or `@vx/start`.
+`vx.app.yaml`; shared behavior should live in `@vezham/config` or `@vezham/start`.
 
 > **AI Instructions**
 >
@@ -34,7 +34,7 @@ apps-internals/playground-docs/vx.app.yaml
 The playground docs Vite config should use the shared docs helper:
 
 ```ts
-import { getPrerenderPages } from '@vx/config/presets/docs'
+import { getPrerenderPages } from '@vezham/config/presets/docs'
 
 tanstackStart({
   spa: {
@@ -372,7 +372,7 @@ metadata:
 
 If no social image is provided, Vx falls back to `/og/image.png`.
 
-For docs pages that use the default social image, `@vx/start` maps the page to
+For docs pages that use the default social image, `@vezham/start` maps the page to
 the page-specific generated docs OG image.
 
 Examples:
@@ -425,17 +425,17 @@ absolute URL.
 
 ## Shared Vite Defaults
 
-Use `defineAppConfig` from `@vx/config/vite` for apps.
+Use `defineConfig` from `@vezham/config/presets/app` for apps.
 
 ```ts
-import { defineAppConfig } from '@vx/config/vite'
+import { defineConfig } from '@vezham/config/presets/app'
 
-export default defineAppConfig({
+export default defineConfig({
   root: import.meta.dirname
 })
 ```
 
-`defineAppConfig` owns:
+`defineConfig` owns:
 
 - app root and Vite cache directory
 - `V_` env prefix

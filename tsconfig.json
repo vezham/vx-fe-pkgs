@@ -6,10 +6,10 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/vx/start"
+      "path": "./packages/start"
     },
     {
-      "path": "./packages/vx/system-utils"
+      "path": "./packages/core/utils"
     },
     {
       "path": "./apps-internals/playground-e2e"
@@ -30,16 +30,16 @@
       "path": "./apps-internals/play-next"
     },
     {
-      "path": "./packages/vx/template"
+      "path": "./packages/template"
     },
     {
-      "path": "./packages/vx/env"
+      "path": "./packages/core/env"
     },
     {
-      "path": "./packages/vx/devtools"
+      "path": "./packages/devtools"
     },
     {
-      "path": "./packages/vx/config"
+      "path": "./packages/config"
     },
     {
       "path": "./apps-internals/playground-docs"
@@ -72,31 +72,10 @@
       "path": "./apps/demo"
     },
     {
-      "path": "./packages/vx/react"
-    },
-    {
       "path": "./packages/core/react"
     },
     {
       "path": "./packages/core/hooks"
-    },
-    {
-      "path": "./packages/template"
-    },
-    {
-      "path": "./packages/core/utils"
-    },
-    {
-      "path": "./packages/core/env"
-    },
-    {
-      "path": "./packages/config"
-    },
-    {
-      "path": "./packages/start"
-    },
-    {
-      "path": "./packages/devtools"
     }
   ],
   "compilerOptions": {

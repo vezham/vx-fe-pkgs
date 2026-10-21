@@ -6,22 +6,188 @@
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/config"
   },
+  "sideEffects": [
+    "./dist/lib/integrations/vitest/setup/*.js"
+  ],
   "type": "module",
   "exports": {
-    ".": {
-      "@vx/fe-kit": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+    "./vite": {
+      "types": "./src/lib/integrations/vite/index.ts",
+      "default": "./workspace/vite.js"
     },
-    "./package.json": "./package.json"
+    "./next": {
+      "types": "./src/lib/integrations/next/index.ts",
+      "default": "./workspace/next.js"
+    },
+    "./vitest": {
+      "types": "./src/lib/integrations/vitest/index.ts",
+      "default": "./workspace/vitest.js"
+    },
+    "./vitest/react": {
+      "types": "./src/lib/integrations/vitest/frameworks/react.ts",
+      "default": "./workspace/vitest/react.js"
+    },
+    "./vitest/next": {
+      "types": "./src/lib/integrations/vitest/frameworks/next.ts",
+      "default": "./workspace/vitest/next.js"
+    },
+    "./vitest/docs": {
+      "types": "./src/lib/integrations/vitest/frameworks/docs.ts",
+      "default": "./workspace/vitest/docs.js"
+    },
+    "./playwright": {
+      "types": "./src/lib/integrations/playwright/index.ts",
+      "default": "./workspace/playwright.js"
+    },
+    "./playwright/test": {
+      "types": "./src/lib/integrations/playwright/test.ts",
+      "default": "./workspace/playwright/test.js"
+    },
+    "./presets/app": {
+      "types": "./src/lib/presets/app/index.ts",
+      "default": "./workspace/presets/app.js"
+    },
+    "./presets/cdn": {
+      "types": "./src/lib/presets/cdn/index.ts",
+      "default": "./workspace/presets/cdn.js"
+    },
+    "./presets/docs": {
+      "types": "./src/lib/presets/docs/index.ts",
+      "default": "./workspace/presets/docs.js"
+    },
+    "./metadata": {
+      "types": "./src/lib/metadata/index.ts",
+      "default": "./workspace/metadata.js"
+    },
+    "./deploy": {
+      "types": "./src/lib/deploy/index.ts",
+      "default": "./workspace/deploy.js"
+    },
+    "./vite-lib": {
+      "types": "./src/lib/integrations/vite-lib/index.ts",
+      "default": "./workspace/vite-lib.js"
+    },
+    "./vite-lib/react": {
+      "types": "./src/lib/integrations/vite-lib/react.ts",
+      "default": "./workspace/vite-lib/react.js"
+    },
+    ".": "./src/index.ts",
+    "./package.json": "./package.json",
+    "./vitest/setup/react": "./src/lib/integrations/vitest/setup/react.ts",
+    "./vitest/setup/next": "./src/lib/integrations/vitest/setup/next.ts"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "bin": {
+    "vezham-deploy": "./dist/lib/deploy/cli.js",
+    "vezham-docs": "./dist/lib/presets/docs/cli.js",
+    "vezham-metadata": "./dist/lib/metadata/cli.js"
+  },
   "files": [
     "!**/*.tsbuildinfo",
     "dist",
     "LICENSE"
-  ]
+  ],
+  "dependencies": {
+    "yaml": "catalog:"
+  },
+  "publishConfig": {
+    "exports": {
+      "./vite": {
+        "types": "./dist/lib/integrations/vite/index.d.ts",
+        "import": "./dist/lib/integrations/vite/index.js",
+        "default": "./dist/lib/integrations/vite/index.js"
+      },
+      "./next": {
+        "types": "./dist/lib/integrations/next/index.d.ts",
+        "import": "./dist/lib/integrations/next/index.js",
+        "default": "./dist/lib/integrations/next/index.js"
+      },
+      "./vitest": {
+        "types": "./dist/lib/integrations/vitest/index.d.ts",
+        "import": "./dist/lib/integrations/vitest/index.js",
+        "default": "./dist/lib/integrations/vitest/index.js"
+      },
+      "./vitest/react": {
+        "types": "./dist/lib/integrations/vitest/frameworks/react.d.ts",
+        "import": "./dist/lib/integrations/vitest/frameworks/react.js",
+        "default": "./dist/lib/integrations/vitest/frameworks/react.js"
+      },
+      "./vitest/next": {
+        "types": "./dist/lib/integrations/vitest/frameworks/next.d.ts",
+        "import": "./dist/lib/integrations/vitest/frameworks/next.js",
+        "default": "./dist/lib/integrations/vitest/frameworks/next.js"
+      },
+      "./vitest/docs": {
+        "types": "./dist/lib/integrations/vitest/frameworks/docs.d.ts",
+        "import": "./dist/lib/integrations/vitest/frameworks/docs.js",
+        "default": "./dist/lib/integrations/vitest/frameworks/docs.js"
+      },
+      "./playwright": {
+        "types": "./dist/lib/integrations/playwright/index.d.ts",
+        "import": "./dist/lib/integrations/playwright/index.js",
+        "default": "./dist/lib/integrations/playwright/index.js"
+      },
+      "./playwright/test": {
+        "types": "./dist/lib/integrations/playwright/test.d.ts",
+        "import": "./dist/lib/integrations/playwright/test.js",
+        "default": "./dist/lib/integrations/playwright/test.js"
+      },
+      "./presets/app": {
+        "types": "./dist/lib/presets/app/index.d.ts",
+        "import": "./dist/lib/presets/app/index.js",
+        "default": "./dist/lib/presets/app/index.js"
+      },
+      "./presets/cdn": {
+        "types": "./dist/lib/presets/cdn/index.d.ts",
+        "import": "./dist/lib/presets/cdn/index.js",
+        "default": "./dist/lib/presets/cdn/index.js"
+      },
+      "./presets/docs": {
+        "types": "./dist/lib/presets/docs/index.d.ts",
+        "import": "./dist/lib/presets/docs/index.js",
+        "default": "./dist/lib/presets/docs/index.js"
+      },
+      "./metadata": {
+        "types": "./dist/lib/metadata/index.d.ts",
+        "import": "./dist/lib/metadata/index.js",
+        "default": "./dist/lib/metadata/index.js"
+      },
+      "./deploy": {
+        "types": "./dist/lib/deploy/index.d.ts",
+        "import": "./dist/lib/deploy/index.js",
+        "default": "./dist/lib/deploy/index.js"
+      },
+      "./vite-lib": {
+        "types": "./dist/lib/integrations/vite-lib/index.d.ts",
+        "import": "./dist/lib/integrations/vite-lib/index.js",
+        "default": "./dist/lib/integrations/vite-lib/index.js"
+      },
+      "./vite-lib/react": {
+        "types": "./dist/lib/integrations/vite-lib/react.d.ts",
+        "import": "./dist/lib/integrations/vite-lib/react.js",
+        "default": "./dist/lib/integrations/vite-lib/react.js"
+      },
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json",
+      "./vitest/setup/react": {
+        "types": "./dist/lib/integrations/vitest/setup/react.d.ts",
+        "import": "./dist/lib/integrations/vitest/setup/react.js",
+        "default": "./dist/lib/integrations/vitest/setup/react.js"
+      },
+      "./vitest/setup/next": {
+        "types": "./dist/lib/integrations/vitest/setup/next.d.ts",
+        "import": "./dist/lib/integrations/vitest/setup/next.js",
+        "default": "./dist/lib/integrations/vitest/setup/next.js"
+      }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  }
 }
