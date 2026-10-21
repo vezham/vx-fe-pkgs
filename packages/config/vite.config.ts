@@ -1,5 +1,5 @@
-import { definePackageConfig } from './src/lib/integrations/vite-lib/index'
+import { defineConfig } from './src/lib/integrations/vite-lib/index'
 
-export default definePackageConfig({
+export default defineConfig({
   root: import.meta.dirname
 })

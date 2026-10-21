@@ -1,5 +1,5 @@
 import { loadConfig } from '../loader.cjs'
 
-export const { defineConfig, definePackageConfig } = loadConfig(
+export const { defineConfig } = loadConfig(
   '../src/lib/integrations/vite-lib/react'
 )

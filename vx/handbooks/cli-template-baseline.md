@@ -172,14 +172,14 @@ React exports retain the name `navigationItems`.
 
 ## Package library templates
 
-Buildable package templates use `@vezham/config/vite-lib` for ESM library output,
-workspace cache defaults, and declarations from `tsconfig.lib.json`. The default
-entry is `src/index.ts` and output is `dist/index.js`; packages can override the
-entry, formats, and output through Vite config. Keep framework plugins and
-external dependencies in framework presets or package overrides. React library
-templates use `@vezham/config/vite-lib/react`, which adds the React SWC plugin and
-externalizes `react`, `react-dom`, and `react/jsx-runtime`. Library mode does not require a global name
-for ESM output. Test configs remain separate and use the shared Vitest preset.
+Package templates use `defineConfig` from `@vezham/config/vite-lib`, or
+`@vezham/config/vite-lib/react` for React packages. These presets discover source
+entry points from package exports and CLI entries, preserve ES module paths, keep
+package dependencies external, copy CSS and HTML assets into `dist`, and disable
+minification. They also provide workspace cache defaults and declarations from
+`tsconfig.lib.json`. React packages add the React SWC plugin. Packages can override
+Vite build options through `defineConfig`; test configs remain separate and use
+the shared Vitest preset. Shared library defaults stay internal to the presets.
 
 Declare the `@vezham/config` tooling package in workspace-root
 `devDependencies`, rather than in publishable package manifests. Package builds

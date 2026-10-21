@@ -25,6 +25,8 @@ Use SemVer with a yearly major release line:
 Keep artifact version and runtime behavior separate.
 
 ```env
+V_APP_ID=vezham-example
+V_APP_NAME=Vezham Example
 V_APP_VER=27.0.0-alpha.1
 V_APP_ENV=production
 V_RELEASE_CHANNEL=stable
@@ -38,13 +40,50 @@ V_RELEASE_CHANNEL=stable
 Metadata generation supplies identity and version from `vx.app.yaml`.
 `V_APP_ENV` defaults to `local` when absent or empty, independently of build mode.
 Reference app configs omit it; deployments must explicitly set and validate their
-target environment.
+target environment. Set it before building and before starting servers that read
+configuration at runtime. Metadata generation preserves this deployment setting.
 
 Do not infer the release channel from the version string. A beta rollout can run
 a stable artifact, and a production deployment can temporarily run a prerelease
 artifact. Use `RELEASE_CHANNEL === 'beta'` for beta-channel behavior.
 `V_RELEASE_CHANNEL` is the only release-channel input; when absent or empty,
 it defaults to `stable`.
+
+### Application Usage
+
+Vite reads these settings from `import.meta.env` using the workspace's `V_`
+prefix. Import the validated values through the Vite adapter:
+
+```ts
+import { APP_ENV, RELEASE_CHANNEL } from '@vezham/env/vite'
+```
+
+Next reads settings from `process.env`. Application code imports validated values
+from `@vezham/env/next`. In `next.config.ts`, use the configuration-only entry:
+
+```ts
+import { configEnv } from '@vezham/env/next/config'
+```
+
+This exposes public configuration without initializing runtime validation during
+Nx project discovery.
+
+### Validation
+
+Missing, empty, or whitespace-only `V_APP_ID`, `V_APP_NAME`, or `V_APP_VER` values
+throw during runtime module initialization. Invalid non-empty `V_APP_ENV` or
+`V_RELEASE_CHANNEL` values also throw, including whitespace-only values and
+unrecognized casing. Defaults apply only when those settings are absent or empty;
+there is no `unknown` environment or placeholder app identity/version.
+
+### Build Mode
+
+`__DEV__` is true when Vite `MODE` or Next `NODE_ENV` is `development`.
+`__PRODUCTION__` is true when that value is `production`. These flags describe
+build mode independently of deployment; a production build can run in `dev`,
+`qa`, or `preview`, and a local production build still defaults to `APP_ENV=local`.
+Compare `APP_ENV` directly with `qa` or `preview` for deployment behavior, and
+`RELEASE_CHANNEL` with `beta` for beta-channel behavior.
 
 ## App Version Sync
 
