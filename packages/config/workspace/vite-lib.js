@@ -1,5 +1,3 @@
 import { loadConfig } from './loader.cjs'
 
-export const { defineConfig } = loadConfig(
-  '../src/lib/integrations/vite-lib/index'
-)
+export const { defineConfig } = loadConfig('../src/lib/integrations/vite-lib')

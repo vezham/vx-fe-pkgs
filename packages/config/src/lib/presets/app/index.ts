@@ -9,7 +9,7 @@ import {
   type ViteConfigOverrides,
   createViteConfig,
   getViteConfig
-} from '../../integrations/vite/index'
+} from '../../integrations/vite'
 import { readYamlConfig } from '../../yaml-config'
 import { unique, walkFiles } from '../files'
 import {

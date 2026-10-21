@@ -1,5 +1,3 @@
-// vx-bot/NOTE: Keep the public preset API explicit while implementations stay separate.
-/* eslint-disable @vx-lint/wildcard-barrel */
 export {
   type DocsMdxMacroImportAliasOptions,
   type DocsMdxOptions,

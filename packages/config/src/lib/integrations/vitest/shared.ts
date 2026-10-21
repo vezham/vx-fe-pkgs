@@ -4,7 +4,7 @@ import { mergeConfig } from 'vite'
 import {
   type ViteConfigOverrides,
   defineConfig as defineViteConfig
-} from '../vite/index'
+} from '../vite'
 
 export const defineTestConfig = (
   feature: 'react' | 'next' | 'docs',

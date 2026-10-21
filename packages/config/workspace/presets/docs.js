@@ -11,4 +11,4 @@ export const {
   getDocsStaticPaths,
   getDocsPrerenderPages,
   getPrerenderPages
-} = loadConfig('../src/lib/presets/docs/index')
+} = loadConfig('../src/lib/presets/docs')

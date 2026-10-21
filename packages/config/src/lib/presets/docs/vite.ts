@@ -3,11 +3,8 @@ import { type Plugin, type TransformResult, mergeConfig } from 'vite'
 
 import { docsMdx as createDocsMdx } from '@vezham/docs-mdx/vite'
 
-import type {
-  ViteConfig,
-  ViteConfigOverrides
-} from '../../integrations/vite/index'
-import { defineConfig as defineAppConfig } from '../app/index'
+import type { ViteConfig, ViteConfigOverrides } from '../../integrations/vite'
+import { defineConfig as defineAppConfig } from '../app'
 import { slash } from '../files'
 
 const docsMdxMacroImport = '@vezham/docs-mdx/macro'

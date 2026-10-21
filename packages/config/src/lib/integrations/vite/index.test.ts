@@ -2,7 +2,7 @@ import path from 'node:path'
 import type { ConfigEnv, UserConfigExport } from 'vite'
 import { describe, expect, it, vi } from 'vitest'
 
-import { defineConfig as defineAppConfig } from '../../presets/app/index'
+import { defineConfig as defineAppConfig } from '../../presets/app'
 import { createViteConfig, defineConfig } from './index'
 
 const env: ConfigEnv = { command: 'serve', mode: 'test' }

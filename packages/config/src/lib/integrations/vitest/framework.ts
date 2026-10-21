@@ -1,5 +1,5 @@
 import type { Framework } from '../../framework'
-import { type ViteConfigOverrides } from '../vite/index'
+import { type ViteConfigOverrides } from '../vite'
 import { defineTestConfig } from './shared'
 
 export const defineFrameworkTestConfig = (

@@ -2,7 +2,7 @@ import path from 'node:path'
 import type { ConfigEnv } from 'vite'
 import { describe, expect, it } from 'vitest'
 
-import { getViteCacheDir } from '../vite/index'
+import { getViteCacheDir } from '../vite'
 import { defineConfig } from './base'
 
 const env: ConfigEnv = { command: 'build', mode: 'production' }

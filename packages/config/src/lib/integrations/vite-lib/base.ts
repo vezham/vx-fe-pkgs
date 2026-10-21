@@ -6,7 +6,7 @@ import {
   type ViteConfig,
   type ViteConfigOverrides,
   getViteConfig
-} from '../vite/index'
+} from '../vite'
 
 export const getViteLibConfig = (projectRoot = process.cwd()): ViteConfig => ({
   ...getViteConfig(projectRoot),

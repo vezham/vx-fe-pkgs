@@ -8,7 +8,7 @@ import {
 import path from 'node:path'
 
 import { validateFramework } from '../framework'
-import { getNavigationFiles } from '../navigation/index'
+import { getNavigationFiles } from '../navigation'
 import { readYamlConfig } from '../yaml-config'
 import { getVxEnv, syncEnvContent } from './env'
 import { syncIndexHtmlContent } from './html'

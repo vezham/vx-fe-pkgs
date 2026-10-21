@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react-swc'
 import { mergeConfig } from 'vite'
 
-import type { ViteConfigOverrides } from '../vite/index'
+import type { ViteConfigOverrides } from '../vite'
 import { defineConfig as defineLibraryConfig } from './index'
 
 export const defineConfig = (overrides: ViteConfigOverrides = {}) =>

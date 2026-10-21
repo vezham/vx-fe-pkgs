@@ -5,4 +5,4 @@ export const {
   getMetadataFiles,
   generateMetadata,
   watchMetadata
-} = loadConfig('../src/lib/metadata/index')
+} = loadConfig('../src/lib/metadata')

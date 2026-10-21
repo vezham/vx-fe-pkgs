@@ -6,4 +6,4 @@ export const {
   getViteConfig,
   createViteConfig,
   defineConfig
-} = loadConfig('../src/lib/integrations/vite/index')
+} = loadConfig('../src/lib/integrations/vite')

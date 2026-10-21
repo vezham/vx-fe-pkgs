@@ -2,7 +2,7 @@ import { cpSync, existsSync, globSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { mergeConfig } from 'vite'
 
-import type { ViteConfig, ViteConfigOverrides } from '../vite/index'
+import type { ViteConfig, ViteConfigOverrides } from '../vite'
 import { defineConfig as defineLibraryConfig } from './base'
 
 const getPackageEntries = (projectRoot: string) => {

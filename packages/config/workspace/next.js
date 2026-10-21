@@ -1,3 +1,3 @@
 import { loadConfig } from './loader.cjs'
 
-export const { defineConfig } = loadConfig('../src/lib/integrations/next/index')
+export const { defineConfig } = loadConfig('../src/lib/integrations/next')
