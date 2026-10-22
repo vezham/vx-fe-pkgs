@@ -103,6 +103,7 @@
     "@vezham/config": "workspace:*",
     "@vezham/icons-react": "1.0.7",
     "@vezham/react-v2": "npm:@vx-oss/heroui-v2-react@2.9.0-beta.1",
+    "@vezham/start": "workspace:*",
     "@vezham/use-logger": "0.3.3",
     "@vitejs/plugin-react": "^6.0.2",
     "@vitejs/plugin-react-swc": "^4.3.1",

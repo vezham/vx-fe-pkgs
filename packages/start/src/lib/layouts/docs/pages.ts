@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentProps } from 'react'
 
 import {
   DocsBody,
@@ -15,8 +15,7 @@ import {
   DocsTitle as NotebookDocsTitle
 } from '@vezham/docs-react/layouts/notebook/page'
 
-import type { DocsShell } from './index'
-import { PageActions } from './page-actions'
+import type { DocsShell } from './types'
 
 export type DocsPageToc = ComponentProps<typeof DocsPagePrimitive>['toc']
 
@@ -47,36 +46,8 @@ const pages = {
   }
 }
 
-type PageComponents = (typeof pages)[keyof typeof pages]
-
-type Props = {
-  children: ReactNode
-  description?: ReactNode
-  markdownUrl?: string
-  title?: ReactNode
-} & Pick<PageComponents, 'Body' | 'Description' | 'Title'>
+export type PageComponents = (typeof pages)[keyof typeof pages]
 
 export const getPageComponents = (shell: DocsShell) => {
   return pages[shell === 'home' ? 'docs' : shell]
 }
-
-export const DocsPageContent = ({
-  children,
-  description,
-  markdownUrl,
-  title,
-  Body,
-  Description,
-  Title
-}: Props) => (
-  <>
-    {title || markdownUrl ? (
-      <div className="flex flex-col items-start gap-3 lg:flex-row lg:justify-between lg:gap-4">
-        {title ? <Title>{title}</Title> : <span />}
-        {markdownUrl ? <PageActions markdownUrl={markdownUrl} /> : null}
-      </div>
-    ) : null}
-    {description ? <Description>{description}</Description> : null}
-    <Body>{children}</Body>
-  </>
-)

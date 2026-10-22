@@ -4,11 +4,10 @@ import { APP_ID, APP_NAME, APP_VER } from '@vezham/env/vite'
 import { useLogger } from '@vezham/use-logger'
 
 import { config, preConfig } from '../shared/config'
-import { ClientDevtools } from '../shared/devtools'
 import { NAMESPACE, type Props } from '../shared/types'
 import { Provider } from './provider'
 
-const defineConfig = (props: Props) => {
+export const defineConfig = (props: Props) => {
   const options = {
     ...props,
     id: props.id || APP_ID,
@@ -30,5 +29,3 @@ const defineConfig = (props: Props) => {
     useLogger.log(NAMESPACE, '[provider] | root el is missing')
   }
 }
-
-export { ClientDevtools, defineConfig, Provider }

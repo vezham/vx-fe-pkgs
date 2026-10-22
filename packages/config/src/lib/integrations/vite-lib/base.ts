@@ -8,7 +8,7 @@ import {
   getViteConfig
 } from '../vite'
 
-export const getViteLibConfig = (projectRoot = process.cwd()): ViteConfig => ({
+const getViteLibConfig = (projectRoot = process.cwd()): ViteConfig => ({
   ...getViteConfig(projectRoot),
   plugins: [
     dts({

@@ -1,2 +1,2 @@
 export * from './command-provider'
-export { CommandContext, useCommand } from '@vezham/hooks'
+export { useCommand } from '@vezham/hooks'

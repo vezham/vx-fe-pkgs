@@ -1,5 +1,12 @@
 {
   "$schema": "./node_modules/fallow/schema.json",
+  "resolve": {
+    "conditions": ["@vx/fe-kit"]
+  },
+  "ignoreUnresolvedImports": [
+    // vx-bot/NOTE: This CSS export is copied during build; its source is an explicit entry below.
+    "@vezham/start/styles/docs"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/dist/**",
@@ -27,6 +34,9 @@
   "entry": [
     // vx-bot/NOTE: Generated apps import these shared stylesheet roots directly.
     "packages/vx/styles/{index.css,docs/index.css}",
+    // vx-bot/NOTE: Public package CSS is copied to dist and consumed through package exports.
+    "packages/{core/react,devtools,template}/src/index.css",
+    "packages/start/src/styles/docs/index.css",
     // vx-bot/NOTE: For Next.js app
     "**/src/app/**/{page,layout,error,global-error,loading,not-found}.tsx",
     "**/src/app/**/route.ts",
@@ -79,6 +89,8 @@
     "@tanstack/react-devtools",
     "@tanstack/react-query",
     "@tanstack/react-query-devtools",
+    // vx-bot/NOTE: Shared Vitest setup uses this dependency declared at the workspace root.
+    "@testing-library/jest-dom",
     "@testing-library/react",
     "@tiptap/core",
     "@tiptap/extension-link",

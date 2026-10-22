@@ -3,7 +3,7 @@ import { APP_ID, APP_NAME, APP_VER } from '@vezham/env/next'
 import type { Props } from '../shared/types'
 import { Provider } from './provider'
 
-const RootDocument = (props: Props) => {
+export const RootDocument = (props: Props) => {
   const options = {
     ...props,
     id: props.id || APP_ID,
@@ -24,8 +24,3 @@ const RootDocument = (props: Props) => {
     </html>
   )
 }
-
-// vx-bot/NOTE: RootComponent
-const defineConfig = (props: Props) => <RootDocument {...props} />
-
-export { defineConfig, Provider }

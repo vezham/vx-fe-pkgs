@@ -12,31 +12,31 @@
   "type": "module",
   "exports": {
     "./vite": {
-      "@vx/fe-kit": "./src/lib/provider/vite/index.tsx",
+      "@vx/fe-kit": "./src/lib/provider/vite/index.ts",
       "types": "./dist/lib/provider/vite/index.d.ts",
       "import": "./dist/lib/provider/vite/index.js",
       "default": "./dist/lib/provider/vite/index.js"
     },
     "./tanstack": {
-      "@vx/fe-kit": "./src/lib/provider/tanstack/index.tsx",
+      "@vx/fe-kit": "./src/lib/provider/tanstack/index.ts",
       "types": "./dist/lib/provider/tanstack/index.d.ts",
       "import": "./dist/lib/provider/tanstack/index.js",
       "default": "./dist/lib/provider/tanstack/index.js"
     },
     "./tanstack-docs": {
-      "@vx/fe-kit": "./src/lib/provider/tanstack-docs/index.tsx",
+      "@vx/fe-kit": "./src/lib/provider/tanstack-docs/index.ts",
       "types": "./dist/lib/provider/tanstack-docs/index.d.ts",
       "import": "./dist/lib/provider/tanstack-docs/index.js",
       "default": "./dist/lib/provider/tanstack-docs/index.js"
     },
     "./next": {
-      "@vx/fe-kit": "./src/lib/provider/next/index.tsx",
+      "@vx/fe-kit": "./src/lib/provider/next/index.ts",
       "types": "./dist/lib/provider/next/index.d.ts",
       "import": "./dist/lib/provider/next/index.js",
       "default": "./dist/lib/provider/next/index.js"
     },
     "./router/tanstack": {
-      "@vx/fe-kit": "./src/lib/router/tanstack/index.tsx",
+      "@vx/fe-kit": "./src/lib/router/tanstack/index.ts",
       "types": "./dist/lib/router/tanstack/index.d.ts",
       "import": "./dist/lib/router/tanstack/index.js",
       "default": "./dist/lib/router/tanstack/index.js"

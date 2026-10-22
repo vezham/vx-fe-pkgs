@@ -1,4 +1,4 @@
-import { HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import { HeadContent, Scripts } from '@tanstack/react-router'
 
 import type { AppRuntime } from '@vezham/devtools'
 import { APP_ID, APP_NAME, APP_VER } from '@vezham/env/vite'
@@ -10,7 +10,7 @@ type RootDocumentProps = Props & {
   runtime?: AppRuntime
 }
 
-const RootDocument = ({
+export const RootDocument = ({
   runtime = 'tanstack',
   ...props
 }: RootDocumentProps) => {
@@ -36,11 +36,3 @@ const RootDocument = ({
     </html>
   )
 }
-
-const defineConfig = ({ children, ...props }: Props) => (
-  <RootDocument {...props}>{children ?? <Outlet />}</RootDocument>
-)
-
-const createRootComponent = (props: Props) => () => defineConfig(props)
-
-export { createRootComponent, defineConfig, Provider, RootDocument }

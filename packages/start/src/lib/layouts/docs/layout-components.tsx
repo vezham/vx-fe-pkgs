@@ -1,5 +1,4 @@
 import { createElement } from 'react'
-import type { ReactNode } from 'react'
 
 import { DocsLayout as DocsLayoutPrimitive } from '@vezham/docs-react/layouts/docs'
 import { DocsLayout as FluxLayoutPrimitive } from '@vezham/docs-react/layouts/flux'
@@ -7,7 +6,7 @@ import { GlassLayout } from '@vezham/docs-react/layouts/glass'
 import { HomeLayout } from '@vezham/docs-react/layouts/home'
 import { DocsLayout as NotebookLayoutPrimitive } from '@vezham/docs-react/layouts/notebook'
 
-import type { DocsLayoutProps, DocsShell } from './index'
+import type { DocsLayoutProps } from './types'
 
 type Props = Omit<DocsLayoutProps, 'shell'>
 
@@ -32,12 +31,12 @@ const getLayoutInputs = (props: Props) => {
   }
 }
 
-const HomeDocsLayout = (props: Props) => {
+export const HomeDocsLayout = (props: Props) => {
   const { base, children } = getLayoutInputs(props)
   return <HomeLayout {...base}>{children}</HomeLayout>
 }
 
-const GlassDocsLayout = (props: Props) => {
+export const GlassDocsLayout = (props: Props) => {
   const { base, children, tree } = getLayoutInputs(props)
   return (
     <GlassLayout {...base} tree={tree} tabs={{ transform: option => option }}>
@@ -46,7 +45,7 @@ const GlassDocsLayout = (props: Props) => {
   )
 }
 
-const FluxDocsLayout = (props: Props) => {
+export const FluxDocsLayout = (props: Props) => {
   const { base, children, tree } = getLayoutInputs(props)
   return (
     <FluxLayoutPrimitive
@@ -58,7 +57,7 @@ const FluxDocsLayout = (props: Props) => {
   )
 }
 
-const NotebookDocsLayout = (props: Props) => {
+export const NotebookDocsLayout = (props: Props) => {
   const { base, children, layoutProps, tabMode, tree } = getLayoutInputs(props)
   const notebookTabMode =
     tabMode === 'top' ? 'navbar' : tabMode === 'auto' ? 'sidebar' : tabMode
@@ -74,7 +73,7 @@ const NotebookDocsLayout = (props: Props) => {
   )
 }
 
-const StandardDocsLayout = (props: Props) => {
+export const StandardDocsLayout = (props: Props) => {
   const { base, children, layoutProps, tabMode, tree } = getLayoutInputs(props)
   const { sidebar, ...docsLayoutProps } = layoutProps
   const { banner, footer, ...sidebarProps } = sidebar ?? {}
@@ -97,12 +96,4 @@ const StandardDocsLayout = (props: Props) => {
       {children}
     </DocsLayoutPrimitive>
   )
-}
-
-export const layouts: Record<DocsShell, (props: Props) => ReactNode> = {
-  docs: StandardDocsLayout,
-  flux: FluxDocsLayout,
-  glass: GlassDocsLayout,
-  home: HomeDocsLayout,
-  notebook: NotebookDocsLayout
 }

@@ -1,31 +1,11 @@
 import {
   type AnyRoute,
-  Outlet,
   createRouter as createTanstackRouter
 } from '@tanstack/react-router'
 
-import { APP_ENV, APP_ID, APP_NAME, APP_VER, __DEV__ } from '@vezham/env/vite'
-import { ErrorPage, Loading, NotFound } from '@vezham/template/components'
+import { ErrorPage, Loading } from '@vezham/template/components'
 
-import { ClientDevtools } from '../../provider/shared/devtools'
-
-export const RouterRoot = () => (
-  <>
-    <Outlet />
-    <ClientDevtools
-      app={{
-        id: APP_ID,
-        name: APP_NAME,
-        version: APP_VER,
-        environment: APP_ENV,
-        runtime: 'vite'
-      }}
-      env={__DEV__}
-    />
-  </>
-)
-
-const DefaultNotFound = () => <NotFound app={APP_NAME} version={APP_VER} />
+import { DefaultNotFound } from './root'
 
 export const createRouter: typeof createTanstackRouter = options => {
   const notFoundComponent = options.defaultNotFoundComponent ?? DefaultNotFound
