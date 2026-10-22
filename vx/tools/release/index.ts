@@ -50,6 +50,13 @@ const main = async () => {
           `release_version=${version}\n`
         )
     },
+    reportPublish: ({ published, total }) => {
+      if (process.env.GITHUB_OUTPUT)
+        appendFileSync(
+          process.env.GITHUB_OUTPUT,
+          `release_published_count=${published ?? ''}\nrelease_publishable_count=${total}\n`
+        )
+    },
     generateMetadata: generateReleaseMetadata,
     changelog: releaseChangelog,
     publish: async options => {
@@ -57,9 +64,9 @@ const main = async () => {
       const client = new ReleaseClient({ projects: options.projects }, true)
       return client.releasePublish(options)
     },
-    getPublishProjects: async names => {
+    getPublishProjects: async () => {
       const graph = await createProjectGraphAsync()
-      return names.filter(
+      return Object.keys(graph.nodes).filter(
         name => graph.nodes[name]?.data.targets?.['nx-release-publish']
       )
     }

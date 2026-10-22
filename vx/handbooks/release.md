@@ -284,6 +284,15 @@ to the summary as `resolved_version`. Automatic selection displays the version
 with `(auto / detected)`, while increments display the resolved version and the
 requested increment. No version output is written when there are no changes.
 
+The runner also reports `release_published_count` and `release_publishable_count`.
+The shared action exposes them as `published_count` and `publishable_count`, and
+the workflow forwards both to the summary's **Packages published** row, such as
+`5/8`. The total includes every workspace project with an `nx-release-publish`
+target; only changed eligible projects are passed to publishing. The numerator
+counts successful Nx publish results, including already-published versions that
+Nx skips successfully. Dry runs and no-change runs report zero. If publishing
+throws before returning results, the numerator is unknown and displays `—/8`.
+
 The fixed workspace release train uses `releaseTag.strictPreid: false` so normal
 releases can resolve an existing alpha or beta tag even without a `preid` option.
 Nx's strict default otherwise searches only stable tags when no preid is given.

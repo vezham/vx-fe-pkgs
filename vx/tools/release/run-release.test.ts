@@ -12,11 +12,18 @@ const options: ReleaseOptions = {
 
 const fixture = () => {
   const calls: Array<{ operation: string; options: unknown }> = []
+  const reports: Array<{ published: number | undefined; total: number }> = []
   const api = {
     generateMetadata: async (names: string[]) => {
       calls.push({ operation: 'metadata', options: names })
     },
-    getPublishProjects: async (names: string[]) => names,
+    getPublishProjects: async () => ['react'],
+    reportPublish: (counts: {
+      published: number | undefined
+      total: number
+    }) => {
+      reports.push(counts)
+    },
     version: async (value: unknown) => {
       calls.push({ operation: 'version', options: value })
       return {
@@ -33,12 +40,14 @@ const fixture = () => {
     changelog: async (value: unknown) => {
       calls.push({ operation: 'changelog', options: value })
     },
-    publish: async (value: unknown) => {
+    publish: async (
+      value: unknown
+    ): Promise<Record<string, { code: number }>> => {
       calls.push({ operation: 'publish', options: value })
       return { react: { code: 0 } }
     }
   }
-  return { calls, api }
+  return { calls, api, reports }
 }
 
 test('releases in order and lets conventional commits select the version', async () => {
@@ -132,9 +141,10 @@ test('a failed changelog prevents publishing', async () => {
 })
 
 test('a failed package publish returns a failure exit code', async () => {
-  const { api } = fixture()
+  const { api, reports } = fixture()
   api.publish = async () => ({ react: { code: 1 } })
   assert.equal(await runRelease(options, api), 1)
+  assert.deepEqual(reports, [{ published: 0, total: 1 }])
 })
 
 test('metadata runs only for projects with a new version', async () => {
@@ -173,7 +183,7 @@ test('metadata failure prevents the release commit and publishing', async () => 
 })
 
 test('no changes skips changelog and publishing', async () => {
-  const { api, calls } = fixture()
+  const { api, calls, reports } = fixture()
   const unchanged = {
     ...api,
     reportVersion: (version: string) => {
@@ -192,6 +202,7 @@ test('no changes skips changelog and publishing', async () => {
   }
   assert.equal(await runRelease(options, unchanged), 0)
   assert.equal(calls.length, 0)
+  assert.deepEqual(reports, [{ published: 0, total: 1 }])
 })
 
 test('publishing uses only eligible projects', async () => {
@@ -204,11 +215,94 @@ test('publishing uses only eligible projects', async () => {
 })
 
 test('no eligible publish projects skips publishing after version and changelog', async () => {
-  const { api, calls } = fixture()
+  const { api, calls, reports } = fixture()
   api.getPublishProjects = async () => []
   assert.equal(await runRelease(options, api), 0)
   assert.deepEqual(
     calls.map(call => call.operation),
     ['version', 'metadata', 'changelog']
   )
+  assert.deepEqual(reports, [{ published: 0, total: 0 }])
+})
+
+test('the denominator includes publishable packages outside this release', async () => {
+  const { api, calls, reports } = fixture()
+  api.getPublishProjects = async () => ['react', 'hooks', 'utils']
+  assert.equal(await runRelease(options, api), 0)
+  assert.deepEqual((calls.at(-1)?.options as { projects: string[] }).projects, [
+    'react'
+  ])
+  assert.deepEqual(reports, [{ published: 1, total: 3 }])
+})
+
+test('unchanged publishable projects contribute only to the denominator', async () => {
+  const { api, calls, reports } = fixture()
+  const version = api.version
+  api.getPublishProjects = async () => ['react', 'utils']
+  api.version = async value => ({
+    ...(await version(value)),
+    projectsVersionData: {
+      react: {
+        currentVersion: '0.0.1',
+        newVersion: '0.0.2',
+        dependentProjects: []
+      },
+      utils: {
+        currentVersion: '0.0.1',
+        newVersion: null,
+        dependentProjects: []
+      }
+    }
+  })
+  assert.equal(await runRelease(options, api), 0)
+  assert.deepEqual((calls.at(-1)?.options as { projects: string[] }).projects, [
+    'react'
+  ])
+  assert.deepEqual(reports, [{ published: 1, total: 2 }])
+})
+
+test('partial publish failures count only successful selected projects', async () => {
+  const { api, reports } = fixture()
+  api.getPublishProjects = async () => ['react', 'hooks', 'utils']
+  api.version = async () => ({
+    workspaceVersion: '0.0.2',
+    projectsVersionData: {
+      react: {
+        currentVersion: '0.0.1',
+        newVersion: '0.0.2',
+        dependentProjects: []
+      },
+      hooks: {
+        currentVersion: '0.0.1',
+        newVersion: '0.0.2',
+        dependentProjects: []
+      }
+    }
+  })
+  api.publish = async () => ({ react: { code: 0 }, hooks: { code: 1 } })
+  assert.equal(await runRelease(options, api), 1)
+  assert.deepEqual(reports, [{ published: 1, total: 3 }])
+})
+
+test('dry runs report zero published packages with the full denominator', async () => {
+  const { api, reports } = fixture()
+  api.getPublishProjects = async () => ['react', 'hooks', 'utils']
+  assert.equal(await runRelease({ ...options, dryRun: true }, api), 0)
+  assert.deepEqual(reports, [{ published: 0, total: 3 }])
+})
+
+test('a publish exception reports an unknown numerator and preserves the total', async () => {
+  const { api, reports } = fixture()
+  api.publish = async () => {
+    throw new Error('publish interrupted')
+  }
+  await assert.rejects(runRelease(options, api), /publish interrupted/)
+  assert.deepEqual(reports, [{ published: undefined, total: 1 }])
+})
+
+test('missing publish results fail and do not count as published', async () => {
+  const { api, reports } = fixture()
+  api.publish = async () => ({})
+  assert.equal(await runRelease(options, api), 1)
+  assert.deepEqual(reports, [{ published: 0, total: 1 }])
 })

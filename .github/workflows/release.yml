@@ -50,6 +50,8 @@ jobs:
     timeout-minutes: 30
     outputs:
       version: ${{ steps.release.outputs.version }}
+      published_count: ${{ steps.release.outputs.published_count }}
+      publishable_count: ${{ steps.release.outputs.publishable_count }}
 
     steps:
       - name: 🔵 · 🔎 Set short SHA
@@ -125,5 +127,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ inputs.version }}
           resolved_version: ${{ needs.release.outputs.version }}
+          published_count: ${{ needs.release.outputs.published_count }}
+          publishable_count: ${{ needs.release.outputs.publishable_count }}
           args: ${{ format('{0} {1}', inputs.firstRelease && '--firstRelease' || '', inputs.dryRun && '--dryRun' || '') }}
           release_result: ${{ needs.release.result }}
