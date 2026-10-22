@@ -1,3 +1,13 @@
+## 26.0.0-alpha.7 (2026-10-22)
+
+### 🩹 Fixes
+
+- **config,react:** ship scoped package CSS ([531269c](https://github.com/vezham/vx-fe-pkgs/commit/531269c))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.6 (2026-10-22)
 
 ### 🚀 Features
