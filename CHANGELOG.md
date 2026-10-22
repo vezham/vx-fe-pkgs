@@ -1,3 +1,13 @@
+## 26.0.0-alpha.8 (2026-10-22)
+
+### 🚀 Features
+
+- **vx:** report publish counts ([e4300e4](https://github.com/vezham/vx-fe-pkgs/commit/e4300e4))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.7 (2026-10-22)
 
 ### 🩹 Fixes

@@ -4,7 +4,7 @@ core:
   id: vezham-playground-docs
   name: Vezham Playground Docs
   shortName: Playground Docs
-  version: 26.0.0-alpha.7
+  version: 26.0.0-alpha.8
   description: Single app to manage your Vezham Playground Docs
   publisher:
     name: Vezham Technologies Private Limited
