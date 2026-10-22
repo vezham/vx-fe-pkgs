@@ -4,7 +4,7 @@ core:
   id: vezham-mail
   name: Vezham Mail
   shortName: Mail
-  version: 26.0.0-alpha.5
+  version: 26.0.0-alpha.6
   description: Single app to manage your Vezham Mail
   publisher:
     name: Vezham Technologies Private Limited

@@ -1,3 +1,31 @@
+## 26.0.0-alpha.6 (2026-10-22)
+
+### 🚀 Features
+
+- **config:** unify Vite package presets ([d82c4f3](https://github.com/vezham/vx-fe-pkgs/commit/d82c4f3))
+- **vx:** publish package CSS sources ([f1ff5b9](https://github.com/vezham/vx-fe-pkgs/commit/f1ff5b9))
+
+### 🩹 Fixes
+
+- **vx:** honor package export boundaries ([c88c6df](https://github.com/vezham/vx-fe-pkgs/commit/c88c6df))
+
+### 💅 Refactors
+
+- **start:** split framework entry points ([956e666](https://github.com/vezham/vx-fe-pkgs/commit/956e666))
+- **workspace:** publish shared packages ([c739251](https://github.com/vezham/vx-fe-pkgs/commit/c739251))
+
+### 📖 Documentation
+
+- **vx:** update CI handbook versions ([e596dcb](https://github.com/vezham/vx-fe-pkgs/commit/e596dcb))
+
+### 🏡 Chore
+
+- **workspace:** align Nx deps and Node 24 ([fa9480c](https://github.com/vezham/vx-fe-pkgs/commit/fa9480c))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.5 (2026-10-21)
 
 ### 🚀 Features
