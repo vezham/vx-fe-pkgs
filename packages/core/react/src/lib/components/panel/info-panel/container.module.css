@@ -41,7 +41,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .panel,
+  .panel {
+    animation: none;
+  }
+
+  /* vx-bot/NOTE: A new closing animation must fire the event that collapses the panel. */
   .panel[data-state='closed'] {
     animation: panel-reduced 1ms linear both;
   }

@@ -211,6 +211,10 @@ Workspace CSS remains under `packages/vx/styles`. Public UI packages expose
 `dist/index.css` through their root `style` export and top-level `style` field.
 Import the package name from CSS; JavaScript imports retain their runtime exports.
 These stylesheets register the packages' compiled JavaScript with Tailwind.
+The shared library preset emits component CSS to `dist/index.css` and merges the
+authored stylesheet into that file. Preserve the generated scoped selectors and
+keyframes; replacing this output with only `@source` directives breaks panel
+animations and sizing in consumers of the built package.
 The docs runtime uses `@vezham/start/styles/docs` for docs layouts and pages.
 Keep source paths inside each package's stylesheet rather than referring to
 workspace source directories from shared CSS. CSS exports remain side effects;

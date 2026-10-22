@@ -1,4 +1,10 @@
-import { cpSync, existsSync, globSync, readFileSync } from 'node:fs'
+import {
+  cpSync,
+  existsSync,
+  globSync,
+  readFileSync,
+  writeFileSync
+} from 'node:fs'
 import path from 'node:path'
 import { mergeConfig } from 'vite'
 
@@ -40,6 +46,7 @@ export const defineConfig = (overrides: ViteConfigOverrides = {}) =>
       typeof overrides === 'function' ? await overrides(env) : overrides
     const root = path.resolve(config.root ?? process.cwd())
     const entries = getPackageEntries(root)
+    const outDir = path.resolve(root, config.build?.outDir ?? 'dist')
     return mergeConfig(
       {
         plugins: [
@@ -49,11 +56,17 @@ export const defineConfig = (overrides: ViteConfigOverrides = {}) =>
               for (const file of globSync('src/**/*.{html,css}', {
                 cwd: root
               })) {
-                cpSync(
-                  path.join(root, file),
-                  path.join(root, file.replace(/^src\//, 'dist/')),
-                  { recursive: true }
-                )
+                const source = path.join(root, file)
+                const target = path.join(outDir, file.replace(/^src\//, ''))
+                if (file.endsWith('.css') && existsSync(target)) {
+                  // vx-bot/NOTE: Keep extracted component CSS alongside the authored Tailwind sources.
+                  writeFileSync(
+                    target,
+                    `${readFileSync(source, 'utf8')}\n${readFileSync(target, 'utf8')}`
+                  )
+                } else {
+                  cpSync(source, target, { recursive: true })
+                }
               }
             }
           }
@@ -62,6 +75,7 @@ export const defineConfig = (overrides: ViteConfigOverrides = {}) =>
           minify: false,
           lib: {
             entry: entries,
+            cssFileName: 'index',
             fileName: (_format: string, name: string) => `${name}.js`
           },
           rolldownOptions: {
