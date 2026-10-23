@@ -3,9 +3,11 @@ import { type ReactNode, useState } from 'react'
 import {
   AltArrowLeft,
   AltArrowRight,
+  Bell,
   CheckRead,
   Logout2 as LogoutIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  VezhamTamizhi
 } from '@vezham/icons-react'
 import {
   Avatar,
@@ -42,6 +44,13 @@ type Props = {
   onLogout: () => void
   onProfile?: () => void
   onPreferences?: () => void
+  showAI?: boolean
+  showControlCenter?: boolean
+  showNotifications?: boolean
+  notificationCount?: number
+  onAI?: () => void
+  onControlCenter?: () => void
+  onNotifications?: () => void
 }
 
 const StatusVisual = ({ status }: { status: UserStatusOption }) => {
@@ -144,7 +153,19 @@ const useAccountSections = (user: UserInfo) => {
   return { currentStatus, tooltipText, accountSections }
 }
 
-const UserMenu = ({ user, onLogout, onProfile, onPreferences }: Props) => {
+const UserMenu = ({
+  user,
+  onLogout,
+  onProfile,
+  onPreferences,
+  showAI = false,
+  showControlCenter = false,
+  showNotifications = false,
+  notificationCount = 0,
+  onAI,
+  onControlCenter,
+  onNotifications
+}: Props) => {
   const small = useMediaQuery(APPLICATION_MENU_SHEET_MEDIA_QUERY, {
     initializeWithValue: false
   })
@@ -160,6 +181,125 @@ const UserMenu = ({ user, onLogout, onProfile, onPreferences }: Props) => {
     setOpen(value)
     if (!value) setSection(null)
   }
+  const closeAndRun = (action?: () => void) => {
+    setOpen(false)
+    action?.()
+  }
+  const compactActions = [
+    showControlCenter
+      ? {
+          label: 'Control center',
+          icon: <SettingsIcon size={24} aria-hidden="true" />,
+          onPress: onControlCenter
+        }
+      : null,
+    showNotifications
+      ? {
+          label: 'Notifications',
+          icon: (
+            <Badge.Anchor>
+              <Bell size={24} aria-hidden="true" />
+              {notificationCount > 0 ? (
+                <Badge
+                  content={String(notificationCount)}
+                  color="danger"
+                  size="sm"
+                />
+              ) : null}
+            </Badge.Anchor>
+          ),
+          onPress: onNotifications
+        }
+      : null,
+    showAI
+      ? {
+          label: 'Tamizhi AI',
+          icon: <VezhamTamizhi size={24} aria-hidden="true" />,
+          onPress: onAI
+        }
+      : null
+  ].filter((action): action is NonNullable<typeof action> => action !== null)
+  const compactContent = (
+    <div className="flex flex-col items-center gap-5 py-2">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <Badge.Anchor>
+          <Avatar className="size-20">
+            {user.avatar ? (
+              <Avatar.Image src={user.avatar} alt={user.name} />
+            ) : null}
+            <Avatar.Fallback className="text-xl">
+              {user.name?.[0]}
+            </Avatar.Fallback>
+          </Avatar>
+          <Badge
+            placement="bottom-right"
+            size="sm"
+            className="border-surface flex items-center justify-center border-2">
+            <StatusVisual status={currentStatus} />
+          </Badge>
+        </Badge.Anchor>
+        <span className="text-base font-semibold">{user.name}</span>
+        <span className="text-muted flex items-center gap-1 text-sm">
+          <StatusVisual status={currentStatus} />
+          {currentStatus.label}
+        </span>
+      </div>
+
+      {compactActions.length > 0 ? (
+        <div
+          className="flex items-center justify-center gap-2"
+          role="group"
+          aria-label="Account actions">
+          {compactActions.map(action => (
+            <Tooltip key={action.label} delay={0}>
+              <Tooltip.Trigger>
+                <Button
+                  aria-label={action.label}
+                  isIconOnly
+                  size="lg"
+                  variant="ghost"
+                  onPress={action.onPress}>
+                  {action.icon}
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content placement="top">{action.label}</Tooltip.Content>
+            </Tooltip>
+          ))}
+        </div>
+      ) : null}
+
+      <Separator className="self-stretch" />
+      <div className="flex w-full flex-col gap-1 p-2">
+        {accountSections.map(item => (
+          <Button
+            key={item.id}
+            variant="ghost"
+            className="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
+            onPress={() => setSection(item.id)}>
+            <span className="min-w-0 flex-1 truncate text-start">
+              {item.label}
+            </span>
+            <AltArrowRight size={16} aria-hidden="true" />
+          </Button>
+        ))}
+        <Separator />
+        <Button
+          variant="ghost"
+          className="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
+          onPress={() => closeAndRun(onPreferences)}>
+          <SettingsIcon size={18} aria-hidden="true" />
+          Preferences
+        </Button>
+        <Button
+          variant="ghost"
+          className="text-danger h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
+          onPress={() => closeAndRun(onLogout)}>
+          <LogoutIcon size={18} aria-hidden="true" />
+          Logout
+        </Button>
+      </div>
+    </div>
+  )
   const Trigger = small ? Button : Dropdown.Trigger
   const content = (
     <>
@@ -187,43 +327,7 @@ const UserMenu = ({ user, onLogout, onProfile, onPreferences }: Props) => {
 
       <Separator />
 
-      {small ? (
-        <div className="flex flex-col gap-1 p-2">
-          {accountSections.map(item => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
-              onPress={() => setSection(item.id)}>
-              <span className="min-w-0 flex-1 truncate text-start">
-                {item.label}
-              </span>
-              <AltArrowRight size={16} aria-hidden="true" />
-            </Button>
-          ))}
-          <Separator />
-          <Button
-            variant="ghost"
-            className="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
-            onPress={() => {
-              setOpen(false)
-              onPreferences?.()
-            }}>
-            <SettingsIcon size={18} aria-hidden="true" />
-            Preferences
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-danger h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
-            onPress={() => {
-              setOpen(false)
-              onLogout()
-            }}>
-            <LogoutIcon size={18} aria-hidden="true" />
-            Logout
-          </Button>
-        </div>
-      ) : (
+      {small ? null : (
         <Dropdown.Menu aria-label="Account actions">
           {accountSections.map(item => (
             <Dropdown.SubmenuTrigger key={item.id}>
@@ -344,7 +448,7 @@ const UserMenu = ({ user, onLogout, onProfile, onPreferences }: Props) => {
             ))}
           </div>
         ) : (
-          content
+          compactContent
         )}
       </MenuSheet>
     </>

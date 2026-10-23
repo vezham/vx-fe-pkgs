@@ -1,4 +1,11 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within
+} from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { UserProvider } from '../../../../store/users/useUserStore'
@@ -94,6 +101,47 @@ describe('ControlCenter', () => {
       </UserProvider>
     )
     expect(screen.queryByRole('button', { name: 'Control center' })).toBeNull()
+  })
+
+  it('places compact account actions inside the user sheet', async () => {
+    viewport.compact = true
+    render(
+      <UserProvider>
+        <Footer
+          user={{ id: 'guest', name: 'Guest' }}
+          showAI
+          showControlCenter
+          showNotifications
+        />
+      </UserProvider>
+    )
+
+    expect(
+      screen.queryByRole('button', { name: 'Open footer actions' })
+    ).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Open Guest menu' }))
+    const accountSheet = await screen.findByRole('dialog', { name: 'Account' })
+    expect(screen.getByText('Guest')).toBeVisible()
+    expect(screen.getAllByText('Available').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Control center' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Notifications' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Tamizhi AI' })).toBeVisible()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Control center' }))
+    const controlCenterSheet = await screen.findByRole('dialog', {
+      name: 'Control Center'
+    })
+    fireEvent.click(
+      within(controlCenterSheet).getByRole('button', {
+        name: 'Close Control Center'
+      })
+    )
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('dialog', { name: 'Control Center' })
+      ).toBeNull()
+    )
+    expect(accountSheet).toBeVisible()
   })
   it('renders an app-provided control center once in the footer', async () => {
     render(

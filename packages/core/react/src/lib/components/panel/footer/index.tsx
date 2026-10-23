@@ -56,7 +56,7 @@ const CompactActions = ({
   showControlCenter,
   onControlCenter,
   showNotifications,
-  notificationCount,
+  notificationCount = 0,
   onAI,
   onNotificationsClick
 }: Omit<FooterActionsProps, 'user' | 'showUserInfo' | 'onUserClick'> & {
@@ -83,7 +83,7 @@ const CompactActions = ({
             <Dropdown.Item onPress={onNotificationsClick}>
               <BellIcon size={20} aria-hidden="true" />
               <span className="flex-1">Notifications</span>
-              {notificationCount && notificationCount > 0 ? (
+              {notificationCount > 0 ? (
                 <Badge
                   content={String(notificationCount)}
                   color="danger"
@@ -167,26 +167,33 @@ const Footer = ({
           </FooterControlCenterContext.Provider>
         )}
 
-        <div className="md:hidden">
-          <CompactActions
-            showControlCenter={showControlCenter}
-            onControlCenter={() => setControlCenterOpen(true)}
-            showAI={showAI}
-            showNotifications={showNotifications}
-            notificationCount={notificationCount}
-            onAI={onAI}
-            onNotificationsClick={onNotificationsClick}
-          />
-        </div>
-
         {showUserInfo ? (
           <UserMenu
             user={user}
+            showAI={showAI}
+            showControlCenter={showControlCenter}
+            showNotifications={showNotifications}
+            notificationCount={notificationCount}
+            onAI={onAI}
+            onControlCenter={() => setControlCenterOpen(true)}
+            onNotifications={onNotificationsClick}
             onProfile={() => onUserClick?.(user, 'profiles')}
             onPreferences={() => onUserClick?.(user, 'account')}
             onLogout={clearUser}
           />
-        ) : null}
+        ) : (
+          <div className="md:hidden">
+            <CompactActions
+              showControlCenter={showControlCenter}
+              onControlCenter={() => setControlCenterOpen(true)}
+              showAI={showAI}
+              showNotifications={showNotifications}
+              notificationCount={notificationCount}
+              onAI={onAI}
+              onNotificationsClick={onNotificationsClick}
+            />
+          </div>
+        )}
 
         {toolbarAction && (
           <Surface variant="transparent" className="md:hidden">
