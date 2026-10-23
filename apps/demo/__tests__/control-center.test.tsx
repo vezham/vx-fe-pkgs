@@ -5,6 +5,7 @@ import {
   createRoute,
   createRouter
 } from '@tanstack/react-router'
+import '@testing-library/jest-dom/vitest'
 import {
   act,
   fireEvent,
@@ -81,10 +82,10 @@ describe('Demo Control Center', () => {
           )
       }))
       await renderDemoLayout()
-      const userMenuTrigger = mobile
-        ? await screen.findByRole('button', { name: 'Open Arya Chan menu' })
-        : null
       if (mobile) {
+        const userMenuTrigger = await screen.findByRole('button', {
+          name: 'Open Arya Chan menu'
+        })
         expect(
           screen.queryByRole('button', { name: 'Open footer actions' })
         ).toBeNull()
