@@ -75,22 +75,33 @@ describe('Demo Control Center', () => {
       vi.spyOn(window, 'matchMedia').mockImplementation(query => ({
         ...matchMedia(query),
         matches:
-          mobile && ['(max-width: 767px)', '(width < 768px)'].includes(query)
+          mobile &&
+          ['(max-width: 767px)', '(width < 768px)', '(width < 640px)'].includes(
+            query
+          )
       }))
       await renderDemoLayout()
-      const trigger = await screen.findByRole('button', {
-        name: mobile ? 'Open footer actions' : 'Control center'
-      })
-      if (mobile)
+      const userMenuTrigger = mobile
+        ? await screen.findByRole('button', { name: 'Open Arya Chan menu' })
+        : null
+      if (mobile) {
         expect(
-          screen.queryByRole('button', { name: 'Control center' })
+          screen.queryByRole('button', { name: 'Open footer actions' })
         ).toBeNull()
+        fireEvent.click(userMenuTrigger)
+      }
+      let accountSheet: HTMLElement | undefined
+      let trigger: HTMLElement
+      if (mobile) {
+        accountSheet = await screen.findByRole('dialog', { name: 'Account' })
+        trigger = within(accountSheet).getByRole('button', {
+          name: 'Control center'
+        })
+      } else {
+        trigger = await screen.findByRole('button', { name: 'Control center' })
+      }
       act(() => trigger.focus())
       fireEvent.click(trigger)
-      if (mobile)
-        fireEvent.click(
-          await screen.findByRole('menuitem', { name: 'Control center' })
-        )
       const dialog = await screen.findByRole('dialog', {
         name: 'Control Center'
       })
@@ -177,7 +188,8 @@ describe('Demo Control Center', () => {
           screen.queryByRole('dialog', { name: 'Control Center' })
         ).toBeNull()
       )
-      await waitFor(() => expect(document.activeElement).toBe(trigger))
+      if (accountSheet) expect(accountSheet).toBeVisible()
+      else await waitFor(() => expect(document.activeElement).toBe(trigger))
     },
     15000
   )
