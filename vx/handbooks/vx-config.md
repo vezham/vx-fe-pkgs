@@ -439,6 +439,8 @@ export default defineConfig({
 
 - app root and Vite cache directory
 - `V_` env prefix
+- SSR transformation of `@vezham/start` and `@vezham/env` so preserved
+  `import.meta.env` expressions are resolved by the consuming app
 - dev server host/port
 - preview host/port using `PRE_PORT`, then `PORT`
 - prerender preview override when `TSS_PRERENDERING=true`
@@ -448,6 +450,9 @@ export default defineConfig({
 - app build defaults
 
 App-local Vite configs should only keep app-specific plugins and dedupe entries.
+The CDN and docs presets inherit these SSR defaults. Consumer `ssr.noExternal`
+arrays are merged with the defaults. Apps using an older published config version
+must retain their local SSR entries until upgrading to a release with this default.
 
 ---
 

@@ -59,6 +59,19 @@ describe('Vite config composition', () => {
         alias: { 'react/jsx-dev-runtime': '/custom-runtime.js' }
       })
       expect(config.preview?.port).toBe(4321)
+      expect(config.ssr?.noExternal).toEqual(['@vezham/start', '@vezham/env'])
     }
   )
+
+  it('merges app SSR dependencies with consumer additions', async () => {
+    const config = await resolveConfig(
+      defineAppConfig({ ssr: { noExternal: ['consumer-runtime'] } })
+    )
+
+    expect(config.ssr?.noExternal).toEqual([
+      '@vezham/start',
+      '@vezham/env',
+      'consumer-runtime'
+    ])
+  })
 })

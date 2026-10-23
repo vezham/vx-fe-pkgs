@@ -94,6 +94,7 @@ const getReactPackageDir = (projectRoot = process.cwd()) => {
 const getViteDefaults = (projectRoot = process.cwd()): ViteConfig => ({
   ...getViteConfig(projectRoot),
   envPrefix: ['V_'],
+  ssr: { noExternal: ['@vezham/start', '@vezham/env'] },
   server: getServerConfig(),
   resolve: {
     alias: getTsConfigPathAliases(projectRoot),
