@@ -1,4 +1,4 @@
-import { type DragEvent, type ReactNode, useId, useState } from 'react'
+import { Fragment, type DragEvent, type ReactNode, useId, useState } from 'react'
 
 import {
   Add,
@@ -10,13 +10,23 @@ import {
 import { Button, Drawer, SearchField, Surface, Tooltip } from '@vezham/react-v3'
 
 import type { EditorState } from '../../components/panel/footer/control-center/editor'
+import { controlCenterVariants } from '../../components/panel/footer/control-center/variant'
+import {
+  type WidgetSize,
+  notificationCenterWidgetVariants
+} from '../../components/panel/footer/notification-center/widget-tiles'
 
 type GalleryShape =
   'small' | 'medium' | 'large' | 'compact' | 'standard' | 'wide' | 'full'
+type ControlSpan = Extract<
+  GalleryShape,
+  'compact' | 'standard' | 'wide' | 'full'
+>
 
 type GalleryTile = {
   id: string
   label: string
+  description?: string
   category: string
   shape: GalleryShape
   suggestionGroup?: string
@@ -40,10 +50,14 @@ type Props = {
   onDone: () => void
 }
 
+const controlCenterStyles = controlCenterVariants()
+const widgetStyles = notificationCenterWidgetVariants()
+const controlSpan = (shape: GalleryShape) => shape as ControlSpan
+const widgetSize = (shape: GalleryShape) => shape as WidgetSize
+
 const useGallery = ({ kind, tiles, editor }: Props) => {
   const dragInstructionsId = useId()
   const [draggedId, setDraggedId] = useState<string | null>(null)
-  const [draggedHeight, setDraggedHeight] = useState(0)
   const [dropTarget, setDropTarget] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState('')
   const [query, setQuery] = useState('')
@@ -102,18 +116,12 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
   const finishDrag = () => {
     setDraggedId(null)
     setDropTarget(null)
-    setDraggedHeight(0)
   }
   const startDrag = (event: DragEvent, id: string, span?: GalleryShape) => {
     event.dataTransfer.setData('application/x-vx-settings-tile', id)
     if (span)
       event.dataTransfer.setData('application/x-vx-settings-tile-span', span)
     event.dataTransfer.effectAllowed = 'move'
-    const currentTile = event.currentTarget as HTMLElement
-    const content = currentTile.hasAttribute('data-preview-tile')
-      ? currentTile
-      : currentTile.querySelector<HTMLElement>('[inert]')
-    setDraggedHeight(content?.getBoundingClientRect().height ?? 64)
     setDraggedId(id)
   }
   const moveTile = (id: string, offset: number) => {
@@ -192,31 +200,20 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
   ))
   const tileSpan = (tile: GalleryTile) =>
     kind === 'widgets'
-      ? tile.shape === 'large'
-        ? 'col-span-2 row-span-2'
-        : tile.shape === 'medium'
-          ? 'col-span-2'
-          : ''
-      : tile.shape === 'compact'
-        ? 'col-span-1 h-14 w-14 justify-self-center'
-        : tile.shape === 'standard'
-          ? 'col-span-2'
-          : tile.shape === 'wide'
-            ? 'col-span-2 min-[420px]:col-span-3'
-            : 'col-span-2 min-[420px]:col-span-3 sm:col-span-4'
+      ? widgetStyles.tile({ size: widgetSize(tile.shape) })
+      : controlCenterStyles.tileContainer({ span: controlSpan(tile.shape) })
   const draggedTile = tiles.find(tile => tile.id === draggedId)
   const blankWidget = (tile: GalleryTile) => (
     <Surface
       variant="transparent"
       aria-hidden="true"
-      className={`bg-surface-secondary border-border w-full rounded-2xl border ${tile.shape === 'large' ? 'aspect-square' : tile.shape === 'medium' ? 'aspect-[2/1]' : 'aspect-square'}`}>
+      className={`bg-surface-secondary border-border w-full rounded-2xl border ${widgetStyles.preview({ size: widgetSize(tile.shape) })}`}>
       {null}
     </Surface>
   )
   return {
     dragInstructionsId,
     draggedId,
-    draggedHeight,
     dropTarget,
     announcement,
     query,
@@ -257,7 +254,6 @@ const GalleryPreview = ({
   showPreview,
   visible,
   draggedId,
-  draggedHeight,
   dropTarget,
   itemFor,
   startDrag,
@@ -272,139 +268,177 @@ const GalleryPreview = ({
 }: GalleryContext) => (
   <aside
     aria-label={`Current ${kind}`}
-    className={`${showPreview ? 'flex' : 'hidden xl:flex'} border-border min-h-0 min-w-0 flex-1 flex-col p-5 xl:w-96 xl:flex-none xl:border-l`}
-    onDragOver={event => {
-      if (!event.dataTransfer.types.includes('application/x-vx-settings-tile'))
-        return
-      event.preventDefault()
-      event.dataTransfer.dropEffect = 'move'
-      setDropTarget('empty')
-    }}
-    onDragLeave={event => {
-      if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-        setDropTarget(null)
-    }}
-    onDrop={event => dropTile(event)}>
+    className={`${showPreview ? 'flex' : 'hidden xl:flex'} border-border min-h-0 min-w-0 flex-1 flex-col p-5 xl:w-96 xl:flex-none xl:border-l`}>
     <div className="mb-4 flex items-center justify-between gap-3">
       <h2 className="text-sm font-semibold">
         {kind === 'widgets' ? 'Notification Center' : 'Control Center'}
       </h2>
       <span className="text-muted text-xs">{visible.length} added</span>
     </div>
-    <div className="@container mx-auto min-h-0 w-full max-w-[252px] flex-1 overflow-y-auto px-3 pt-4 pb-4">
+    <div
+      data-preview-drop-area
+      className={`relative ${
+        kind === 'widgets'
+          ? widgetStyles.galleryPreview()
+          : controlCenterStyles.galleryPreview()
+      }`}
+      onDragOver={event => {
+        if (
+          !event.dataTransfer.types.includes('application/x-vx-settings-tile')
+        )
+          return
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+        setDropTarget('empty')
+      }}
+      onDragLeave={event => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+          setDropTarget(null)
+      }}
+      onDrop={event => dropTile(event)}>
       {visible.length === 0 && (
         <p className="text-muted py-8 text-center text-sm">
           No {kind} added. Choose a tile from the gallery.
         </p>
       )}
       <div
-        className={`grid gap-4 ${kind === 'widgets' ? 'auto-rows-[calc((100cqw-1rem)/2)] grid-cols-2' : 'grid-cols-2 items-start min-[420px]:grid-cols-3 sm:grid-cols-4'}`}>
-        {visible.map(tile => {
+        className={kind === 'widgets' ? widgetStyles.grid() : controlCenterStyles.home()}>
+        {visible.map((tile, index) => {
           const editable = itemFor(tile.id)?.editable
+          const nextTile = visible[index + 1]
+          const emptyWidgetSlot =
+            kind === 'widgets' &&
+            draggedTile !== undefined &&
+            tile.shape === 'small' &&
+            nextTile?.shape !== 'small'
           return (
-            <div
-              key={tile.id}
-              data-preview-tile={tile.id}
-              draggable={editable}
-              role="group"
-              aria-label={tile.label}
-              onDragStart={event => startDrag(event, tile.id)}
-              onDragEnd={finishDrag}
-              onDragOver={event => {
-                if (
-                  !event.dataTransfer.types.includes(
-                    'application/x-vx-settings-tile'
-                  )
-                )
-                  return
-                event.preventDefault()
-                event.stopPropagation()
-                event.dataTransfer.dropEffect = 'move'
-                setDropTarget(tile.id === draggedId ? null : tile.id)
-              }}
-              onDragLeave={event => {
-                if (
-                  !event.currentTarget.contains(
-                    event.relatedTarget as Node | null
-                  )
-                ) {
-                  setDropTarget(current =>
-                    current === tile.id ? null : current
-                  )
-                }
-              }}
-              onDrop={event => dropTile(event, tile.id)}
-              data-dragging={draggedId === tile.id || undefined}
-              data-drop-target={dropTarget === tile.id || undefined}
-              className={`group focus-visible:outline-focus data-[drop-target]:bg-accent-soft data-[drop-target]:outline-accent/40 group-focus-within:[&>div>*]:ring-foreground/35 group-hover:[&>div>*]:ring-foreground/35 relative min-w-0 overflow-visible rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 data-[dragging]:opacity-40 data-[drop-target]:outline data-[drop-target]:outline-offset-2 [&>div>*]:transition-[box-shadow] group-focus-within:[&>div>*]:ring-1 group-hover:[&>div>*]:ring-1 ${editable ? 'cursor-grab active:cursor-grabbing' : ''} ${tileSpan(tile)}`}>
+            <Fragment key={tile.id}>
               <div
-                inert
-                className={
-                  kind === 'widgets'
-                    ? 'pointer-events-none h-full [&>div]:aspect-auto [&>div]:h-full'
-                    : 'pointer-events-none [&>button]:w-full'
-                }>
-                {kind === 'widgets'
-                  ? (tile.preview ?? blankWidget(tile))
-                  : tile.preview}
-              </div>
-              {editable && (
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="ghost"
-                  aria-label={`Reorder ${tile.label}`}
-                  aria-roledescription="reorderable tile"
-                  aria-describedby={dragInstructionsId}
-                  className="focus-visible:outline-focus absolute inset-0 h-auto w-auto min-w-0 cursor-grab rounded-[inherit] bg-transparent! p-0 hover:bg-transparent! focus-visible:outline-2 focus-visible:outline-offset-2 active:cursor-grabbing active:bg-transparent!"
-                  onKeyDown={event => {
-                    if (
-                      [
-                        'ArrowUp',
-                        'ArrowLeft',
-                        'ArrowDown',
-                        'ArrowRight'
-                      ].includes(event.key)
-                    ) {
-                      event.preventDefault()
-                      moveTile(
-                        tile.id,
-                        event.key === 'ArrowUp' || event.key === 'ArrowLeft'
-                          ? -1
-                          : 1
-                      )
-                    }
-                  }}>
-                  <span className="sr-only">Reorder {tile.label}</span>
-                </Button>
-              )}
-              {editable && (
-                <Tooltip>
+                data-preview-tile={tile.id}
+                draggable={editable}
+                role="group"
+                aria-label={tile.label}
+                onDragStart={event => startDrag(event, tile.id)}
+                onDragEnd={finishDrag}
+                onDragOver={event => {
+                  if (
+                    !event.dataTransfer.types.includes(
+                      'application/x-vx-settings-tile'
+                    )
+                  )
+                    return
+                  event.preventDefault()
+                  event.stopPropagation()
+                  event.dataTransfer.dropEffect = 'move'
+                  setDropTarget(tile.id === draggedId ? null : tile.id)
+                }}
+                onDragLeave={event => {
+                  if (
+                    !event.currentTarget.contains(
+                      event.relatedTarget as Node | null
+                    )
+                  ) {
+                    setDropTarget(current =>
+                      current === tile.id ? null : current
+                    )
+                  }
+                }}
+                onDrop={event => dropTile(event, tile.id)}
+                data-dragging={draggedId === tile.id || undefined}
+                data-drop-target={dropTarget === tile.id || undefined}
+                className={`group focus-visible:outline-focus data-[drop-target]:bg-accent-soft data-[drop-target]:outline-accent/40 group-focus-within:[&>div>*]:ring-foreground/35 group-hover:[&>div>*]:ring-foreground/35 relative min-w-0 overflow-visible rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 data-[dragging]:opacity-40 data-[drop-target]:outline data-[drop-target]:outline-offset-2 [&>div>*]:transition-[box-shadow] group-focus-within:[&>div>*]:ring-1 group-hover:[&>div>*]:ring-1 ${editable ? 'cursor-grab active:cursor-grabbing' : ''} ${tileSpan(tile)}`}>
+                <div
+                  inert
+                  className={
+                    kind === 'widgets'
+                      ? 'pointer-events-none h-full [&>div]:aspect-auto [&>div]:h-full'
+                      : 'pointer-events-none [&>button]:w-full'
+                  }>
+                  {kind === 'widgets'
+                    ? (tile.preview ?? blankWidget(tile))
+                    : tile.preview}
+                </div>
+                {editable && (
                   <Button
                     isIconOnly
                     size="sm"
-                    variant="secondary"
-                    className="bg-danger! text-danger-foreground hover:bg-danger/90! absolute -top-1 -left-1 z-20 size-6 min-w-0 rounded-full p-0 opacity-0 shadow-md transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
-                    aria-label={`Remove ${tile.label}`}
-                    onPress={() => editor.onVisibilityChange(tile.id, false)}>
-                    <Minus aria-hidden="true" className="size-3" />
+                    variant="ghost"
+                    aria-label={`Reorder ${tile.label}`}
+                    aria-roledescription="reorderable tile"
+                    aria-describedby={dragInstructionsId}
+                    className="focus-visible:outline-focus absolute inset-0 h-auto w-auto min-w-0 cursor-grab rounded-[inherit] bg-transparent! p-0 hover:bg-transparent! focus-visible:outline-2 focus-visible:outline-offset-2 active:cursor-grabbing active:bg-transparent!"
+                    onKeyDown={event => {
+                      if (
+                        [
+                          'ArrowUp',
+                          'ArrowLeft',
+                          'ArrowDown',
+                          'ArrowRight'
+                        ].includes(event.key)
+                      ) {
+                        event.preventDefault()
+                        moveTile(
+                          tile.id,
+                          event.key === 'ArrowUp' || event.key === 'ArrowLeft'
+                            ? -1
+                            : 1
+                        )
+                      }
+                    }}>
+                    <span className="sr-only">Reorder {tile.label}</span>
                   </Button>
-                  <Tooltip.Content>Remove {tile.label}</Tooltip.Content>
-                </Tooltip>
+                )}
+                {editable && (
+                  <Tooltip>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="secondary"
+                      className="border-danger text-danger hover:bg-danger/10! absolute -top-1 -left-1 z-20 size-6! min-w-0 rounded-full border bg-transparent! p-0 opacity-0 shadow-md transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+                      aria-label={`Remove ${tile.label}`}
+                      onPress={() => editor.onVisibilityChange(tile.id, false)}>
+                      <Minus aria-hidden="true" className="size-3" />
+                    </Button>
+                    <Tooltip.Content>Remove {tile.label}</Tooltip.Content>
+                  </Tooltip>
+                )}
+              </div>
+              {emptyWidgetSlot && (
+                <div
+                  data-preview-empty-slot={tile.id}
+                  data-drop-target={
+                    dropTarget === `after:${tile.id}` || undefined
+                  }
+                  onDragOver={event => {
+                    if (
+                      !event.dataTransfer.types.includes(
+                        'application/x-vx-settings-tile'
+                      )
+                    )
+                      return
+                    event.preventDefault()
+                    event.stopPropagation()
+                    event.dataTransfer.dropEffect = 'move'
+                    setDropTarget(`after:${tile.id}`)
+                  }}
+                  onDragLeave={event => {
+                    if (
+                      !event.currentTarget.contains(
+                        event.relatedTarget as Node | null
+                      )
+                    ) {
+                      setDropTarget(current =>
+                        current === `after:${tile.id}` ? null : current
+                      )
+                    }
+                  }}
+                  onDrop={event => dropTile(event, nextTile?.id)}
+                  className="aspect-square"
+                />
               )}
-            </div>
+            </Fragment>
           )
         })}
-        {draggedTile && (
-          <div
-            data-preview-empty-drop
-            aria-label={`Drop ${draggedTile.label} here`}
-            data-drop-target={dropTarget === 'empty' || undefined}
-            className={`border-border text-muted data-[drop-target]:border-accent/40 data-[drop-target]:bg-accent-soft flex items-center justify-center rounded-2xl border border-dashed text-xs ${tileSpan(draggedTile)}`}
-            style={kind === 'controls' ? { height: draggedHeight } : undefined}>
-            Drop here
-          </div>
-        )}
       </div>
     </div>
     <Button size="sm" variant="ghost" onPress={editor.onReset}>
@@ -432,20 +466,16 @@ const GalleryAvailable = ({
     const isCompactControl = kind === 'controls' && tile.shape === 'compact'
     const size =
       kind === 'controls'
-        ? tile.shape === 'compact'
-          ? 'w-24 shrink-0'
-          : tile.shape === 'wide'
-            ? 'w-full max-w-[200px] shrink-0'
-            : 'w-full max-w-[252px] shrink-0'
-        : tile.shape === 'small'
-          ? 'w-24 shrink-0'
-          : tile.shape === 'medium'
-            ? 'w-full max-w-[200px] shrink-0'
-            : 'w-full max-w-[252px] shrink-0'
+        ? controlCenterStyles.gallerySuggestion({
+            span: controlSpan(tile.shape)
+          })
+        : widgetStyles.gallerySuggestion({ size: widgetSize(tile.shape) })
     return (
       <div
         key={tile.suggestionKey}
         data-gallery-tile={tile.suggestionKey}
+        data-control-span={kind === 'controls' ? tile.shape : undefined}
+        data-widget-size={kind === 'widgets' ? tile.shape : undefined}
         data-added={isAdded || undefined}
         draggable={item?.editable}
         onDragStart={event =>
@@ -456,10 +486,10 @@ const GalleryAvailable = ({
           )
         }
         onDragEnd={finishDrag}
-        className={`group relative min-w-0 justify-self-center transition-opacity ${isAdded ? 'opacity-50' : ''} ${size}`}>
+        className={`group relative min-w-0 justify-self-center transition-opacity ${kind === 'widgets' ? 'grid h-full self-stretch grid-rows-[minmax(0,1fr)_auto]' : ''} ${isAdded ? 'opacity-50' : ''} ${size}`}>
         <div
           inert
-          className={`pointer-events-none flex items-center justify-center [&>section]:w-full ${isCompactControl ? 'mx-auto size-14 [&>button]:size-14' : '[&>button]:w-full'} ${kind === 'widgets' ? '[&>[data-widget-size]]:w-full' : ''} ${kind === 'widgets' ? 'min-h-24' : ''}`}>
+          className={`pointer-events-none flex items-center justify-center [&>section]:w-full ${isCompactControl ? 'mx-auto size-14 [&>button]:size-14' : '[&>button]:w-full'} ${kind === 'widgets' ? 'h-full min-h-24 [&>[data-widget-size]]:w-full' : ''}`}>
           {kind === 'widgets'
             ? (tile.preview ?? blankWidget(tile))
             : tile.preview}
@@ -475,9 +505,14 @@ const GalleryAvailable = ({
             <Add aria-hidden="true" className="size-3" />
           </Button>
         )}
-        <p className="mt-2 min-w-0 truncate text-center text-sm font-light">
-          {tile.label}
-        </p>
+        <div className="mt-2 min-w-0 text-center">
+          <p className="truncate text-sm font-medium">{tile.label}</p>
+          {kind === 'widgets' && tile.description && (
+            <p className="text-muted mt-0.5 line-clamp-2 text-xs">
+              {tile.description}
+            </p>
+          )}
+        </div>
       </div>
     )
   }
@@ -507,7 +542,7 @@ const GalleryAvailable = ({
             {availableGroups.map(group => (
               <section key={group.id} aria-label={`${group.label} sizes`}>
                 <h3 className="text-sm font-light">{group.label}</h3>
-                <div className="mt-3 grid grid-cols-1 justify-items-center gap-x-8 gap-y-4 min-[600px]:grid-cols-2 min-[820px]:grid-cols-3">
+                <div className={`mt-3 grid grid-cols-1 justify-items-center gap-x-8 gap-y-4 min-[600px]:grid-cols-2 min-[820px]:grid-cols-3 ${kind === 'widgets' ? 'items-stretch' : ''}`}>
                   {group.tiles.map(suggestionTile)}
                 </div>
               </section>
@@ -541,7 +576,8 @@ export const TileGallery = (props: Props) => {
   return (
     <div className="bg-background flex h-full min-h-0 flex-col">
       <span id={dragInstructionsId} className="sr-only">
-        Drag the tile to reorder, or focus it and use the arrow keys.
+        Drag the tile to reorder or drop it anywhere in the preview. You can
+        also focus it and use the arrow keys.
       </span>
       <span role="status" className="sr-only">
         {announcement}

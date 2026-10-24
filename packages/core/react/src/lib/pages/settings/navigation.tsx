@@ -5,8 +5,8 @@ export type SettingsSection =
   | 'Appearance'
   | 'Notifications'
   | 'Account'
-  | 'Edit Widgets'
-  | 'Edit Controls'
+  | 'Widget Center'
+  | 'Control Center'
 export const SettingsNavigationContext = createContext<
   ((section: SettingsSection) => void) | null
 >(null)

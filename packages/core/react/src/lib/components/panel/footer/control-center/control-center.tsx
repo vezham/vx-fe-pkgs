@@ -89,9 +89,9 @@ export const ControlCenter = <Context extends object>({
             className="rounded-full"
             onPress={() => {
               changeOpen(false)
-              openSettings('Edit Controls')
+              openSettings('Control Center')
             }}>
-            Edit Controls
+            Control Center
           </Button>
         </div>
       )}
@@ -183,7 +183,7 @@ const PanelOutlet = <Context extends object>({
       {tiles.map(entry => (
         <div
           key={entry.id}
-          className={styles.tileContainer({ span: entry.span })}>
+          className={`${styles.tileContainer({ span: entry.span })} ${entry.span === 'compact' ? '' : '[&>button]:w-full'}`}>
           <TileContent
             entry={entry}
             context={context}

@@ -84,7 +84,7 @@ describe('ControlCenter', () => {
       expect(screen.getByRole('button', { name: 'Appearance' })).toBeTruthy()
       expect(screen.getByRole('button', { name: 'Theme' })).toBeTruthy()
       expect(screen.getByRole('button', { name: 'Direction' })).toBeTruthy()
-      expect(screen.queryByRole('button', { name: 'Edit Controls' })).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Control Center' })).toBeNull()
       expect(screen.queryByText(/Device controls are simulated/)).toBeNull()
       expect(screen.queryByRole('button', { name: 'Wi-Fi' })).toBeNull()
       fireEvent.click(screen.getByRole('button', { name: 'Appearance' }))

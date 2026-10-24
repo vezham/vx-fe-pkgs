@@ -78,11 +78,11 @@ export const Route = createFileRoute('/settings')({
 ```
 
 The shared Settings route handles section validation, query updates, and Back
-to app (`/`). Pass the same Control Center config so Edit Controls uses the same
+to app (`/`). Pass the same Control Center config so Control Center uses the same
 registry. When `/settings` matches, `AppLayout` renders the dedicated Settings
 frame. Shared providers stay mounted across layout switches, preserving user
-and shell state. The Settings navigation context connects Edit Widgets and Edit
-Controls actions to their Settings sections.
+and shell state. The Settings navigation context connects Widget Center and
+Control Center actions to their Settings sections.
 
 Without `settings`, the standard app frame remains active on every route.
 Without a Control Center config or custom slot, the footer uses its default

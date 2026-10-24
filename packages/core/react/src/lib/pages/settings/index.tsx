@@ -51,11 +51,11 @@ const sections = [
     keywords: 'profile name email'
   },
   {
-    title: 'Edit Widgets',
+    title: 'Widget Center',
     icon: Settings,
     keywords: 'notification center tiles'
   },
-  { title: 'Edit Controls', icon: Settings, keywords: 'control center tiles' }
+  { title: 'Control Center', icon: Settings, keywords: 'control center tiles' }
 ] as const
 
 export const validateSearch = (
@@ -136,11 +136,11 @@ const SettingsGallery = ({
   const currentControls = new Map(
     controls.orderedTiles.map(tile => [tile.id, tile])
   )
-  if (active === 'Edit Widgets') {
+  if (active === 'Widget Center') {
     return (
       <TileGallery
         key="widgets"
-        title="Edit Widgets"
+        title="Widget Center"
         kind="widgets"
         editor={widgets.editor}
         tiles={widgets.orderedTiles.map(tile => {
@@ -172,7 +172,7 @@ const SettingsGallery = ({
       <PreviewProvider enabled>
         <TileGallery
           key="controls"
-          title="Edit Controls"
+          title="Control Center"
           kind="controls"
           editor={controls.editor}
           tiles={configuredControls.map(configuredTile => {
@@ -239,7 +239,7 @@ export const SettingsPage = ({
   }
   useSidebarShortcut(
     toggleSidebar,
-    active !== 'Edit Widgets' && active !== 'Edit Controls'
+    active !== 'Widget Center' && active !== 'Control Center'
   )
   const { user } = useUser()
   const visibleSections = sections.filter(section =>
@@ -253,7 +253,7 @@ export const SettingsPage = ({
     setIsDrawerOpen(false)
   }
 
-  if (active === 'Edit Widgets' || active === 'Edit Controls') {
+  if (active === 'Widget Center' || active === 'Control Center') {
     return (
       <SettingsGallery
         active={active}
