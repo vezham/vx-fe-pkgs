@@ -11,12 +11,25 @@ import { Button, Drawer, SearchField, Surface, Tooltip } from '@vezham/react-v3'
 
 import type { EditorState } from '../../components/panel/footer/control-center/editor'
 
+type GalleryShape =
+  'small' | 'medium' | 'large' | 'compact' | 'standard' | 'wide' | 'full'
+
 type GalleryTile = {
   id: string
   label: string
   category: string
-  shape: 'small' | 'medium' | 'large' | 'compact' | 'standard' | 'wide' | 'full'
+  shape: GalleryShape
+  suggestionGroup?: string
+  suggestionShapes?: readonly GalleryShape[]
+  suggestionPreview?: (shape: GalleryShape) => ReactNode
   preview?: ReactNode
+}
+
+type GallerySuggestionTile = GalleryTile & { suggestionKey: string }
+type GallerySuggestionGroup = {
+  id: string
+  label: string
+  tiles: GallerySuggestionTile[]
 }
 
 type Props = {
@@ -46,12 +59,41 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
   const matchingCategories = [
     ...new Set(matchingTiles.map(tile => tile.category))
   ]
-  const available = tiles.filter(
+  const availableTiles = tiles.filter(
     tile =>
       `${tile.label} ${tile.category}`
         .toLowerCase()
         .includes(normalizedQuery) &&
       (category === 'All' || tile.category === category)
+  )
+  const seenSuggestionGroups = new Set<string>()
+  const available: GallerySuggestionTile[] = availableTiles
+    .filter(tile => {
+      const group = tile.suggestionGroup ?? tile.id
+      if (seenSuggestionGroups.has(group)) return false
+      seenSuggestionGroups.add(group)
+      return true
+    })
+    .flatMap(tile =>
+      tile.suggestionShapes
+        ? tile.suggestionShapes.map(shape => ({
+            ...tile,
+            shape,
+            preview: tile.suggestionPreview?.(shape) ?? tile.preview,
+            suggestionKey: `${tile.id}:${shape}`
+          }))
+        : [{ ...tile, suggestionKey: tile.id }]
+    )
+  const availableGroups = Array.from(
+    available
+      .reduce((groups, tile) => {
+        const group = tile.suggestionGroup ?? tile.id
+        const existing = groups.get(group)
+        if (existing) existing.tiles.push(tile)
+        else groups.set(group, { id: group, label: tile.label, tiles: [tile] })
+        return groups
+      }, new Map<string, GallerySuggestionGroup>())
+      .values()
   )
   const visible = editor.items
     .filter(item => item.visible)
@@ -62,8 +104,10 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
     setDropTarget(null)
     setDraggedHeight(0)
   }
-  const startDrag = (event: DragEvent, id: string) => {
+  const startDrag = (event: DragEvent, id: string, span?: GalleryShape) => {
     event.dataTransfer.setData('application/x-vx-settings-tile', id)
+    if (span)
+      event.dataTransfer.setData('application/x-vx-settings-tile-span', span)
     event.dataTransfer.effectAllowed = 'move'
     const currentTile = event.currentTarget as HTMLElement
     const content = currentTile.hasAttribute('data-preview-tile')
@@ -90,11 +134,20 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
     event.preventDefault()
     event.stopPropagation()
     const id = event.dataTransfer.getData('application/x-vx-settings-tile')
+    const requestedSpan = event.dataTransfer.getData(
+      'application/x-vx-settings-tile-span'
+    )
     const item = itemFor(id)
+    const span = tiles
+      .find(tile => tile.id === id)
+      ?.suggestionShapes?.includes(requestedSpan as GalleryShape)
+      ? requestedSpan
+      : undefined
     finishDrag()
     if (!item?.editable) return
     if (editor.onPlace) {
-      editor.onPlace(id, target)
+      if (span) editor.onPlace(id, target, span)
+      else editor.onPlace(id, target)
       return
     }
     if (!item.visible) editor.onVisibilityChange(id, true)
@@ -145,12 +198,12 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
           ? 'col-span-2'
           : ''
       : tile.shape === 'compact'
-        ? ''
+        ? 'col-span-1 h-14 w-14 justify-self-center'
         : tile.shape === 'standard'
           ? 'col-span-2'
           : tile.shape === 'wide'
-            ? 'col-span-3'
-            : 'col-span-4'
+            ? 'col-span-2 min-[420px]:col-span-3'
+            : 'col-span-2 min-[420px]:col-span-3 sm:col-span-4'
   const draggedTile = tiles.find(tile => tile.id === draggedId)
   const blankWidget = (tile: GalleryTile) => (
     <Surface
@@ -172,12 +225,20 @@ const useGallery = ({ kind, tiles, editor }: Props) => {
     isCategoryMenuOpen,
     showPreview,
     available,
+    availableGroups,
     visible,
     itemFor,
     finishDrag,
     startDrag,
     moveTile,
     dropTile,
+    addTile: (tile: (typeof available)[number]) => {
+      if (editor.onAdd && tile.suggestionShapes)
+        editor.onAdd(tile.id, tile.shape)
+      else if (editor.onPlace && tile.suggestionShapes)
+        editor.onPlace(tile.id, undefined, tile.shape)
+      else editor.onVisibilityChange(tile.id, true)
+    },
     search,
     categoryButtons,
     tileSpan,
@@ -230,14 +291,14 @@ const GalleryPreview = ({
       </h2>
       <span className="text-muted text-xs">{visible.length} added</span>
     </div>
-    <div className="@container mx-auto min-h-0 w-full max-w-[352px] flex-1 overflow-y-auto px-2 pt-3 pb-4">
+    <div className="@container mx-auto min-h-0 w-full max-w-[252px] flex-1 overflow-y-auto px-3 pt-4 pb-4">
       {visible.length === 0 && (
         <p className="text-muted py-8 text-center text-sm">
           No {kind} added. Choose a tile from the gallery.
         </p>
       )}
       <div
-        className={`grid gap-4 ${kind === 'widgets' ? 'auto-rows-[calc((100cqw-1rem)/2)] grid-cols-2' : 'grid-cols-4 items-start'}`}>
+        className={`grid gap-4 ${kind === 'widgets' ? 'auto-rows-[calc((100cqw-1rem)/2)] grid-cols-2' : 'grid-cols-2 items-start min-[420px]:grid-cols-3 sm:grid-cols-4'}`}>
         {visible.map(tile => {
           const editable = itemFor(tile.id)?.editable
           return (
@@ -275,7 +336,7 @@ const GalleryPreview = ({
               onDrop={event => dropTile(event, tile.id)}
               data-dragging={draggedId === tile.id || undefined}
               data-drop-target={dropTarget === tile.id || undefined}
-              className={`group focus-visible:outline-focus data-[drop-target]:bg-accent-soft data-[drop-target]:outline-accent/40 group-focus-within:[&>div>*]:ring-foreground/35 group-hover:[&>div>*]:ring-foreground/35 relative min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 data-[dragging]:opacity-40 data-[drop-target]:outline data-[drop-target]:outline-offset-2 [&>div>*]:transition-[box-shadow] group-focus-within:[&>div>*]:ring-1 group-hover:[&>div>*]:ring-1 ${editable ? 'cursor-grab active:cursor-grabbing' : ''} ${tileSpan(tile)}`}>
+              className={`group focus-visible:outline-focus data-[drop-target]:bg-accent-soft data-[drop-target]:outline-accent/40 group-focus-within:[&>div>*]:ring-foreground/35 group-hover:[&>div>*]:ring-foreground/35 relative min-w-0 overflow-visible rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 data-[dragging]:opacity-40 data-[drop-target]:outline data-[drop-target]:outline-offset-2 [&>div>*]:transition-[box-shadow] group-focus-within:[&>div>*]:ring-1 group-hover:[&>div>*]:ring-1 ${editable ? 'cursor-grab active:cursor-grabbing' : ''} ${tileSpan(tile)}`}>
               <div
                 inert
                 className={
@@ -323,10 +384,10 @@ const GalleryPreview = ({
                     isIconOnly
                     size="sm"
                     variant="secondary"
-                    className="text-muted absolute -top-2 -left-2 z-10 size-6 min-w-0 rounded-full p-0 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+                    className="bg-danger! text-danger-foreground hover:bg-danger/90! absolute -top-1 -left-1 z-20 size-6 min-w-0 rounded-full p-0 opacity-0 shadow-md transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                     aria-label={`Remove ${tile.label}`}
                     onPress={() => editor.onVisibilityChange(tile.id, false)}>
-                    <Minus aria-hidden="true" className="size-3.5" />
+                    <Minus aria-hidden="true" className="size-3" />
                   </Button>
                   <Tooltip.Content>Remove {tile.label}</Tooltip.Content>
                 </Tooltip>
@@ -354,72 +415,113 @@ const GalleryPreview = ({
 
 const GalleryAvailable = ({
   kind,
-  editor,
   isSearching,
   showPreview,
   category,
   available,
+  availableGroups,
   itemFor,
   startDrag,
   finishDrag,
-  blankWidget
-}: GalleryContext) => (
-  <section
-    aria-label={`Available ${kind}`}
-    className={`${showPreview ? 'hidden xl:flex' : 'flex'} min-h-0 min-w-0 flex-1 flex-col p-4 md:p-6`}>
-    <h2 className="mb-1 text-sm font-semibold">
-      {isSearching
-        ? 'Search results'
-        : category === 'All'
-          ? 'Suggestions'
-          : category}
-    </h2>
-    <p className="text-muted mb-5 text-xs">
-      Add or drag a tile into your preview. Changes save automatically.
-    </p>
-    <div className="min-h-0 flex-1 overflow-y-auto p-1">
-      {available.length === 0 && (
-        <p role="status" className="text-muted py-8 text-sm">
-          No {kind} found.
-        </p>
-      )}
-      <div className="grid grid-cols-2 items-start gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {available.map(tile => {
-          const item = itemFor(tile.id)
-          return (
-            <div
-              key={tile.id}
-              data-gallery-tile={tile.id}
-              draggable={item?.editable}
-              onDragStart={event => startDrag(event, tile.id)}
-              onDragEnd={finishDrag}
-              className={`group relative min-w-0 ${tile.shape === 'medium' || tile.shape === 'large' || tile.shape === 'full' || tile.shape === 'wide' ? 'col-span-2' : ''}`}>
-              <div
-                inert
-                className="pointer-events-none flex min-h-24 items-center justify-center [&>button]:w-full">
-                {kind === 'widgets'
-                  ? (tile.preview ?? blankWidget(tile))
-                  : tile.preview}
-              </div>
-              {item?.editable && !item.visible && (
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="ghost"
-                  aria-label={`Quick add ${tile.label}`}
-                  className="bg-success hover:bg-success/90 absolute -top-1 -left-1 z-10 size-7 min-w-0 rounded-full p-0 text-white opacity-0 shadow-sm transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
-                  onPress={() => editor.onVisibilityChange(tile.id, true)}>
-                  <Add aria-hidden="true" className="size-4" />
-                </Button>
-              )}
-              <p className="mt-2 min-w-0 truncate text-xs">{tile.label}</p>
-            </div>
+  blankWidget,
+  addTile
+}: GalleryContext) => {
+  const suggestionTile = (tile: GallerySuggestionTile) => {
+    const item = itemFor(tile.id)
+    const isAdded = item?.visible === true
+    const isCompactControl = kind === 'controls' && tile.shape === 'compact'
+    const size =
+      kind === 'controls'
+        ? tile.shape === 'compact'
+          ? 'w-24 shrink-0'
+          : tile.shape === 'wide'
+            ? 'w-full max-w-[200px] shrink-0'
+            : 'w-full max-w-[252px] shrink-0'
+        : tile.shape === 'small'
+          ? 'w-24 shrink-0'
+          : tile.shape === 'medium'
+            ? 'w-full max-w-[200px] shrink-0'
+            : 'w-full max-w-[252px] shrink-0'
+    return (
+      <div
+        key={tile.suggestionKey}
+        data-gallery-tile={tile.suggestionKey}
+        data-added={isAdded || undefined}
+        draggable={item?.editable}
+        onDragStart={event =>
+          startDrag(
+            event,
+            tile.id,
+            tile.suggestionShapes ? tile.shape : undefined
           )
-        })}
+        }
+        onDragEnd={finishDrag}
+        className={`group relative min-w-0 justify-self-center transition-opacity ${isAdded ? 'opacity-50' : ''} ${size}`}>
+        <div
+          inert
+          className={`pointer-events-none flex items-center justify-center [&>section]:w-full ${isCompactControl ? 'mx-auto size-14 [&>button]:size-14' : '[&>button]:w-full'} ${kind === 'widgets' ? '[&>[data-widget-size]]:w-full' : ''} ${kind === 'widgets' ? 'min-h-24' : ''}`}>
+          {kind === 'widgets'
+            ? (tile.preview ?? blankWidget(tile))
+            : tile.preview}
+        </div>
+        {item?.editable && !item.visible && (
+          <Button
+            isIconOnly
+            size="sm"
+            variant="ghost"
+            aria-label={`Quick add ${tile.label}${tile.suggestionKey === tile.id ? '' : ` (${tile.shape})`}`}
+            className="bg-success hover:bg-success/90 absolute -top-1 -left-1 z-10 size-6 min-w-0 rounded-full p-0 text-white opacity-0 shadow-sm transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+            onPress={() => addTile(tile)}>
+            <Add aria-hidden="true" className="size-3" />
+          </Button>
+        )}
+        <p className="mt-2 min-w-0 truncate text-center text-sm font-light">
+          {tile.label}
+        </p>
       </div>
-    </div>
-  </section>
-)
+    )
+  }
+
+  return (
+    <section
+      aria-label={`Available ${kind}`}
+      className={`${showPreview ? 'hidden xl:flex' : 'flex'} min-h-0 min-w-0 flex-1 flex-col p-4 md:p-6`}>
+      <h2 className="mb-1 text-sm font-semibold">
+        {isSearching
+          ? 'Search results'
+          : category === 'All'
+            ? 'Suggestions'
+            : category}
+      </h2>
+      <p className="text-muted mb-5 text-xs">
+        Add or drag a tile into your preview. Changes save automatically.
+      </p>
+      <div className="min-h-0 flex-1 overflow-y-auto p-3">
+        {available.length === 0 && (
+          <p role="status" className="text-muted py-8 text-sm">
+            No {kind} found.
+          </p>
+        )}
+        {available.some(tile => tile.suggestionShapes) ? (
+          <div className="flex flex-col gap-6">
+            {availableGroups.map(group => (
+              <section key={group.id} aria-label={`${group.label} sizes`}>
+                <h3 className="text-sm font-light">{group.label}</h3>
+                <div className="mt-3 grid grid-cols-1 justify-items-center gap-x-8 gap-y-4 min-[600px]:grid-cols-2 min-[820px]:grid-cols-3">
+                  {group.tiles.map(suggestionTile)}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 items-start gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {available.map(suggestionTile)}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
 
 export const TileGallery = (props: Props) => {
   const context = { ...props, ...useGallery(props) }

@@ -25,23 +25,24 @@ export const ActionTile = ({
     aria-label={label}
     aria-pressed={isSelected}
     className={styles.button({ compact, selected: isSelected })}
-    isIconOnly={compact}
     variant="ghost"
     onPress={onPress}>
-    {compact ? (
-      (icon ?? label)
-    ) : (
-      <span className={styles.content()}>
-        {icon && (
-          <span className={styles.icon({ selected: isSelected })}>{icon}</span>
-        )}
-        <span className={styles.text()}>
+    <span data-slot="tile-content" className={styles.content({ compact })}>
+      {(icon || compact) && (
+        <span
+          data-slot="tile-icon"
+          className={styles.icon({ compact, selected: isSelected })}>
+          {icon ?? label}
+        </span>
+      )}
+      {!compact && (
+        <span data-slot="tile-text" className={styles.text()}>
           <span className={styles.title()}>{label}</span>
           {description && (
             <span className={styles.description()}>{description}</span>
           )}
         </span>
-      </span>
-    )}
+      )}
+    </span>
   </Button>
 )

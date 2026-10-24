@@ -3,7 +3,7 @@ import { tv } from '@vezham/react-v3'
 export const controlCenterVariants = tv({
   slots: {
     surface:
-      'border-border/70 dark:border-border/80 relative w-72 overflow-hidden rounded-[1.75rem] border p-2 shadow-2xl ring-1 ring-white/15 backdrop-blur-2xl',
+      'border-border/70 dark:border-border/80 relative w-76 overflow-hidden rounded-[1.75rem] border p-2 shadow-2xl ring-1 ring-white/15 backdrop-blur-2xl',
     triggerIcon: 'text-muted',
     backdrop: 'bg-overlay/10 z-80 backdrop-blur-xs',
     sheetContent: 'mx-auto max-h-[85dvh] w-full max-w-72',
@@ -18,7 +18,8 @@ export const controlCenterVariants = tv({
     panelHeader: 'flex items-center gap-2 px-1 pt-1 pb-2',
     panelTitle: 'text-sm font-semibold capitalize',
     panelBody: 'p-1',
-    home: 'grid grid-cols-4 items-center gap-x-2 gap-y-3',
+    home:
+      'grid grid-cols-2 items-center gap-x-2 gap-y-3 min-[420px]:grid-cols-3 sm:grid-cols-4',
     tileContainer: 'min-w-0',
     optionsList: 'flex flex-col gap-1',
     colorSettings: 'flex flex-col gap-3',
@@ -41,11 +42,17 @@ export const controlCenterVariants = tv({
     span: {
       compact: {
         tileContainer:
-          'col-span-1 aspect-square w-full overflow-hidden [&>button]:size-full [&>button>span>span:last-child]:hidden'
+          'col-span-1 h-14 w-14 justify-self-center'
       },
       standard: { tileContainer: 'col-span-2 min-w-0 [&>button]:w-full' },
-      wide: { tileContainer: 'col-span-3 min-w-0 [&>button]:w-full' },
-      full: { tileContainer: 'col-span-4 min-w-0 [&>button]:w-full' }
+      wide: {
+        tileContainer:
+          'col-span-2 min-w-0 min-[420px]:col-span-3 [&>button]:w-full'
+      },
+      full: {
+        tileContainer:
+          'col-span-2 min-w-0 min-[420px]:col-span-3 sm:col-span-4 [&>button]:w-full'
+      }
     },
     presentation: {
       popover: { surface: 'bg-transparent' },
@@ -64,7 +71,7 @@ export const controlCenterTileVariants = tv({
   slots: {
     button: 'bg-default-hover hover:bg-surface rounded-full',
     content: 'flex min-w-0 items-center gap-2',
-    icon: 'bg-surface flex size-10 shrink-0 items-center justify-center rounded-full border shadow-sm',
+    icon: 'bg-surface flex size-10 shrink-0 items-center justify-center rounded-full',
     text: 'flex min-w-0 flex-col',
     title: 'truncate text-sm font-medium',
     description: 'text-muted truncate text-xs'
@@ -78,10 +85,16 @@ export const controlCenterTileVariants = tv({
       false: {}
     },
     compact: {
-      true: { button: 'size-14 shrink-0' },
+      true: {
+        button:
+          'bg-surface! hover:bg-surface! size-14 shrink-0 items-center justify-center p-0 shadow-none!',
+        content: 'size-full justify-center',
+        icon: 'size-full border-0! bg-transparent! shadow-none! ring-0!'
+      },
       false: {
         button:
-          'h-auto min-h-14 items-center justify-between px-3 py-2.5 text-start'
+          'h-auto min-h-14 items-center justify-between px-3 py-2.5 text-start',
+        icon: 'border shadow-sm'
       }
     }
   },

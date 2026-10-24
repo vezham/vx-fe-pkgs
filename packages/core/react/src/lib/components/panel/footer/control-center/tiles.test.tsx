@@ -13,6 +13,8 @@ import {
   ThemeTile,
   type TileDefinition
 } from './index'
+import { ActionTile } from './tile'
+import { controlCenterTileVariants, controlCenterVariants } from './variant'
 
 const tiles = [
   { id: 'theme', span: 'compact', Tile: AppearanceToggle },
@@ -34,6 +36,41 @@ afterEach(() => {
 })
 
 describe('shared control center tiles', () => {
+  it('keeps compact controls at a fixed size', () => {
+    expect(
+      controlCenterVariants().tileContainer({ span: 'compact' })
+    ).toContain('h-14 w-14')
+    expect(controlCenterVariants().home()).toContain('grid-cols-2')
+    expect(controlCenterVariants().home()).toContain('sm:grid-cols-4')
+    expect(controlCenterTileVariants().button({ compact: true })).toContain(
+      'size-14'
+    )
+    expect(controlCenterTileVariants().button({ compact: true })).toContain(
+      'justify-center'
+    )
+  })
+
+  it('uses a single-surface icon treatment for compact controls', () => {
+    render(
+      <ActionTile
+        compact
+        label="Appearance"
+        icon={<span>icon</span>}
+        onPress={vi.fn()}
+      />
+    )
+
+    const button = screen.getByRole('button', { name: 'Appearance' })
+    expect(button).not.toHaveClass('button--icon-only')
+    expect(button.firstElementChild).toHaveAttribute(
+      'data-slot',
+      'tile-content'
+    )
+    const icon = button.firstElementChild?.firstElementChild
+    expect(icon).toHaveClass('size-full', 'border-0!', 'shadow-none!')
+    expect(icon).not.toHaveClass('border', 'shadow-sm')
+  })
+
   it('follows system appearance in Auto while closed, and stops after manual selection', async () => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const listeners = new Set<EventListenerOrEventListenerObject>()

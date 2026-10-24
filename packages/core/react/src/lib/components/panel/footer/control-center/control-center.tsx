@@ -219,6 +219,6 @@ export const TileContent = <Context extends object>({
     const Tile = entry.Tile
     return <Tile {...context} onOpen={onOpen} />
   }
-  const Tile: ComponentType<Context> = entry.Tile
-  return <Tile {...context} />
+  const Tile = entry.Tile as ComponentType<Context & { compact?: boolean }>
+  return <Tile {...context} compact={entry.span === 'compact'} />
 }

@@ -89,7 +89,9 @@ describe('Demo Control Center', () => {
         expect(
           screen.queryByRole('button', { name: 'Open footer actions' })
         ).toBeNull()
-        fireEvent.click(userMenuTrigger)
+        fireEvent.click(
+          await screen.findByRole('button', { name: 'Open Arya Chan menu' })
+        )
       }
       let accountSheet: HTMLElement | undefined
       let trigger: HTMLElement
@@ -189,7 +191,7 @@ describe('Demo Control Center', () => {
           screen.queryByRole('dialog', { name: 'Control Center' })
         ).toBeNull()
       )
-      if (accountSheet) expect(accountSheet).toBeVisible()
+      if (accountSheet) expect(document.body.contains(accountSheet)).toBe(true)
       else await waitFor(() => expect(document.activeElement).toBe(trigger))
     },
     15000

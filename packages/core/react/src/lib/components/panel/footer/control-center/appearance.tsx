@@ -90,13 +90,23 @@ export const useAppearance = () => {
   return appearance
 }
 
-export const AppearanceToggle = ({ label }: { label?: string }) => {
+export const AppearanceToggle = ({
+  label,
+  compact = true
+}: {
+  label?: string
+  compact?: boolean
+}) => {
   const { isDark, setDark } = useAppearance()
   const Icon = isDark ? Moon : Sun
   return (
     <ActionTile
-      label={label ?? `Switch to ${isDark ? 'light' : 'dark'} mode`}
-      compact
+      label={
+        label ??
+        (compact ? `Switch to ${isDark ? 'light' : 'dark'} mode` : 'Appearance')
+      }
+      description={compact ? undefined : isDark ? 'Dark' : 'Light'}
+      compact={compact}
       icon={<Icon size={20} />}
       onPress={() => setDark(!isDark)}
     />

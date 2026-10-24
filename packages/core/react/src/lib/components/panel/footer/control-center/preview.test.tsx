@@ -169,6 +169,37 @@ describe('Control Center UI preview', () => {
     expect((volume as HTMLInputElement).value).toBe('74')
   })
 
+  it('renders focus and stage manager through the compact tile variant', async () => {
+    const compactTiles: readonly TileDefinition[] = [
+      {
+        id: 'focus',
+        label: 'Do Not Disturb',
+        span: 'compact',
+        Tile: PreviewFocusTile
+      },
+      {
+        id: 'stage',
+        label: 'Stage Manager',
+        span: 'compact',
+        Tile: PreviewStageManagerTile
+      }
+    ]
+    render(<ControlCenter tiles={compactTiles} context={{}} preview />)
+    await open()
+
+    for (const label of ['Do Not Disturb', 'Stage Manager']) {
+      const tile = screen.getByRole('button', { name: label })
+      expect(tile).toHaveClass('size-14')
+      expect(tile.firstElementChild).toHaveAttribute(
+        'data-slot',
+        'tile-content'
+      )
+      expect(tile.firstElementChild?.firstElementChild).toHaveClass(
+        'bg-surface'
+      )
+    }
+  })
+
   it('does not offer an inline editor without application Settings', async () => {
     render(<ControlCenter tiles={tiles} context={{}} preview editControls />)
     await open()
