@@ -1,3 +1,20 @@
+## 26.0.0-alpha.9 (2026-10-24)
+
+### 🩹 Fixes
+
+- **config:** bundle app SSR dependencies ([34e596b](https://github.com/vezham/vx-fe-pkgs/commit/34e596b))
+- **react:** group compact actions ([884db46](https://github.com/vezham/vx-fe-pkgs/commit/884db46))
+
+### ✅ Tests
+
+- **demo:** cover mobile control center flow ([5e18b30](https://github.com/vezham/vx-fe-pkgs/commit/5e18b30))
+- **demo:** fix control center assertions ([3400677](https://github.com/vezham/vx-fe-pkgs/commit/3400677))
+
+### ❤️ Thank You
+
+- suresh-vtpl
+- vx-vigneshwaran
+
 ## 26.0.0-alpha.8 (2026-10-22)
 
 ### 🚀 Features
