@@ -265,9 +265,11 @@ export const PreviewAirDropSettings = () => {
 }
 
 export const PreviewFocusTile = ({
-  label = 'Do Not Disturb'
+  label = 'Do Not Disturb',
+  compact = false
 }: {
   label?: string
+  compact?: boolean
 }) => {
   const { state, update } = usePreview()
   return (
@@ -275,6 +277,7 @@ export const PreviewFocusTile = ({
       label={label}
       description={state.focus ? 'On' : 'Off'}
       icon={<Moon size={18} />}
+      compact={compact}
       isSelected={state.focus}
       onPress={() => update({ focus: !state.focus })}
     />
@@ -282,9 +285,11 @@ export const PreviewFocusTile = ({
 }
 
 export const PreviewStageManagerTile = ({
-  label = 'Stage Manager'
+  label = 'Stage Manager',
+  compact = false
 }: {
   label?: string
+  compact?: boolean
 }) => {
   const { state, update } = usePreview()
   return (
@@ -292,6 +297,7 @@ export const PreviewStageManagerTile = ({
       label={label}
       description={state.stageManager ? 'On' : 'Off'}
       icon={<Widget2 size={18} />}
+      compact={compact}
       isSelected={state.stageManager}
       onPress={() => update({ stageManager: !state.stageManager })}
     />

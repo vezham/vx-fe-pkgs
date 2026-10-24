@@ -1,5 +1,5 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 
 import {
   AltArrowLeft,
@@ -18,6 +18,8 @@ import { useTileEditor } from '../../components/panel/footer/control-center/edit
 import { PreviewProvider } from '../../components/panel/footer/control-center/preview'
 import type { ControlCenterConfig } from '../../components/panel/footer/control-center/types'
 import {
+  getWidgetSize,
+  widgetSizes,
   WidgetPreview,
   useWidgetTiles
 } from '../../components/panel/footer/notification-center/widget-tiles'
@@ -101,6 +103,21 @@ const categoryFor = (type: string) => {
   return 'General'
 }
 
+const suggestionShapesFor = (type: string) => {
+  if (
+    [
+      'appearance-toggle',
+      'direction-toggle',
+      'preview-focus',
+      'preview-stage-manager'
+    ].includes(type)
+  )
+    return ['compact', 'wide', 'full'] as const
+  if (['preview-display', 'preview-media', 'preview-sound'].includes(type))
+    return ['wide', 'full'] as const
+  return ['wide', 'full'] as const
+}
+
 const SettingsGallery = ({
   active,
   controlCenter,
@@ -111,8 +128,13 @@ const SettingsGallery = ({
   onDone: () => void
 }) => {
   const widgets = useWidgetTiles()
-  const controls = useTileEditor(
-    controlCenter ? resolveTiles(controlCenter, () => undefined) : []
+  const configuredControls = useMemo(
+    () => (controlCenter ? resolveTiles(controlCenter, () => undefined) : []),
+    [controlCenter]
+  )
+  const controls = useTileEditor(configuredControls)
+  const currentControls = new Map(
+    controls.orderedTiles.map(tile => [tile.id, tile])
   )
   if (active === 'Edit Widgets') {
     return (
@@ -121,12 +143,26 @@ const SettingsGallery = ({
         title="Edit Widgets"
         kind="widgets"
         editor={widgets.editor}
-        tiles={widgets.orderedTiles.map(tile => ({
-          ...tile,
-          shape: tile.size,
-          category: tile.category,
-          preview: <WidgetPreview tile={tile} />
-        }))}
+        tiles={widgets.orderedTiles.map(tile => {
+          const size = getWidgetSize(tile)
+          return {
+            ...tile,
+            shape: size,
+            category: tile.category,
+            suggestionGroup: tile.label,
+            suggestionShapes: widgetSizes,
+            suggestionPreview: suggestionSize => (
+              <WidgetPreview
+                tile={{
+                  ...tile,
+                  size: suggestionSize as typeof size,
+                  span: undefined
+                }}
+              />
+            ),
+            preview: <WidgetPreview tile={tile} />
+          }
+        })}
         onDone={onDone}
       />
     )
@@ -139,19 +175,40 @@ const SettingsGallery = ({
           title="Edit Controls"
           kind="controls"
           editor={controls.editor}
-          tiles={controls.orderedTiles.map(tile => ({
-            id: tile.id,
-            label:
-              controls.editor.items.find(item => item.id === tile.id)?.label ??
-              tile.id,
-            shape: tile.span,
-            category: categoryFor(
+          tiles={configuredControls.map(configuredTile => {
+            const tile =
+              currentControls.get(configuredTile.id) ?? configuredTile
+            const type =
               controlCenter?.tiles.find(item => item.id === tile.id)?.type ?? ''
-            ),
-            preview: (
-              <TileContent entry={tile} context={{}} onOpen={() => undefined} />
-            )
-          }))}
+            const label =
+              controls.editor.items.find(item => item.id === tile.id)?.label ??
+              tile.id
+            return {
+              id: tile.id,
+              label,
+              shape: tile.span,
+              suggestionGroup: label,
+              suggestionShapes: suggestionShapesFor(type),
+              suggestionPreview: span => (
+                <TileContent
+                  entry={{
+                    ...tile,
+                    span: span as 'compact' | 'standard' | 'wide' | 'full'
+                  }}
+                  context={{}}
+                  onOpen={() => undefined}
+                />
+              ),
+              category: categoryFor(type),
+              preview: (
+                <TileContent
+                  entry={tile}
+                  context={{}}
+                  onOpen={() => undefined}
+                />
+              )
+            }
+          })}
           onDone={onDone}
         />
       </PreviewProvider>

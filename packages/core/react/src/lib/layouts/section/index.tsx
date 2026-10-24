@@ -74,28 +74,26 @@ const CompactTabs = ({
   search?: SectionSearch
   primaryAction?: SectionAction
 }) => (
-  <>
-    {displayTabs.length > 0 && (
-      <Tabs.ListContainer
-        key={JSON.stringify(displayTabs.map(tab => tab.key))}
-        className={`scrollbar-hide order-2 mb-3 w-fit min-w-0 self-center overflow-x-auto rounded-full ${
-          search && primaryAction
-            ? 'max-w-[calc(100%-9rem)]'
-            : 'max-w-[calc(100%-1.5rem)]'
-        }`}>
-        <Tabs.List
-          aria-label={`${title} tabs`}
-          className="flex min-w-max flex-nowrap *:whitespace-nowrap">
-          {displayTabs.map(tab => (
-            <Tabs.Tab key={tab.key} id={tab.key} className="whitespace-nowrap">
-              {tab.title}
-              <Tabs.Indicator />
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-      </Tabs.ListContainer>
-    )}
-  </>
+  displayTabs.length > 0 && (
+    <Tabs.ListContainer
+      key={JSON.stringify(displayTabs.map(tab => tab.key))}
+      className={`scrollbar-hide order-2 mb-3 w-fit min-w-0 self-center overflow-x-auto rounded-full ${
+        search && primaryAction
+          ? 'max-w-[calc(100%-9rem)]'
+          : 'max-w-[calc(100%-1.5rem)]'
+      }`}>
+      <Tabs.List
+        aria-label={`${title} tabs`}
+        className="flex min-w-max flex-nowrap *:whitespace-nowrap">
+        {displayTabs.map(tab => (
+          <Tabs.Tab key={tab.key} id={tab.key} className="whitespace-nowrap">
+            {tab.title}
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+    </Tabs.ListContainer>
+  )
 )
 
 const SectionPanels = ({

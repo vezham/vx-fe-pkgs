@@ -10,13 +10,15 @@ export type EditorState = {
   onVisibilityChange: (id: string, visible: boolean) => void
   onMove: (id: string, offset: number) => void
   onReset: () => void
-  onPlace?: (id: string, target?: string) => void
+  onAdd?: (id: string, span?: string) => void
+  onPlace?: (id: string, target?: string, span?: string) => void
 }
 type EditableTile = {
   id: string
   label?: string
   title?: string
   editable?: boolean
+  span?: string
 }
 const subscribe = (onChange: () => void) => {
   window.addEventListener('storage', onChange)
@@ -37,6 +39,7 @@ export const useTileEditor = <Tile extends EditableTile>(
   )
   let order: string[] = []
   let hidden: string[] = []
+  const spans: Record<string, string> = {}
   try {
     const value = JSON.parse(snapshot || '{}')
     if (Array.isArray(value.order))
@@ -47,6 +50,11 @@ export const useTileEditor = <Tile extends EditableTile>(
       ]
     if (Array.isArray(value.hidden))
       hidden = value.hidden.filter((id: unknown) => typeof id === 'string')
+    if (value.spans && typeof value.spans === 'object') {
+      for (const [id, span] of Object.entries(value.spans)) {
+        if (typeof span === 'string') spans[id] = span
+      }
+    }
   } catch {
     // vx-bot/NOTE: Invalid saved preferences fall back to the configured tiles.
   }
@@ -59,14 +67,15 @@ export const useTileEditor = <Tile extends EditableTile>(
       return tile ? [tile] : []
     }),
     ...tiles.filter(tile => !orderedIds.has(tile.id))
-  ]
+  ].map(tile => (spans[tile.id] ? { ...tile, span: spans[tile.id] } : tile))
   const save = (
     nextOrder: readonly string[],
-    nextHidden: readonly string[]
+    nextHidden: readonly string[],
+    nextSpans = spans
   ) => {
     localStorage.setItem(
       storageKey,
-      JSON.stringify({ order: nextOrder, hidden: nextHidden })
+      JSON.stringify({ order: nextOrder, hidden: nextHidden, spans: nextSpans })
     )
     window.dispatchEvent(new Event('vx:tile-preferences'))
   }
@@ -95,7 +104,15 @@ export const useTileEditor = <Tile extends EditableTile>(
       ids.splice(target, 0, id)
       save(ids, hidden)
     },
-    onPlace: (id, target) => {
+    onAdd: (id, span) => {
+      if (!tilesById.has(id) || tilesById.get(id)?.editable === false) return
+      save(
+        order,
+        hidden.filter(value => value !== id),
+        span ? { ...spans, [id]: span } : spans
+      )
+    },
+    onPlace: (id, target, span) => {
       if (!tilesById.has(id) || tilesById.get(id)?.editable === false) return
       const ids = orderedTiles.map(tile => tile.id)
       const from = ids.indexOf(id)
@@ -106,13 +123,15 @@ export const useTileEditor = <Tile extends EditableTile>(
       }
       save(
         ids,
-        hidden.filter(value => value !== id)
+        hidden.filter(value => value !== id),
+        span ? { ...spans, [id]: span } : spans
       )
     },
     onReset: () =>
       save(
         tiles.map(tile => tile.id),
-        []
+        [],
+        {}
       )
   }
   return {

@@ -33,13 +33,23 @@ export const DirectionSettings = () => {
   return <Options {...direction} options={options} />
 }
 
-export const DirectionToggle = ({ label }: { label?: string }) => {
+export const DirectionToggle = ({
+  label,
+  compact = true
+}: {
+  label?: string
+  compact?: boolean
+}) => {
   const { value, onChange } = useRootAttribute('dir', 'ltr')
   const Icon = value === 'rtl' ? AlignRight : AlignLeft
   return (
     <ActionTile
-      label={label ?? `Switch to ${value === 'rtl' ? 'LTR' : 'RTL'}`}
-      compact
+      label={
+        label ??
+        (compact ? `Switch to ${value === 'rtl' ? 'LTR' : 'RTL'}` : 'Direction')
+      }
+      description={compact ? undefined : value.toUpperCase()}
+      compact={compact}
       icon={<Icon size={20} />}
       onPress={() => onChange(value === 'rtl' ? 'ltr' : 'rtl')}
     />

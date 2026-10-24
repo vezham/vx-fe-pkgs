@@ -10,7 +10,8 @@ import { Surface } from '@vezham/react-v3'
 
 import { useTileEditor } from '../control-center/editor'
 
-type WidgetSize = 'small' | 'medium' | 'large'
+export const widgetSizes = ['small', 'medium', 'large'] as const
+export type WidgetSize = (typeof widgetSizes)[number]
 
 export type WidgetTileDefinition = {
   id: string
@@ -70,6 +71,13 @@ const widgetSizeClasses: Record<WidgetSize, string> = {
   large: 'aspect-square'
 }
 
+export const getWidgetSize = (
+  tile: WidgetTileDefinition & { span?: string }
+): WidgetSize =>
+  widgetSizes.includes(tile.span as WidgetSize)
+    ? (tile.span as WidgetSize)
+    : tile.size
+
 const WidgetPreviewContent = ({ id }: Pick<WidgetTileDefinition, 'id'>) => {
   switch (id) {
     case 'calendar-month':
@@ -95,9 +103,14 @@ const WidgetPreviewContent = ({ id }: Pick<WidgetTileDefinition, 'id'>) => {
     case 'weather-forecast':
       return (
         <>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold">New Delhi</span>
-            <Sun aria-hidden="true" className="text-warning size-5" />
+          <div className="flex min-w-0 items-center justify-between gap-2">
+            <span className="min-w-0 truncate text-sm font-semibold">
+              New Delhi
+            </span>
+            <Sun
+              aria-hidden="true"
+              className="text-warning size-5 shrink-0"
+            />
           </div>
           <div className="mt-auto flex items-end justify-between">
             <span className="text-3xl font-semibold tabular-nums">25°</span>
@@ -108,9 +121,14 @@ const WidgetPreviewContent = ({ id }: Pick<WidgetTileDefinition, 'id'>) => {
     case 'reminders-list':
       return (
         <>
-          <div className="flex items-center gap-2">
-            <ClipboardList aria-hidden="true" className="text-accent size-5" />
-            <span className="text-sm font-semibold">Reminders</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <ClipboardList
+              aria-hidden="true"
+              className="text-accent size-5 shrink-0"
+            />
+            <span className="min-w-0 truncate text-sm font-semibold">
+              Reminders
+            </span>
           </div>
           <span className="text-muted mt-auto text-xs">No reminders today</span>
         </>
@@ -118,12 +136,14 @@ const WidgetPreviewContent = ({ id }: Pick<WidgetTileDefinition, 'id'>) => {
     case 'notes-summary':
       return (
         <>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <NotebookBookmark
               aria-hidden="true"
-              className="text-warning size-5"
+              className="text-warning size-5 shrink-0"
             />
-            <span className="text-sm font-semibold">Notes</span>
+            <span className="min-w-0 truncate text-sm font-semibold">
+              Notes
+            </span>
           </div>
           <span className="text-muted mt-auto text-xs">No recent notes</span>
         </>
@@ -151,17 +171,20 @@ export const WidgetPreview = ({
   tile,
   className = ''
 }: {
-  tile: WidgetTileDefinition
+  tile: WidgetTileDefinition & { span?: string }
   className?: string
-}) => (
-  <Surface
-    variant="transparent"
-    data-widget-size={tile.size}
-    aria-label={tile.label}
-    className={`bg-surface-secondary flex min-w-0 flex-col rounded-2xl p-3 shadow-sm ${widgetSizeClasses[tile.size]} ${tile.size === 'large' ? 'col-span-2 row-span-2' : tile.size === 'medium' ? 'col-span-2' : ''} ${className}`}>
-    <WidgetPreviewContent id={tile.id} />
-  </Surface>
-)
+}) => {
+  const size = getWidgetSize(tile)
+  return (
+    <Surface
+      variant="transparent"
+      data-widget-size={size}
+      aria-label={tile.label}
+      className={`bg-surface-secondary flex min-w-0 flex-col rounded-2xl p-3 shadow-sm ${widgetSizeClasses[size]} ${size === 'large' ? 'col-span-2 row-span-2' : size === 'medium' ? 'col-span-2' : ''} ${className}`}>
+      <WidgetPreviewContent id={tile.id} />
+    </Surface>
+  )
+}
 
 export const useWidgetTiles = () =>
   useTileEditor(widgetDefinitions, 'vx:widgets')
@@ -169,7 +192,7 @@ export const useWidgetTiles = () =>
 export const WidgetTiles = () => {
   const { visibleTiles } = useWidgetTiles()
   return (
-    <div className="@container mx-auto w-full max-w-[352px]">
+    <div className="@container mx-auto w-full max-w-[252px]">
       <div className="grid auto-rows-[calc((100cqw-1rem)/2)] grid-cols-2 gap-4 pb-4">
         {visibleTiles.map(tile => (
           <WidgetPreview key={tile.id} tile={tile} className="h-full" />
