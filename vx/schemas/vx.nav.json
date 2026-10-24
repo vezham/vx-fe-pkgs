@@ -25,7 +25,7 @@
       "properties": {
         "editControls": {
           "type": "boolean",
-          "description": "Show Edit Controls when application Settings navigation is available.",
+          "description": "Show the Control Center link when application Settings navigation is available.",
           "default": false
         },
         "tiles": {

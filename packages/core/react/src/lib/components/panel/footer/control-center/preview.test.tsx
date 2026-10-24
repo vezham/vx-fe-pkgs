@@ -203,7 +203,7 @@ describe('Control Center UI preview', () => {
   it('does not offer an inline editor without application Settings', async () => {
     render(<ControlCenter tiles={tiles} context={{}} preview editControls />)
     await open()
-    expect(screen.queryByRole('button', { name: 'Edit Controls' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Control Center' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Reset Controls' })).toBeNull()
   })
 })

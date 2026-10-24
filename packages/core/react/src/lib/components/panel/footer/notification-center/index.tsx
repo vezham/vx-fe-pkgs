@@ -71,7 +71,7 @@ const NotificationDrawer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const handleEdit = () => {
     if (openSettings) {
       onClose()
-      openSettings('Edit Widgets')
+      openSettings('Widget Center')
     } else if (onEdit) {
       onEdit()
     } else {
@@ -86,7 +86,7 @@ const NotificationDrawer = forwardRef<HTMLDivElement, Props>((props, ref) => {
       size="sm"
       {...getEditButtonProps()}
       onPress={handleEdit}>
-      Edit Widgets
+      Widget Center
     </Button>
   )
 

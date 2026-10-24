@@ -67,7 +67,12 @@ describe('shared control center tiles', () => {
       'tile-content'
     )
     const icon = button.firstElementChild?.firstElementChild
-    expect(icon).toHaveClass('size-full', 'border-0!', 'shadow-none!')
+    expect(icon).toHaveClass(
+      'size-full',
+      'border-0!',
+      'shadow-none!',
+      '[&>svg]:size-[1.375rem]'
+    )
     expect(icon).not.toHaveClass('border', 'shadow-sm')
   })
 
