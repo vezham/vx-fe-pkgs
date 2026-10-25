@@ -1,6 +1,6 @@
 {
   "name": "play-next",
-  "version": "26.0.0-alpha.9",
+  "version": "26.0.0-beta.1",
   "private": true,
   "dependencies": {
     "@vezham/env": "workspace:*",

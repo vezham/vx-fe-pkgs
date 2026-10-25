@@ -1,3 +1,57 @@
+## 26.0.0-beta.1 (2026-10-25)
+
+### 🚀 Features
+
+- **nx-cloud:** set up nx cloud workspace ([d21b5de](https://github.com/vezham/vx-fe-pkgs/commit/d21b5de))
+- **react:** add control and widget size options ([e89286f](https://github.com/vezham/vx-fe-pkgs/commit/e89286f))
+- **react:** refine tile settings galleries ([63c348b](https://github.com/vezham/vx-fe-pkgs/commit/63c348b))
+- **vx:** release, automate release metadata ([8e4ba4f](https://github.com/vezham/vx-fe-pkgs/commit/8e4ba4f))
+
+### 💅 Refactors
+
+- **react:** extract account menu ([9076122](https://github.com/vezham/vx-fe-pkgs/commit/9076122))
+- **vx:** remove legacy packages ([eacadca](https://github.com/vezham/vx-fe-pkgs/commit/eacadca))
+
+### 📖 Documentation
+
+- **vx:** update handbook version ([f50fa8b](https://github.com/vezham/vx-fe-pkgs/commit/f50fa8b))
+- **vx:** bump CI handbook version ([f28425a](https://github.com/vezham/vx-fe-pkgs/commit/f28425a))
+- **vx:** bump kit version ([51de78d](https://github.com/vezham/vx-fe-pkgs/commit/51de78d))
+
+### 📦 Build
+
+- **react:** add declaration plugin ([7c9e094](https://github.com/vezham/vx-fe-pkgs/commit/7c9e094))
+
+### 🏡 Chore
+
+- **apps:** use published Vezham packages ([12b6897](https://github.com/vezham/vx-fe-pkgs/commit/12b6897))
+- **demo:** update CI and mobile coverage ([860497b](https://github.com/vezham/vx-fe-pkgs/commit/860497b))
+- **playground-docs:** add ES2022 DOM libs ([e686cb7](https://github.com/vezham/vx-fe-pkgs/commit/e686cb7))
+- **release:** publish 26.0.0-beta.1 ([7ac6876](https://github.com/vezham/vx-fe-pkgs/commit/7ac6876))
+- **release:** publish 26.0.0-beta.2 ([5a219c2](https://github.com/vezham/vx-fe-pkgs/commit/5a219c2))
+- **repo:** align workspace with public packages ([aa65350](https://github.com/vezham/vx-fe-pkgs/commit/aa65350))
+- **repo:** share test TypeScript types ([6c69d42](https://github.com/vezham/vx-fe-pkgs/commit/6c69d42))
+- **repo:** ignore vite-plugin-dts ([eff19f5](https://github.com/vezham/vx-fe-pkgs/commit/eff19f5))
+- **vx:** update style imports and test setup ([da75c2c](https://github.com/vezham/vx-fe-pkgs/commit/da75c2c))
+- **vx:** update audit and CI configuration ([5f96ad1](https://github.com/vezham/vx-fe-pkgs/commit/5f96ad1))
+- **workspace:** clarify Fallow catalog note ([6d24e42](https://github.com/vezham/vx-fe-pkgs/commit/6d24e42))
+- **workspace:** format workspace config ([3f1ea8b](https://github.com/vezham/vx-fe-pkgs/commit/3f1ea8b))
+- **workspace:** adjust fallow dependency rules ([19bc93d](https://github.com/vezham/vx-fe-pkgs/commit/19bc93d))
+
+### 🤖 CI
+
+- **workspace:** enable Nx Cloud ([f172b0c](https://github.com/vezham/vx-fe-pkgs/commit/f172b0c))
+
+### deps
+
+- **repo:** update tools and security fixes ([c554d26](https://github.com/vezham/vx-fe-pkgs/commit/c554d26))
+
+### ❤️ Thank You
+
+- suresh-vtpl
+- v0xvigneshwaran
+- vx-vigneshwaran @vx-vigneshwaran
+
 ## 26.0.0-alpha.9 (2026-10-24)
 
 ### 🩹 Fixes
