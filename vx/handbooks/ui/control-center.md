@@ -50,7 +50,7 @@ import app-specific providers, generated locales, or route definitions.
 The footer accepts a `controlCenter` element alongside `showControlCenter`.
 When enabled without app registration, it opens the shared Control Center with
 Appearance, Theme color, and Direction. When application Settings navigation
-is available, the default also offers an Edit Controls link to Settings. The old drawer and
+is available, the default also offers a Control Center link to Settings. The old drawer and
 `onControlCenterClick` callback have been removed. On small screens (below 768px), Control Center opens from the footer More
 menu. On larger screens, its trigger renders directly in the footer. Both paths
 use the same instance and settings state.
@@ -86,7 +86,7 @@ reset scroll position when changing panels.
 
 Configure the app layout under `controlCenter.tiles` in `vx.nav.yaml`. Array
 order determines the initial visual and keyboard order. Each entry has a unique
-`id`, a built-in `type` or `custom`, and a `span`. Optional `label` overrides the tile name, detail panel heading, and Edit Controls row. Built-in names are used when omitted.
+`id`, a built-in `type` or `custom`, and a `span`. Optional `label` overrides the tile name, detail panel heading, and Control Center row. Built-in names are used when omitted.
 Set `editable: false` to prevent hiding or moving a tile. Reset Controls in Settings restores the YAML order.
 
 ```yaml
@@ -229,6 +229,10 @@ gutters when rows need more breathing room.
 The grid governs placement. A tile component governs its content, including
 truncation, icon size, and direct action.
 
+The Settings gallery reuses this grid and its span variants for both suggested
+controls and the live preview. A control selected at any span must retain that
+same footprint after it is added to Control Center.
+
 ## Panel outlet
 
 The overlay owner keeps `isOpen` and `activePanel` state. Render home when
@@ -272,7 +276,7 @@ same open-state callback and return focus to the trigger or footer More entry.
 
 `controlCenter.editControls` is an optional boolean, defaulting to `false`. Enable
 it for apps that use `AppLayout settings` and provide a `/settings` route. It shows
-an Edit Controls link in a fixed footer outside the scrolling tiles. The link
+a Control Center link in a fixed footer outside the scrolling tiles. The link
 hides while a detail panel is open, closes Control Center, and opens Settings. It is not a
 tile and does not participate in hiding or reordering. Docs omit the option and
 have no editor or Settings link. Raw `ControlCenter` accepts the same optional

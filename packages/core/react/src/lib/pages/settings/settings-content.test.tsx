@@ -19,6 +19,7 @@ it('uses the saved widget size in the notification center preview', () => {
     getWidgetSize({
       id: 'calendar',
       label: 'Calendar',
+      description: 'See your upcoming events.',
       category: 'Calendar',
       size: 'small',
       span: 'large'
@@ -63,7 +64,7 @@ it('hydrates saved notification preferences without changing the initial server 
   }
 })
 
-it('drops a hidden gallery tile into empty preview space without requiring an existing drop target', () => {
+it('accepts drops in the preview without showing a drop prompt', () => {
   const onPlace = vi.fn()
   const tiles = [
     {
@@ -81,7 +82,7 @@ it('drops a hidden gallery tile into empty preview space without requiring an ex
   ]
   render(
     <TileGallery
-      title="Edit Widgets"
+      title="Widget Center"
       kind="widgets"
       tiles={tiles}
       onDone={vi.fn()}
@@ -99,28 +100,101 @@ it('drops a hidden gallery tile into empty preview space without requiring an ex
       }}
     />
   )
+  expect(screen.getByRole('button', { name: 'Remove First' })).toHaveClass(
+    'opacity-0',
+    'group-hover:opacity-100',
+    'group-focus-within:opacity-100'
+  )
+  const dataTransfer = {
+    effectAllowed: '',
+    setData: vi.fn(),
+    getData: (type: string) =>
+      type === 'application/x-vx-settings-tile' ? 'second' : ''
+  }
+  const suggestion = document.querySelector('[data-gallery-tile="second"]')
+  if (suggestion === null) throw new Error('Second suggestion was not found')
+  fireEvent.dragStart(suggestion, { dataTransfer })
+  expect(screen.queryByText('Drop anywhere in preview')).toBeNull()
   fireEvent.drop(
-    screen.getByRole('complementary', {
-      name: 'Current widgets',
-      hidden: true
-    }),
-    {
-      dataTransfer: { getData: () => 'second' }
-    }
+    document.querySelector('[data-preview-drop-area]') as Element,
+    { dataTransfer }
   )
   expect(onPlace).toHaveBeenCalledWith('second', undefined)
+})
+
+it('drops a small widget into the empty cell beside another small widget', () => {
+  const onPlace = vi.fn()
+  const tiles = [
+    {
+      id: 'calendar',
+      label: 'Calendar',
+      category: 'Calendar',
+      shape: 'small' as const
+    },
+    {
+      id: 'reminders',
+      label: 'Reminders',
+      category: 'Reminders',
+      shape: 'medium' as const
+    },
+    {
+      id: 'clock',
+      label: 'World Clock',
+      category: 'Clock',
+      shape: 'small' as const
+    }
+  ]
+  render(
+    <TileGallery
+      title="Widget Center"
+      kind="widgets"
+      tiles={tiles}
+      onDone={vi.fn()}
+      editor={{
+        items: tiles.map(tile => ({
+          id: tile.id,
+          label: tile.label,
+          visible: tile.id !== 'clock',
+          editable: true
+        })),
+        onPlace,
+        onVisibilityChange: vi.fn(),
+        onMove: vi.fn(),
+        onReset: vi.fn()
+      }}
+    />
+  )
+  const dataTransfer = {
+    effectAllowed: '',
+    setData: vi.fn(),
+    getData: (type: string) =>
+      type === 'application/x-vx-settings-tile' ? 'clock' : ''
+  }
+  const suggestion = document.querySelector('[data-gallery-tile="clock"]')
+  if (suggestion === null) throw new Error('Clock suggestion was not found')
+  fireEvent.dragStart(suggestion, { dataTransfer })
+
+  const emptySlot = document.querySelector(
+    '[data-preview-empty-slot="calendar"]'
+  )
+  expect(emptySlot).toHaveClass('aspect-square')
+  expect(emptySlot).not.toHaveTextContent('Drop here')
+  fireEvent.drop(emptySlot as Element, { dataTransfer })
+
+  expect(onPlace).toHaveBeenCalledWith('clock', 'reminders')
 })
 
 it('offers each widget size once and adds the selected size', () => {
   const onAdd = vi.fn()
   render(
     <TileGallery
-      title="Edit Widgets"
+      title="Widget Center"
       kind="widgets"
       tiles={[
         {
           id: 'calendar',
           label: 'Calendar',
+          description: 'See your upcoming events.',
           category: 'Calendar',
           shape: 'small',
           suggestionGroup: 'Calendar',
@@ -143,20 +217,80 @@ it('offers each widget size once and adds the selected size', () => {
 
   expect(screen.getByRole('heading', { name: 'Calendar' })).toBeTruthy()
   expect(document.querySelectorAll('[data-gallery-tile]')).toHaveLength(3)
+  expect(screen.getAllByText('See your upcoming events.')).toHaveLength(3)
   expect(
     document.querySelector('[data-gallery-tile="calendar:small"]')
-  ).toHaveClass('w-24')
+  ).toHaveClass(
+    'w-[7.375rem]',
+    'grid',
+    'h-full',
+    'self-stretch',
+    'grid-rows-[minmax(0,1fr)_auto]'
+  )
+  expect(
+    document.querySelector('[data-gallery-tile="calendar:small"] [inert]')
+  ).toHaveClass('h-full')
   expect(
     document.querySelector('[data-gallery-tile="calendar:medium"]')
-  ).toHaveClass('w-full', 'max-w-[200px]')
+  ).toHaveClass('w-[15.75rem]', 'max-w-full')
   expect(
     document.querySelector('[data-gallery-tile="calendar:large"]')
-  ).toHaveClass('w-full', 'max-w-[252px]')
+  ).toHaveClass('w-[15.75rem]', 'max-w-full')
 
   fireEvent.click(
     screen.getByRole('button', { name: 'Quick add Calendar (large)' })
   )
   expect(onAdd).toHaveBeenCalledWith('calendar', 'large')
+})
+
+it('uses the Notification Center grid for suggestion and preview widget sizes', () => {
+  const tiles = [
+    {
+      id: 'weather',
+      label: 'Weather',
+      category: 'Weather',
+      shape: 'medium' as const,
+      suggestionGroup: 'Weather',
+      suggestionShapes: ['small', 'medium', 'large'] as const,
+      suggestionPreview: (size: string) => <div data-preview-size={size} />
+    }
+  ]
+  render(
+    <TileGallery
+      title="Widget Center"
+      kind="widgets"
+      tiles={tiles}
+      onDone={vi.fn()}
+      editor={{
+        items: [
+          { id: 'weather', label: 'Weather', visible: true, editable: true }
+        ],
+        onVisibilityChange: vi.fn(),
+        onMove: vi.fn(),
+        onReset: vi.fn()
+      }}
+    />
+  )
+
+  expect(
+    document.querySelector('[data-gallery-tile="weather:small"]')
+  ).toHaveClass('w-[7.375rem]')
+  expect(
+    document.querySelector('[data-gallery-tile="weather:medium"]')
+  ).toHaveClass('w-[15.75rem]', 'max-w-full')
+  expect(
+    document.querySelector('[data-gallery-tile="weather:large"]')
+  ).toHaveClass('w-[15.75rem]', 'max-w-full')
+  expect(document.querySelector('[data-preview-tile="weather"]')).toHaveClass(
+    'col-span-2'
+  )
+  expect(
+    document.querySelector('[data-preview-tile="weather"]')?.parentElement
+  ).toHaveClass('auto-rows-[calc((100cqw-1rem)/2)]', 'grid-cols-2', 'gap-4')
+  expect(
+    document.querySelector('[data-preview-tile="weather"]')?.parentElement
+      ?.parentElement
+  ).toHaveClass('max-w-[260px]', 'p-1')
 })
 
 it('adds a hidden control from its hover quick-add action', () => {
@@ -177,7 +311,7 @@ it('adds a hidden control from its hover quick-add action', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -216,7 +350,7 @@ it('keeps suggestions stable while the preview reflects control order', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -247,13 +381,60 @@ it('keeps suggestions stable while the preview reflects control order', () => {
       tile.getAttribute('data-preview-tile')
     )
   ).toEqual(['theme', 'appearance'])
-  expect(document.querySelector('[data-gallery-tile="appearance"]')).toHaveClass(
-    'opacity-50'
+  expect(
+    document.querySelector('[data-gallery-tile="appearance"]')
+  ).toHaveClass('opacity-50')
+  expect(
+    document.querySelector('[data-gallery-tile="appearance"]')
+  ).toHaveAttribute('data-added', 'true')
+})
+
+it('uses the Control Center grid for suggestion and preview control sizes', () => {
+  const tiles = [
+    {
+      id: 'bluetooth',
+      label: 'Bluetooth',
+      category: 'Connectivity',
+      shape: 'wide' as const,
+      suggestionGroup: 'Bluetooth',
+      suggestionShapes: ['wide', 'full'] as const,
+      suggestionPreview: (span: string) => <button data-preview-span={span} />
+    }
+  ]
+  render(
+    <TileGallery
+      title="Control Center"
+      kind="controls"
+      tiles={tiles}
+      onDone={vi.fn()}
+      editor={{
+        items: [
+          { id: 'bluetooth', label: 'Bluetooth', visible: true, editable: true }
+        ],
+        onVisibilityChange: vi.fn(),
+        onMove: vi.fn(),
+        onReset: vi.fn()
+      }}
+    />
   )
-  expect(document.querySelector('[data-gallery-tile="appearance"]')).toHaveAttribute(
-    'data-added',
-    'true'
+
+  expect(
+    document.querySelector('[data-gallery-tile="bluetooth:wide"]')
+  ).toHaveClass('w-full', 'max-w-[12.125rem]')
+  expect(
+    document.querySelector('[data-gallery-tile="bluetooth:full"]')
+  ).toHaveClass('w-[17rem]')
+  expect(document.querySelector('[data-preview-tile="bluetooth"]')).toHaveClass(
+    'col-span-2',
+    'min-[420px]:col-span-3'
   )
+  expect(
+    document.querySelector('[data-preview-tile="bluetooth"]')?.parentElement
+  ).toHaveClass('gap-x-2', 'gap-y-3', 'sm:grid-cols-4')
+  expect(
+    document.querySelector('[data-preview-tile="bluetooth"]')?.parentElement
+      ?.parentElement
+  ).toHaveClass('max-w-72')
 })
 
 it('adds a control suggestion with its selected size', () => {
@@ -278,7 +459,7 @@ it('adds a control suggestion with its selected size', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -327,7 +508,7 @@ it('offers medium and large content control suggestions', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -346,10 +527,10 @@ it('offers medium and large content control suggestions', () => {
   expect(document.querySelectorAll('[data-gallery-tile]')).toHaveLength(2)
   expect(
     document.querySelector('[data-gallery-tile="display:wide"]')
-  ).toHaveClass('w-full', 'max-w-[200px]')
+  ).toHaveClass('w-full', 'max-w-[12.125rem]')
   expect(
     document.querySelector('[data-gallery-tile="display:full"]')
-  ).toHaveClass('w-full', 'max-w-[252px]')
+  ).toHaveClass('w-[17rem]')
   fireEvent.click(
     screen.getByRole('button', { name: 'Quick add Display (wide)' })
   )
@@ -367,7 +548,7 @@ it('opens the mobile category menu from the gallery', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -409,7 +590,7 @@ it('shows matching category navigation for global search results', () => {
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -451,12 +632,12 @@ it('removes a preview control from its hover remove action', () => {
       id: 'first',
       label: 'First',
       category: 'General',
-      shape: 'compact' as const
+      shape: 'full' as const
     }
   ]
   render(
     <TileGallery
-      title="Edit Controls"
+      title="Control Center"
       kind="controls"
       tiles={tiles}
       onDone={vi.fn()}
@@ -469,6 +650,20 @@ it('removes a preview control from its hover remove action', () => {
     />
   )
 
-  fireEvent.click(screen.getByRole('button', { name: 'Remove First' }))
+  const remove = screen.getByRole('button', { name: 'Remove First' })
+  expect(remove).toHaveClass(
+    'size-6!',
+    'border-danger',
+    'bg-transparent!',
+    'text-danger'
+  )
+  expect(remove).not.toHaveClass('w-full')
+  expect(document.querySelector('[data-preview-tile="first"]')).toHaveClass(
+    'sm:col-span-4'
+  )
+  expect(document.querySelector('[data-preview-tile="first"]')).not.toHaveClass(
+    '[&>button]:w-full'
+  )
+  fireEvent.click(remove)
   expect(onVisibilityChange).toHaveBeenCalledWith('first', false)
 })

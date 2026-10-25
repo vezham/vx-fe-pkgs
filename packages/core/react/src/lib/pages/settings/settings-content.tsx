@@ -241,7 +241,7 @@ const settingsComponents = {
 }
 const SettingsContentView = ({ active }: { active: SettingsSection }) => {
   const preferences = useSettingsPreferences()
-  if (active === 'Edit Widgets' || active === 'Edit Controls') return null
+  if (active === 'Widget Center' || active === 'Control Center') return null
   const Content = settingsComponents[active]
   return <Content {...preferences} />
 }
