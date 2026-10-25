@@ -197,7 +197,9 @@ const AccountIdentity = ({
   <div className="flex flex-col items-center gap-2 text-center">
     <Badge.Anchor>
       <Avatar className="size-20">
-        {user.avatar ? <Avatar.Image src={user.avatar} alt={user.name} /> : null}
+        {user.avatar ? (
+          <Avatar.Image src={user.avatar} alt={user.name} />
+        ) : null}
         <Avatar.Fallback className="text-xl">{user.name?.[0]}</Avatar.Fallback>
       </Avatar>
       <Badge
@@ -279,7 +281,9 @@ const AccountSheetContent = ({
           variant="ghost"
           className="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
           onPress={() => onSection(item.id)}>
-          <span className="min-w-0 flex-1 truncate text-start">{item.label}</span>
+          <span className="min-w-0 flex-1 truncate text-start">
+            {item.label}
+          </span>
           <AltArrowRight size={16} aria-hidden="true" />
         </Button>
       ))}
@@ -323,7 +327,9 @@ const AccountDropdownContent = ({
       className="hover:bg-default-100 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left"
       onClick={onProfile}>
       <Avatar size="sm">
-        {user.avatar ? <Avatar.Image src={user.avatar} alt={user.name} /> : null}
+        {user.avatar ? (
+          <Avatar.Image src={user.avatar} alt={user.name} />
+        ) : null}
         <Avatar.Fallback>{user.name?.[0]}</Avatar.Fallback>
       </Avatar>
       <span>
@@ -404,7 +410,9 @@ const UserMenuTrigger = ({
           className={`button button--ghost relative flex h-12 w-12 items-center justify-center ${bubble ? 'rounded-full' : 'rounded-xl'}`}>
           <Badge.Anchor>
             <Avatar size="sm" className="h-6 w-6 rounded-md">
-              {user.avatar ? <Avatar.Image src={user.avatar} alt={user.name} /> : null}
+              {user.avatar ? (
+                <Avatar.Image src={user.avatar} alt={user.name} />
+              ) : null}
               <Avatar.Fallback>{user.name?.[0]}</Avatar.Fallback>
             </Avatar>
             <Badge

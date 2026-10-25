@@ -1,4 +1,10 @@
-import { Fragment, type DragEvent, type ReactNode, useId, useState } from 'react'
+import {
+  type DragEvent,
+  Fragment,
+  type ReactNode,
+  useId,
+  useState
+} from 'react'
 
 import {
   Add,
@@ -302,7 +308,9 @@ const GalleryPreview = ({
         </p>
       )}
       <div
-        className={kind === 'widgets' ? widgetStyles.grid() : controlCenterStyles.home()}>
+        className={
+          kind === 'widgets' ? widgetStyles.grid() : controlCenterStyles.home()
+        }>
         {visible.map((tile, index) => {
           const editable = itemFor(tile.id)?.editable
           const nextTile = visible[index + 1]
@@ -486,7 +494,7 @@ const GalleryAvailable = ({
           )
         }
         onDragEnd={finishDrag}
-        className={`group relative min-w-0 justify-self-center transition-opacity ${kind === 'widgets' ? 'grid h-full self-stretch grid-rows-[minmax(0,1fr)_auto]' : ''} ${isAdded ? 'opacity-50' : ''} ${size}`}>
+        className={`group relative min-w-0 justify-self-center transition-opacity ${kind === 'widgets' ? 'grid h-full grid-rows-[minmax(0,1fr)_auto] self-stretch' : ''} ${isAdded ? 'opacity-50' : ''} ${size}`}>
         <div
           inert
           className={`pointer-events-none flex items-center justify-center [&>section]:w-full ${isCompactControl ? 'mx-auto size-14 [&>button]:size-14' : '[&>button]:w-full'} ${kind === 'widgets' ? 'h-full min-h-24 [&>[data-widget-size]]:w-full' : ''}`}>
@@ -542,7 +550,8 @@ const GalleryAvailable = ({
             {availableGroups.map(group => (
               <section key={group.id} aria-label={`${group.label} sizes`}>
                 <h3 className="text-sm font-light">{group.label}</h3>
-                <div className={`mt-3 grid grid-cols-1 justify-items-center gap-x-8 gap-y-4 min-[600px]:grid-cols-2 min-[820px]:grid-cols-3 ${kind === 'widgets' ? 'items-stretch' : ''}`}>
+                <div
+                  className={`mt-3 grid grid-cols-1 justify-items-center gap-x-8 gap-y-4 min-[600px]:grid-cols-2 min-[820px]:grid-cols-3 ${kind === 'widgets' ? 'items-stretch' : ''}`}>
                   {group.tiles.map(suggestionTile)}
                 </div>
               </section>

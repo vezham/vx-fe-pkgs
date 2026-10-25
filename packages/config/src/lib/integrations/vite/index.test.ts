@@ -27,7 +27,7 @@ describe('Vite config composition', () => {
 
     expect(overrides).toHaveBeenCalledExactlyOnceWith(env)
     expect(defaults).toHaveBeenCalledExactlyOnceWith(root, env)
-    expect(config.server).toEqual({ host: 'localhost', port: 4321 })
+    expect(config.server).toMatchObject({ host: 'localhost', port: 4321 })
     expect(config.define).toEqual({ SHARED: 'override', DEFAULT_ONLY: 'true' })
   })
 

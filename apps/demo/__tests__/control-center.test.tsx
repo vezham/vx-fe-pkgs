@@ -89,9 +89,7 @@ describe('Demo Control Center', () => {
         expect(
           screen.queryByRole('button', { name: 'Open footer actions' })
         ).toBeNull()
-        fireEvent.click(
-          await screen.findByRole('button', { name: 'Open Arya Chan menu' })
-        )
+        fireEvent.click(userMenuTrigger)
       }
       let accountSheet: HTMLElement | undefined
       let trigger: HTMLElement

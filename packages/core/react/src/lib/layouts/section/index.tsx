@@ -73,7 +73,7 @@ const CompactTabs = ({
   displayTabs: AppNavigationItem[]
   search?: SectionSearch
   primaryAction?: SectionAction
-}) => (
+}) =>
   displayTabs.length > 0 && (
     <Tabs.ListContainer
       key={JSON.stringify(displayTabs.map(tab => tab.key))}
@@ -94,7 +94,6 @@ const CompactTabs = ({
       </Tabs.List>
     </Tabs.ListContainer>
   )
-)
 
 const SectionPanels = ({
   displayTabs,

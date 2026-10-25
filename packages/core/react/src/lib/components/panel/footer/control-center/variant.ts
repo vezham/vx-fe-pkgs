@@ -96,8 +96,7 @@ export const controlCenterTileVariants = tv({
         button:
           'bg-surface! hover:bg-surface! size-14 shrink-0 items-center justify-center p-0 shadow-none!',
         content: 'size-full justify-center',
-        icon:
-          'size-full border-0! bg-transparent! shadow-none! ring-0! [&>svg]:size-[1.375rem]'
+        icon: 'size-full border-0! bg-transparent! shadow-none! ring-0! [&>svg]:size-[1.375rem]'
       },
       false: {
         button:

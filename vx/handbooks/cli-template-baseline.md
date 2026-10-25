@@ -207,6 +207,11 @@ transformer; published config remains ESM-only. TypeScript resolution applies
 only to the config import graph, without a global loader. Keep workspace runtime
 exports aligned with the source API. The obsolete private package adapters and
 manifests under `packages/vx` are removed.
+The shared app preset owns `ssr.noExternal` for `@vezham/start` and
+`@vezham/env`; CDN and docs inherit it. App configs do not repeat those entries.
+Vitest keeps runtime packages in `server.deps.inline` so Vite transforms
+`import.meta.env` and applies test mocks when testing compiled package output.
+
 Workspace CSS remains under `packages/vx/styles`. Public UI packages expose
 `dist/index.css` through their root `style` export and top-level `style` field.
 Import the package name from CSS; JavaScript imports retain their runtime exports.
@@ -230,3 +235,11 @@ ship with `@vezham/config`.
 
 Keep component-owned state and hooks with their UI. Extract independent hooks
 into `@vezham/hooks` and plain utilities into `@vezham/utils`.
+
+## Shared test types
+
+The root `tsconfig.spec.json` supplies shared Vitest, DOM matcher, and framework
+asset types. Apps can extend their existing base plus this root test config.
+TypeScript replaces inherited arrays, so avoid repeating `types` when using the
+shared config. Keep test declarations out of production configs. The shared
+`@vezham/config` Vitest setup registers matchers at runtime.

@@ -41,7 +41,9 @@ describe('configured control center', () => {
       )
       fireEvent.click(screen.getByRole('button', { name: 'Control center' }))
       await screen.findByRole('dialog', { name: 'Control Center' })
-      expect(screen.queryByRole('button', { name: 'Control Center' })).toBeNull()
+      expect(
+        screen.queryByRole('button', { name: 'Control Center' })
+      ).toBeNull()
     }
   )
 

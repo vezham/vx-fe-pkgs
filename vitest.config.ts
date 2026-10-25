@@ -37,6 +37,20 @@ export default defineConfig(async env => {
       watch: false,
       globals: true,
       environment: 'node',
+      // vx-bot/NOTE: Transform installed packages so import.meta.env and mocks use Vite's module runner.
+      server: {
+        deps: {
+          inline: [
+            '@vezham/start',
+            '@vezham/env',
+            '@vezham/react',
+            '@vezham/template',
+            '@vezham/devtools',
+            '@vezham/hooks',
+            '@vezham/utils'
+          ]
+        }
+      },
       include: [
         '{src,tests,__tests__}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'
       ],

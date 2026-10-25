@@ -52,6 +52,7 @@
     "vx/tools/audit/*.test.mjs",
     "vx/tools/eslint/tests/*.test.mjs",
     "vx/tools/release/index.ts",
+    "vx/tools/release/*.test.ts",
     "vx/tools/release/version-actions.cjs"
   ],
   "framework": [
@@ -63,6 +64,8 @@
         "@nx/plugin",
         "@swc-node/register",
         "@swc/helpers",
+        // vx-bot/NOTE: The Nx test:eslint command invokes c8 for rule coverage.
+        "c8",
         "eslint-config-prettier",
         "eslint-plugin-import",
         "eslint-plugin-react",
@@ -134,6 +137,9 @@
     "yargs"
   ],
   "ignoreDependencyOverrides": [
+    { "package": "follow-redirects", "source": "pnpm-workspace.yaml" },
+    { "package": "body-parser", "source": "pnpm-workspace.yaml" },
+    { "package": "fast-uri", "source": "pnpm-workspace.yaml" },
     // vx-bot/NOTE: These transitive peer aliases resolve to the forks in pnpm-lock.yaml.
     { "package": "fumadocs-core", "source": "pnpm-workspace.yaml" },
     { "package": "fumadocs-ui", "source": "pnpm-workspace.yaml" },

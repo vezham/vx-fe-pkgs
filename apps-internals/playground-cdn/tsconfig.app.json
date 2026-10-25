@@ -45,13 +45,10 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../packages/config/tsconfig.lib.json"
+      "path": "../../packages/start/tsconfig.lib.json"
     },
     {
       "path": "../../packages/core/env/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/start/tsconfig.lib.json"
     }
   ]
 }
