@@ -1,3 +1,14 @@
+## 26.0.0-beta.2 (2026-10-27)
+
+### 🩹 Fixes
+
+- **react:** preserve section content across tabs ([fbae54a](https://github.com/vezham/vx-fe-pkgs/commit/fbae54a))
+- **react:** remove obsolete type exports ([031c382](https://github.com/vezham/vx-fe-pkgs/commit/031c382))
+
+### ❤️ Thank You
+
+- suresh-vtpl
+
 ## 26.0.0-beta.1 (2026-10-25)
 
 ### 🚀 Features
