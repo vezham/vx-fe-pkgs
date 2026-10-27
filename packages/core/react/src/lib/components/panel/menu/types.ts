@@ -4,16 +4,6 @@ import { cn } from '@vezham/react-v3'
 
 import { tvProps, tvSlots, tva } from './variant'
 
-type SubMenuItem = {
-  key: string
-  title: string
-  href?: string
-  icon?: string
-  iconActive?: string
-  endContent?: ReactNode
-  submenu?: SubMenuItem[]
-}
-
 type MenuItem = {
   key: string
   title: string
@@ -152,4 +142,4 @@ const useProps = (originalProps: Props) => {
 }
 
 export { useProps }
-export type { Props, MenuItem, SubMenuItem }
+export type { Props, MenuItem }

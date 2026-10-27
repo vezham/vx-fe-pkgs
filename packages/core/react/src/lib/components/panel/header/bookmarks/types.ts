@@ -25,12 +25,6 @@ export interface BookmarkTreeItem {
 export type TreeKey = string | number
 export type TreeSelection = 'all' | Set<TreeKey>
 
-export interface BookmarkFileTreeNode {
-  key: TreeKey
-  value: BookmarkTreeItem
-  children?: BookmarkFileTreeNode[] | null
-}
-
 export interface FavoriteItemRendererProps {
   item: FavoriteItem
   onItemClick?: (url: string) => void

@@ -516,7 +516,10 @@ function HeaderTabs({
 }) {
   return (
     <Surface {...getTabsScrollerProps()}>
-      <Tabs selectedKey={selectedKey} onSelectionChange={onSelectionChange} variant="primary">
+      <Tabs
+        selectedKey={selectedKey}
+        onSelectionChange={onSelectionChange}
+        variant="primary">
         <Tabs.ListContainer>
           <Tabs.List {...getTabsListProps()}>
             {tabs.map((tab, index) => (

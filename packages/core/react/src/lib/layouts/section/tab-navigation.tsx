@@ -38,12 +38,16 @@ export const SectionTabNavigation = ({
       variant="primary"
       onSelectionChange={(key: Key) => onTabChange?.(String(key))}>
       <Tabs.ListContainer className={`max-w-full ${className ?? ''}`}>
-        <Tabs.List aria-label={`${title} tabs`} className="min-w-max flex-nowrap">
+        <Tabs.List
+          aria-label={`${title} tabs`}
+          className="min-w-max flex-nowrap">
           {tabs.map(tab => (
             <Tabs.Tab
               key={tab.key}
               id={tab.key}
-              ref={tab.key === selectedTabKey ? handleSelectedTabRef : undefined}
+              ref={
+                tab.key === selectedTabKey ? handleSelectedTabRef : undefined
+              }
               className="whitespace-nowrap">
               {tab.title}
               <Tabs.Indicator />
