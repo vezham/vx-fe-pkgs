@@ -17,7 +17,6 @@ import {
   Popover,
   SearchField,
   Separator,
-  Tabs,
   Tooltip,
   useMediaQuery
 } from '@vezham/react-v3'
@@ -28,6 +27,7 @@ import { useResponsiveToolbarAction } from '../../components/responsive-toolbar-
 import { ShortcutButton } from '../../components/shortcut-key'
 import type { AppNavigationItem } from '../../navigation'
 import { DEFAULT_SORT, type SectionSort, SortMenu } from './sort-menu'
+import { SectionTabNavigation } from './tab-navigation'
 import { ToolbarMoreSheet } from './toolbar-more-sheet'
 
 export type SectionAction = {
@@ -72,6 +72,9 @@ type ToolbarSearch = SectionSearch & {
 type Props = {
   title: string
   tabs: AppNavigationItem[]
+  selectedTabKey?: string
+  onPanelIdChange?: (id: string) => void
+  onTabChange?: (key: string) => void
   navigationControls: ReactNode
   isNavigationCollapsed?: boolean
   toolbar?: ReactNode
@@ -702,25 +705,14 @@ const SectionToolbar = (props: Props) => {
           <div className="col-start-1 row-start-1 hidden min-w-0 items-center gap-1 md:flex">
             {navigationControls}
           </div>
-          {tabs.length > 0 && (
-            <Tabs.ListContainer
-              key={JSON.stringify(tabs.map(tab => tab.key))}
-              className="scrollbar-hide col-span-2 row-start-2 mt-2 w-fit max-w-full min-w-0 justify-self-center overflow-x-auto rounded-full sm:mt-0 sm:max-w-fit sm:flex-1">
-              <Tabs.List
-                aria-label={`${title} tabs`}
-                className="flex min-w-max flex-nowrap *:whitespace-nowrap">
-                {tabs.map(tab => (
-                  <Tabs.Tab
-                    key={tab.key}
-                    id={tab.key}
-                    className="whitespace-nowrap">
-                    {tab.title}
-                    <Tabs.Indicator />
-                  </Tabs.Tab>
-                ))}
-              </Tabs.List>
-            </Tabs.ListContainer>
-          )}
+          <SectionTabNavigation
+            title={title}
+            tabs={tabs}
+            selectedTabKey={props.selectedTabKey}
+            onPanelIdChange={props.onPanelIdChange}
+            onTabChange={props.onTabChange}
+            className="col-span-2 row-start-2 mt-2 w-fit max-w-full min-w-0 justify-self-center sm:mt-0 sm:max-w-fit sm:flex-1"
+          />
         </div>
         <ToolbarActions
           {...props}
