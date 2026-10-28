@@ -4,7 +4,7 @@ core:
   id: vezham-playground-cdn
   name: Vezham Playground CDN
   shortName: Playground CDN
-  version: 26.0.0-beta.2
+  version: 26.0.0-beta.3
   description: Single app to manage your Vezham Playground CDN
   publisher:
     name: Vezham Technologies Private Limited

@@ -4,7 +4,7 @@ core:
   id: vezham-play-start
   name: Vezham Play Start
   shortName: Play Start
-  version: 26.0.0-beta.2
+  version: 26.0.0-beta.3
   description: Single app to manage your Vezham Play Start
   publisher:
     name: Vezham Technologies Private Limited

@@ -1,3 +1,17 @@
+## 26.0.0-beta.3 (2026-10-28)
+
+### 🩹 Fixes
+
+- **react:** remount tabs when tab groups change ([50ddc15](https://github.com/vezham/vx-fe-pkgs/commit/50ddc15))
+
+### 🏡 Chore
+
+- **workspace:** update workspace lockfile ([8c07cc1](https://github.com/vezham/vx-fe-pkgs/commit/8c07cc1))
+
+### ❤️ Thank You
+
+- suresh-vtpl
+
 ## 26.0.0-beta.2 (2026-10-27)
 
 ### 🩹 Fixes
