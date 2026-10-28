@@ -30,6 +30,12 @@ const tabs = [
   },
   { key: 'schedule', title: 'Schedule', href: '/academic/classes/schedule' }
 ]
+const timetableTabs = [
+  { key: 'day', title: 'Day', href: '/academic/timetable/day' },
+  { key: 'week', title: 'Week', href: '/academic/timetable/week' },
+  { key: 'month', title: 'Month', href: '/academic/timetable/month' },
+  { key: 'year', title: 'Year', href: '/academic/timetable/year' }
+]
 const TablePage = ({ onMount }: { onMount: () => void }) => {
   useEffect(onMount, [onMount])
   return (
@@ -83,5 +89,31 @@ describe('Section route content', () => {
     }
     expect(onMount).toHaveBeenCalledTimes(1)
     expect(screen.getByRole('group', { name: 'Toolbar actions' })).toBe(toolbar)
+  })
+
+  it('remounts the tab list when navigation switches tab groups', () => {
+    route.pathname = tabs[0].href
+    const { rerender } = render(
+      <SectionLayout title="Academic" tabs={tabs}>
+        <TablePage onMount={vi.fn()} />
+      </SectionLayout>
+    )
+    const classesTabList = screen.getByRole('tablist')
+    const classesTabListContainer = classesTabList.parentElement
+
+    route.pathname = '/academic/timetable/week'
+    rerender(
+      <SectionLayout title="Academic" tabs={timetableTabs}>
+        <TablePage onMount={vi.fn()} />
+      </SectionLayout>
+    )
+
+    const timetableTabList = screen.getByRole('tablist')
+    expect(timetableTabList).not.toBe(classesTabList)
+    expect(timetableTabList.parentElement).not.toBe(classesTabListContainer)
+    expect(screen.getByRole('tab', { name: 'Week' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
   })
 })

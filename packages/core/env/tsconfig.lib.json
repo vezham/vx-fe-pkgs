@@ -8,6 +8,10 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts"],
-  "references": [],
+  "references": [
+    {
+      "path": "../../config/tsconfig.lib.json"
+    }
+  ],
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"]
 }

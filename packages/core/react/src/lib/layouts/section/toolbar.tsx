@@ -697,7 +697,7 @@ const SectionToolbar = (props: Props) => {
 
   return (
     <header
-      className={`bg-background sticky top-0 z-30 shrink-0 px-3 py-0 md:px-4 md:py-2 ${
+      className={`bg-background sticky top-0 z-30 shrink-0 px-2 py-0 md:py-2 ${
         isNavigationCollapsed ? 'md:pl-30' : ''
       }`}>
       <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 md:flex md:min-h-12 md:justify-between">

@@ -37,7 +37,9 @@ export const SectionTabNavigation = ({
       className="contents"
       variant="primary"
       onSelectionChange={(key: Key) => onTabChange?.(String(key))}>
-      <Tabs.ListContainer className={`max-w-full ${className ?? ''}`}>
+      <Tabs.ListContainer
+        key={JSON.stringify(tabs.map(tab => tab.key))}
+        className={`max-w-full ${className ?? ''}`}>
         <Tabs.List
           aria-label={`${title} tabs`}
           className="min-w-max flex-nowrap">
