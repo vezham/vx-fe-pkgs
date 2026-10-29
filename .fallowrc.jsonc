@@ -113,8 +113,12 @@
     "@vezham/react-pro-v3",
     "@vezham/react-v2",
     "@vezham/react-v3",
+    // vx-bot/NOTE: Shared docs CSS imports its generated stylesheet export.
+    "@vezham/start",
     "@vezham/styles-v3",
     "@vezham/use-logger",
+    // vx-bot/NOTE: Retained at the workspace root for future consumers.
+    "@vezham/utils",
     "@vitejs/plugin-react-swc",
     "axios",
     "embla-carousel",
