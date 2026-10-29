@@ -167,27 +167,30 @@ catalogs:
     '@internationalized/date':
       specifier: 3.12.4
       version: 3.12.4
+    '@tanstack/react-hotkeys':
+      specifier: ^0.10.0
+      version: 0.10.0
     '@vezham/config':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/devtools':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/env':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/react':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/start':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/template':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/utils':
-      specifier: 26.0.0-beta.3
-      version: 26.0.0-beta.3
+      specifier: workspace:*
+      version: workspace:*
     framer-motion:
       specifier: ^12.40.0
       version: 12.43.0
@@ -274,7 +277,7 @@ importers:
         version: 0.8.6
       '@vezham/devtools':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+        version: link:packages/devtools
       '@vezham/docs-core':
         specifier: npm:@vx-oss/docs-core@1.0.17
         version: '@vx-oss/docs-core@1.0.17(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.17)(lucide-react@1.61.0(@types/react@19.2.17)(react@19.2.7))(next@16.4.2(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@25.9.3)(babel-plugin-macros@3.1.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@10.2.2)(zod@4.6.7)'
@@ -292,10 +295,10 @@ importers:
         version: '@vx-oss/docs-story@1.0.17(4eca0da51de2a795d9ada64a87b027d5)'
       '@vezham/env':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3
+        version: link:packages/core/env
       '@vezham/react':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: link:packages/core/react
       '@vezham/react-pro-v3':
         specifier: npm:@heroui-pro/react@1.0.0-beta.10
         version: '@heroui-pro/react@1.0.0-beta.10'
@@ -304,16 +307,16 @@ importers:
         version: '@heroui/react@3.2.6(@internationalized/date@3.12.4)(@react-aria/ssr@3.10.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-aria/utils@3.34.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-aria-components@1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-aria@3.52.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/start':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+        version: link:packages/start
       '@vezham/styles-v3':
         specifier: npm:@heroui/styles@3.2.6
         version: '@heroui/styles@3.2.6(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/template':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3
+        version: link:packages/template
       '@vezham/utils':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3
+        version: link:packages/core/utils
       embla-carousel:
         specifier: ^8.6.0
         version: 8.6.0
@@ -500,7 +503,7 @@ importers:
         version: 17.0.35
       '@vezham/config':
         specifier: 'catalog:'
-        version: 26.0.0-beta.3
+        version: link:packages/config
       '@vezham/icons-react':
         specifier: 1.0.7
         version: 1.0.7(react@19.2.7)
@@ -584,7 +587,7 @@ importers:
         version: 16.4.2(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@25.9.3)(babel-plugin-macros@3.1.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261022-060608-da176d5f
+        version: nitro-nightly@3.0.1-20261022-120804-a190eae4
       nx:
         specifier: 24.0.2
         version: 24.0.2(@swc-node/register@1.11.1(@swc/core@1.15.41(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@10.2.2)(typescript@6.0.3))(@swc/core@1.15.41(@swc/helpers@0.5.23))
@@ -655,7 +658,203 @@ importers:
         specifier: 17.7.3
         version: 17.7.3
 
-  packages/vx/react: {}
+  apps-internals/play-next:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/play-next-e2e: {}
+
+  apps-internals/play-start:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/play-start-e2e: {}
+
+  apps-internals/playground:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-app:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-app-e2e: {}
+
+  apps-internals/playground-cdn:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+
+  apps-internals/playground-cdn-e2e: {}
+
+  apps-internals/playground-docs:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-docs-e2e: {}
+
+  apps-internals/playground-e2e: {}
+
+  apps/crm:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps/demo:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+    devDependencies:
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  apps/mail:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps/school-os:
+    dependencies:
+      '@internationalized/date':
+        specifier: 'catalog:'
+        version: 3.12.4
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+      '@vezham/utils':
+        specifier: workspace:*
+        version: link:../../packages/core/utils
+
+  packages/config:
+    dependencies:
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+
+  packages/core/env: {}
+
+  packages/core/hooks: {}
+
+  packages/core/react:
+    dependencies:
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  packages/core/utils: {}
+
+  packages/devtools:
+    dependencies:
+      '@tanstack/react-hotkeys-devtools':
+        specifier: ^0.7.0
+        version: 0.7.0(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+
+  packages/start:
+    dependencies:
+      '@vezham/devtools':
+        specifier: workspace:*
+        version: link:../devtools
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../core/env
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../template
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+
+  packages/template: {}
 
 packages:
 
@@ -6165,38 +6364,13 @@ packages:
     resolution: {integrity: sha512-LTV6/Kcr8pS//iDjDitfYi1bp0AlKBUuvNoHAbI8tMnj0PLOUtRWJxId5FwuE+z3oNBeDLeOWPoXVtqKjl277Q==}
     engines: {node: '>=18'}
 
-  '@vezham/config@26.0.0-beta.3':
-    resolution: {integrity: sha512-MyGWXWGyH+7Z7ax8DTvGbCF3mqv4NR/TB5NVwRxZ8+zsB2SskojCOHV4/0XN3wgn2PBUL3ukniyLVagAxDo/xg==}
-    hasBin: true
-
-  '@vezham/devtools@26.0.0-beta.3':
-    resolution: {integrity: sha512-JbKipObgFbVltK2fz0s0Kqw+jLKzjw0RjSLzmc/aPk7k81YXmk6SE5zZtK6MqyALLCo1YXssJOBTOezu3YLYwg==}
-
-  '@vezham/env@26.0.0-beta.3':
-    resolution: {integrity: sha512-sJgBgXsTIOLhZ6/8f9ieDa3ynzcIN5CaE0S+0df2NhB3wE+NDXtznQKtDEt3x8OC8BA4syEFR8OnjvO/IfssBg==}
-
-  '@vezham/hooks@26.0.0-beta.3':
-    resolution: {integrity: sha512-bVn05MLalH3Kb+4pWVrqrkopvksMxJNFrSZXXaM2E5al5pfdY8/WRf3DB1P/A1CWYp0UQBMi84uvPwhIGvF+dA==}
-
   '@vezham/icons-react@1.0.7':
     resolution: {integrity: sha512-f9ckgxi4NIP/OBG3RCw4mCAK9rl8EKDdiocVqYYXQ/2IjsKytJ3DQkzHqcBa1RLprF93rIRvvCc+1YYT5QaknQ==}
     peerDependencies:
       react: '>=16.8.0'
 
-  '@vezham/react@26.0.0-beta.3':
-    resolution: {integrity: sha512-YnzAyDv3f259aNUq6DijnC21wSZzrRfma4RxioqwBeN32oD4Qj4C8luj0jN/+10tFRws8dp0BHRYkbBonKNs/g==}
-
-  '@vezham/start@26.0.0-beta.3':
-    resolution: {integrity: sha512-PuTUXMnhQAHnzlMa7KLrtZNKUWbAMA1HDQOtVUbzONOXC/v28T5Vt6B7dfnOV4PQ+R6aa5K+SgHofNXhxZKDBA==}
-
-  '@vezham/template@26.0.0-beta.3':
-    resolution: {integrity: sha512-dNby7DF7nRvLRqvU8CIKDFvDBwwVLV+Vtqd4Wlxa22+EKptAtCMDZmt/Kh2tcMr/AYz/llnGcwiH72+/fn/LFA==}
-
   '@vezham/use-logger@0.3.3':
     resolution: {integrity: sha512-b0f7GVXDxfUU1FPHb4XWEIT6NNU00TLueuQcAKq46JjiZfFw0NdHX3h/ZO20AR0iKsCkhRyjtqw6+QkGBj2lMg==}
-
-  '@vezham/utils@26.0.0-beta.3':
-    resolution: {integrity: sha512-X+ArR9sBZexdQdbao5Fq6jPU6xhu3ad+eFBGxmnNXWh6OX4vZN15LWlu2yuaZ9gNuxOjNy44ORv/3gnrOkjoOA==}
 
   '@vitejs/plugin-react-swc@4.3.3':
     resolution: {integrity: sha512-bti8ZAcvz4Lh6/e4Uk2k3aa1TiUXbbMsahuqOHvd3MveFTkKDZOA6wQVkpj7J/+tepX/wGfe+lsGh/t24HTXMQ==}
@@ -10596,8 +10770,8 @@ packages:
       sass:
         optional: true
 
-  nitro-nightly@3.0.1-20261022-060608-da176d5f:
-    resolution: {integrity: sha512-Y/NhtxxboI3qOe3bRwObtpfEG2vy5iDb6uD7iiGRa0iw4P2Q9polzHFgVYFb3vfIspczhBVfLtdlWDEwUqaGTQ==}
+  nitro-nightly@3.0.1-20261022-120804-a190eae4:
+    resolution: {integrity: sha512-ZROs8Swvr05T3amPJ4ZgYKMCg8IOzT55ehOEcVODolnUoixBGhtYXVXxDmqQ2TkfYUout+KYWB36sYkdJL8VzQ==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -19000,63 +19174,11 @@ snapshots:
       lodash: 4.18.1
       minimatch: 7.4.9
 
-  '@vezham/config@26.0.0-beta.3':
-    dependencies:
-      yaml: 2.9.1
-
-  '@vezham/devtools@26.0.0-beta.3(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)':
-    dependencies:
-      '@tanstack/react-hotkeys-devtools': 0.7.0(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
-    transitivePeerDependencies:
-      - '@tanstack/hotkeys'
-      - '@types/react'
-      - '@types/react-dom'
-      - csstype
-      - preact
-      - react
-      - react-dom
-      - solid-js
-      - vue
-
-  '@vezham/env@26.0.0-beta.3': {}
-
-  '@vezham/hooks@26.0.0-beta.3': {}
-
   '@vezham/icons-react@1.0.7(react@19.2.7)':
     dependencies:
       react: 19.2.7
 
-  '@vezham/react@26.0.0-beta.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      '@tanstack/react-hotkeys': 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@vezham/hooks': 26.0.0-beta.3
-      react-aria-components: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-    transitivePeerDependencies:
-      - react
-      - react-dom
-
-  '@vezham/start@26.0.0-beta.3(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)':
-    dependencies:
-      '@vezham/devtools': 26.0.0-beta.3(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
-      '@vezham/env': 26.0.0-beta.3
-      '@vezham/template': 26.0.0-beta.3
-      yaml: 2.9.1
-    transitivePeerDependencies:
-      - '@tanstack/hotkeys'
-      - '@types/react'
-      - '@types/react-dom'
-      - csstype
-      - preact
-      - react
-      - react-dom
-      - solid-js
-      - vue
-
-  '@vezham/template@26.0.0-beta.3': {}
-
   '@vezham/use-logger@0.3.3': {}
-
-  '@vezham/utils@26.0.0-beta.3': {}
 
   '@vitejs/plugin-react-swc@4.3.3(@swc/helpers@0.5.23)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
@@ -24627,7 +24749,7 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  nitro-nightly@3.0.1-20261022-060608-da176d5f:
+  nitro-nightly@3.0.1-20261022-120804-a190eae4:
     dependencies:
       crossws: 0.4.15(srvx@1.0.6)
       env-runner: 0.3.7
