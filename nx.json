@@ -16,7 +16,7 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/packages/vx/styles/**/*"]
   },
-  "nxCloudId": "6887e1bae4deca638dc2324a",
+  "nxCloudId": "6add54f5c6219b46c1c5863c",
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

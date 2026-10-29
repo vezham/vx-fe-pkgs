@@ -76,6 +76,9 @@
     },
     {
       "path": "./packages/core/hooks"
+    },
+    {
+      "path": "./packages/vx/react"
     }
   ],
   "compilerOptions": {

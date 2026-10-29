@@ -66,6 +66,10 @@ The Fallow dependency exceptions cover these indirect uses:
 
 - `@fontsource/inter` and `@fontsource/jura`: OG font files loaded with
   `require.resolve`; `@vezham/styles-v3`: imported from the shared CSS entry.
+- The required peers of `@vezham/react-pro-v3` and `@vezham/react-v3`: HeroUI,
+  React Aria/Stately, date utilities, motion, panels, and Tailwind merge are
+  supplied at the root for published UI packages. Keep the React Aria versions
+  aligned as described in the CLI template baseline.
 - The listed Pro optional peers: retained for the workspace's component demos
   and supported component features; review them when `@vezham/react-pro-v3`
   changes or those features are removed.
@@ -86,8 +90,8 @@ unlisted dependency findings, so keep these packages declared and review the
 exceptions alongside dependency updates. Tool-only dependencies belong in
 `framework.toolingDependencies` instead.
 
-The root development dependencies include `@vezham/start` because the shared
-docs stylesheet imports its CSS export from outside an application package.
+The root dependencies include `@vezham/start` because the shared docs stylesheet
+imports its CSS export from outside an application package.
 
 Fallow's average maintainability score also includes a penalty for each file's
 number of imports. It is not a percentage of resolved findings; removing all
