@@ -1,3 +1,29 @@
+# 26.0.0 (2026-10-29)
+
+### 🚀 Features
+
+- **react:** add React package scaffold ([f42b1be](https://github.com/vezham/vx-fe-pkgs/commit/f42b1be))
+
+### 🏡 Chore
+
+- **release:** publish 26.0.0-beta.3 ([74cd3cc](https://github.com/vezham/vx-fe-pkgs/commit/74cd3cc))
+- **repo:** update packages to beta ([3e30c9d](https://github.com/vezham/vx-fe-pkgs/commit/3e30c9d))
+- **repo:** upgrade Nx 24 and add migration prompts ([93924f3](https://github.com/vezham/vx-fe-pkgs/commit/93924f3))
+- **repo:** sync workspace lockfile ([6dc98d5](https://github.com/vezham/vx-fe-pkgs/commit/6dc98d5))
+- **workspace:** reserve hooks catalog version ([c9c3d93](https://github.com/vezham/vx-fe-pkgs/commit/c9c3d93))
+- **workspace:** add Ox tooling ([1bca563](https://github.com/vezham/vx-fe-pkgs/commit/1bca563))
+- **workspace:** allow packages in Fallow ([c75bbd9](https://github.com/vezham/vx-fe-pkgs/commit/c75bbd9))
+
+### deps
+
+- **workspace:** update Fallow to 3.37.0 ([9fd6dce](https://github.com/vezham/vx-fe-pkgs/commit/9fd6dce))
+- **workspace:** bump CLI and Vezham packages ([bd2d1ac](https://github.com/vezham/vx-fe-pkgs/commit/bd2d1ac))
+
+### ❤️ Thank You
+
+- v0xvigneshwaran
+- vx-vigneshwaran
+
 ## 26.0.0-beta.3 (2026-10-28)
 
 ### 🏡 Chore

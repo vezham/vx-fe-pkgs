@@ -1,6 +1,6 @@
 {
   "name": "playground-app",
-  "version": "26.0.0-beta.3",
+  "version": "26.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
