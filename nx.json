@@ -169,14 +169,16 @@
     "metadata:generate": {
       "executor": "nx:run-commands",
       "cache": false,
+      "dependsOn": ["config:build"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/config/src/lib/metadata/cli.ts generate {projectRoot}"
+        "command": "vezham-metadata generate {projectRoot}"
       }
     },
     "deploy:generate": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["config:build"],
       "inputs": [
         "{projectRoot}/vx.app.yaml",
         "{projectRoot}/vx.deploy.yaml",
@@ -189,20 +191,22 @@
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/config/src/lib/deploy/cli.ts generate {projectRoot}"
+        "command": "vezham-deploy generate {projectRoot}"
       }
     },
     "metadata:watch": {
       "executor": "nx:run-commands",
       "continuous": true,
+      "dependsOn": ["config:build"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/config/src/lib/metadata/cli.ts watch {projectRoot}"
+        "command": "vezham-metadata watch {projectRoot}"
       }
     },
     "openapi:generate": {
       "executor": "nx:run-commands",
       "cache": false,
+      "dependsOn": ["config:build"],
       "inputs": [
         "{projectRoot}/vx.app.yaml",
         "{projectRoot}/content/docs/**/*",
@@ -212,7 +216,7 @@
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/config/src/lib/presets/docs/cli.ts generate {projectRoot}"
+        "command": "vezham-docs generate {projectRoot}"
       }
     },
     "og:generate": {
@@ -243,7 +247,7 @@
       "outputs": ["{projectRoot}/public/og"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "tsx packages/config/src/lib/presets/docs/cli.ts og {projectRoot}"
+        "command": "vezham-docs og {projectRoot}"
       }
     },
     "serve:next": {
