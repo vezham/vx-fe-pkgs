@@ -1,3 +1,4 @@
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import react from '@vitejs/plugin-react-swc'
@@ -9,8 +10,9 @@ export default defineConfig({
   root: import.meta.dirname,
   plugins: [
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-    tailwindcss(),
     tanstackStart(),
-    react()
+    tailwindcss(),
+    react(),
+    nxReadySignal()
   ]
 })
