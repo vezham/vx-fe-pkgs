@@ -1,12 +1,16 @@
 import { test as base, expect } from '@playwright/test'
 
+import { isThirdPartyCookieDiagnostic } from './browser-health'
+
 // vx-bot/NOTE: Check every scenario, including navigation to an expected 404 document.
 export const test = base.extend<{ browserHealth: void }>({
   browserHealth: [
-    async ({ page }, use) => {
+    async ({ page, baseURL }, use, testInfo) => {
       const runtimeErrors: string[] = []
       const consoleErrors: Array<{ text: string; url: string }> = []
       const notFoundDocuments = new Set<string>()
+      const documentUrls = new Set<string>(baseURL ? [baseURL] : [])
+      const successfulResourceUrls = new Set<string>()
       page.on('pageerror', error => runtimeErrors.push(error.message))
       page.on('console', message => {
         if (message.type() === 'error')
@@ -18,16 +22,31 @@ export const test = base.extend<{ browserHealth: void }>({
       page.on('response', response => {
         const request = response.request()
         if (
-          response.status() === 404 &&
           request.isNavigationRequest() &&
           request.frame() === page.mainFrame()
         ) {
-          notFoundDocuments.add(response.url())
+          documentUrls.add(response.url())
+          if (response.status() === 404) notFoundDocuments.add(response.url())
+        } else if (!request.isNavigationRequest() && response.ok()) {
+          successfulResourceUrls.add(response.url())
         }
       })
       await use()
+      const cookieDiagnostics = consoleErrors.filter(error =>
+        isThirdPartyCookieDiagnostic(error, {
+          documentUrls,
+          successfulResourceUrls
+        })
+      )
+      if (cookieDiagnostics.length > 0) {
+        await testInfo.attach('browser-cookie-diagnostics', {
+          body: JSON.stringify(cookieDiagnostics, null, 2),
+          contentType: 'application/json'
+        })
+      }
       const unexpectedErrors = consoleErrors.filter(
         error =>
+          !cookieDiagnostics.includes(error) &&
           !(
             notFoundDocuments.has(error.url) &&
             /^Failed to load resource: the server responded with a status of 404(?: \((?:Not Found)?\))?$/.test(

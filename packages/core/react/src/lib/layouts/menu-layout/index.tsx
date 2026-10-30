@@ -10,7 +10,9 @@ export type MenuLayoutProps = Pick<FooterActionsProps, 'controlCenter'> & {
 }
 
 const MenuLayout = ({ items, controlCenter }: MenuLayoutProps) => {
-  const isMobile = useMediaQuery('(max-width: 767px)')
+  const isMobile = useMediaQuery('(max-width: 767px)', {
+    initializeWithValue: false
+  })
 
   if (isMobile) {
     return <MenuSM items={items} controlCenter={controlCenter} />

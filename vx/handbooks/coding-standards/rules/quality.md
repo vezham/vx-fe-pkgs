@@ -55,7 +55,9 @@ assertions. Component tests stay synchronous unless they await async behavior.
 
 App E2E suites import `test` and `expect` from `@vezham/config/playwright/test`.
 Its automatic fixture checks console and runtime errors after each scenario,
-allowing only the resource error associated with an actual main-document 404.
+allowing the resource error associated with an actual main-document 404 and
+invalid-domain cookie diagnostics from successfully loaded external resources.
+The cookie diagnostics are attached to the test report.
 
 ## Dependencies
 
