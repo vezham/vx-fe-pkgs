@@ -1,4 +1,4 @@
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import { mergeConfig } from 'vite'
 
 import type { ViteConfigOverrides } from '../vite'

@@ -119,7 +119,6 @@
     "@vezham/use-logger",
     // vx-bot/NOTE: Retained at the workspace root for future consumers.
     "@vezham/utils",
-    "@vitejs/plugin-react-swc",
     "axios",
     "embla-carousel",
     "embla-carousel-react",
