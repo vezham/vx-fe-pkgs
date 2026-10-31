@@ -1,3 +1,17 @@
+## 26.0.2 (2026-10-31)
+
+### 🏡 Chore
+
+- **config:** replace React SWC plugin ([8ceec47f](https://github.com/vezham/vx-fe-pkgs/commit/8ceec47f))
+
+### ✅ Tests
+
+- **config:** expect React Babel plugin ([dd7197b8](https://github.com/vezham/vx-fe-pkgs/commit/dd7197b8))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.1 (2026-10-30)
 
 ### 🩹 Fixes
