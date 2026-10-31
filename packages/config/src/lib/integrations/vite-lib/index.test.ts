@@ -125,7 +125,7 @@ describe('Vite package preset', () => {
       lib: { entry: 'src/custom.ts', formats: ['cjs'] },
       rolldownOptions: { output: { preserveModules: true } }
     })
-    expect(JSON.stringify(config.plugins)).toContain('vite:react-swc')
+    expect(JSON.stringify(config.plugins)).toContain('vite:react-babel')
     expect(config.plugins).toContainEqual(plugin)
     expect(config.plugins).toContainEqual(
       expect.objectContaining({ name: 'vite:dts' })
