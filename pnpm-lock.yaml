@@ -167,27 +167,30 @@ catalogs:
     '@internationalized/date':
       specifier: 3.12.4
       version: 3.12.4
+    '@tanstack/react-hotkeys':
+      specifier: ^0.10.0
+      version: 0.10.0
     '@vezham/config':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/devtools':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/env':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/react':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/start':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/template':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     '@vezham/utils':
-      specifier: 26.0.2
-      version: 26.0.2
+      specifier: workspace:*
+      version: workspace:*
     framer-motion:
       specifier: ^12.40.0
       version: 12.43.0
@@ -274,7 +277,7 @@ importers:
         version: 0.8.6
       '@vezham/devtools':
         specifier: 'catalog:'
-        version: 26.0.2(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+        version: link:packages/devtools
       '@vezham/docs-core':
         specifier: npm:@vx-oss/docs-core@1.0.17
         version: '@vx-oss/docs-core@1.0.17(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.17)(lucide-react@1.61.0(@types/react@19.2.17)(react@19.2.7))(next@16.4.2(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@25.9.3)(babel-plugin-macros@3.1.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@10.2.2)(zod@4.6.7)'
@@ -292,10 +295,10 @@ importers:
         version: '@vx-oss/docs-story@1.0.17(4eca0da51de2a795d9ada64a87b027d5)'
       '@vezham/env':
         specifier: 'catalog:'
-        version: 26.0.2
+        version: link:packages/core/env
       '@vezham/react':
         specifier: 'catalog:'
-        version: 26.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: link:packages/core/react
       '@vezham/react-pro-v3':
         specifier: npm:@heroui-pro/react@1.0.0-beta.10
         version: '@heroui-pro/react@1.0.0-beta.10'
@@ -304,16 +307,16 @@ importers:
         version: '@heroui/react@3.2.6(@internationalized/date@3.12.4)(@react-aria/ssr@3.10.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-aria/utils@3.34.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-aria-components@1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-aria@3.52.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/start':
         specifier: 'catalog:'
-        version: 26.0.2(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+        version: link:packages/start
       '@vezham/styles-v3':
         specifier: npm:@heroui/styles@3.2.6
         version: '@heroui/styles@3.2.6(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/template':
         specifier: 'catalog:'
-        version: 26.0.2
+        version: link:packages/template
       '@vezham/utils':
         specifier: 'catalog:'
-        version: 26.0.2
+        version: link:packages/core/utils
       embla-carousel:
         specifier: ^8.6.0
         version: 8.6.0
@@ -467,7 +470,7 @@ importers:
         version: 1.167.2(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.34)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-start':
         specifier: 1.168.60
-        version: 1.168.60(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
+        version: 1.168.60(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
       '@tanstack/router-cli':
         specifier: 1.167.25
         version: 1.167.25(supports-color@10.2.2)
@@ -500,7 +503,7 @@ importers:
         version: 17.0.35
       '@vezham/config':
         specifier: 'catalog:'
-        version: 26.0.2
+        version: link:packages/config
       '@vezham/icons-react':
         specifier: 1.0.7
         version: 1.0.7(react@19.2.7)
@@ -581,7 +584,7 @@ importers:
         version: 16.4.2(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@25.9.3)(babel-plugin-macros@3.1.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261023-052727-7e9a0481
+        version: nitro-nightly@3.0.1-20261024-005652-6bccaad1
       nx:
         specifier: 24.0.2
         version: 24.0.2(@swc-node/register@1.11.1(@swc/core@1.15.41(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@10.2.2)(typescript@6.0.3))(@swc/core@1.15.41(@swc/helpers@0.5.23))
@@ -651,6 +654,204 @@ importers:
       yargs:
         specifier: 17.7.3
         version: 17.7.3
+
+  apps-internals/play-next:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/play-next-e2e: {}
+
+  apps-internals/play-start:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/play-start-e2e: {}
+
+  apps-internals/playground:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-app:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-app-e2e: {}
+
+  apps-internals/playground-cdn:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+
+  apps-internals/playground-cdn-e2e: {}
+
+  apps-internals/playground-docs:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps-internals/playground-docs-e2e: {}
+
+  apps-internals/playground-e2e: {}
+
+  apps/crm:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps/demo:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+    devDependencies:
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  apps/mail:
+    dependencies:
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+
+  apps/school-os:
+    dependencies:
+      '@internationalized/date':
+        specifier: 'catalog:'
+        version: 3.12.4
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../../packages/core/env
+      '@vezham/react':
+        specifier: workspace:*
+        version: link:../../packages/core/react
+      '@vezham/start':
+        specifier: workspace:*
+        version: link:../../packages/start
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../../packages/template
+      '@vezham/utils':
+        specifier: workspace:*
+        version: link:../../packages/core/utils
+
+  packages/config:
+    dependencies:
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+
+  packages/core/env: {}
+
+  packages/core/hooks: {}
+
+  packages/core/react:
+    dependencies:
+      '@tanstack/react-hotkeys':
+        specifier: 'catalog:'
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      react-aria-components:
+        specifier: 'catalog:'
+        version: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
+  packages/core/utils: {}
+
+  packages/devtools:
+    dependencies:
+      '@tanstack/react-hotkeys-devtools':
+        specifier: ^0.7.0
+        version: 0.7.0(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
+
+  packages/start:
+    dependencies:
+      '@vezham/devtools':
+        specifier: workspace:*
+        version: link:../devtools
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../core/env
+      '@vezham/template':
+        specifier: workspace:*
+        version: link:../template
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+
+  packages/template: {}
 
   packages/vx/react: {}
 
@@ -6070,38 +6271,13 @@ packages:
     resolution: {integrity: sha512-LTV6/Kcr8pS//iDjDitfYi1bp0AlKBUuvNoHAbI8tMnj0PLOUtRWJxId5FwuE+z3oNBeDLeOWPoXVtqKjl277Q==}
     engines: {node: '>=18'}
 
-  '@vezham/config@26.0.2':
-    resolution: {integrity: sha512-fSlv+hgI0Ek0wuBjWEJilA2Tk2i47X9ZwpW21eExXpxkDhVoo9oBaZSi7OtoyEC9AeG0i7f8Zt/D1C/coaVRAA==}
-    hasBin: true
-
-  '@vezham/devtools@26.0.2':
-    resolution: {integrity: sha512-8IyJI/dKbpcrBlHob1T/eGzraw6zsG0OZLGsWuG7+4eBRclJbrKhML/Fc4JbxXzjsjMQ0itGKZVj8AbEVZ+K0Q==}
-
-  '@vezham/env@26.0.2':
-    resolution: {integrity: sha512-Umcuzh0+XFD61lbJB6UP3IgivBV/QoPF9Q+PCMl6Coot452falCLTiWEX4VLLkEfaqaaSxJNIOcLRrfF0RKEWA==}
-
-  '@vezham/hooks@26.0.2':
-    resolution: {integrity: sha512-CpVm0ZcLayGbuW2v2xL79rT0t/ST6hy+7L/Rz8kPaHV6qKT5j7wTKmd80NgULCMUv/MoTB7mUMYSaXkVHo8JKw==}
-
   '@vezham/icons-react@1.0.7':
     resolution: {integrity: sha512-f9ckgxi4NIP/OBG3RCw4mCAK9rl8EKDdiocVqYYXQ/2IjsKytJ3DQkzHqcBa1RLprF93rIRvvCc+1YYT5QaknQ==}
     peerDependencies:
       react: '>=16.8.0'
 
-  '@vezham/react@26.0.2':
-    resolution: {integrity: sha512-E1aHDkMkqps+hwHKNEOb2X8TbQV7WZMO8jLfQlgQFkMlK4JP5xSnuQBT5+TYybV6z0qIoYh7J581kDfMWWgBpw==}
-
-  '@vezham/start@26.0.2':
-    resolution: {integrity: sha512-n4Ib6IeLPlhO7YnvwEcnNZoOu1JLJF3d+MPEZCMZonGZ6d6Dm7dgGyru6Ef8cAcRJ4WSLBS+NkbNcZ/MjgrxWQ==}
-
-  '@vezham/template@26.0.2':
-    resolution: {integrity: sha512-+1RGISZlp8G9QmXduauG3jjQkFM4aNzyWANHooGXQcemnedU8Q2qePxZmxlk9BF2nRfDv0Fm49fMlQqBzwrAvw==}
-
   '@vezham/use-logger@0.3.3':
     resolution: {integrity: sha512-b0f7GVXDxfUU1FPHb4XWEIT6NNU00TLueuQcAKq46JjiZfFw0NdHX3h/ZO20AR0iKsCkhRyjtqw6+QkGBj2lMg==}
-
-  '@vezham/utils@26.0.2':
-    resolution: {integrity: sha512-pKKOJ5A8TN4nKSBA25yzynAFw/biAmFF3jJgjBWK23i3i9g2ZN4D8DoFl0B7KPABA8wLnWxnF5Wb0fM4nctNAA==}
 
   '@vitejs/plugin-react@6.1.2':
     resolution: {integrity: sha512-fhJNGUdscQa4HkI0xFxwonWyhnVReCPDbXI7FH7jmzpnVCrFQI7PRrhWecO263610vOrs9tr2Y4xcf8uAdFxbw==}
@@ -10496,8 +10672,8 @@ packages:
       sass:
         optional: true
 
-  nitro-nightly@3.0.1-20261023-052727-7e9a0481:
-    resolution: {integrity: sha512-9XElAldyN7V8Vnet6aM3jWY1YFM0xrOoRp585h0dI9vG3w7ntrvzRvbywiclzjW5gZ5W40KR9GaKp1wOTxPYYw==}
+  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
+    resolution: {integrity: sha512-AJ31BZWNg7k47ThA3rE+i7axPSC2s+yGsUMWTdl3FyHThaYzm0cb2hVqR2qU260NWz0qIGBCpBQj0Gk6qKzNLQ==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -11752,6 +11928,11 @@ packages:
 
   srvx@1.0.6:
     resolution: {integrity: sha512-QeTKgAhk8OSsfeq60bl3wuVs9PmBftzmk7owBInA/F1YQne+TRw0UcPymNpURldAmx8hfmM2PNNGH/zgo3GpLA==}
+    engines: {node: '>=20.16.0'}
+    hasBin: true
+
+  srvx@1.0.7:
+    resolution: {integrity: sha512-8h30Qy2cpYkcXgByHNpV4+jp609bU3ic7MqnfyLQ2Fpa8BgjIaI2zfsDKAIbwm8DcYDrCLqm5izF5KeL2nxdvg==}
     engines: {node: '>=20.16.0'}
     hasBin: true
 
@@ -17771,14 +17952,14 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@tanstack/react-start-rsc@0.1.59(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
+  '@tanstack/react-start-rsc@0.1.59(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
     dependencies:
       '@tanstack/react-router': 1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-core': 1.171.34
       '@tanstack/router-utils': 1.162.3(supports-color@10.2.2)
       '@tanstack/start-client-core': 1.170.34
       '@tanstack/start-fn-stubs': 1.162.0
-      '@tanstack/start-plugin-core': 1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
+      '@tanstack/start-plugin-core': 1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
       '@tanstack/start-storage-context': 1.167.36
       pathe: 2.0.3
       react: 19.2.7
@@ -17797,26 +17978,26 @@ snapshots:
       - vite-plugin-solid
       - webpack
 
-  '@tanstack/react-start-server@1.167.46(crossws@0.4.15(srvx@1.0.6))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@tanstack/react-start-server@1.167.46(crossws@0.4.15(srvx@1.0.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/react-router': 1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-core': 1.171.34
-      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.6))
+      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.7))
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
     transitivePeerDependencies:
       - crossws
 
-  '@tanstack/react-start@1.168.60(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
+  '@tanstack/react-start@1.168.60(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
     dependencies:
       '@tanstack/react-router': 1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-start-client': 1.168.39(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@tanstack/react-start-rsc': 0.1.59(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
-      '@tanstack/react-start-server': 1.167.46(crossws@0.4.15(srvx@1.0.6))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@tanstack/react-start-rsc': 0.1.59(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
+      '@tanstack/react-start-server': 1.167.46(crossws@0.4.15(srvx@1.0.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-utils': 1.162.3(supports-color@10.2.2)
       '@tanstack/start-client-core': 1.170.34
-      '@tanstack/start-plugin-core': 1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
-      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.6))
+      '@tanstack/start-plugin-core': 1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
+      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.7))
       pathe: 2.0.3
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
@@ -18010,7 +18191,7 @@ snapshots:
 
   '@tanstack/start-fn-stubs@1.162.0': {}
 
-  '@tanstack/start-plugin-core@1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.6))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
+  '@tanstack/start-plugin-core@1.171.49(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(crossws@0.4.15(srvx@1.0.7))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))':
     dependencies:
       '@babel/code-frame': 7.29.7
       '@babel/core': 7.29.7(supports-color@10.2.2)
@@ -18020,7 +18201,7 @@ snapshots:
       '@tanstack/router-generator': 1.167.40(supports-color@10.2.2)
       '@tanstack/router-plugin': 1.168.42(@tanstack/react-router@1.170.41(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(esbuild@0.28.2)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.15.41(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@25.9.3))(uglify-js@3.19.3))
       '@tanstack/router-utils': 1.162.3(supports-color@10.2.2)
-      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.6))
+      '@tanstack/start-server-core': 1.169.39(crossws@0.4.15(srvx@1.0.7))
       exsolve: 1.1.3
       lightningcss: 1.33.0
       pathe: 2.0.3
@@ -18049,14 +18230,14 @@ snapshots:
       - vite-plugin-solid
       - webpack
 
-  '@tanstack/start-server-core@1.169.39(crossws@0.4.15(srvx@1.0.6))':
+  '@tanstack/start-server-core@1.169.39(crossws@0.4.15(srvx@1.0.7))':
     dependencies:
       '@tanstack/history': 1.162.4
       '@tanstack/router-core': 1.171.34
       '@tanstack/start-client-core': 1.170.34
       '@tanstack/start-storage-context': 1.167.36
       fetchdts: 0.1.7
-      h3-v2: h3@2.0.1-rc.20(crossws@0.4.15(srvx@1.0.6))
+      h3-v2: h3@2.0.1-rc.20(crossws@0.4.15(srvx@1.0.7))
       seroval: 1.6.8
     transitivePeerDependencies:
       - crossws
@@ -18836,63 +19017,11 @@ snapshots:
       lodash: 4.18.1
       minimatch: 7.4.9
 
-  '@vezham/config@26.0.2':
-    dependencies:
-      yaml: 2.9.1
-
-  '@vezham/devtools@26.0.2(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)':
-    dependencies:
-      '@tanstack/react-hotkeys-devtools': 0.7.0(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
-    transitivePeerDependencies:
-      - '@tanstack/hotkeys'
-      - '@types/react'
-      - '@types/react-dom'
-      - csstype
-      - preact
-      - react
-      - react-dom
-      - solid-js
-      - vue
-
-  '@vezham/env@26.0.2': {}
-
-  '@vezham/hooks@26.0.2': {}
-
   '@vezham/icons-react@1.0.7(react@19.2.7)':
     dependencies:
       react: 19.2.7
 
-  '@vezham/react@26.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      '@tanstack/react-hotkeys': 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@vezham/hooks': 26.0.2
-      react-aria-components: 1.21.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-    transitivePeerDependencies:
-      - react
-      - react-dom
-
-  '@vezham/start@26.0.2(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)':
-    dependencies:
-      '@vezham/devtools': 26.0.2(@tanstack/hotkeys@0.8.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(solid-js@1.9.17)
-      '@vezham/env': 26.0.2
-      '@vezham/template': 26.0.2
-      yaml: 2.9.1
-    transitivePeerDependencies:
-      - '@tanstack/hotkeys'
-      - '@types/react'
-      - '@types/react-dom'
-      - csstype
-      - preact
-      - react
-      - react-dom
-      - solid-js
-      - vue
-
-  '@vezham/template@26.0.2': {}
-
   '@vezham/use-logger@0.3.3': {}
-
-  '@vezham/utils@26.0.2': {}
 
   '@vitejs/plugin-react@6.1.2(vite@8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
@@ -21290,6 +21419,10 @@ snapshots:
     optionalDependencies:
       srvx: 1.0.6
 
+  crossws@0.4.15(srvx@1.0.7):
+    optionalDependencies:
+      srvx: 1.0.7
+
   css-background-parser@0.1.0: {}
 
   css-box-shadow@1.0.0-3: {}
@@ -22535,19 +22668,19 @@ snapshots:
       pumpify: 1.5.1
       through2: 2.0.5
 
-  h3@2.0.1-rc.20(crossws@0.4.15(srvx@1.0.6)):
+  h3@2.0.1-rc.20(crossws@0.4.15(srvx@1.0.7)):
     dependencies:
       rou3: 0.8.1
       srvx: 0.11.22
     optionalDependencies:
-      crossws: 0.4.15(srvx@1.0.6)
+      crossws: 0.4.15(srvx@1.0.7)
 
-  h3@2.0.8(crossws@0.4.15(srvx@1.0.6))(ocache@0.3.1):
+  h3@2.0.8(crossws@0.4.15(srvx@1.0.7))(ocache@0.3.1):
     dependencies:
       rou3: 1.0.0
       srvx: 1.0.6
     optionalDependencies:
-      crossws: 0.4.15(srvx@1.0.6)
+      crossws: 0.4.15(srvx@1.0.7)
       ocache: 0.3.1
 
   handlebars@4.7.10:
@@ -24455,14 +24588,14 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  nitro-nightly@3.0.1-20261023-052727-7e9a0481:
+  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
     dependencies:
-      crossws: 0.4.15(srvx@1.0.6)
+      crossws: 0.4.15(srvx@1.0.7)
       env-runner: 0.3.7
-      h3: 2.0.8(crossws@0.4.15(srvx@1.0.6))(ocache@0.3.1)
+      h3: 2.0.8(crossws@0.4.15(srvx@1.0.7))(ocache@0.3.1)
       ocache: 0.3.1
       rou3: 1.0.0
-      srvx: 1.0.6
+      srvx: 1.0.7
 
   node-addon-api@7.1.1: {}
 
@@ -26096,6 +26229,8 @@ snapshots:
   srvx@0.11.22: {}
 
   srvx@1.0.6: {}
+
+  srvx@1.0.7: {}
 
   sshpk@1.18.0:
     dependencies:
