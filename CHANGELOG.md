@@ -1,3 +1,14 @@
+## 26.0.3 (2026-10-31)
+
+### 🏡 Chore
+
+- **workspace:** update deps and prune Nx guides ([1171ceb4](https://github.com/vezham/vx-fe-pkgs/commit/1171ceb4))
+- **workspace:** link packages locally ([5680c6d8](https://github.com/vezham/vx-fe-pkgs/commit/5680c6d8))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.2 (2026-10-31)
 
 ### 🏡 Chore

@@ -4,7 +4,7 @@ core:
   id: vezham-playground
   name: Vezham Playground
   shortName: Playground
-  version: 26.0.2
+  version: 26.0.3
   description: Single app to manage your Vezham Playground
   publisher:
     name: Vezham Technologies Private Limited

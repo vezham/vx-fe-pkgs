@@ -4,7 +4,7 @@ core:
   id: vezham-play-next
   name: Vezham Play Next
   shortName: Play Next
-  version: 26.0.2
+  version: 26.0.3
   description: Single app to manage your Vezham Play Next
   publisher:
     name: Vezham Technologies Private Limited
