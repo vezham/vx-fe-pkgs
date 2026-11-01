@@ -37,6 +37,7 @@ export interface FooterActionsProps {
   controlCenter?: ReactElement
   showNotifications?: boolean
   showUserInfo?: boolean
+  hideSeparator?: boolean
 
   notificationCount?: number
 

@@ -128,7 +128,7 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
         }}
       />
 
-      {!isFooterHidden && (
+      {!isFooterHidden && items.length > 1 && (
         <div className="shrink-0">
           <BottomNavbar
             items={items}

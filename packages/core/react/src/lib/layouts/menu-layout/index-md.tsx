@@ -157,11 +157,17 @@ const NavigationPanel = ({
           showSearch
           showBookamarks
           showStorage
+          hideSeparator={items.length <= 1}
           onToggleDock={onToggleDock}
         />
-        <Menu collapsed={false} items={items} selectedKey={selectedKey} />
+        {items.length > 1 ? (
+          <Menu collapsed={false} items={items} selectedKey={selectedKey} />
+        ) : (
+          <div className="min-h-0 flex-1" aria-hidden="true" />
+        )}
         <Footer
           user={footerUser}
+          hideSeparator={items.length <= 1}
           showAI
           showControlCenter
           controlCenter={controlCenter}

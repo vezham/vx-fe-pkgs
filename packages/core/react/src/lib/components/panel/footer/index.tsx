@@ -111,6 +111,7 @@ const Footer = ({
   controlCenter,
   showNotifications = false,
   showUserInfo = true,
+  hideSeparator = false,
   notificationCount = 0,
   onAI,
   onNotificationsClick,
@@ -134,7 +135,7 @@ const Footer = ({
 
   return (
     <>
-      <Separator className="hidden md:block" />
+      {!hideSeparator && <Separator className="hidden md:block" />}
       <Surface
         variant="transparent"
         className={`flex items-center justify-center gap-2 md:flex-col md:gap-3 ${className ?? ''}`}>
