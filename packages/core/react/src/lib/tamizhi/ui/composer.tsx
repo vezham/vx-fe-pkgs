@@ -11,10 +11,14 @@ import {
   Tooltip
 } from '@vezham/react-v3'
 
-import { ModelPicker } from '../../components/panel/footer/ai/model-picker'
+import {
+  FastModeToggle,
+  ModelPicker
+} from '../../components/panel/footer/ai/model-picker'
+import { PermissionPicker } from '../../components/panel/footer/ai/permission-picker'
 import { ComposerControls } from './controls'
 
-interface Props {
+export interface ComposerProps {
   isStreaming: boolean
   isReady: boolean
   isOffline: boolean
@@ -32,7 +36,12 @@ interface Props {
   onStop: () => void
 }
 
-export const Composer = ({
+interface ComposerLayoutProps extends ComposerProps {
+  variant: 'app' | 'embed'
+}
+
+export const ComposerLayout = ({
+  variant,
   isStreaming,
   isReady,
   isOffline,
@@ -48,7 +57,7 @@ export const Composer = ({
   onListeningChange,
   onSend,
   onStop
-}: Props) => {
+}: ComposerLayoutProps) => {
   const [text, setText] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const fileInput = useRef<HTMLInputElement>(null)
@@ -85,7 +94,7 @@ export const Composer = ({
     inputRef.current?.focus()
   }
   return (
-    <div className="tamizhi-composer">
+    <div className={`tamizhi-composer tamizhi-composer--${variant}`}>
       <Form
         onSubmit={event => {
           event.preventDefault()
@@ -186,16 +195,29 @@ export const Composer = ({
                 className="tamizhi-composer__tool-button"
                 isDisabled={isOffline}
                 onPress={() => fileInput.current?.click()}>
-                <Paperclip size={20} aria-hidden="true" />
+                <Paperclip size={24} aria-hidden="true" />
               </Button>
               <Tooltip.Content>Attach files · local preview</Tooltip.Content>
             </Tooltip>
-            <ComposerControls
-              isFastMode={isFastMode}
-              onFastModeChange={onFastModeChange}
-              permission={permission}
-              onPermissionChange={onPermissionChange}
-            />
+            {variant === 'embed' ? (
+              <ComposerControls
+                isFastMode={isFastMode}
+                onFastModeChange={onFastModeChange}
+                permission={permission}
+                onPermissionChange={onPermissionChange}
+              />
+            ) : (
+              <>
+                <FastModeToggle
+                  isFastMode={isFastMode}
+                  onFastModeChange={onFastModeChange}
+                />
+                <PermissionPicker
+                  permission={permission}
+                  onPermissionChange={onPermissionChange}
+                />
+              </>
+            )}
           </div>
           <div className="tamizhi-composer__toolbar-end">
             <ModelPicker model={model} onModelChange={onModelChange} />
@@ -206,7 +228,7 @@ export const Composer = ({
                 variant="secondary"
                 className="tamizhi-composer__send"
                 onPress={onStop}>
-                <Stop size={18} aria-hidden="true" />
+                <Stop size={24} aria-hidden="true" />
               </Button>
             ) : (
               <Button
@@ -215,7 +237,7 @@ export const Composer = ({
                 type="submit"
                 className="tamizhi-composer__send"
                 isDisabled={!text.trim() || !isReady || isOffline}>
-                <ArrowUp size={22} aria-hidden="true" />
+                <ArrowUp size={24} aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -227,3 +249,7 @@ export const Composer = ({
     </div>
   )
 }
+
+export const Composer = (props: ComposerProps) => (
+  <ComposerLayout {...props} variant="app" />
+)

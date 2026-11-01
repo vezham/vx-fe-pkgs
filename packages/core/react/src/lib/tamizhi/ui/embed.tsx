@@ -17,6 +17,7 @@ export const TamizhiEmbed = () => {
     <TamizhiChat
       {...session}
       compact
+      composerVariant="embed"
       composerNote={
         <>
           <p className="text-xs">AI may make mistakes. Verify all outputs.</p>

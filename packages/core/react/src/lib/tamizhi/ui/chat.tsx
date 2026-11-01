@@ -7,6 +7,7 @@ import { OUTFITS, detectOutfit } from './avatar-data'
 import { BotPicker } from './bot-picker'
 import { Companion } from './companion'
 import { Composer } from './composer'
+import { ComposerLite } from './composer-lite'
 import { Conversation } from './conversation'
 import { Playground } from './playground'
 import { PlaygroundPanel } from './playground-panel'
@@ -23,6 +24,7 @@ export interface TamizhiChatProps {
   isOffline: boolean
   setIsOffline: (value: boolean) => void
   compact?: boolean
+  composerVariant?: 'app' | 'embed'
   composerNote?: ReactNode
   renderLayout: (content: ReactNode, openPlayground: () => void) => ReactNode
 }
@@ -34,6 +36,7 @@ export const TamizhiChat = ({
   isOffline,
   setIsOffline,
   compact = false,
+  composerVariant = 'app',
   composerNote,
   renderLayout
 }: TamizhiChatProps) => {
@@ -108,6 +111,8 @@ export const TamizhiChat = ({
     />
   )
 
+  const ComposerComponent =
+    composerVariant === 'embed' ? ComposerLite : Composer
   const content = (
     <section ref={main} className="tamizhi__main" aria-label="Tamizhi chat">
       <div
@@ -174,7 +179,7 @@ export const TamizhiChat = ({
           {outfitInfo.name} mode
         </span>
       )}
-      <Composer
+      <ComposerComponent
         model={model}
         onModelChange={setModel}
         isFastMode={isFastMode}
