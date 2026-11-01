@@ -1266,10 +1266,10 @@ export function createRenderer(opts = {}) {
       return r
     }
     meshLoading = Promise.all([
-      fetch(meshBase + '.json')
+      fetch(opts.resolveAsset ? opts.resolveAsset('.json') : meshBase + '.json')
         .then(ok)
         .then(r => r.json()),
-      fetch(meshBase + '.lod.bin')
+      fetch(opts.resolveAsset ? opts.resolveAsset('.lod.bin') : meshBase + '.lod.bin')
         .then(ok)
         .then(r => r.arrayBuffer()),
       MeshoptDecoder.ready

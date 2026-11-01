@@ -49,6 +49,7 @@ type Props = {
   showNotifications?: boolean
   notificationCount?: number
   onAI?: () => void
+  onTamizhi?: () => void
   onControlCenter?: () => void
   onNotifications?: () => void
 }
@@ -441,6 +442,7 @@ const UserMenu = ({
   showNotifications = false,
   notificationCount = 0,
   onAI,
+  onTamizhi,
   onControlCenter,
   onNotifications
 }: Props) => {
@@ -494,6 +496,13 @@ const UserMenu = ({
           label: 'Tamizhi AI',
           icon: <VezhamTamizhi size={24} aria-hidden="true" />,
           onPress: onAI
+        }
+      : null,
+    showAI && onTamizhi
+      ? {
+          label: 'Tamizhi Preview',
+          icon: <VezhamTamizhi size={24} aria-hidden="true" />,
+          onPress: onTamizhi
         }
       : null
   ].filter((action): action is NonNullable<typeof action> => action !== null)

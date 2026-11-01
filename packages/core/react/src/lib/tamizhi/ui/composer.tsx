@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { RefObject } from 'react'
+import type { ReactNode, RefObject } from 'react'
 
 import { Button, Form, Label, TextArea, TextField } from '@vezham/react-v3'
 
@@ -7,6 +7,7 @@ interface Props {
   isStreaming: boolean
   isReady: boolean
   isOffline: boolean
+  note?: ReactNode
   avatarSlotRef: RefObject<HTMLDivElement | null>
   inputRef: RefObject<HTMLTextAreaElement | null>
   onListeningChange: (isListening: boolean) => void
@@ -18,6 +19,7 @@ export const Composer = ({
   isStreaming,
   isReady,
   isOffline,
+  note,
   avatarSlotRef,
   inputRef,
   onListeningChange,
@@ -121,9 +123,9 @@ export const Composer = ({
           </Button>
         )}
       </Form>
-      <p className="tamizhi-composer__note">
-        Local demo · Replies are written ahead of time
-      </p>
+      <div className="tamizhi-composer__note">
+        {note ?? <p>Local demo · Replies are written ahead of time</p>}
+      </div>
     </div>
   )
 }

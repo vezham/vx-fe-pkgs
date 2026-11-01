@@ -1,5 +1,6 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useState } from 'react'
 
+import { useLocalStore } from '@vezham/hooks'
 import {
   Button,
   Input,
@@ -20,17 +21,14 @@ import type { ThemeMode } from '../../components/panel/footer/control-center/typ
 import { useUser } from '../../store/users/useUserStore'
 import type { SettingsSection } from './navigation'
 
-const subscribeNotifications = (onChange: () => void) => {
-  window.addEventListener('storage', onChange)
-  window.addEventListener('vx:notification-settings', onChange)
-  return () => {
-    window.removeEventListener('storage', onChange)
-    window.removeEventListener('vx:notification-settings', onChange)
-  }
+const INITIAL_NOTIFICATIONS = { sounds: true, badges: true }
+const parseNotifications = (data: unknown) => {
+  if (!data || typeof data !== 'object') return INITIAL_NOTIFICATIONS
+  const value = data as Partial<typeof INITIAL_NOTIFICATIONS>
+  return typeof value.sounds === 'boolean' && typeof value.badges === 'boolean'
+    ? { sounds: value.sounds, badges: value.badges }
+    : INITIAL_NOTIFICATIONS
 }
-const readNotifications = () =>
-  localStorage.getItem('demo:notification-settings') ?? ''
-const serverNotifications = () => ''
 const useSettingsPreferences = () => {
   const { user, updateUser } = useUser()
   const { value: language, onChange: setLanguage } = useRootAttribute(
@@ -42,27 +40,11 @@ const useSettingsPreferences = () => {
   const [lastName, setLastName] = useState(user?.lastName ?? '')
   const [email, setEmail] = useState(user?.email ?? '')
   const [saved, setSaved] = useState(false)
-  const snapshot = useSyncExternalStore(
-    subscribeNotifications,
-    readNotifications,
-    serverNotifications
+  const { value: notifications, setValue: setNotifications } = useLocalStore(
+    'demo:notification-settings',
+    INITIAL_NOTIFICATIONS,
+    { parse: parseNotifications }
   )
-  let notifications = { sounds: true, badges: true }
-  try {
-    const value = JSON.parse(snapshot || 'null')
-    if (
-      value &&
-      typeof value.sounds === 'boolean' &&
-      typeof value.badges === 'boolean'
-    )
-      notifications = { sounds: value.sounds, badges: value.badges }
-  } catch {
-    // vx-bot/NOTE: Invalid saved preferences use defaults.
-  }
-  const setNotifications = (next: typeof notifications) => {
-    localStorage.setItem('demo:notification-settings', JSON.stringify(next))
-    window.dispatchEvent(new Event('vx:notification-settings'))
-  }
   return {
     updateUser,
     language,

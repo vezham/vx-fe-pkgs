@@ -8,6 +8,7 @@ import { Footer } from '../../components/panel/footer'
 import { aiPanel } from '../../components/panel/footer/ai'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
 import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
+import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
 import { Header } from '../../components/panel/header'
 import { bookmarksPanel } from '../../components/panel/header/bookmarks'
 import { storagePanel } from '../../components/panel/header/storage'
@@ -83,6 +84,7 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
         navigationWidth={navigationWidth}
         selectedKey={selectedKey}
         onAI={() => openInfoPanel('ai')}
+        onTamizhi={() => openInfoPanel('tamizhi')}
         onToggleDock={toggleDock}
         onNotifications={() => setNotificationsOpen(true)}
         onUser={entryPoint => {
@@ -108,7 +110,8 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
         panels={{
           bookmarks: bookmarksPanel,
           storage: storagePanel,
-          ai: aiPanel
+          ai: aiPanel,
+          tamizhi: tamizhiPanel
         }}
       />
     </>
@@ -126,6 +129,7 @@ type Props = Pick<MenuLayoutProps, 'controlCenter'> & {
   items: AppNavigationItem[]
   navigationWidth: string
   selectedKey?: string
+  onTamizhi: () => void
   onAI: () => void
   onToggleDock?: () => void
   onNotifications: () => void
@@ -140,6 +144,7 @@ const NavigationPanel = ({
   navigationWidth,
   selectedKey,
   onAI,
+  onTamizhi,
   onToggleDock,
   onNotifications,
   onUser
@@ -174,6 +179,7 @@ const NavigationPanel = ({
           showNotifications
           showUserInfo
           onAI={onAI}
+          onTamizhi={onTamizhi}
           onNotificationsClick={onNotifications}
           onUserClick={(_user, entryPoint = 'account') => onUser(entryPoint)}
         />

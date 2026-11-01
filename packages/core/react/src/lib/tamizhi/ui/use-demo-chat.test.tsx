@@ -104,7 +104,9 @@ describe('Tamizhi local conversations', () => {
     const initialProps: { chatId: string | null } = { chatId: null }
     const hook = renderHook(
       ({ chatId }: { chatId: string | null }) => useDemoChat(false, chatId),
-      { initialProps }
+      {
+        initialProps
+      }
     )
     act(() => vi.advanceTimersByTime(0))
     let createdId: string | undefined

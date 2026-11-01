@@ -58,6 +58,7 @@ const CompactActions = ({
   showNotifications,
   notificationCount = 0,
   onAI,
+  onTamizhi,
   onNotificationsClick
 }: Omit<FooterActionsProps, 'user' | 'showUserInfo' | 'onUserClick'> & {
   onControlCenter: () => void
@@ -98,6 +99,12 @@ const CompactActions = ({
               Tamizhi AI
             </Dropdown.Item>
           ) : null}
+          {showAI && onTamizhi ? (
+            <Dropdown.Item onPress={onTamizhi}>
+              <VezhamTamizhi size={20} aria-hidden="true" />
+              Tamizhi Preview
+            </Dropdown.Item>
+          ) : null}
         </Dropdown.Menu>
       </Dropdown.Popover>
     </Dropdown>
@@ -114,6 +121,7 @@ const Footer = ({
   hideSeparator = false,
   notificationCount = 0,
   onAI,
+  onTamizhi,
   onNotificationsClick,
   onUserClick,
   toolbarAction,
@@ -146,6 +154,11 @@ const Footer = ({
             </FooterAction>
           ) : null}
 
+          {showAI && onTamizhi ? (
+            <FooterAction label="Tamizhi Preview" onPress={onTamizhi}>
+              <VezhamTamizhi size={20} aria-hidden="true" />
+            </FooterAction>
+          ) : null}
           {showNotifications ? (
             <div className="relative">
               <FooterAction
@@ -176,6 +189,7 @@ const Footer = ({
             showNotifications={showNotifications}
             notificationCount={notificationCount}
             onAI={onAI}
+            onTamizhi={onTamizhi}
             onControlCenter={() => setControlCenterOpen(true)}
             onNotifications={onNotificationsClick}
             onProfile={() => onUserClick?.(user, 'profiles')}
@@ -191,6 +205,7 @@ const Footer = ({
               showNotifications={showNotifications}
               notificationCount={notificationCount}
               onAI={onAI}
+              onTamizhi={onTamizhi}
               onNotificationsClick={onNotificationsClick}
             />
           </div>

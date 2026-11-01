@@ -1,39 +1,12 @@
-import { useState } from 'react'
 import Markdown from 'react-markdown'
 
+import { useCopyToClipboard } from '@vezham/hooks'
 import { CheckRead, Copy, Refresh } from '@vezham/icons-react'
 import { Card, Checkbox, Label } from '@vezham/react-v3'
 
 import { Companion } from './companion'
 import type { Message } from './demo'
 import { IconButton } from './icon-button'
-
-const copyText = async (text: string) => {
-  if (typeof navigator.clipboard?.writeText === 'function') {
-    try {
-      await navigator.clipboard.writeText(text)
-      return
-    } catch {
-      // vx-bot/NOTE: Fall through to selection-based copy for restricted origins.
-    }
-  }
-
-  const input = document.createElement('textarea')
-  input.value = text
-  input.setAttribute('readonly', '')
-  input.style.position = 'fixed'
-  input.style.top = '0'
-  input.style.left = '-9999px'
-  input.style.fontSize = '16px'
-  document.body.appendChild(input)
-  input.focus()
-  input.select()
-  input.setSelectionRange(0, text.length)
-  const copied = document.execCommand('copy')
-  input.remove()
-
-  if (!copied) throw new Error('Clipboard copy is unavailable')
-}
 
 interface Props {
   message: Message
@@ -52,22 +25,16 @@ export const ChatMessage = ({
   onRetry,
   onToggleTask
 }: Props) => {
-  const [copyStatus, setCopyStatus] = useState('')
-  const copy = async () => {
-    try {
-      await copyText(
-        [
-          message.text,
-          ...(message.tasks?.map(
-            task => `${task.done ? '[x]' : '[ ]'} ${task.label}`
-          ) ?? [])
-        ].join('\n')
-      )
-      setCopyStatus('Copied')
-    } catch {
-      setCopyStatus('Copy unavailable. Select the text to copy it.')
-    }
-  }
+  const { copy, isCopied, isUnavailable } = useCopyToClipboard()
+  const copyResponse = () =>
+    void copy(
+      [
+        message.text,
+        ...(message.tasks?.map(
+          task => `${task.done ? '[x]' : '[ ]'} ${task.label}`
+        ) ?? [])
+      ].join('\n')
+    )
 
   if (message.role === 'user')
     return (
@@ -148,10 +115,10 @@ export const ChatMessage = ({
       {!isStreaming && message.text && (
         <div className="tamizhi-message__actions">
           <IconButton
-            label={copyStatus === 'Copied' ? 'Copied' : 'Copy response'}
+            label={isCopied ? 'Copied' : 'Copy response'}
             size="sm"
-            onPress={copy}>
-            {copyStatus === 'Copied' ? (
+            onPress={copyResponse}>
+            {isCopied ? (
               <CheckRead size={16} aria-hidden="true" />
             ) : (
               <Copy size={16} aria-hidden="true" />
@@ -162,7 +129,13 @@ export const ChatMessage = ({
               <Refresh size={16} aria-hidden="true" />
             </IconButton>
           )}
-          <span role="status">{copyStatus}</span>
+          <span role="status">
+            {isUnavailable
+              ? 'Copy unavailable. Select the text to copy it.'
+              : isCopied
+                ? 'Copied'
+                : ''}
+          </span>
         </div>
       )}
     </article>

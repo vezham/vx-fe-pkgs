@@ -1,3 +1,4 @@
+import { resolveAvatarAsset } from './avatar-assets'
 import { EXPRESSIONS, OUTFITS } from './avatar-data'
 import type { Expression, Outfit } from './avatar-data'
 
@@ -24,29 +25,28 @@ export interface AvatarRenderer {
   ) => Promise<HTMLCanvasElement | null>
 }
 interface EngineModule {
-  createRenderer: (options: { base: string }) => AvatarRenderer
+  createRenderer: (options: {
+    base: string
+    resolveAsset: (suffix: string) => string
+  }) => AvatarRenderer
   PALETTES: Record<string, string[]>
 }
-const BASE = `${import.meta.env.BASE_URL}momo`
+const rendererOptions = { base: '.', resolveAsset: resolveAvatarAsset }
 let enginePromise: Promise<EngineModule> | undefined
 let snapshotPromise: Promise<AvatarRenderer> | undefined
 
 const loadEngine = () =>
-  (enginePromise ??= import(
-    // eslint-disable-next-line @vx-lint/comment-style -- Vite requires this exact runtime import directive.
-    /* @vite-ignore */ `${BASE}/engine/mesh.js`
-  ) as Promise<EngineModule>)
+  (enginePromise ??=
+    import('./vendor/momo/engine/mesh.js') as Promise<EngineModule>)
 
 export const createAvatarRenderer = async () => {
   const engine = await loadEngine()
   try {
-    return engine.createRenderer({ base: BASE })
+    return engine.createRenderer(rendererOptions)
   } catch {
-    const fallback = (await import(
-      // eslint-disable-next-line @vx-lint/comment-style -- Vite requires this exact runtime import directive.
-      /* @vite-ignore */ `${BASE}/engine/canvas.js`
-    )) as EngineModule
-    return fallback.createRenderer({ base: BASE })
+    const fallback =
+      (await import('./vendor/momo/engine/canvas.js')) as EngineModule
+    return fallback.createRenderer(rendererOptions)
   }
 }
 

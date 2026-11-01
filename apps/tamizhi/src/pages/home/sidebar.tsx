@@ -1,7 +1,6 @@
 import type { AppNavigationItem } from '@vezham/react'
-
-import { EXAMPLES } from './demo'
-import type { Conversation } from './demo'
+import type { Conversation } from '@vezham/react/tamizhi/contracts'
+import { EXAMPLES } from '@vezham/react/tamizhi/ui'
 
 export const getSidebarItems = (
   conversations: Conversation[]

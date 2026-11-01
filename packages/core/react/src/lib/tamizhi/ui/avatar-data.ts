@@ -1,4 +1,6 @@
-import type { Persona } from './demo'
+import type { Outfit, Persona } from '../contracts'
+
+export type { Outfit } from '../contracts'
 
 export const OUTFITS = [
   {
@@ -147,7 +149,6 @@ export const OUTFITS = [
   }
 ] as const
 
-export type Outfit = (typeof OUTFITS)[number]['id']
 export type Expression =
   | 'neutral'
   | 'happy'

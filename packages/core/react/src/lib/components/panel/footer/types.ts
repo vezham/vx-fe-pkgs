@@ -42,6 +42,7 @@ export interface FooterActionsProps {
   notificationCount?: number
 
   onAI?: () => void
+  onTamizhi?: () => void
   onNotificationsClick?: () => void
   onUserClick?: (user: UserInfo, entryPoint?: UserSettingsEntryPoint) => void
 

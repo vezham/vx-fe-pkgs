@@ -5,13 +5,14 @@ import { OUTFITS } from './avatar-data'
 import type { Outfit } from './avatar-data'
 
 interface Props {
+  headingId: string
   name: string
   outfit: Outfit
   onSelect: (name: string, outfit: Outfit) => void
 }
 
-export const BotPicker = ({ name, outfit, onSelect }: Props) => (
-  <h1 id="welcome-title" className="tamizhi-welcome__question">
+export const BotPicker = ({ name, outfit, onSelect, headingId }: Props) => (
+  <h1 id={headingId} className="tamizhi-welcome__question">
     Who’s helping?
     <Dropdown>
       <Dropdown.Trigger

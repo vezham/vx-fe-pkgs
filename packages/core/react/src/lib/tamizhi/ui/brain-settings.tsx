@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 
 import { Button, Form, Input, Label, TextField } from '@vezham/react-v3'
 
@@ -16,12 +16,13 @@ export const BrainSettings = ({
   lastOutfit,
   onApiKeyChange
 }: Props) => {
+  const headingId = useId()
   const [draftKey, setDraftKey] = useState('')
   const lastPick = OUTFITS.find(item => item.id === lastOutfit)
 
   return (
-    <section aria-labelledby="tamizhi-brain-title">
-      <h2 id="tamizhi-brain-title">Brain</h2>
+    <section aria-labelledby={headingId}>
+      <h2 id={headingId}>Brain</h2>
       <p className="mb-3">Setup preview · No provider connected</p>
       {apiKey ? (
         <div className="flex items-center justify-between gap-2">

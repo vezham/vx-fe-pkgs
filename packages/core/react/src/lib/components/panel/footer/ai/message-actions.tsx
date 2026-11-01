@@ -1,6 +1,4 @@
-import { useState } from 'react'
-
-import { writeClipboardText } from '@vezham/docs-react/utils/clipboard'
+import { useCopyToClipboard } from '@vezham/hooks'
 import { BranchingPathsUp } from '@vezham/icons-react'
 import { ChatMessageActions } from '@vezham/react-pro-v3'
 import { Button } from '@vezham/react-v3'
@@ -12,24 +10,15 @@ type Props = {
   conversation: Conversation
 }
 export const MessageActions = ({ message, conversation }: Props) => {
-  const [copied, setCopied] = useState(false)
-  const [error, setError] = useState(false)
+  const { copy, isCopied, isUnavailable } = useCopyToClipboard()
   return (
     <>
       <ChatMessageActions>
         <ChatMessageActions.Copy
           aria-label="Copy response"
           tooltip="Copy"
-          isCopied={copied}
-          onPress={async () => {
-            try {
-              await writeClipboardText(message.text)
-              setCopied(true)
-              setError(false)
-            } catch {
-              setError(true)
-            }
-          }}
+          isCopied={isCopied}
+          onPress={() => void copy(message.text)}
         />
         <ChatMessageActions.ThumbsUp
           aria-label="Good response"
@@ -59,7 +48,7 @@ export const MessageActions = ({ message, conversation }: Props) => {
           <BranchingPathsUp size={18} aria-hidden="true" />
         </Button>
       </ChatMessageActions>
-      {error && (
+      {isUnavailable && (
         <p role="status" className="text-muted text-xs">
           Copy is unavailable in this browser.
         </p>

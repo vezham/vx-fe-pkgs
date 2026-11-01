@@ -1,3 +1,5 @@
+import type { RefObject } from 'react'
+
 import { outfitForPersona } from './avatar-data'
 import type { Expression, Outfit } from './avatar-data'
 import type { Persona } from './demo'
@@ -12,7 +14,7 @@ interface Props {
   isThinking?: boolean
   isAnimated?: boolean
   isOffline?: boolean
-  focusTarget?: HTMLElement | null
+  focusTargetRef?: RefObject<HTMLElement | null> | null
   size?: 'small' | 'large'
   previewSize?: 28 | 44 | 72
 }
@@ -26,7 +28,7 @@ export const Companion = ({
   isThinking = false,
   isAnimated = true,
   isOffline = false,
-  focusTarget = null,
+  focusTargetRef = null,
   size = 'large',
   previewSize
 }: Props) => {
@@ -38,7 +40,7 @@ export const Companion = ({
     isThinking,
     isAnimated,
     isOffline,
-    focusTarget,
+    focusTargetRef,
     size,
     previewSize
   })

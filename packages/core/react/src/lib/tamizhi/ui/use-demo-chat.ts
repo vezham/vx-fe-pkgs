@@ -1,8 +1,11 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
-import { OUTFITS, detectOutfit } from './avatar-data'
+import { useLocalStore } from '@vezham/hooks'
+
+import { detectOutfit } from './avatar-data'
+import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
 import { createDemoReply, detectPersona } from './demo'
-import type { Conversation, Message, Persona } from './demo'
+import type { Message, Persona } from './demo'
 
 const STORAGE_KEY = 'tamizhi.demo.v1'
 
@@ -18,53 +21,23 @@ const createId = () => {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 }
 
-const readConversations = (): Conversation[] => {
-  const saved: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-  if (!Array.isArray(saved)) return []
-  return saved
-    .filter(
-      (chat): chat is Conversation =>
-        typeof chat?.id === 'string' &&
-        typeof chat?.title === 'string' &&
-        Array.isArray(chat.messages) &&
-        chat.messages.length <= 60 &&
-        chat.messages.every(
-          (message: Message) =>
-            typeof message?.id === 'string' &&
-            typeof message.text === 'string' &&
-            ['user', 'assistant'].includes(message.role) &&
-            [
-              'helper',
-              'coder',
-              'writer',
-              'planner',
-              'tutor',
-              'explorer'
-            ].includes(message.persona) &&
-            (message.outfit === undefined ||
-              OUTFITS.some(outfit => outfit.id === message.outfit)) &&
-            (message.tasks === undefined ||
-              (Array.isArray(message.tasks) &&
-                message.tasks.every(
-                  task =>
-                    typeof task?.label === 'string' &&
-                    typeof task.done === 'boolean'
-                )))
-        )
-    )
-    .slice(0, 24)
-}
-
 export const useDemoChat = (
   isInstant = false,
-  selectedChatId?: string | null
+  selectedChatId?: string | null,
+  storageKey = STORAGE_KEY
 ) => {
-  const [conversations, setConversations] = useState<Conversation[]>([])
+  const {
+    value: conversations,
+    setValue: setConversations,
+    isReady,
+    isSaved
+  } = useLocalStore(storageKey, EMPTY_CONVERSATIONS, {
+    parse: parseConversations,
+    debounceMs: 150
+  })
   const [sessionChatId, setActiveId] = useState<string | null>(null)
   const activeId = selectedChatId === undefined ? sessionChatId : selectedChatId
   const [isStreaming, setIsStreaming] = useState(false)
-  const [isReady, setIsReady] = useState(false)
-  const [isSaved, setIsSaved] = useState(true)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
   const busy = useRef(false)
   const streamingChatId = useRef<string | null>(null)
@@ -72,33 +45,12 @@ export const useDemoChat = (
   const messages = active?.messages ?? []
   const persona = messages[messages.length - 1]?.persona ?? 'helper'
 
-  useEffect(() => {
-    const hydration = setTimeout(() => {
-      try {
-        setConversations(readConversations())
-      } catch {
-        setIsSaved(false)
-      }
-      setIsReady(true)
-    }, 0)
-    return () => {
-      clearTimeout(hydration)
+  useEffect(
+    () => () => {
       if (timer.current) clearInterval(timer.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isReady || isStreaming) return
-    const save = setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations))
-        setIsSaved(true)
-      } catch {
-        setIsSaved(false)
-      }
-    }, 150)
-    return () => clearTimeout(save)
-  }, [conversations, isReady, isStreaming])
+    },
+    []
+  )
 
   const stop = () => {
     if (timer.current) clearInterval(timer.current)

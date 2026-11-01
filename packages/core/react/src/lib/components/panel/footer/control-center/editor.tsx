@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { useLocalStore } from '@vezham/hooks'
 
 export type EditorState = {
   items: readonly {
@@ -20,44 +20,48 @@ type EditableTile = {
   editable?: boolean
   span?: string
 }
-const subscribe = (onChange: () => void) => {
-  window.addEventListener('storage', onChange)
-  window.addEventListener('vx:tile-preferences', onChange)
-  return () => {
-    window.removeEventListener('storage', onChange)
-    window.removeEventListener('vx:tile-preferences', onChange)
+interface TilePreferences {
+  order: string[]
+  hidden: string[]
+  spans: Record<string, string>
+}
+const INITIAL_PREFERENCES: TilePreferences = {
+  order: [],
+  hidden: [],
+  spans: {}
+}
+const parsePreferences = (data: unknown): TilePreferences => {
+  if (!data || typeof data !== 'object') return INITIAL_PREFERENCES
+  const value = data as Partial<TilePreferences>
+  return {
+    order: Array.isArray(value.order)
+      ? [...new Set(value.order.filter(id => typeof id === 'string'))]
+      : [],
+    hidden: Array.isArray(value.hidden)
+      ? value.hidden.filter(id => typeof id === 'string')
+      : [],
+    spans:
+      value.spans && typeof value.spans === 'object'
+        ? Object.fromEntries(
+            Object.entries(value.spans).filter(
+              ([, span]) => typeof span === 'string'
+            )
+          )
+        : {}
   }
 }
 export const useTileEditor = <Tile extends EditableTile>(
   tiles: readonly Tile[],
   storageKey = 'vx:control-center'
 ) => {
-  const snapshot = useSyncExternalStore(
-    subscribe,
-    () => localStorage.getItem(storageKey) ?? '',
-    () => ''
-  )
-  let order: string[] = []
-  let hidden: string[] = []
-  const spans: Record<string, string> = {}
-  try {
-    const value = JSON.parse(snapshot || '{}')
-    if (Array.isArray(value.order))
-      order = [
-        ...new Set<string>(
-          value.order.filter((id: unknown) => typeof id === 'string')
-        )
-      ]
-    if (Array.isArray(value.hidden))
-      hidden = value.hidden.filter((id: unknown) => typeof id === 'string')
-    if (value.spans && typeof value.spans === 'object') {
-      for (const [id, span] of Object.entries(value.spans)) {
-        if (typeof span === 'string') spans[id] = span
-      }
+  const { value: preferences, setValue } = useLocalStore(
+    storageKey,
+    INITIAL_PREFERENCES,
+    {
+      parse: parsePreferences
     }
-  } catch {
-    // vx-bot/NOTE: Invalid saved preferences fall back to the configured tiles.
-  }
+  )
+  const { order, hidden, spans } = preferences
   const tilesById = new Map(tiles.map(tile => [tile.id, tile]))
   const orderedIds = new Set(order)
   const hiddenIds = new Set(hidden)
@@ -73,11 +77,11 @@ export const useTileEditor = <Tile extends EditableTile>(
     nextHidden: readonly string[],
     nextSpans = spans
   ) => {
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify({ order: nextOrder, hidden: nextHidden, spans: nextSpans })
-    )
-    window.dispatchEvent(new Event('vx:tile-preferences'))
+    setValue({
+      order: [...nextOrder],
+      hidden: [...nextHidden],
+      spans: nextSpans
+    })
   }
   const editor: EditorState = {
     items: orderedTiles.map(tile => ({

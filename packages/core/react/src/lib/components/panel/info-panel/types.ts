@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-export type ActiveInfoPanel = 'bookmarks' | 'storage' | 'ai' | null
+export type ActiveInfoPanel = 'bookmarks' | 'storage' | 'ai' | 'tamizhi' | null
 
 export interface InfoPanelContextValue {
   activeInfoPanel: ActiveInfoPanel

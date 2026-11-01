@@ -1,31 +1,7 @@
+import type { ExampleChat, Message, Outfit, Persona } from '../contracts'
 import { detectOutfit } from './avatar-data'
-import type { Outfit } from './avatar-data'
 
-export type Persona =
-  'helper' | 'coder' | 'writer' | 'planner' | 'tutor' | 'explorer'
-
-export interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  text: string
-  persona: Persona
-  outfit?: Outfit
-  tasks?: { label: string; done: boolean }[]
-}
-
-export interface Conversation {
-  id: string
-  title: string
-  messages: Message[]
-}
-
-export interface ExampleChat {
-  id: string
-  persona: Persona
-  title: string
-  description: string
-  prompt: string
-}
+export type { Conversation, Message, Persona } from '../contracts'
 
 export const EXAMPLES: ExampleChat[] = [
   {

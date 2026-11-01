@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { Maximize, Minimize } from '@vezham/icons-react'
@@ -20,6 +20,8 @@ export const PlaygroundPanel = ({
   isCompact,
   onOpenChange
 }: Props) => {
+  const panelId = useId()
+  const headingId = useId()
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (isCompact)
@@ -36,7 +38,7 @@ export const PlaygroundPanel = ({
           <Sheet.Content
             className={`mx-auto w-full ${isExpanded ? 'h-dvh max-h-none max-w-none' : 'h-[75dvh] max-h-[75dvh] max-w-2xl'}`}>
             <Sheet.Dialog
-              id="tamizhi-playground"
+              id={panelId}
               className={`flex h-full max-h-none min-h-0 flex-col overflow-hidden ${isExpanded ? 'rounded-none pt-[env(safe-area-inset-top)]' : 'rounded-t-[1.75rem]'}`}>
               <Surface
                 variant="transparent"
@@ -75,14 +77,14 @@ export const PlaygroundPanel = ({
 
   return (
     <aside
-      id="tamizhi-playground"
+      id={panelId}
       className="tamizhi__playground"
-      aria-labelledby="tamizhi-playground-title">
+      aria-labelledby={headingId}>
       <Surface
         variant="transparent"
         className="flex h-full min-h-0 flex-col overflow-hidden">
         <div className="tamizhi__playground-header">
-          <h2 id="tamizhi-playground-title">Playground</h2>
+          <h2 id={headingId}>Playground</h2>
           <CloseButton
             aria-label="Close Playground"
             onPress={() => onOpenChange(false)}

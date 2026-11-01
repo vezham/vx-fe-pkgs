@@ -31,7 +31,8 @@ it('keeps closing content inert until the CSS animation finishes and handles reo
             content: <button>Bookmark entry</button>
           },
           storage: { title: 'Storage', content: null },
-          ai: { title: 'AI', content: null }
+          ai: { title: 'AI', content: null },
+          tamizhi: { title: 'Tamizhi Preview', content: null }
         }}
       />
     </InfoPanelProvider>

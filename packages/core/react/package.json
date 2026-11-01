@@ -96,7 +96,19 @@
       "import": "./dist/lib/pages/settings/index.js",
       "default": "./dist/lib/pages/settings/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./tamizhi/ui": {
+      "@vx/fe-kit": "./src/lib/tamizhi/ui/index.ts",
+      "types": "./dist/lib/tamizhi/ui/index.d.ts",
+      "import": "./dist/lib/tamizhi/ui/index.js",
+      "default": "./dist/lib/tamizhi/ui/index.js"
+    },
+    "./tamizhi/contracts": {
+      "@vx/fe-kit": "./src/lib/tamizhi/contracts/index.ts",
+      "types": "./dist/lib/tamizhi/contracts/index.d.ts",
+      "import": "./dist/lib/tamizhi/contracts/index.js",
+      "default": "./dist/lib/tamizhi/contracts/index.js"
+    }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -110,6 +122,7 @@
   "dependencies": {
     "@tanstack/react-hotkeys": "catalog:",
     "@vezham/hooks": "workspace:*",
-    "react-aria-components": "catalog:"
+    "react-aria-components": "catalog:",
+    "react-markdown": "^10.1.0"
   }
 }

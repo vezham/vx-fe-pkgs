@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import { type ReactNode, createElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { CommandContext, useCommand } from '../index'
+import { CommandContext, useCommand } from '../../index'
 
 describe('useCommand', () => {
   it('requires a command provider', () => {

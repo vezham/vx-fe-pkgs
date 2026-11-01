@@ -1,8 +1,7 @@
 import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
 import { useEffect, useEffectEvent } from 'react'
 
-import { EXAMPLES } from './demo'
-import { useDemoChat } from './use-demo-chat'
+import { EXAMPLES, useDemoChat } from '@vezham/react/tamizhi/ui'
 
 interface Props {
   isInstant: boolean

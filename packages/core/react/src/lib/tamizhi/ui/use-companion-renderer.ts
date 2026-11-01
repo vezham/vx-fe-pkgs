@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import type { Expression, Outfit } from './avatar-data'
@@ -39,7 +40,7 @@ interface Props {
   isThinking: boolean
   isAnimated: boolean
   isOffline: boolean
-  focusTarget: HTMLElement | null
+  focusTargetRef: RefObject<HTMLElement | null> | null
   size: 'small' | 'large'
   previewSize?: 28 | 44 | 72
 }
@@ -52,7 +53,7 @@ export const useCompanionRenderer = ({
   isThinking,
   isAnimated,
   isOffline,
-  focusTarget,
+  focusTargetRef,
   size,
   previewSize
 }: Props) => {
@@ -68,7 +69,7 @@ export const useCompanionRenderer = ({
     isThinking,
     isOffline,
     isAnimated,
-    focusTarget,
+    focusTargetRef,
     connectionReaction
   })
   const previousOffline = useRef(isOffline)
@@ -82,7 +83,7 @@ export const useCompanionRenderer = ({
       isThinking,
       isOffline,
       isAnimated,
-      focusTarget,
+      focusTargetRef,
       connectionReaction
     }
     redraw.current?.()
@@ -94,7 +95,7 @@ export const useCompanionRenderer = ({
     isThinking,
     isOffline,
     isAnimated,
-    focusTarget,
+    focusTargetRef,
     connectionReaction
   ])
 
@@ -147,11 +148,14 @@ export const useCompanionRenderer = ({
     const pointer = [0, 0]
     const start = performance.now()
     const reduced = matchMedia('(prefers-reduced-motion: reduce)')
-    const observer = new IntersectionObserver(entries => {
-      visible = entries[0].isIntersecting
-      if (visible) redraw.current?.()
-    })
-    observer.observe(element)
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? undefined
+        : new IntersectionObserver(entries => {
+            visible = entries[0].isIntersecting
+            if (visible) redraw.current?.()
+          })
+    observer?.observe(element)
     const followPointer = (event: PointerEvent) => {
       lastInteraction = performance.now()
       const bounds = element.getBoundingClientRect()
@@ -232,7 +236,7 @@ export const useCompanionRenderer = ({
         const draw = async (now: number) => {
           if (cancelled || !renderer || !canvas) return
           try {
-            const { focusTarget, ...renderSettings } = latest.current
+            const { focusTargetRef, ...renderSettings } = latest.current
             const settings = {
               ...renderSettings,
               isDark: document.documentElement.classList.contains('dark')
@@ -292,7 +296,8 @@ export const useCompanionRenderer = ({
               let look = animated ? pointer : [0, 0]
               if (animated && settings.isThinking) look = [-0.045, 0.055]
               else if (animated && settings.isListening) {
-                const targetBounds = focusTarget?.getBoundingClientRect()
+                const targetBounds =
+                  focusTargetRef?.current?.getBoundingClientRect()
                 const bounds = element.getBoundingClientRect()
                 if (targetBounds) {
                   const dx =
@@ -460,7 +465,7 @@ export const useCompanionRenderer = ({
     return () => {
       cancelled = true
       cancelAnimationFrame(frame)
-      observer.disconnect()
+      observer?.disconnect()
       appearanceObserver?.disconnect()
       if (faceOverlayTimer !== undefined) window.clearTimeout(faceOverlayTimer)
       faceOverlay?.remove()

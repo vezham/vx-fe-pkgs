@@ -29,7 +29,12 @@ import {
   SettingsNavigationContext,
   type SettingsSection
 } from '../../pages/settings/navigation'
-import { type User, UserProvider } from '../../store/users/useUserStore'
+import {
+  type User,
+  UserProvider,
+  useUser
+} from '../../store/users/useUserStore'
+import { TamizhiSessionProvider } from '../../tamizhi/ui/session'
 import { MenuLayout } from '../menu-layout'
 import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
@@ -70,13 +75,15 @@ export const AppLayoutProviders = ({
       <UserProvider initialUser={user}>
         <CommandProvider items={navigationItems}>
           <InfoPanelProvider>
-            <WorkspaceNavigationProvider>
-              <MobileControlsProvider>
-                <ResponsiveToolbarActionProvider>
-                  {children}
-                </ResponsiveToolbarActionProvider>
-              </MobileControlsProvider>
-            </WorkspaceNavigationProvider>
+            <EmbeddedSession>
+              <WorkspaceNavigationProvider>
+                <MobileControlsProvider>
+                  <ResponsiveToolbarActionProvider>
+                    {children}
+                  </ResponsiveToolbarActionProvider>
+                </MobileControlsProvider>
+              </WorkspaceNavigationProvider>
+            </EmbeddedSession>
           </InfoPanelProvider>
         </CommandProvider>
       </UserProvider>
@@ -187,3 +194,13 @@ const AppMenuShell = ({
 export { AppLayout }
 export { AppFrame } from './frame'
 export type { AppFrameProps } from './frame'
+
+const EmbeddedSession = ({ children }: { children: ReactNode }) => {
+  const { user } = useUser()
+  const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}.v1`
+  return (
+    <TamizhiSessionProvider key={storageKey} storageKey={storageKey}>
+      {children}
+    </TamizhiSessionProvider>
+  )
+}

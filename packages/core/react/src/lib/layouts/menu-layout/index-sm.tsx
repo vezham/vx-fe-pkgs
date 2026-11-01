@@ -9,6 +9,7 @@ import { Footer } from '../../components/panel/footer'
 import { aiPanel } from '../../components/panel/footer/ai'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
 import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
+import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
 import { Header } from '../../components/panel/header'
 import { bookmarksPanel } from '../../components/panel/header/bookmarks'
 import { storagePanel } from '../../components/panel/header/storage'
@@ -100,6 +101,7 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
             showNotifications
             showUserInfo
             onAI={() => openInfoPanel('ai')}
+            onTamizhi={() => openInfoPanel('tamizhi')}
             onNotificationsClick={() => setNotificationsOpen(true)}
             onUserClick={(_user, entryPoint = 'account') => {
               setSettingsEntryPoint(entryPoint)
@@ -124,7 +126,8 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
         panels={{
           bookmarks: bookmarksPanel,
           storage: storagePanel,
-          ai: aiPanel
+          ai: aiPanel,
+          tamizhi: tamizhiPanel
         }}
       />
 
