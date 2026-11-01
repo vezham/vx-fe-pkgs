@@ -85,6 +85,9 @@
     },
     {
       "path": "./apps-showcases/test"
+    },
+    {
+      "path": "./apps/tamizhi"
     }
   ],
   "compilerOptions": {
