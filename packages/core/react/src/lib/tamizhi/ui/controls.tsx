@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Bolt, SliderHorizontal } from '@vezham/icons-react'
+import { Bolt, Tuning } from '@vezham/icons-react'
 import { Button, ListBox, Popover, Select, Switch } from '@vezham/react-v3'
 
 import { permissionOptions } from '../../components/panel/footer/ai/permission-picker'
@@ -29,7 +29,7 @@ export const ComposerControls = ({
         size="sm"
         className="tamizhi-composer__controls-trigger">
         <span title="Composer controls">
-          <SliderHorizontal size={24} aria-hidden="true" />
+          <Tuning size={24} aria-hidden="true" />
         </span>
       </Button>
       <Popover.Content
