@@ -1,0 +1,53 @@
+{
+  "name": "@vezham/tamizhi-ui",
+  "version": "26.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-kit.git",
+    "directory": "packages/tamizhi/ui"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "style": "./dist/index.css",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./styles.css": {
+      "@vx/fe-kit": "./src/lib/styles.css",
+      "default": "./dist/index.css"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/index.css",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@vezham/hooks": "workspace:*",
+    "@vezham/icons-react": "1.0.7",
+    "@vezham/react-pro-v3": "npm:@heroui-pro/react@1.0.0-beta.10",
+    "@vezham/react-v3": "npm:@heroui/react@3.2.6",
+    "@vezham/tamizhi-client": "workspace:*",
+    "@vezham/tamizhi-contracts": "workspace:*",
+    "react-markdown": "^10.1.0"
+  },
+  "devDependencies": {
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "peerDependencies": {
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  }
+}

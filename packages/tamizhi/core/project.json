@@ -1,0 +1,17 @@
+{
+  "name": "tamizhi-core",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tamizhi/core/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project utils --web",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "node --conditions=@vx/fe-kit --import tsx packages/tamizhi/core/examples/server.ts"
+      }
+    }
+  }
+}

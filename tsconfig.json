@@ -88,6 +88,18 @@
     },
     {
       "path": "./apps/tamizhi"
+    },
+    {
+      "path": "./packages/tamizhi/contracts"
+    },
+    {
+      "path": "./packages/tamizhi/client"
+    },
+    {
+      "path": "./packages/tamizhi/core"
+    },
+    {
+      "path": "./packages/tamizhi/ui"
     }
   ],
   "compilerOptions": {

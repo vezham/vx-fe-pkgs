@@ -7,6 +7,10 @@ import {
 import { type ReactElement, type ReactNode, useCallback } from 'react'
 
 import { toast } from '@vezham/react-v3'
+import {
+  TamizhiSessionProvider,
+  type TamizhiSessionProviderProps
+} from '@vezham/tamizhi-ui'
 
 import { type AppMenuItem, AppMenuProvider } from '../../components/app-menu'
 import { CommandProvider } from '../../components/command'
@@ -34,24 +38,22 @@ import {
   UserProvider,
   useUser
 } from '../../store/users/useUserStore'
-import { TamizhiSessionProvider } from '../../tamizhi/ui/session'
 import { MenuLayout } from '../menu-layout'
 import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
 
-export type AppLayoutProps = Omit<
-  AppFrameProps,
-  'navigation' | 'children' | 'hasBottomNavigation'
-> & {
-  children?: ReactNode
-  navigationItems: AppNavigationItem[]
-  appMenu?: AppMenuItem[]
-  user?: User | null
-  settings?: boolean
-  controlCenter?: ControlCenterConfig
-  controlCenterSlot?: ReactElement
-  i18n?: ControlCenterI18n
-}
+export type AppLayoutProps = {
+  tamizhi?: Pick<TamizhiSessionProviderProps, 'client'>
+} & Omit<AppFrameProps, 'navigation' | 'children' | 'hasBottomNavigation'> & {
+    children?: ReactNode
+    navigationItems: AppNavigationItem[]
+    appMenu?: AppMenuItem[]
+    user?: User | null
+    settings?: boolean
+    controlCenter?: ControlCenterConfig
+    controlCenterSlot?: ReactElement
+    i18n?: ControlCenterI18n
+  }
 
 type AppLayoutViewProps = Omit<
   AppFrameProps,
@@ -65,17 +67,18 @@ export const AppLayoutProviders = ({
   children,
   navigationItems,
   appMenu = [],
-  user
+  user,
+  tamizhi
 }: Pick<
   AppLayoutProps,
-  'children' | 'navigationItems' | 'appMenu' | 'user'
+  'children' | 'navigationItems' | 'appMenu' | 'user' | 'tamizhi'
 >) => (
   <ToolbarActionsProvider>
     <AppMenuShell items={appMenu} navigationItems={navigationItems}>
       <UserProvider initialUser={user}>
         <CommandProvider items={navigationItems}>
           <InfoPanelProvider>
-            <EmbeddedSession>
+            <EmbeddedSession client={tamizhi?.client}>
               <WorkspaceNavigationProvider>
                 <MobileControlsProvider>
                   <ResponsiveToolbarActionProvider>
@@ -115,6 +118,7 @@ const AppLayout = ({
   settings = false,
   controlCenter,
   controlCenterSlot,
+  tamizhi,
   i18n,
   ...frameProps
 }: AppLayoutProps) => {
@@ -144,7 +148,8 @@ const AppLayout = ({
     <AppLayoutProviders
       navigationItems={navigationItems}
       appMenu={appMenu}
-      user={user}>
+      user={user}
+      tamizhi={tamizhi}>
       <SettingsNavigationContext.Provider
         value={settings ? openSettings : null}>
         {isSettings ? (
@@ -195,11 +200,20 @@ export { AppLayout }
 export { AppFrame } from './frame'
 export type { AppFrameProps } from './frame'
 
-const EmbeddedSession = ({ children }: { children: ReactNode }) => {
+const EmbeddedSession = ({
+  children,
+  client
+}: {
+  children: ReactNode
+  client?: TamizhiSessionProviderProps['client']
+}) => {
   const { user } = useUser()
   const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}.v1`
   return (
-    <TamizhiSessionProvider key={storageKey} storageKey={storageKey}>
+    <TamizhiSessionProvider
+      key={storageKey}
+      storageKey={storageKey}
+      client={client}>
       {children}
     </TamizhiSessionProvider>
   )

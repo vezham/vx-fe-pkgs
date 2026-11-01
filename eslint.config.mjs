@@ -23,7 +23,7 @@ const ignores = [
   '**/out-tsc',
   '**/test-output',
   '**/node_modules',
-  'packages/core/react/src/lib/tamizhi/ui/vendor/**',
+  'packages/tamizhi/ui/src/lib/vendor/**',
   '**/coverage',
   '**/.next',
   '**/.next/**',

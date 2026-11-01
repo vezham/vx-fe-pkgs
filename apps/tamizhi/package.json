@@ -2,5 +2,10 @@
   "name": "tamizhi",
   "version": "26.0.1",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@vezham/tamizhi-client": "workspace:*",
+    "@vezham/tamizhi-contracts": "workspace:*",
+    "@vezham/tamizhi-ui": "workspace:*"
+  }
 }

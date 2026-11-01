@@ -1,0 +1,43 @@
+{
+  "name": "@vezham/tamizhi-core",
+  "version": "26.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-kit.git",
+    "directory": "packages/tamizhi/core"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./node": {
+      "@vx/fe-kit": "./src/lib/node.ts",
+      "types": "./dist/lib/node.d.ts",
+      "import": "./dist/lib/node.js",
+      "default": "./dist/lib/node.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@tanstack/ai": "0.71.0",
+    "@tanstack/ai-openai": "0.31.0",
+    "@vezham/tamizhi-contracts": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@vezham/tamizhi-client": "workspace:*"
+  }
+}

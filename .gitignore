@@ -209,3 +209,5 @@ firebase-debug.*.log*
 .claude/worktrees
 .claude/settings.local.json
 .vitest
+
+.tamizhi/

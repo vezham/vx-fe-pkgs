@@ -51,6 +51,15 @@
       "path": "../../packages/core/react/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/tamizhi/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/tamizhi/contracts/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/tamizhi/client/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/start/tsconfig.lib.json"
     }
   ]

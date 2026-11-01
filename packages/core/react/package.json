@@ -122,6 +122,8 @@
   "dependencies": {
     "@tanstack/react-hotkeys": "catalog:",
     "@vezham/hooks": "workspace:*",
+    "@vezham/tamizhi-contracts": "workspace:*",
+    "@vezham/tamizhi-ui": "workspace:*",
     "react-aria-components": "catalog:",
     "react-markdown": "^10.1.0"
   }

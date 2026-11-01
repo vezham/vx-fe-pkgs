@@ -2,7 +2,7 @@ import { Outlet } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { SectionLayout } from '@vezham/react/layouts/section'
-import { TamizhiChat } from '@vezham/react/tamizhi/ui'
+import { TamizhiChat } from '@vezham/tamizhi-ui'
 
 import { getSidebarItems } from './sidebar'
 import { useChatNavigation } from './use-chat-navigation'

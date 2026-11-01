@@ -1,7 +1,9 @@
 import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
 import { useEffect, useEffectEvent } from 'react'
 
-import { EXAMPLES, useDemoChat } from '@vezham/react/tamizhi/ui'
+import { EXAMPLES, useDemoChat } from '@vezham/tamizhi-ui'
+
+import { tamizhiClient } from '../../app/tamizhi-client'
 
 interface Props {
   isInstant: boolean
@@ -13,7 +15,12 @@ const getChatId = (itemId?: string) =>
 
 export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
   const { chatId: itemId } = useParams({ strict: false })
-  const chat = useDemoChat(isInstant, getChatId(itemId))
+  const chat = useDemoChat(
+    isInstant,
+    getChatId(itemId),
+    undefined,
+    tamizhiClient
+  )
   const router = useRouter()
   const navigate = useNavigate()
 
@@ -66,5 +73,11 @@ export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
     void openChat('new')
   }
 
-  return { ...chat, send, deleteActiveChat }
+  const branchChat = (messageId: string) => {
+    const id = chat.branchChat(messageId)
+    if (id) void openChat(id)
+    return id
+  }
+
+  return { ...chat, send, branchChat, deleteActiveChat }
 }

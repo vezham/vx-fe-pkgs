@@ -207,3 +207,6 @@ firebase-debug.*.log*
 # Claude
 .claude/worktrees
 .claude/settings.local.json
+
+# vx-bot/NOTE: Preserve the upstream avatar engine and decoder formatting.
+packages/tamizhi/ui/src/lib/vendor/**

@@ -1,20 +1,10 @@
-import { Suspense, lazy } from 'react'
-
 import { VezhamTamizhi } from '@vezham/icons-react'
+import { TamizhiEmbed } from '@vezham/tamizhi-ui'
 
 import type { InfoPanelDefinition } from '../../info-panel'
 import { InfoPanelSheet } from '../../info-panel/sheet'
 
-const Embed = lazy(() =>
-  import('../../../../tamizhi/ui/embed').then(module => ({
-    default: module.TamizhiEmbed
-  }))
-)
-const Content = () => (
-  <Suspense fallback={<p role="status">Loading Tamizhi…</p>}>
-    <Embed />
-  </Suspense>
-)
+const Content = () => <TamizhiEmbed />
 
 export const tamizhiPanel: InfoPanelDefinition = {
   title: 'Tamizhi AI',

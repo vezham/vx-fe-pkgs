@@ -1,0 +1,9 @@
+{
+  "name": "tamizhi-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tamizhi/client/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project utils --web",
+  "targets": {}
+}
