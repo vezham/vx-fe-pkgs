@@ -1,9 +1,13 @@
-import { CodeSquare, HandStars, ShieldWarning } from '@vezham/icons-react'
+import {
+  AltArrowDown,
+  CodeSquare,
+  HandStars,
+  ShieldCheck,
+  ShieldWarning
+} from '@vezham/icons-react'
 import { Dropdown } from '@vezham/react-v3'
 
-import type { Conversation } from './conversation'
-
-const permissions = [
+export const permissionOptions = [
   {
     label: 'Ask for approval',
     description: 'Always ask to edit external files and use the internet',
@@ -22,16 +26,28 @@ const permissions = [
   }
 ]
 
+const compactLabels: Record<string, string> = {
+  'Ask for approval': 'Ask',
+  'Approve for me': 'Approve',
+  'Full access': 'Full access'
+}
+
 export const PermissionPicker = ({
-  conversation: c
+  permission,
+  onPermissionChange
 }: {
-  conversation: Conversation
+  permission: string
+  onPermissionChange: (permission: string) => void
 }) => (
   <Dropdown>
     <Dropdown.Trigger
-      aria-label="Tool permissions"
-      className="button button--ghost button--sm text-muted text-xs">
-      {c.permissions}
+      aria-label={`Permissions: ${permission}`}
+      className="tamizhi-composer__permission-trigger">
+      <ShieldCheck size={18} aria-hidden="true" />
+      <span className="tamizhi-composer__permission-label">
+        {compactLabels[permission] ?? permission}
+      </span>
+      <AltArrowDown size={14} aria-hidden="true" />
     </Dropdown.Trigger>
     <Dropdown.Popover
       placement="top start"
@@ -39,9 +55,9 @@ export const PermissionPicker = ({
       <Dropdown.Menu
         aria-label="Tool permissions"
         selectionMode="single"
-        selectedKeys={[c.permissions]}
-        onAction={key => c.setPermissions(String(key))}>
-        {permissions.map(({ label, description, Icon }) => (
+        selectedKeys={[permission]}
+        onAction={key => onPermissionChange(String(key))}>
+        {permissionOptions.map(({ label, description, Icon }) => (
           <Dropdown.Item
             key={label}
             id={label}

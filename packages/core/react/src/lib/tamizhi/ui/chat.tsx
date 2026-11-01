@@ -43,6 +43,9 @@ export const TamizhiChat = ({
     initializeWithValue: false
   })
   const [isAnimated, setIsAnimated] = useState(true)
+  const [model, setModel] = useState('Auto')
+  const [isFastMode, setIsFastMode] = useState(false)
+  const [permission, setPermission] = useState('Ask for approval')
   const [botName, setBotName] = useState('Tamizhi')
   const [apiKey, setApiKey] = useState('')
   const composerInput = useRef<HTMLTextAreaElement>(null)
@@ -172,6 +175,12 @@ export const TamizhiChat = ({
         </span>
       )}
       <Composer
+        model={model}
+        onModelChange={setModel}
+        isFastMode={isFastMode}
+        onFastModeChange={setIsFastMode}
+        permission={permission}
+        onPermissionChange={setPermission}
         note={composerNote}
         isStreaming={chat.isStreaming}
         isReady={chat.isReady}

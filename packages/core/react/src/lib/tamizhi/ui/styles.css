@@ -69,17 +69,17 @@
   width: min(100%, 48rem);
   flex-shrink: 0;
   margin: 0 auto;
-  padding: 0 1.5rem 0.75rem;
+  padding: 0 1.5rem 0.5rem;
 }
 
 .tamizhi-composer__form {
   position: relative;
   display: flex;
-  min-height: 3.5rem;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 0.5rem;
-  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  min-height: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  padding: 0.5rem 0.875rem 0.375rem;
   border: 0.0625rem solid var(--border);
   border-radius: 1.75rem;
   background: var(--surface);
@@ -93,12 +93,12 @@
 .tamizhi-composer__input {
   display: block;
   width: 100%;
-  min-height: 2.5rem;
-  height: 2.5rem;
+  min-height: 1.875rem;
+  height: 1.875rem;
   max-height: 13rem;
   margin: 0;
   overflow-y: auto;
-  padding: 0.5rem 0;
+  padding: 0.1875rem 0;
   resize: none;
   border: 0;
   border-radius: 0;
@@ -119,16 +119,91 @@
   color: var(--muted);
 }
 
+.tamizhi-composer__toolbar,
+.tamizhi-composer__toolbar-start,
+.tamizhi-composer__toolbar-end {
+  display: flex;
+  align-items: center;
+}
+
+.tamizhi-composer__toolbar {
+  min-height: 2.75rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tamizhi-composer__toolbar-start,
+.tamizhi-composer__toolbar-end {
+  min-width: 0;
+  gap: 0.5rem;
+}
+
+.tamizhi-composer__toolbar-end {
+  margin-left: auto;
+}
+
+.tamizhi-composer__tool-button,
 .tamizhi-composer__send {
-  height: 2.5rem;
-  min-width: 4.5rem;
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
   flex-shrink: 0;
-  padding-inline: 1.125rem;
-  border-radius: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.tamizhi-composer__tool-button {
+  color: var(--muted);
+}
+
+.tamizhi-composer__controls-trigger {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.375rem;
+  padding-inline: 0.5rem;
+  border-radius: 999rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.tamizhi-composer__send {
+  padding: 0;
   background: var(--accent);
   color: var(--accent-foreground);
-  font-size: 0.875rem;
-  font-weight: 500;
+}
+
+.tamizhi-composer__attachments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.tamizhi-composer__file {
+  display: inline-flex;
+  max-width: 14rem;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+  border-radius: 999rem;
+  background: var(--surface-secondary);
+  font-size: 0.75rem;
+}
+
+.tamizhi-composer__file-remove {
+  width: 1.75rem;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+}
+
+.tamizhi-composer__file-note {
+  color: var(--muted);
+  font-size: 0.6875rem;
 }
 
 .tamizhi-composer__send[disabled] {
@@ -136,7 +211,7 @@
 }
 
 .tamizhi-composer__note {
-  padding-top: 0.5rem;
+  padding-top: 0.25rem;
   color: var(--muted);
   font-size: 0.625rem;
   text-align: center;
@@ -528,13 +603,13 @@
   }
 
   .tamizhi-composer__form {
-    padding: 0.375rem 0.375rem 0.375rem 1rem;
-    border-radius: 1.625rem;
+    padding: 0.375rem 0.625rem 0.375rem;
+    border-radius: 1.5rem;
   }
 
-  .tamizhi-composer__send {
-    min-width: 4rem;
-    padding-inline: 0.875rem;
+  .tamizhi-composer__toolbar-start,
+  .tamizhi-composer__toolbar-end {
+    gap: 0.25rem;
   }
 
   .tamizhi__perch {

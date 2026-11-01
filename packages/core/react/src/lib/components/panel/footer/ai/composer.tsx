@@ -77,7 +77,7 @@ export const Composer = ({ conversation: c }: Props) => {
             </PromptInput.Action>
           </PromptInput.ToolbarStart>
           <PromptInput.ToolbarEnd>
-            <ModelPicker conversation={c} />
+            <ModelPicker model={c.model} onModelChange={c.setModel} />
             <PromptInput.Send
               aria-label={
                 c.phase === 'ready' ? 'Send message' : 'Stop answering'
@@ -90,8 +90,14 @@ export const Composer = ({ conversation: c }: Props) => {
         </PromptInput.Toolbar>
       </PromptInput.Shell>
       <div className="mt-2 flex flex-wrap gap-1">
-        <FastModeToggle conversation={c} />
-        <PermissionPicker conversation={c} />
+        <FastModeToggle
+          isFastMode={c.fastMode}
+          onFastModeChange={c.setFastMode}
+        />
+        <PermissionPicker
+          permission={c.permissions}
+          onPermissionChange={c.setPermissions}
+        />
       </div>
     </PromptInput>
   )

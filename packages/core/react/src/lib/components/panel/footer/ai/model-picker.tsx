@@ -9,7 +9,6 @@ import {
   useMediaQuery
 } from '@vezham/react-v3'
 
-import type { Conversation } from './conversation'
 import { ModelLogo } from './model-logo'
 import { PREVIEW_MODELS, type PreviewModel } from './models'
 
@@ -45,17 +44,26 @@ const ModelFeatures = ({ model }: { model: PreviewModel }) => (
 )
 
 export const ModelPicker = ({
-  conversation: c
+  model: selectedModel,
+  onModelChange
 }: {
-  conversation: Conversation
+  model: string
+  onModelChange: (model: string) => void
 }) => {
   const [open, setOpen] = useState(false)
   const smallScreen = useMediaQuery('(width < 640px)')
   const manualModel = useRef(PREVIEW_MODELS[0].name)
-  const auto = c.model === 'Auto'
+  const auto = selectedModel === 'Auto'
+  const selectedDetails = PREVIEW_MODELS.find(
+    item => item.name === selectedModel
+  )
+  const tooltip = auto
+    ? 'Automatically choose a model based on task complexity. Routing is simulated in this preview.'
+    : (selectedDetails?.description ?? 'Choose an AI model.')
   return (
     <Popover isOpen={open} onOpenChange={setOpen}>
       <Button
+        type="button"
         aria-label="AI model"
         variant="ghost"
         size="sm"
@@ -65,12 +73,14 @@ export const ModelPicker = ({
         ) : (
           <ModelLogo
             provider={
-              PREVIEW_MODELS.find(model => model.name === c.model)?.provider ??
-              'GPT'
+              PREVIEW_MODELS.find(item => item.name === selectedModel)
+                ?.provider ?? 'GPT'
             }
           />
         )}
-        <span className="max-w-16 truncate text-xs">{c.model}</span>
+        <span title={tooltip} className="max-w-16 truncate text-xs">
+          {selectedModel}
+        </span>
         <AltArrowDown size={12} className="shrink-0" aria-hidden="true" />
       </Button>
       <Popover.Content
@@ -81,8 +91,8 @@ export const ModelPicker = ({
             aria-label="Auto model selection"
             isSelected={auto}
             onChange={enabled => {
-              if (!auto) manualModel.current = c.model
-              c.setModel(enabled ? 'Auto' : manualModel.current)
+              if (!auto) manualModel.current = selectedModel
+              onModelChange(enabled ? 'Auto' : manualModel.current)
             }}
             className="bg-surface-secondary w-full rounded-2xl p-3">
             <Switch.Content className="flex w-full flex-row-reverse items-center justify-between gap-3">
@@ -106,10 +116,10 @@ export const ModelPicker = ({
                   <Button
                     aria-label={`Select ${model.name}`}
                     variant="ghost"
-                    className={`w-full shrink-0 justify-start gap-2 px-3 text-xs ${c.model === model.name ? 'bg-surface-secondary' : ''}`}
-                    aria-pressed={c.model === model.name}
+                    className={`w-full shrink-0 justify-start gap-2 px-3 text-xs ${selectedModel === model.name ? 'bg-surface-secondary' : ''}`}
+                    aria-pressed={selectedModel === model.name}
                     onPress={() => {
-                      c.setModel(model.name)
+                      onModelChange(model.name)
                       manualModel.current = model.name
                       setOpen(false)
                     }}>
@@ -117,7 +127,7 @@ export const ModelPicker = ({
                     <span className="min-w-0 flex-1 truncate text-start">
                       {model.name}
                     </span>
-                    {c.model === model.name && (
+                    {selectedModel === model.name && (
                       <CheckRead size={16} aria-hidden="true" />
                     )}
                   </Button>
@@ -137,23 +147,26 @@ export const ModelPicker = ({
 }
 
 export const FastModeToggle = ({
-  conversation: c
+  isFastMode,
+  onFastModeChange
 }: {
-  conversation: Conversation
+  isFastMode: boolean
+  onFastModeChange: (isFastMode: boolean) => void
 }) => (
   <Tooltip delay={150}>
     <Button
+      type="button"
       aria-label="Fast mode"
-      aria-pressed={c.fastMode}
+      aria-pressed={isFastMode}
       isIconOnly
       size="sm"
       variant="ghost"
-      className={c.fastMode ? 'text-accent bg-accent/10' : 'text-muted'}
-      onPress={() => c.setFastMode(current => !current)}>
+      className={isFastMode ? 'text-accent bg-accent/10' : 'text-muted'}
+      onPress={() => onFastModeChange(!isFastMode)}>
       <Bolt size={18} aria-hidden="true" />
     </Button>
     <Tooltip.Content>
-      {c.fastMode ? 'Fast mode on' : 'Fast mode off'} · simulated
+      {isFastMode ? 'Fast mode on' : 'Fast mode off'} · simulated
     </Tooltip.Content>
   </Tooltip>
 )

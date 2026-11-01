@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 
-import { Button, Form, Label, TextArea, TextField } from '@vezham/react-v3'
+import { ArrowUp, CloseCircle, Paperclip, Stop } from '@vezham/icons-react'
+import {
+  Button,
+  Form,
+  Label,
+  TextArea,
+  TextField,
+  Tooltip
+} from '@vezham/react-v3'
+
+import { ModelPicker } from '../../components/panel/footer/ai/model-picker'
+import { ComposerControls } from './controls'
 
 interface Props {
   isStreaming: boolean
   isReady: boolean
   isOffline: boolean
+  model: string
+  onModelChange: (model: string) => void
+  isFastMode: boolean
+  onFastModeChange: (isFastMode: boolean) => void
+  permission: string
+  onPermissionChange: (permission: string) => void
   note?: ReactNode
   avatarSlotRef: RefObject<HTMLDivElement | null>
   inputRef: RefObject<HTMLTextAreaElement | null>
@@ -19,6 +36,12 @@ export const Composer = ({
   isStreaming,
   isReady,
   isOffline,
+  model,
+  onModelChange,
+  isFastMode,
+  onFastModeChange,
+  permission,
+  onPermissionChange,
   note,
   avatarSlotRef,
   inputRef,
@@ -27,6 +50,8 @@ export const Composer = ({
   onStop
 }: Props) => {
   const [text, setText] = useState('')
+  const [files, setFiles] = useState<File[]>([])
+  const fileInput = useRef<HTMLInputElement>(null)
   const listeningTimer = useRef<number | undefined>(undefined)
   const signalListening = (duration = 1100) => {
     onListeningChange(true)
@@ -55,6 +80,7 @@ export const Composer = ({
     stopListening()
     onSend(text)
     setText('')
+    setFiles([])
     if (inputRef.current) inputRef.current.style.height = ''
     inputRef.current?.focus()
   }
@@ -71,6 +97,49 @@ export const Composer = ({
           ref={avatarSlotRef}
           aria-hidden="true"
         />
+        <input
+          ref={fileInput}
+          type="file"
+          multiple
+          className="hidden"
+          aria-label="Attach files"
+          accept="image/*,.pdf,.txt,.md,.csv,.json"
+          onChange={event => {
+            setFiles(current => [
+              ...current,
+              ...Array.from(event.target.files ?? [])
+            ])
+            event.target.value = ''
+          }}
+        />
+        {files.length > 0 && (
+          <div className="tamizhi-composer__attachments" aria-live="polite">
+            {files.map((file, index) => (
+              <span
+                key={`${file.name}-${index}`}
+                className="tamizhi-composer__file">
+                <span className="min-w-0 truncate">{file.name}</span>
+                <Button
+                  aria-label={`Remove ${file.name}`}
+                  type="button"
+                  isIconOnly
+                  size="sm"
+                  variant="ghost"
+                  className="tamizhi-composer__file-remove"
+                  onPress={() =>
+                    setFiles(current =>
+                      current.filter((_, item) => item !== index)
+                    )
+                  }>
+                  <CloseCircle size={14} aria-hidden="true" />
+                </Button>
+              </span>
+            ))}
+            <span className="tamizhi-composer__file-note">
+              Preview only · files are not sent in the local demo.
+            </span>
+          </div>
+        )}
         <TextField
           value={text}
           onChange={value => {
@@ -78,7 +147,7 @@ export const Composer = ({
             signalListening()
           }}
           isDisabled={isOffline}
-          className="min-w-0 flex-1">
+          className="min-w-0">
           <Label className="sr-only">Message Tamizhi</Label>
           <TextArea
             ref={inputRef}
@@ -105,23 +174,52 @@ export const Composer = ({
             }}
           />
         </TextField>
-        {isStreaming ? (
-          <Button
-            aria-label="Stop response"
-            variant="secondary"
-            className="tamizhi-composer__send"
-            onPress={onStop}>
-            Stop
-          </Button>
-        ) : (
-          <Button
-            aria-label="Send message"
-            type="submit"
-            className="tamizhi-composer__send"
-            isDisabled={!text.trim() || !isReady || isOffline}>
-            Send
-          </Button>
-        )}
+        <div className="tamizhi-composer__toolbar">
+          <div className="tamizhi-composer__toolbar-start">
+            <Tooltip>
+              <Button
+                aria-label="Attach files"
+                type="button"
+                isIconOnly
+                size="sm"
+                variant="ghost"
+                className="tamizhi-composer__tool-button"
+                isDisabled={isOffline}
+                onPress={() => fileInput.current?.click()}>
+                <Paperclip size={20} aria-hidden="true" />
+              </Button>
+              <Tooltip.Content>Attach files · local preview</Tooltip.Content>
+            </Tooltip>
+            <ComposerControls
+              isFastMode={isFastMode}
+              onFastModeChange={onFastModeChange}
+              permission={permission}
+              onPermissionChange={onPermissionChange}
+            />
+          </div>
+          <div className="tamizhi-composer__toolbar-end">
+            <ModelPicker model={model} onModelChange={onModelChange} />
+            {isStreaming ? (
+              <Button
+                aria-label="Stop response"
+                isIconOnly
+                variant="secondary"
+                className="tamizhi-composer__send"
+                onPress={onStop}>
+                <Stop size={18} aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button
+                aria-label="Send message"
+                isIconOnly
+                type="submit"
+                className="tamizhi-composer__send"
+                isDisabled={!text.trim() || !isReady || isOffline}>
+                <ArrowUp size={22} aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+        </div>
       </Form>
       <div className="tamizhi-composer__note">
         {note ?? <p>Local demo · Replies are written ahead of time</p>}
