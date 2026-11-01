@@ -79,6 +79,12 @@
     },
     {
       "path": "./packages/vx/react"
+    },
+    {
+      "path": "./apps-showcases/test-e2e"
+    },
+    {
+      "path": "./apps-showcases/test"
     }
   ],
   "compilerOptions": {
