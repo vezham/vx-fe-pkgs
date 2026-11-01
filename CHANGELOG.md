@@ -1,3 +1,20 @@
+## 26.1.0 (2026-11-01)
+
+### 🚀 Features
+
+- **test:** add test app and e2e coverage ([ff8f80f0](https://github.com/vezham/vx-fe-pkgs/commit/ff8f80f0))
+
+### 🩹 Fixes
+
+- **react:** menu-layout, suppress extra nav chrome ([2ecc3ad2](https://github.com/vezham/vx-fe-pkgs/commit/2ecc3ad2))
+- **react:** layout, hide bottom nav padding when unused ([7ef38dd0](https://github.com/vezham/vx-fe-pkgs/commit/7ef38dd0))
+- **react:** hide nav with few items ([da6b0942](https://github.com/vezham/vx-fe-pkgs/commit/da6b0942))
+- **test:** replace home page with placeholder ([060628d9](https://github.com/vezham/vx-fe-pkgs/commit/060628d9))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.0.3 (2026-10-31)
 
 ### 🏡 Chore
