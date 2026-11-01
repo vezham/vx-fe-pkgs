@@ -1,6 +1,5 @@
 import { AltArrowDown, VezhamTamizhi } from '@vezham/icons-react'
 import {
-  ChainOfThought,
   ChatAttachment,
   ChatConversation,
   ChatLoader,
@@ -46,9 +45,6 @@ export const AIContent = ({
     <div
       className={`flex min-h-0 flex-col gap-3 ${compact ? 'max-h-[calc(100dvh-10rem)] overflow-hidden' : panel ? 'h-full overflow-hidden' : 'h-[min(65dvh,32rem)]'}`}>
       <ChatHeader conversation={c} expanded={expanded} onExpand={onExpand} />
-      <p className="text-muted shrink-0 px-1 text-xs">
-        Preview · Replies, files, voice and permissions are simulated.
-      </p>
       <div
         className={`relative min-h-0 flex-1 ${compact ? 'max-h-[35dvh]' : ''}`}>
         <ChatConversation
@@ -66,8 +62,8 @@ export const AIContent = ({
               <div className="py-4">
                 <h2 className="font-semibold">{greeting}</h2>
                 <p className="text-muted mt-2">
-                  Find your way around, plan your day, or explore a sample
-                  result.
+                  Find your way around, plan your day, or explore your
+                  workspace.
                 </p>
               </div>
             )}
@@ -138,28 +134,12 @@ export const AIContent = ({
                   <ChatLoader.Pulse aria-hidden="true" />
                   <TextShimmer>
                     {c.phase === 'listening'
-                      ? 'Listening to a sample prompt…'
+                      ? 'Listening…'
                       : c.phase === 'streaming'
                         ? 'Writing response…'
                         : 'Working on your request…'}
                   </TextShimmer>
                 </div>
-                <ChainOfThought isStreaming>
-                  <ChainOfThought.Trigger>
-                    Preview progress
-                  </ChainOfThought.Trigger>
-                  <ChainOfThought.Content>
-                    <ChainOfThought.Steps>
-                      <ChainOfThought.Step label="Read the prompt">
-                        Using this mock conversation and attached file names.
-                      </ChainOfThought.Step>
-                      <ChainOfThought.Step label="Prepare a sample result">
-                        Generating a simulated response with the {c.model}{' '}
-                        preset.
-                      </ChainOfThought.Step>
-                    </ChainOfThought.Steps>
-                  </ChainOfThought.Content>
-                </ChainOfThought>
               </div>
             )}
           </ChatConversation.Content>

@@ -69,8 +69,8 @@ export const Composer = ({ conversation: c }: Props) => {
               <AddCircle size={18} aria-hidden="true" />
             </PromptInput.Action>
             <PromptInput.Action
-              aria-label="Try voice preview"
-              tooltip="Dictate · simulated"
+              aria-label="Dictate"
+              tooltip="Dictate"
               isDisabled={c.phase !== 'ready'}
               onPress={c.listen}>
               <Microphone size={18} aria-hidden="true" />

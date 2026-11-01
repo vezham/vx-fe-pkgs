@@ -2,10 +2,10 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import { useLocalStore } from '@vezham/hooks'
 
+import type { Conversation, Message, Persona } from '../contracts'
 import { detectOutfit } from './avatar-data'
 import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
 import { createDemoReply, detectPersona } from './demo'
-import type { Message, Persona } from './demo'
 
 const STORAGE_KEY = 'tamizhi.demo.v1'
 
@@ -204,6 +204,41 @@ export const useDemoChat = (
     if (id === activeId) newChat()
     setConversations(chats => chats.filter(chat => chat.id !== id))
   }
+  const rate = (messageId: string, rating: 'up' | 'down') => {
+    setConversations(chats =>
+      chats.map(chat =>
+        chat.id === activeId
+          ? {
+              ...chat,
+              messages: chat.messages.map(message =>
+                message.id === messageId
+                  ? {
+                      ...message,
+                      rating: message.rating === rating ? undefined : rating
+                    }
+                  : message
+              )
+            }
+          : chat
+      )
+    )
+  }
+
+  const branchChat = (messageId: string) => {
+    if (!active || busy.current) return
+    const messageIndex = messages.findIndex(message => message.id === messageId)
+    if (messageIndex < 0) return
+    const id = createId()
+    const branch: Conversation = {
+      id,
+      title: `Branch: ${active.title}`.slice(0, 48),
+      messages: messages.slice(0, messageIndex + 1)
+    }
+    setConversations(chats => [branch, ...chats].slice(0, 24))
+    setActiveId(id)
+    return id
+  }
+
   const toggleTask = (messageId: string, index: number, done: boolean) => {
     setConversations(chats =>
       chats.map(chat =>
@@ -238,6 +273,8 @@ export const useDemoChat = (
     send,
     stop,
     retry,
+    rate,
+    branchChat,
     newChat,
     selectChat,
     deleteChat,

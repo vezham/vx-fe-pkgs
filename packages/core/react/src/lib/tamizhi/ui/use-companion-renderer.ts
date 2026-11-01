@@ -149,7 +149,7 @@ export const useCompanionRenderer = ({
     const start = performance.now()
     const reduced = matchMedia('(prefers-reduced-motion: reduce)')
     const observer =
-      typeof IntersectionObserver === "undefined"
+      typeof IntersectionObserver === 'undefined'
         ? undefined
         : new IntersectionObserver(entries => {
             visible = entries[0].isIntersecting

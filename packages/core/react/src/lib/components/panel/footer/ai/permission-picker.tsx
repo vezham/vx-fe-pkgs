@@ -75,9 +75,6 @@ export const PermissionPicker = ({
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
-      <p className="text-muted px-3 pt-1 pb-2 text-xs">
-        Preview only · No files or internet access is granted.
-      </p>
     </Dropdown.Popover>
   </Dropdown>
 )

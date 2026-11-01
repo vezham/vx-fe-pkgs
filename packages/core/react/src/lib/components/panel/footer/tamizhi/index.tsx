@@ -17,7 +17,7 @@ const Content = () => (
 )
 
 export const tamizhiPanel: InfoPanelDefinition = {
-  title: 'Tamizhi Preview',
+  title: 'Tamizhi AI',
   titleIcon: <VezhamTamizhi size={20} aria-hidden="true" />,
   scrollable: false,
   content: <Content />,

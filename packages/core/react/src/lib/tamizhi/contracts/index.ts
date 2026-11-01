@@ -24,6 +24,7 @@ export type Persona =
 export interface Message {
   id: string
   role: 'user' | 'assistant'
+  rating?: 'up' | 'down'
   text: string
   persona: Persona
   outfit?: Outfit

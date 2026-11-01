@@ -156,6 +156,8 @@ export const TamizhiChat = ({
               chat.retry()
             }}
             onToggleTask={chat.toggleTask}
+            onRate={chat.rate}
+            onBranch={chat.branchChat}
           />
         )}
       </div>

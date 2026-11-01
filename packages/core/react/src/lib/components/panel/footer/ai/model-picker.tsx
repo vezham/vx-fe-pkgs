@@ -37,9 +37,6 @@ const ModelFeatures = ({ model }: { model: PreviewModel }) => (
       )}
     </dl>
     <p className="text-muted mt-3 text-xs">{model.context}</p>
-    <p className="text-muted mt-1 text-xs">
-      Illustrative ratings, not provider specifications.
-    </p>
   </div>
 )
 
@@ -58,7 +55,7 @@ export const ModelPicker = ({
     item => item.name === selectedModel
   )
   const tooltip = auto
-    ? 'Automatically choose a model based on task complexity. Routing is simulated in this preview.'
+    ? 'Automatically choose a model based on task complexity.'
     : (selectedDetails?.description ?? 'Choose an AI model.')
   return (
     <Popover isOpen={open} onOpenChange={setOpen}>
@@ -105,7 +102,7 @@ export const ModelPicker = ({
           {auto ? (
             <p className="text-muted px-2 pt-3 pb-2 text-xs">
               Balances and switches between models based on each task’s
-              complexity. Recommended. Routing is simulated in this preview.
+              complexity. Recommended.
             </p>
           ) : (
             <div
@@ -166,7 +163,7 @@ export const FastModeToggle = ({
       <Bolt size={18} aria-hidden="true" />
     </Button>
     <Tooltip.Content>
-      {isFastMode ? 'Fast mode on' : 'Fast mode off'} · simulated
+      {isFastMode ? 'Fast mode on' : 'Fast mode off'}
     </Tooltip.Content>
   </Tooltip>
 )

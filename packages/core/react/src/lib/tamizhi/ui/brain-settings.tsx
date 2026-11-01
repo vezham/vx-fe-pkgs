@@ -23,7 +23,6 @@ export const BrainSettings = ({
   return (
     <section aria-labelledby={headingId}>
       <h2 id={headingId}>Brain</h2>
-      <p className="mb-3">Setup preview · No provider connected</p>
       {apiKey ? (
         <div className="flex items-center justify-between gap-2">
           <code aria-label="Saved API key">•••• {apiKey.slice(-4)}</code>
@@ -68,17 +67,14 @@ export const BrainSettings = ({
           </Button>
         </Form>
       )}
-      <p className="mt-2" role="status">
-        {apiKey
-          ? 'Key held for this session. Using local rules.'
-          : 'Using local rules'}
-      </p>
-      <p>Replies are written ahead of time</p>
+      {apiKey && (
+        <p className="mt-2" role="status">
+          Provider key saved for this session.
+        </p>
+      )}
       {lastPick && (
         <div className="tamizhi-playground__last-pick" aria-label="Last pick">
           <p>Last pick: {lastPick.label}</p>
-          <p>Source: local rules</p>
-          <p>Reply: prepared demo response</p>
         </div>
       )}
     </section>

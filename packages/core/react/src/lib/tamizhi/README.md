@@ -9,7 +9,7 @@ later without bringing app routes or shell providers with them.
 - `client`: reserved for the future browser API client. No API contract is invented here.
 
 The standalone app owns `/chat/$chatId` routing and SectionLayout. The new
-**Tamizhi Preview** menu entry uses the same chat view inside the existing info
+**Tamizhi AI** menu entry uses the same chat view inside the existing info
 panel/bottom sheet. The original **Tamizhi AI** embed is unchanged for comparison.
 
 Keep `TamizhiSessionProvider` above responsive panel mounts. AppLayout supplies

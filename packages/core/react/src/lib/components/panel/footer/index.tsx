@@ -102,7 +102,7 @@ const CompactActions = ({
           {showAI && onTamizhi ? (
             <Dropdown.Item onPress={onTamizhi}>
               <VezhamTamizhi size={20} aria-hidden="true" />
-              Tamizhi Preview
+              Tamizhi AI
             </Dropdown.Item>
           ) : null}
         </Dropdown.Menu>
@@ -155,7 +155,7 @@ const Footer = ({
           ) : null}
 
           {showAI && onTamizhi ? (
-            <FooterAction label="Tamizhi Preview" onPress={onTamizhi}>
+            <FooterAction label="Tamizhi AI" onPress={onTamizhi}>
               <VezhamTamizhi size={20} aria-hidden="true" />
             </FooterAction>
           ) : null}

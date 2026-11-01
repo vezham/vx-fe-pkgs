@@ -34,7 +34,7 @@ export const TamizhiEmbed = () => {
       renderLayout={(content, openPlayground) => (
         <div className="tamizhi-embed w-full">
           <nav
-            aria-label="Tamizhi preview navigation"
+            aria-label="Tamizhi AI navigation"
             className="flex shrink-0 items-center gap-1 pb-2">
             <Dropdown>
               <Dropdown.Trigger

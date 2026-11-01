@@ -1,7 +1,8 @@
 import Markdown from 'react-markdown'
 
 import { useCopyToClipboard } from '@vezham/hooks'
-import { CheckRead, Copy, Refresh } from '@vezham/icons-react'
+import { BranchingPathsUp, CheckRead, Copy, Refresh } from '@vezham/icons-react'
+import { ChatMessageActions } from '@vezham/react-pro-v3'
 import { Card, Checkbox, Label } from '@vezham/react-v3'
 
 import { Companion } from './companion'
@@ -14,6 +15,8 @@ interface Props {
   canRetry: boolean
   isAnimated: boolean
   onRetry: () => void
+  onRate: (messageId: string, rating: 'up' | 'down') => void
+  onBranch: (messageId: string) => void
   onToggleTask: (messageId: string, index: number, done: boolean) => void
 }
 
@@ -23,6 +26,8 @@ export const ChatMessage = ({
   canRetry,
   isAnimated,
   onRetry,
+  onRate,
+  onBranch,
   onToggleTask
 }: Props) => {
   const { copy, isCopied, isUnavailable } = useCopyToClipboard()
@@ -57,7 +62,6 @@ export const ChatMessage = ({
           isAnimated={false}
         />
         <span>Tamizhi</span>
-        <span className="tamizhi-message__demo">Demo response</span>
       </div>
       <div className="tamizhi-message__body" aria-busy={isStreaming}>
         {message.text ? (
@@ -114,21 +118,44 @@ export const ChatMessage = ({
       )}
       {!isStreaming && message.text && (
         <div className="tamizhi-message__actions">
-          <IconButton
-            label={isCopied ? 'Copied' : 'Copy response'}
-            size="sm"
-            onPress={copyResponse}>
-            {isCopied ? (
-              <CheckRead size={16} aria-hidden="true" />
-            ) : (
-              <Copy size={16} aria-hidden="true" />
-            )}
-          </IconButton>
-          {canRetry && (
-            <IconButton label="Try response again" size="sm" onPress={onRetry}>
-              <Refresh size={16} aria-hidden="true" />
+          <ChatMessageActions>
+            <IconButton
+              label={isCopied ? 'Copied' : 'Copy response'}
+              size="sm"
+              onPress={copyResponse}>
+              {isCopied ? (
+                <CheckRead size={16} aria-hidden="true" />
+              ) : (
+                <Copy size={16} aria-hidden="true" />
+              )}
             </IconButton>
-          )}
+            <ChatMessageActions.ThumbsUp
+              aria-label="Good response"
+              tooltip="Good response"
+              aria-pressed={message.rating === 'up'}
+              onPress={() => onRate(message.id, 'up')}
+            />
+            <ChatMessageActions.ThumbsDown
+              aria-label="Bad response"
+              tooltip="Bad response"
+              aria-pressed={message.rating === 'down'}
+              onPress={() => onRate(message.id, 'down')}
+            />
+            <IconButton
+              label="Branch chat"
+              size="sm"
+              onPress={() => onBranch(message.id)}>
+              <BranchingPathsUp size={16} aria-hidden="true" />
+            </IconButton>
+            {canRetry && (
+              <IconButton
+                label="Try response again"
+                size="sm"
+                onPress={onRetry}>
+                <Refresh size={16} aria-hidden="true" />
+              </IconButton>
+            )}
+          </ChatMessageActions>
           <span role="status">
             {isUnavailable
               ? 'Copy unavailable. Select the text to copy it.'

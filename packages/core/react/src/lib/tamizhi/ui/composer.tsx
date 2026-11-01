@@ -144,9 +144,6 @@ export const ComposerLayout = ({
                 </Button>
               </span>
             ))}
-            <span className="tamizhi-composer__file-note">
-              Preview only · files are not sent in the local demo.
-            </span>
           </div>
         )}
         <TextField
@@ -197,7 +194,7 @@ export const ComposerLayout = ({
                 onPress={() => fileInput.current?.click()}>
                 <Paperclip size={24} aria-hidden="true" />
               </Button>
-              <Tooltip.Content>Attach files · local preview</Tooltip.Content>
+              <Tooltip.Content>Attach files</Tooltip.Content>
             </Tooltip>
             {variant === 'embed' ? (
               <ComposerControls
@@ -243,9 +240,7 @@ export const ComposerLayout = ({
           </div>
         </div>
       </Form>
-      <div className="tamizhi-composer__note">
-        {note ?? <p>Local demo · Replies are written ahead of time</p>}
-      </div>
+      {note && <div className="tamizhi-composer__note">{note}</div>}
     </div>
   )
 }

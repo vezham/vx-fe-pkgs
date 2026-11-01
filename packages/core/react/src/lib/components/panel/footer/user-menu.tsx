@@ -500,7 +500,7 @@ const UserMenu = ({
       : null,
     showAI && onTamizhi
       ? {
-          label: 'Tamizhi Preview',
+          label: 'Tamizhi AI',
           icon: <VezhamTamizhi size={24} aria-hidden="true" />,
           onPress: onTamizhi
         }

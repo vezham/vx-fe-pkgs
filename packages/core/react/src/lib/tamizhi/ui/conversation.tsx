@@ -7,6 +7,8 @@ interface Props {
   isAnimated: boolean
   isOffline: boolean
   onRetry: () => void
+  onRate: (messageId: string, rating: 'up' | 'down') => void
+  onBranch: (messageId: string) => void
   onToggleTask: (messageId: string, index: number, done: boolean) => void
 }
 
@@ -16,6 +18,8 @@ export const Conversation = ({
   isAnimated,
   isOffline,
   onRetry,
+  onRate,
+  onBranch,
   onToggleTask
 }: Props) => (
   <section className="tamizhi-conversation" aria-label="Conversation">
@@ -27,6 +31,8 @@ export const Conversation = ({
         isAnimated={isAnimated}
         canRetry={!isOffline && !isStreaming && index === messages.length - 1}
         onRetry={onRetry}
+        onRate={onRate}
+        onBranch={onBranch}
         onToggleTask={onToggleTask}
       />
     ))}

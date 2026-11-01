@@ -520,7 +520,11 @@ export function createRenderer(opts = {}) {
       fetch(opts.resolveAsset ? opts.resolveAsset('.json') : meshBase + '.json')
         .then(ok)
         .then(r => r.json()),
-      fetch(opts.resolveAsset ? opts.resolveAsset('.' + main + '.bin') : meshBase + '.' + main + '.bin')
+      fetch(
+        opts.resolveAsset
+          ? opts.resolveAsset('.' + main + '.bin')
+          : meshBase + '.' + main + '.bin'
+      )
         .then(ok)
         .then(r => r.arrayBuffer()),
       MeshoptDecoder.ready
@@ -564,7 +568,11 @@ export function createRenderer(opts = {}) {
     const f = M.failed[v]
     if (f && performance.now() - f.at < Math.min(30000, 1000 * 2 ** f.n)) return
     const file = 'v' + v
-    M.pending[v] = fetch(opts.resolveAsset ? opts.resolveAsset('.' + file + '.bin') : meshBase + '.' + file + '.bin')
+    M.pending[v] = fetch(
+      opts.resolveAsset
+        ? opts.resolveAsset('.' + file + '.bin')
+        : meshBase + '.' + file + '.bin'
+    )
       .then(r => {
         if (!r.ok) throw new Error(`${r.url} ${r.status}`)
         return r.arrayBuffer()

@@ -29,7 +29,7 @@ export const MockResult = ({ prompt }: Props) => {
   const [name, setName] = useState('My workspace')
   if (/preferences/i.test(prompt))
     return (
-      <ResultCard title="Preferences preview">
+      <ResultCard title="Preferences">
         <form
           onSubmit={event => {
             event.preventDefault()
@@ -47,11 +47,11 @@ export const MockResult = ({ prompt }: Props) => {
             />
           </TextField>
           <Button type="submit" size="sm">
-            Save preview
+            Save
           </Button>
           {saved && (
             <p role="status" className="text-muted text-xs">
-              Saved “{name}” in this preview.
+              Saved “{name}”.
             </p>
           )}
         </form>
@@ -106,7 +106,7 @@ export const MockResult = ({ prompt }: Props) => {
               variant="secondary"
               size="sm"
               onPress={() => setSaved(true)}>
-              Preview next step
+              Open Search
             </Button>
             {saved && (
               <p role="status" className="text-xs">

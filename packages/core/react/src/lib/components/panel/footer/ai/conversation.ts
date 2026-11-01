@@ -29,10 +29,10 @@ const replyTo = (prompt: string) => {
   if (/day|plan|schedule/i.test(prompt))
     return 'Start with your most important task, leave time for meetings, and finish with a short review. Share your priorities and we can build a simple plan together.'
   if (/workspace|find|search/i.test(prompt))
-    return 'Try Search to find a page, Bookmarks for saved destinations, or Storage for your files. In this preview I can explain these controls; I haven’t opened or changed anything.'
+    return 'Try Search to find a page, Bookmarks for saved destinations, or Storage for your files. I can explain how these controls work.'
   if (/summary|summarize|notes/i.test(prompt))
-    return 'Paste your notes here and I’ll show a sample summary organized into key points, decisions, and next steps. This preview uses simulated replies.'
-  return 'Let’s break that into a clear next step. You can ask me to plan your day, explore your workspace, or summarize notes. This is a sample reply for the assistant preview.'
+    return 'Share your notes and I’ll organize them into key points, decisions, and next steps.'
+  return 'Let’s break that into a clear next step. You can ask me to plan your day, explore your workspace, or summarize notes.'
 }
 
 export const useMockConversation = () => {

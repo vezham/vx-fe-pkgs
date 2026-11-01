@@ -103,13 +103,13 @@ export const createDemoReply = (
   if (/வணக்கம்|\b(vanakkam|hello|hi|hey)\b/i.test(prompt))
     return {
       persona: 'helper',
-      text: 'Vanakkam! வணக்கம்! I’m Tamizhi, your little thinking companion.\n\nPick an example, bring me an idea, or try a question. This is our local demo, so my replies are prepared while we shape the experience together.'
+      text: 'Vanakkam! வணக்கம்! I’m Tamizhi, your little thinking companion.\n\nPick an example, bring me an idea, or try a question. '
     }
 
   const replies: Record<Persona, Omit<Message, 'id' | 'role'>> = {
     helper: {
       persona,
-      text: 'Let’s give that a little room to grow.\n\nI can help you **build**, **write**, **plan**, **learn**, or **explore**. Try one of the examples to see my look change with the task.\n\nFor this first-stage demo, I use prepared replies. Your messages stay in this browser, and no AI service is called.'
+      text: 'Let’s give that a little room to grow.\n\nI can help you **build**, **write**, **plan**, **learn**, or **explore**. Try one of the examples to see my look change with the task.\n\n'
     },
     coder: {
       persona,
@@ -136,31 +136,31 @@ export const createDemoReply = (
     },
     explorer: {
       persona,
-      text: 'A slow weekend in Chennai sounds lovely. Here’s an unhurried starting point.\n\n**Saturday · Old streets, new discoveries**\n\nStart with a walk around Mylapore, pause for a filter coffee, and leave the afternoon open for a bookshop or somewhere you stumble upon.\n\n**Sunday · A little sea air**\n\nHead to Besant Nagar for a morning beach walk. Have a relaxed breakfast, then spend the afternoon with a book or a friend.\n\nKeep just one anchor activity each day. Check opening times and local conditions before you go; this sample itinerary isn’t live travel information.'
+      text: 'A slow weekend in Chennai sounds lovely. Here’s an unhurried starting point.\n\n**Saturday · Old streets, new discoveries**\n\nStart with a walk around Mylapore, pause for a filter coffee, and leave the afternoon open for a bookshop or somewhere you stumble upon.\n\n**Sunday · A little sea air**\n\nHead to Besant Nagar for a morning beach walk. Have a relaxed breakfast, then spend the afternoon with a book or a friend.\n\nKeep just one anchor activity each day. Check opening times and local conditions before you go; '
     }
   }
   const outfit = detectOutfit(prompt)
   const extraReplies: Partial<Record<Outfit, string>> = {
-    cook: 'A quick dinner idea: **tomato and egg toast**.\n\n1. Soften a chopped tomato in a little oil.\n2. Beat two eggs, add them to the pan, and stir gently until set.\n3. Season and spoon over warm toast.\n\nAdd a handful of greens on the side. This is a prepared recipe example for the local demo.',
+    cook: 'A quick dinner idea: **tomato and egg toast**.\n\n1. Soften a chopped tomato in a little oil.\n2. Beat two eggs, add them to the pan, and stir gently until set.\n3. Season and spoon over warm toast.\n\nAdd a handful of greens on the side. ',
     music:
-      'For a focused afternoon, try a gentle three-part listening session:\n\n1. **Settle in:** quiet piano or ambient instrumentals.\n2. **Find your rhythm:** steady instrumental beats without lyrics.\n3. **Wind down:** softer acoustic tracks for your last small task.\n\nThis demo suggests a listening plan; it doesn’t connect to a music service.',
+      'For a focused afternoon, try a gentle three-part listening session:\n\n1. **Settle in:** quiet piano or ambient instrumentals.\n2. **Find your rhythm:** steady instrumental beats without lyrics.\n3. **Wind down:** softer acoustic tracks for your last small task.\n\n',
     garden:
-      'For a happier basil plant, start with the basics.\n\n- Give it plenty of bright light.\n- Check the soil before watering; water when the top feels dry.\n- Use a pot with drainage and avoid leaving it in standing water.\n- Pinch the growing tips above a pair of leaves to encourage branching.\n\nTell me what its leaves look like when we connect the full assistant.',
-    bug: 'Let’s narrow down that error.\n\n1. **Read the first error line.** Note the value and operation that failed.\n2. **Follow the stack trace** to the first line in your own code.\n3. **Check the input** at that line. Is it missing, null, or the wrong type?\n4. Reduce it to the smallest example that still fails.\n\nThis is a prepared debugging walkthrough. The local demo doesn’t inspect or execute your code.',
+      'For a happier basil plant, start with the basics.\n\n- Give it plenty of bright light.\n- Check the soil before watering; water when the top feels dry.\n- Use a pot with drainage and avoid leaving it in standing water.\n- Pinch the growing tips above a pair of leaves to encourage branching.\n\n',
+    bug: 'Let’s narrow down that error.\n\n1. **Read the first error line.** Note the value and operation that failed.\n2. **Follow the stack trace** to the first line in your own code.\n3. **Check the input** at that line. Is it missing, null, or the wrong type?\n4. Reduce it to the smallest example that still fails.\n\n',
     money:
-      'Here’s a simple budget worksheet to start with:\n\n- List your regular income.\n- Subtract fixed essentials such as housing and utilities.\n- Set an amount aside for savings and unexpected expenses.\n- Give the remaining amount a clear purpose, leaving some flexibility.\n\nUse your own numbers to make it realistic. This local example doesn’t access accounts or calculate a personal budget.',
+      'Here’s a simple budget worksheet to start with:\n\n- List your regular income.\n- Subtract fixed essentials such as housing and utilities.\n- Set an amount aside for savings and unexpected expenses.\n- Give the remaining amount a clear purpose, leaving some flexibility.\n\n',
     designer:
-      'Start with the job the interface needs to do.\n\n1. Sketch the main action and the content it needs.\n2. Use a clear type hierarchy and a small spacing scale.\n3. Choose one accent and let neutral surfaces do the rest.\n4. Check keyboard navigation, contrast, and a narrow screen.\n\nThis is a prepared design walkthrough for the demo.',
+      'Start with the job the interface needs to do.\n\n1. Sketch the main action and the content it needs.\n2. Use a clear type hierarchy and a small spacing scale.\n3. Choose one accent and let neutral surfaces do the rest.\n4. Check keyboard navigation, contrast, and a narrow screen.\n\n',
     tester:
-      'A small test plan:\n\n1. Check the main successful path.\n2. Try missing and invalid input.\n3. Verify cancel, retry, and error recovery.\n4. Test with keyboard navigation and a small viewport.\n\nKeep assertions focused on what a user can observe. This demo doesn’t run tests.',
+      'A small test plan:\n\n1. Check the main successful path.\n2. Try missing and invalid input.\n3. Verify cancel, retry, and error recovery.\n4. Test with keyboard navigation and a small viewport.\n\nKeep assertions focused on what a user can observe. ',
     guard:
-      'Before a destructive change, make the action concrete:\n\n1. Identify the exact files or records affected.\n2. Preview the change and check for a recoverable backup.\n3. Confirm the intended result before proceeding.\n\nThis is a local demo; no files are changed.',
+      'Before a destructive change, make the action concrete:\n\n1. Identify the exact files or records affected.\n2. Preview the change and check for a recoverable backup.\n3. Confirm the intended result before proceeding.\n\n',
     captain:
-      'A simple release check:\n\n1. Review the diff and confirm the intended scope.\n2. Run the relevant checks.\n3. Write a short release note describing the user-visible change.\n4. Ship through your normal review process.\n\nThis local demo doesn’t connect to Git or deploy anything.',
+      'A simple release check:\n\n1. Review the diff and confirm the intended scope.\n2. Run the relevant checks.\n3. Write a short release note describing the user-visible change.\n4. Ship through your normal review process.\n\n',
     coach:
-      'Try a gentle screen-break routine:\n\n- Stand up and relax your shoulders.\n- Walk around for a couple of minutes.\n- Look away from the screen and breathe comfortably.\n- Return to one small, clear task.\n\nKeep movement comfortable for you. This is a prepared wellbeing example.',
+      'Try a gentle screen-break routine:\n\n- Stand up and relax your shoulders.\n- Walk around for a couple of minutes.\n- Look away from the screen and breathe comfortably.\n- Return to one small, clear task.\n\nKeep movement comfortable for you. ',
     director:
-      'A simple three-beat storyboard:\n\n1. **The setup:** show the person and the problem.\n2. **The turn:** show the idea that changes things.\n3. **The payoff:** show the result and one clear next step.\n\nKeep each beat to a single visual idea. This is a prepared example; the demo doesn’t generate video.',
+      'A simple three-beat storyboard:\n\n1. **The setup:** show the person and the problem.\n2. **The turn:** show the idea that changes things.\n3. **The payoff:** show the result and one clear next step.\n\nKeep each beat to a single visual idea. ',
     investigate:
       'Start with what you can observe:\n\n1. Write down what you expected and what actually happened.\n2. Find the earliest moment those paths diverged.\n3. Check one possible cause at a time.\n4. Keep the evidence that supports or rules out each cause.\n\nThis is a local investigation template, ready for a real question in the next stage.'
   }

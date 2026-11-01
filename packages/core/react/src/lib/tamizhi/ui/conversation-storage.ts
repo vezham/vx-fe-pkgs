@@ -17,6 +17,9 @@ export const parseConversations = (saved: unknown): Conversation[] => {
             typeof message?.id === 'string' &&
             typeof message.text === 'string' &&
             ['user', 'assistant'].includes(message.role) &&
+            (message.rating === undefined ||
+              message.rating === 'up' ||
+              message.rating === 'down') &&
             [
               'helper',
               'coder',

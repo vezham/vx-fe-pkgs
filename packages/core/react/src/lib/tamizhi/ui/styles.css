@@ -257,11 +257,6 @@
   padding: 0;
 }
 
-.tamizhi-composer__file-note {
-  color: var(--muted);
-  font-size: 0.6875rem;
-}
-
 .tamizhi-composer__send[disabled] {
   opacity: 0.28;
 }
@@ -326,12 +321,6 @@
   margin-left: -0.25rem;
   font-size: 0.8125rem;
   font-weight: 600;
-}
-
-.tamizhi-message__demo {
-  color: var(--muted);
-  font-size: 0.625rem;
-  font-weight: 400;
 }
 
 .tamizhi-message__body {

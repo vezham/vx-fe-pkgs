@@ -11,7 +11,7 @@ const model = (
   provider: string,
   description: string,
   ratings: PreviewModel['ratings'],
-  context = '1M context window · preview'
+  context = '1M context window'
 ): PreviewModel => ({ name, provider, description, ratings, context })
 
 export const PREVIEW_MODELS: readonly PreviewModel[] = [

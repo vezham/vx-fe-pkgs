@@ -51,7 +51,6 @@ export const ComposerControls = ({
                     <Bolt size={16} aria-hidden="true" />
                     Fast mode
                   </span>
-                  <span className="text-muted text-xs">Simulated</span>
                 </span>
               </Switch.Content>
             </Switch>
@@ -99,9 +98,6 @@ export const ComposerControls = ({
                   </ListBox>
                 </Select.Popover>
               </Select>
-              <p className="text-muted px-2 pt-1.5 text-[0.6875rem]">
-                Preview only · No files or internet access is granted.
-              </p>
             </div>
           </div>
         </Popover.Dialog>
