@@ -39,6 +39,14 @@ them to the exported `dist` paths. The exact `@vezham/start/styles/docs` import
 is exempt from unresolved-import checks because its export targets generated
 CSS; its source stays covered and the package build produces the exported file.
 
+Fallow 3.37 cannot resolve the playground docs app's `tsconfig.app.json` aliases
+from MDX content and tests outside `src`. Keep those valid app imports unchanged.
+The exact `@components/callout/index.story` and `@app/docs` specifiers are exempt
+from unresolved-import findings. The Callout story is an explicit entry point so
+its implementation and imports remain analyzed. These are resolver workarounds,
+not evidence that the story or Callout component is unused. Remove the exceptions
+and extra entry when Fallow resolves these imports correctly.
+
 The workspace-only template keeps reusable docs pages exported explicitly from
 `@vezham/start` and registers the shared stylesheet roots as audit entry points.
 Removing reference apps must not make these generated-app inputs appear unused.

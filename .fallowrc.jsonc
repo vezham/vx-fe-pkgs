@@ -5,7 +5,11 @@
   },
   "ignoreUnresolvedImports": [
     // vx-bot/NOTE: This CSS export is copied during build; its source is an explicit entry below.
-    "@vezham/start/styles/docs"
+    "@vezham/start/styles/docs",
+    // vx-bot/NOTE: Fallow 3.37 misses tsconfig.app.json aliases from docs content and tests outside src.
+    // The MDX story is registered below so its implementation remains in the import graph.
+    "@components/callout/index.story",
+    "@app/docs"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
@@ -45,6 +49,8 @@
     "**/src/router.tsx",
     // vx-bot/NOTE: For TanStack Docs app
     "**/content/**/*.mdx",
+    // vx-bot/NOTE: Referenced by MDX through an alias Fallow 3.37 cannot resolve outside src.
+    "apps-internals/playground-docs/src/components/callout/index.story.tsx",
     // vx-bot/NOTE: Workspace CLI, release, and test files load outside the app import graph.
     "packages/config/src/lib/{metadata,deploy}/cli.ts",
     "packages/config/src/lib/presets/docs/cli.ts",
