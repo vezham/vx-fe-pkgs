@@ -51,9 +51,6 @@
       "path": "../../packages/core/react/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/template/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/start/tsconfig.lib.json"
     }
   ]

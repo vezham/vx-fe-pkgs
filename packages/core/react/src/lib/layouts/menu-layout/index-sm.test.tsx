@@ -92,7 +92,10 @@ vi.mock('../../components/panel/footer/preferences/modal', () => ({
   UserInfoModal: () => null
 }))
 
-const items = [{ key: 'home', title: 'Home', href: '/' }]
+const items = [
+  { key: 'home', title: 'Home', href: '/' },
+  { key: 'academic', title: 'Academic', href: '/academic' }
+]
 
 const renderMobile = () =>
   render(
@@ -119,8 +122,30 @@ describe('Small-screen navigation', () => {
     actions.pathname = '/academic'
   })
 
+  it.each([0, 1])(
+    'hides bottom navigation with %i items while preserving mobile controls',
+    count => {
+      render(
+        <WorkspaceNavigationProvider>
+          <MenuSM items={items.slice(0, count)} />
+        </WorkspaceNavigationProvider>
+      )
+
+      expect(
+        screen.queryByRole('navigation', { name: 'Bottom navigation' })
+      ).toBeNull()
+      expect(
+        screen.getByRole('group', { name: 'Mobile navigation controls' })
+      ).toBeVisible()
+      expect(
+        screen.getByRole('group', { name: 'Mobile account actions' })
+      ).toBeVisible()
+    }
+  )
+
   it('follows inherited search settings and hides bottom search when navigating away', () => {
     const navigation = [
+      items[0],
       {
         key: 'academic',
         title: 'Academic',
@@ -170,6 +195,7 @@ describe('Small-screen navigation', () => {
 
   it('clears the primary action slot when a destination overrides it with false', () => {
     const navigation = [
+      items[0],
       {
         key: 'academic',
         title: 'Academic',
