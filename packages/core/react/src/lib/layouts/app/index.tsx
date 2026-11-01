@@ -34,7 +34,10 @@ import { MenuLayout } from '../menu-layout'
 import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
 
-export type AppLayoutProps = Omit<AppFrameProps, 'navigation' | 'children'> & {
+export type AppLayoutProps = Omit<
+  AppFrameProps,
+  'navigation' | 'children' | 'hasBottomNavigation'
+> & {
   children?: ReactNode
   navigationItems: AppNavigationItem[]
   appMenu?: AppMenuItem[]
@@ -45,7 +48,10 @@ export type AppLayoutProps = Omit<AppFrameProps, 'navigation' | 'children'> & {
   i18n?: ControlCenterI18n
 }
 
-type AppLayoutViewProps = Omit<AppFrameProps, 'navigation'> & {
+type AppLayoutViewProps = Omit<
+  AppFrameProps,
+  'navigation' | 'hasBottomNavigation'
+> & {
   navigationItems: AppNavigationItem[]
   controlCenterSlot?: ReactElement
 }
@@ -86,6 +92,7 @@ export const AppLayoutView = ({
 }: AppLayoutViewProps) => (
   <AppFrame
     {...frameProps}
+    hasBottomNavigation={navigationItems.length > 1}
     navigation={
       <MenuLayout items={navigationItems} controlCenter={controlCenterSlot} />
     }>
