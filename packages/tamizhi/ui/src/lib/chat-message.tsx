@@ -1,7 +1,13 @@
 import Markdown from 'react-markdown'
 
 import { useCopyToClipboard } from '@vezham/hooks'
-import { BranchingPathsUp, CheckRead, Copy, Refresh } from '@vezham/icons-react'
+import {
+  BranchingPathsUp,
+  CheckRead,
+  Copy,
+  Refresh,
+  VolumeLoud
+} from '@vezham/icons-react'
 import { ChatMessageActions } from '@vezham/react-pro-v3'
 import { Card, Checkbox, Label } from '@vezham/react-v3'
 
@@ -16,6 +22,7 @@ interface Props {
   canRetry: boolean
   canBranch: boolean
   isAnimated: boolean
+  onSpeak?: (text: string) => void
   onRetry: () => void
   onRate: (messageId: string, rating: 'up' | 'down') => void
   onBranch: (messageId: string) => void
@@ -29,6 +36,7 @@ export const ChatMessage = ({
   canBranch,
   isAnimated,
   onRetry,
+  onSpeak,
   onRate,
   onBranch,
   onToggleTask
@@ -50,6 +58,11 @@ export const ChatMessage = ({
         className="tamizhi-message tamizhi-message--user"
         aria-label="Your message">
         <p>{message.text}</p>
+        {message.attachments?.map(file => (
+          <span key={file.id} className="text-muted mt-1 block text-xs">
+            {file.name}
+          </span>
+        ))}
       </article>
     )
 
@@ -157,6 +170,14 @@ export const ChatMessage = ({
                 size="sm"
                 onPress={onRetry}>
                 <Refresh size={16} aria-hidden="true" />
+              </IconButton>
+            )}
+            {onSpeak && (
+              <IconButton
+                label="Read aloud"
+                size="sm"
+                onPress={() => onSpeak(message.text)}>
+                <VolumeLoud size={16} aria-hidden="true" />
               </IconButton>
             )}
             <TamizhiPluginSlot name="message-actions" message={message} />

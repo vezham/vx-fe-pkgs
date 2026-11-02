@@ -6,6 +6,7 @@ interface Props {
   isStreaming: boolean
   isAnimated: boolean
   isOffline: boolean
+  onSpeak?: (text: string) => void
   onRetry: () => void
   onRate: (messageId: string, rating: 'up' | 'down') => void
   onBranch: (messageId: string) => void
@@ -18,6 +19,7 @@ export const Conversation = ({
   isAnimated,
   isOffline,
   onRetry,
+  onSpeak,
   onRate,
   onBranch,
   onToggleTask
@@ -31,6 +33,7 @@ export const Conversation = ({
         isAnimated={isAnimated}
         canBranch={!isStreaming}
         canRetry={!isOffline && !isStreaming && index === messages.length - 1}
+        onSpeak={onSpeak}
         onRetry={onRetry}
         onRate={onRate}
         onBranch={onBranch}

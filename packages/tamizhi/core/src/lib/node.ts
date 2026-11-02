@@ -4,7 +4,10 @@ import { createServer } from 'node:http'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
 
-import { storedConversationSchema } from '@vezham/tamizhi-contracts'
+import {
+  storedConversationSchema,
+  wireMessageSchema
+} from '@vezham/tamizhi-contracts'
 
 import type { createTamizhi } from './runtime'
 import type { TamizhiPlugin } from './types'
@@ -23,9 +26,15 @@ export const fileStoragePlugin = (directory: string): TamizhiPlugin => ({
     context.tamizhi.storage.register(context, 'default', {
       get: async (owner, id) => {
         try {
-          return storedConversationSchema.parse(
+          const item = storedConversationSchema.parse(
             JSON.parse(await readFile(filename(owner, id), 'utf8'))
           )
+          return {
+            ...item,
+            messages: item.messages.map(message =>
+              wireMessageSchema.parse(message)
+            )
+          }
         } catch (error) {
           if (
             error instanceof Error &&

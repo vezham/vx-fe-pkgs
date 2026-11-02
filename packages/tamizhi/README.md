@@ -1,77 +1,21 @@
 # Tamizhi
 
-Tamizhi has independent packages for static React clients and a separately hosted plugin runtime.
+Tamizhi supports a standalone static/prerendered app and an embedded assistant in AppLayout. Both share HeroUI UI, avatar behavior, browser-safe contracts and a typed client. The production backend lives in the sibling **vx-be-kit-lab** Go workspace.
 
-| Package                     | Generator                 | Responsibility                                                             |
-| --------------------------- | ------------------------- | -------------------------------------------------------------------------- |
-| `@vezham/tamizhi-contracts` | `@vx-cli/react:lib`       | Message types, validated HTTP requests, stream events, approvals           |
-| `@vezham/tamizhi-core`      | `@vx-cli/react:lib`       | Cordis host, plugins, model/tool orchestration, storage, permissions, HTTP |
-| `@vezham/tamizhi-client`    | `@vx-cli/react:lib`       | Browser-safe fetch client, validated SSE reader, cancellation              |
-| `@vezham/tamizhi-ui`        | `@vx-cli/react:react-lib` | HeroUI chat, composer/composer-lite, avatar, embed, UI extension slots     |
+| Package                     | Responsibility                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `@vezham/tamizhi-contracts` | Generated Go API types/OpenAPI/JSON Schema plus browser runtime validation                             |
+| `@vezham/tamizhi-client`    | Authenticated API requests, SSE streaming/reconnect, explicit cancellation and typed feature endpoints |
+| `@vezham/tamizhi-ui`        | Standalone composer, compact composer-lite, avatar, embed, messages and capability-driven controls     |
+| `@vezham/tamizhi-core`      | Earlier TypeScript prototype; retained for comparison/tests, not the production backend                |
 
-Composer attachments support TXT, Markdown, CSV, and JSON files (up to four files totaling 20 KB). Their contents are included in the submitted message. Image, PDF, and voice input need dedicated modality plugins/adapters.
+## Backend connection
 
-The dependency direction is `ui -> client -> contracts` and `core -> contracts`.
-The UI never imports the backend. `core/node` is a separate entrypoint for Node HTTP hosting and file storage.
+Set the public build variable `V_TAMIZHI_API_URL` for the standalone app. Without it, the app retains its local prepared-reply demo. Users add their own provider keys in **Tuning → AI settings** after signing in. Keys are encrypted on the Go backend and never saved in browser local storage.
 
-## Plugin architecture
+The backend uses **Neon Postgres** through Go `pgx`. Its server-only `DATABASE_URL` comes from Neon Console; keep its TLS options and use a pooled URL for API traffic. The browser only receives `V_TAMIZHI_API_URL` and never connects directly to Postgres. SQLite is reserved for explicit local development and test fixtures.
 
-Inspired by DeepSeek Harness's composition philosophy, Tamizhi reuses `@deepseek-ai/cordis` for plugin lifecycle and dependency injection. It does not wrap the DSH agent, session, or transport APIs. Model/tool execution uses TanStack AI behind the provider plugin.
-
-Providers, tools, storage, permission policies, and HTTP transports register through scoped services. They are removed when their Cordis plugin unloads. Registrations reject duplicate names. Removing an execution dependency cancels active runs; disposal aborts pending tool approvals.
-
-```ts
-import {
-  createTamizhi,
-  httpTransportPlugin,
-  memoryStoragePlugin,
-  openaiCompatiblePlugin,
-  permissionPolicyPlugin
-} from '@vezham/tamizhi-core'
-
-const runtime = await createTamizhi({
-  defaultModel: 'deepseek-chat',
-  plugins: [
-    memoryStoragePlugin(),
-    permissionPolicyPlugin(),
-    openaiCompatiblePlugin({
-      id: 'deepseek',
-      apiKey: process.env.DEEPSEEK_API_KEY!,
-      baseURL: 'https://api.deepseek.com',
-      models: [
-        { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek' }
-      ]
-    }),
-    httpTransportPlugin({ authenticate: authenticateYourUser })
-  ]
-})
-
-// Fetch-compatible runtimes route requests here.
-const response = await runtime.fetch(request)
-await runtime.dispose()
-```
-
-`tanstackProviderPlugin({ id, models, adapter })` also accepts any TanStack AI text adapter. `openaiCompatiblePlugin` targets chat completions for compatible endpoints. `fastModel` optionally selects a different server-configured model when Fast mode is enabled. TanStack AI owns streamed model calls and the bounded tool loop; Tamizhi owns approvals, service composition, storage, and its stable wire protocol.
-
-Tools use `toolPlugin({ name, description, risk, inputSchema, execute })`; schemas are Zod schemas. The executor receives the authenticated principal, conversation id, and AbortSignal. `risk` is `read`, `write`, or `external`. Ask mode requests approval for every tool. Safe mode allows read tools and asks for other tools. Full mode still asks unless the backend policy explicitly opts into `allowFullAccess`. Client controls cannot override backend policy. Approval decisions are bound to the owning principal and active run, expire, and are removed on cancellation.
-
-Custom plugins can register against `ctx.tamizhi` and observe `ctx.on('tamizhi/event', ...)`. Use `ctx.effect()` to release external resources. `runtime.mount(plugin)` returns an async unmount function. Cordis `inject` also supports dependencies on custom services provided through `ctx.provide()`.
-
-## Backend example
-
-`packages/tamizhi/core/examples/server.ts` composes an OpenAI-compatible provider, file storage, permissions, a current-time tool, and the HTTP transport. Set the variables from `examples/.env.example` in the backend environment, then run:
-
-```sh
-pnpm nx run tamizhi-core:serve
-```
-
-The example binds to `127.0.0.1:8787`. It authenticates a backend-configured token through a Bearer header or the `tamizhi-session` cookie. Replace its single-user authenticator with the hosting application's session authentication for deployment. The Node server is optional: workers and other Fetch-compatible backends can use `runtime.fetch` directly.
-
-Provider keys belong only in the backend environment. The example does not load `.env` automatically; export variables in the shell or provide them through the process manager. File storage uses atomic writes and hashes the principal/session identifiers rather than treating user input as paths. Memory storage is transient and bounded to 100 conversations per principal. File storage persists conversations across restarts; UI feedback and branch metadata remain in the existing per-user browser store.
-
-## Static standalone app and embed
-
-The app remains static/prerender compatible. Set `V_TAMIZHI_API_URL` to the deployed API base (for example, `https://api.example.com/api/tamizhi`) to enable its backend client. Without it, the existing local example chat remains available. Only the public URL goes into the frontend build. Authentication is supplied by the host session cookie; the API must explicitly allow the frontend origin when it is hosted separately.
+The Go backend is linked to [Tamizhi on Neon](https://console.neon.tech/app/projects/late-flower-50992894/) in Singapore. Credentials stay in the backend repository’s git-ignored `.env.local`; project-scoped MCP and Neon skills are configured there.
 
 ```tsx
 import { createTamizhiClient } from '@vezham/tamizhi-client'
@@ -83,36 +27,62 @@ const client = createTamizhiClient({
   credentials: 'include'
 })
 
-<TamizhiSessionProvider client={client} storageKey="my-app:tamizhi:user-id">
+<TamizhiSessionProvider client={client} storageKey="my-app:tamizhi">
   <TamizhiEmbed />
 </TamizhiSessionProvider>
 ```
 
-For the existing menu layout use `<AppLayout tamizhi={{ client }} ... />`. AppLayout keeps the embedded session above responsive info-panel/sheet mounts. Standalone routing stays in the app, and its branch action opens the newly created chat route. Use `useTamizhiChat` for custom hosts; `useDemoChat` remains a compatibility alias. Import the stylesheet once; theme tokens continue to come from Control Center.
+For menu integration pass `<AppLayout tamizhi={{ client }} ... />`. Browser login uses the Go API's OIDC cookie session; host applications can also supply asynchronous authorization headers. Keep frontend/API on the same site for cookie sessions and configure exact API CORS origins. Static/prerendered output never requires SSR.
 
-For custom UI extensions wrap the view in `TamizhiUIProvider` with plugins contributing to `welcome`, `composer-actions`, or `message-actions`. Slots are React components, so they can use hooks. Duplicate UI plugin names are rejected.
+When connected, history stays in memory in the browser and persists on the backend. The local demo continues using `useLocalStore`; remote conversations are not written into demo local storage. Incoming server messages retain their IDs so retry, feedback, tasks and branching operate on the canonical conversation.
 
-## HTTP protocol
+The server streams durable sequenced events. The client reconnects with the last received sequence after a dropped response, without resubmitting a prompt/tool execution. Stop calls the cancellation API. Server restart preserves replayable events and marks unfinished runs interrupted.
 
-- `POST /api/tamizhi/chat`: validated request, incremental SSE events, one terminal finish/error event.
-- `POST /api/tamizhi/approvals`: resolve a pending tool approval for the authenticated owner.
-- `GET /api/tamizhi/models`: actual installed provider model catalog.
-- `GET /api/tamizhi/plugins`: installed plugin names.
-- `GET /api/tamizhi/conversations/:id`: persisted history for the authenticated owner.
+## Login and SSO
 
-All routes authenticate. CORS uses an explicit origin list. Requests, run concurrency, output queues, approval waits, and run duration are bounded. Client stream parsing handles fragmented frames and rejects incomplete replies. The client supports host-supplied asynchronous authorization headers and custom fetch implementations.
+Both standalone and embed show account controls without requiring an API error first. The sign-in chooser lists configured Google, Microsoft, GitHub and enterprise connections from the backend identity broker. OIDC authorization code, PKCE and HttpOnly sessions run on the Go backend. Sign-in restores the original app/host page only when its origin is explicitly trusted. Sign-out revokes the Tamizhi session without signing out of unrelated SSO applications.
+
+Configure the broker using the backend's `config/tamizhi.sso.example.json` template; upstream providers still require client registrations. Clients can call `api.authSession()` for anonymous-safe identity/login metadata and `api.getLoginURL(returnTo, connection)` for a selected connection. Secrets are never part of the static build.
+
+**Signing in does not automatically grant AI credits.** ChatGPT plan sharing for hosted apps requires provider access/registration; Gemini account authorization is implemented when its server registration is configured; Claude third-party inference uses supported API credentials. Model authorization remains separate from app SSO. The backend `docs/tamizhi-auth.md` records official references and remaining integration requirements. BYOK remains available.
+
+## Provider settings
+
+**Test & save key** validates the selected provider by discovering its account model catalog. OpenAI, Anthropic, Gemini, DeepSeek, Kimi and xAI are supported. Both standalone and embed update their model picker and capabilities after a key changes. The disconnected demo retains sample presets; connected models come from the account. OpenAI accounts with transcription/speech models enable voice input and read-aloud.
+
+When the server configures its optional `geminiOAuth` block, select Gemini, enter your authorized Google Cloud project ID and choose **Connect Google account**. The browser performs Google consent without an API key. The backend encrypts and renews tokens, discovers models and handles streaming; disconnect removes the connection and models. That project's API permissions, quota and billing apply; Google consumer subscription credits are not imported. The backend `config/tamizhi.oauth.example.json` documents the required web-client registration and callback.
+
+The backend encrypts saved keys with an owner-bound AES-GCM key. Its server-only `TAMIZHI_ENCRYPTION_KEY` (base64, 32 random bytes) or persistent owner-only `.tamizhi/credential-key` must be backed up separately from Neon. Removing or replacing a key cancels that user's active runs. Provider responses contain connection status and model metadata, never the secret.
+
+## Available controls
+
+- Model and Fast mode use the installed backend catalog; permissions are enforced by the backend, with explicit action approval cards.
+- Both composers upload text, images and PDFs when the server/model supports them. Local demo attachments remain text-only. Voice input uses MediaRecorder and real transcription, with a one-minute recording limit. Read-aloud uses the speech endpoint.
+- Tuning → AI settings exposes sign-in/out, server chat search/rename, checkpoints/restore, context compaction, memory and admin plugin enablement.
+- Child-agent activity/approval events share the parent stream. Tool results and navigation requests remain typed data; navigation is shown as a local link.
+- Feedback, task state and branching persist through the Go API. Layout routing remains in the standalone app.
+
+All components use HeroUI compound notation and Control Center theme tokens. UI extension slots remain available through `TamizhiUIProvider` for `welcome`, `composer-actions` and `message-actions`. The upstream Momo engine/assets/licenses remain in the UI package.
+
+## Contract synchronization
+
+Run in the backend repository:
+
+```sh
+pnpm nx run tamizhi-contracts-go:generate
+scripts/sync-tamizhi-contracts /path/to/this-repo
+scripts/sync-tamizhi-contracts /path/to/this-repo --check
+```
+
+Do not manually edit `contracts/src/lib/generated`. Go owns wire DTOs. Changes to browser Zod validation and behavioral adapters must accompany wire changes; integration tests validate the actual server/client combination.
 
 ## Verification
 
-Run package tests and checks through Nx:
-
 ```sh
-pnpm nx run-many -t test -p tamizhi-core,tamizhi-client,tamizhi-contracts,tamizhi-ui --parallel=1
-pnpm nx run-many -t typecheck,lint -p tamizhi-core,tamizhi-client,tamizhi-contracts,tamizhi-ui,react,tamizhi --parallel=1
+pnpm nx run-many -t test,typecheck,lint -p tamizhi-contracts,tamizhi-client,tamizhi-ui,tamizhi --parallel=1
+pnpm nx run tamizhi:build
+# First build the API through Nx in the backend workspace.
+TAMIZHI_BACKEND_DIR=/path/to/vx-be-kit-lab pnpm nx run tamizhi-client:test --skip-nx-cache
 ```
 
-Tests cover real TanStack tool-loop behavior with a mocked provider endpoint, client/HTTP streaming, approval ownership, denial, cancellation, plugin disposal, contract validation, and the existing avatar/demo interactions. Live provider calls require deployment credentials and are not part of these tests.
-
-## Source and attribution
-
-Architecture reference: `deepseek-ai/deepseek-harness` (local checkout inspected for plugin/service/lifecycle design). Cordis is consumed as an npm dependency. Momo engine, meshes, decoder, and upstream licenses move with the UI package and are copied into its published output. No absolute reference to a developer's DSH checkout is used by these packages.
+The Go integration test uses a local mocked provider and temporary SQLite database. Running it requires the built API binary in the supplied repository. Real paid provider requests require a user-supplied BYOK key; the fixtures do not verify a vendor account. The optional Chromium suite checks login, BYOK settings, image forwarding, microphone recording/denial and native audio playback against local Go/OIDC/provider fixtures. Run it with `TAMIZHI_BACKEND_DIR=/path/to/vx-be-kit-lab pnpm nx run tamizhi-ui:browser-test`. Docker, deployment and CI verification are excluded from this work. The backend README describes setup, plugin configuration, execution boundaries and current single-process deployment constraints.

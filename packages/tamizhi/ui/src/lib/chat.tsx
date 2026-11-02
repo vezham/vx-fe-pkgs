@@ -2,8 +2,11 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { Button, Card, useMediaQuery } from '@vezham/react-v3'
+import type { APIAttachment } from '@vezham/tamizhi-contracts'
 
+import { AccountControls } from './account-controls'
 import { OUTFITS, detectOutfit } from './avatar-data'
+import { BackendSettings } from './backend-settings'
 import { BotPicker } from './bot-picker'
 import { Companion } from './companion'
 import { Composer } from './composer'
@@ -15,10 +18,11 @@ import { TamizhiPluginSlot } from './plugins'
 import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
 import type { useDemoChat } from './use-demo-chat'
+import { useSpeechOutput } from './use-speech-output'
 
 export interface TamizhiChatProps {
   chat: Omit<ReturnType<typeof useDemoChat>, 'send'> & {
-    send: (prompt: string) => unknown
+    send: (prompt: string, attachments?: APIAttachment[]) => unknown
   }
   isInstant: boolean
   setIsInstant: (value: boolean) => void
@@ -41,6 +45,7 @@ export const TamizhiChat = ({
   composerNote,
   renderLayout
 }: TamizhiChatProps) => {
+  const speech = useSpeechOutput(chat.api)
   const welcomeId = useId()
   const [isPlaygroundOpen, setIsPlaygroundOpen] = useState(false)
   const isCompact = useMediaQuery('(width < 64rem)', {
@@ -48,6 +53,12 @@ export const TamizhiChat = ({
   })
   const [isAnimated, setIsAnimated] = useState(true)
   const [model, setModel] = useState('Auto')
+  const availableModel =
+    chat.isRemote &&
+    model !== 'Auto' &&
+    !chat.models.some(item => item.id === model)
+      ? 'Auto'
+      : model
   const [isFastMode, setIsFastMode] = useState(false)
   const [permission, setPermission] = useState('Ask for approval')
   const [botName, setBotName] = useState('Tamizhi')
@@ -85,36 +96,40 @@ export const TamizhiChat = ({
   }, [chat.messages, chat.activeId])
 
   const playground = (
-    <Playground
-      outfit={outfit}
-      expression={expression}
-      palette={palette}
-      isAnimated={isAnimated}
-      isOffline={isOffline}
-      isInstant={isInstant}
-      connection={chat.isRemote ? 'Backend' : 'Local'}
-      model={model}
-      lastOutfit={lastUser ? detectOutfit(lastUser.text) : undefined}
-      onOutfitChange={value => {
-        setManualOutfit(value)
-        setPalette(undefined)
-      }}
-      onExpressionChange={setExpression}
-      onPaletteChange={setPalette}
-      onAnimatedChange={setIsAnimated}
-      onOfflineChange={value => {
-        if (value === isOffline) return
-        if (value) chat.stop()
-        setIsOffline(value)
-      }}
-      onInstantChange={setIsInstant}
-    />
+    <>
+      <Playground
+        outfit={outfit}
+        expression={expression}
+        palette={palette}
+        isAnimated={isAnimated}
+        isOffline={isOffline}
+        isInstant={isInstant}
+        connection={chat.isRemote ? 'Backend' : 'Local'}
+        model={availableModel}
+        lastOutfit={lastUser ? detectOutfit(lastUser.text) : undefined}
+        onOutfitChange={value => {
+          setManualOutfit(value)
+          setPalette(undefined)
+        }}
+        onExpressionChange={setExpression}
+        onPaletteChange={setPalette}
+        onAnimatedChange={setIsAnimated}
+        onOfflineChange={value => {
+          if (value === isOffline) return
+          if (value) chat.stop()
+          setIsOffline(value)
+        }}
+        onInstantChange={setIsInstant}
+      />
+      {chat.api && <BackendSettings chat={chat} />}
+    </>
   )
 
   const ComposerComponent =
     composerVariant === 'embed' ? ComposerLite : Composer
   const content = (
     <section ref={main} className="tamizhi__main" aria-label="Tamizhi chat">
+      {chat.api && <AccountControls api={chat.api} />}
       <div
         className="tamizhi__scroll"
         ref={scroll}
@@ -158,6 +173,11 @@ export const TamizhiChat = ({
             }}
             onToggleTask={chat.toggleTask}
             onRate={chat.rate}
+            onSpeak={
+              chat.capabilities?.speech
+                ? text => void speech.speak(text)
+                : undefined
+            }
             onBranch={chat.branchChat}
           />
         )}
@@ -187,8 +207,39 @@ export const TamizhiChat = ({
           {chat.error}
         </p>
       )}
+      {speech.error && (
+        <p role="alert" className="text-danger px-4 text-xs">
+          {speech.error}
+        </p>
+      )}
+      {chat.runEvents.length > 0 && (
+        <div
+          className="text-muted flex flex-wrap gap-2 px-4 py-1 text-xs"
+          role="status">
+          {chat.runEvents
+            .filter(event => event.type !== 'subagent-event')
+            .slice(-3)
+            .map((event, index) =>
+              event.type === 'client-action' ? (
+                <a
+                  key={`${event.runId}-${index}`}
+                  href={event.output.path}
+                  className="text-accent underline">
+                  Open {event.output.path}
+                </a>
+              ) : (
+                <span key={`${event.runId}-${index}`}>
+                  {event.type === 'status' ? event.name : 'Delegated task'}
+                </span>
+              )
+            )}
+        </div>
+      )}
       {chat.approvals.map(approval => (
-        <Card key={approval.callId} className="mx-4 mb-2" variant="secondary">
+        <Card
+          key={`${approval.runId}-${approval.callId}`}
+          className="mx-4 mb-2"
+          variant="secondary">
           <Card.Header>
             <Card.Title>Allow {approval.name}?</Card.Title>
             <Card.Description>
@@ -225,8 +276,12 @@ export const TamizhiChat = ({
         </p>
       )}
       <ComposerComponent
+        api={chat.api}
+        allowImages={chat.capabilities?.images}
+        allowPDF={chat.capabilities?.pdf}
+        allowVoice={chat.capabilities?.transcription}
         models={chat.isRemote ? chat.models : undefined}
-        model={model}
+        model={availableModel}
         onModelChange={setModel}
         isFastMode={isFastMode}
         onFastModeChange={setIsFastMode}
@@ -239,11 +294,11 @@ export const TamizhiChat = ({
         avatarSlotRef={chatAvatarSlot}
         inputRef={composerInput}
         onListeningChange={setIsListening}
-        onSend={prompt => {
+        onSend={(prompt, attachments) => {
           shouldFollow.current.enabled = true
           resetAppearance()
           chat.configureRun({
-            model,
+            model: availableModel,
             fast: isFastMode,
             permission:
               permission === 'Full access'
@@ -252,7 +307,7 @@ export const TamizhiChat = ({
                   ? 'safe'
                   : 'ask'
           })
-          chat.send(prompt)
+          chat.send(prompt, attachments)
         }}
         onStop={chat.stop}
       />

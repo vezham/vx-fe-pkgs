@@ -1,5 +1,5 @@
-# @vezham/tamizhi-core
+# TypeScript runtime prototype
 
-Plugin host and backend runtime. Includes separately exported Node HTTP hosting and file storage at `@vezham/tamizhi-core/node`.
+This package preserves the earlier Cordis/TanStack AI implementation and its comparison tests. The production Tamizhi backend is now Go in the sibling `vx-be-kit-lab` workspace. Static frontend applications use `@vezham/tamizhi-client` and must not import this package.
 
-See [Tamizhi architecture and usage](../README.md).
+See [the Tamizhi package guide](../README.md) for the current integration.

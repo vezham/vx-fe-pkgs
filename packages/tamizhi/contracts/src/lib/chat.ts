@@ -27,11 +27,13 @@ export interface Message {
   rating?: 'up' | 'down'
   text: string
   persona: Persona
+  attachments?: import('./generated/api').Attachment[]
   outfit?: Outfit
   tasks?: { label: string; done: boolean }[]
 }
 
 export interface Conversation {
+  version?: number
   id: string
   title: string
   messages: Message[]

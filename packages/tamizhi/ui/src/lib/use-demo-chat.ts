@@ -3,18 +3,52 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useLocalStore } from '@vezham/hooks'
 import type { TamizhiClient } from '@vezham/tamizhi-client'
 import type {
+  APIAttachment,
+  APICapabilities,
+  APIConversation,
   ApprovalRequest,
   ModelInfo,
   RunRequest,
+  StoredConversationData,
+  StreamEvent,
   ToolActivity
 } from '@vezham/tamizhi-contracts'
 import type { Conversation, Message, Persona } from '@vezham/tamizhi-contracts'
+import { streamEventSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
 import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
 import { createDemoReply, detectPersona } from './demo'
 
 const STORAGE_KEY = 'tamizhi.demo.v1'
+const fromWire = (
+  item: StoredConversationData | APIConversation
+): Conversation => ({
+  id: item.id,
+  title: item.title ?? 'Chat',
+  version: item.version,
+  messages: item.messages
+    .filter(
+      message =>
+        message.role === 'user' ||
+        (message.role === 'assistant' && message.content.trim())
+    )
+    .map(message => ({
+      id: message.id ?? createId(),
+      role: message.role as 'user' | 'assistant',
+      text: message.content,
+      persona: detectPersona(message.content),
+      outfit: detectOutfit(message.content),
+      attachments: message.attachments,
+      rating:
+        message.rating === 'like'
+          ? 'up'
+          : message.rating === 'dislike'
+            ? 'down'
+            : undefined,
+      tasks: message.tasks
+    }))
+})
 
 const createId = () => {
   if (typeof crypto !== 'undefined') {
@@ -34,21 +68,30 @@ export const useDemoChat = (
   storageKey = STORAGE_KEY,
   client?: TamizhiClient
 ) => {
-  const {
-    value: conversations,
-    setValue: setConversations,
-    isReady,
-    isSaved
-  } = useLocalStore(storageKey, EMPTY_CONVERSATIONS, {
+  const local = useLocalStore(storageKey, EMPTY_CONVERSATIONS, {
     parse: parseConversations,
     debounceMs: 150
   })
+  const [remoteConversations, setRemoteConversations] = useState<
+    Conversation[]
+  >([])
+  const [loadedClient, setLoadedClient] = useState<TamizhiClient | null>(null)
+  const conversations = client
+    ? client.api && loadedClient !== client
+      ? []
+      : remoteConversations
+    : local.value
+  const setConversations = client ? setRemoteConversations : local.setValue
+  const isReady = client?.api ? loadedClient === client : local.isReady
+  const isSaved = client ? true : local.isSaved
+  const [capabilities, setCapabilities] = useState<APICapabilities | null>(null)
   const [sessionChatId, setActiveId] = useState<string | null>(null)
   const activeId = selectedChatId === undefined ? sessionChatId : selectedChatId
   const [isStreaming, setIsStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [approvals, setApprovals] = useState<ApprovalRequest[]>([])
   const [activities, setActivities] = useState<ToolActivity[]>([])
+  const [runEvents, setRunEvents] = useState<StreamEvent[]>([])
   const [models, setModels] = useState<ModelInfo[]>([])
   const runOptions = useRef<Pick<RunRequest, 'model' | 'fast' | 'permission'>>({
     model: 'Auto',
@@ -56,6 +99,40 @@ export const useDemoChat = (
     permission: 'ask'
   })
   const remote = useRef<AbortController | null>(null)
+  const currentRun = useRef<string | null>(null)
+  const acceptConversation = (
+    item: StoredConversationData | APIConversation
+  ) => {
+    const chat = fromWire(item)
+    setConversations(current => [
+      chat,
+      ...current.filter(value => value.id !== chat.id)
+    ])
+    return chat
+  }
+  useEffect(() => {
+    if (!client?.api) return
+    const controller = new AbortController()
+    void Promise.all([
+      client.api.conversations('', '', controller.signal),
+      client.api.capabilities(controller.signal)
+    ])
+      .then(([page, features]) => {
+        if (controller.signal.aborted) return
+        setRemoteConversations(page.items.map(fromWire))
+        setCapabilities(features)
+      })
+      .catch(() => {
+        if (!controller.signal.aborted)
+          setError(
+            'Unable to load conversations. Sign in or check the Tamizhi connection.'
+          )
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadedClient(client)
+      })
+    return () => controller.abort()
+  }, [client])
   useEffect(() => {
     if (!client) return
     const controller = new AbortController()
@@ -74,6 +151,27 @@ export const useDemoChat = (
   const active = conversations.find(chat => chat.id === activeId)
   const messages = active?.messages ?? []
   const persona = messages[messages.length - 1]?.persona ?? 'helper'
+  const acceptRemoteConversation = useEffectEvent(acceptConversation)
+  useEffect(() => {
+    if (
+      !client?.api ||
+      !isReady ||
+      !activeId ||
+      streamingChatId.current === activeId
+    )
+      return
+    const controller = new AbortController()
+    void client
+      .conversation(activeId, controller.signal)
+      .then(item => {
+        if (!controller.signal.aborted) acceptRemoteConversation(item)
+      })
+      .catch(() => {
+        if (!controller.signal.aborted)
+          setError('Unable to load this conversation.')
+      })
+    return () => controller.abort()
+  }, [client, activeId, isReady])
 
   useEffect(
     () => () => {
@@ -84,6 +182,11 @@ export const useDemoChat = (
   )
 
   const stop = () => {
+    if (client?.api && currentRun.current)
+      void client.api
+        .cancel(currentRun.current)
+        .catch(() => setError('Unable to stop the backend run.'))
+    currentRun.current = null
     remote.current?.abort()
     remote.current = null
     setApprovals([])
@@ -116,7 +219,8 @@ export const useDemoChat = (
     chatId: string,
     history: Message[],
     prompt: string,
-    selectedPersona?: Persona
+    selectedPersona?: Persona,
+    title?: string
   ) => {
     if (client) {
       const controller = new AbortController()
@@ -128,6 +232,7 @@ export const useDemoChat = (
       setError(null)
       setApprovals([])
       setActivities([])
+      setRunEvents([])
       const assistant: Message = {
         id,
         role: 'assistant',
@@ -148,15 +253,24 @@ export const useDemoChat = (
           for await (const event of client.stream(
             {
               conversationId: chatId,
-              messages: history.map(message => ({
-                role: message.role,
-                content: message.text
-              })),
+              title:
+                title ??
+                conversations.find(item => item.id === chatId)?.title ??
+                prompt.slice(0, 48),
+              messages: (client.api ? history.slice(-1) : history).map(
+                message => ({
+                  id: message.id,
+                  role: message.role,
+                  content: message.text,
+                  attachments: message.attachments
+                })
+              ),
               ...runOptions.current
             },
             controller.signal
           )) {
             if (controller.signal.aborted) break
+            currentRun.current = event.runId
             if (event.type === 'error') throw new Error(event.message)
             if (event.type === 'text') {
               text += event.delta
@@ -176,10 +290,37 @@ export const useDemoChat = (
                 )
               )
             }
+            if (event.type === 'finish' && client.api) {
+              const saved = await client.conversation(chatId, controller.signal)
+              if (!controller.signal.aborted) acceptConversation(saved)
+            }
+            if (
+              event.type === 'status' ||
+              event.type === 'subagent' ||
+              event.type === 'client-action'
+            )
+              setRunEvents(current => [...current.slice(-99), event])
+            if (event.type === 'subagent-event') {
+              const child = streamEventSchema.safeParse(event.output)
+              if (child.success && child.data.type === 'approval')
+                setApprovals(current => [
+                  ...current,
+                  child.data as ApprovalRequest
+                ])
+              if (
+                child.success &&
+                (child.data.type === 'tool' ||
+                  child.data.type === 'tool-result')
+              )
+                setActivities(current => [
+                  ...current.slice(-99),
+                  child.data as ToolActivity
+                ])
+            }
             if (event.type === 'approval')
               setApprovals(current => [...current, event])
             if (event.type === 'tool' || event.type === 'tool-result')
-              setActivities(current => [...current, event])
+              setActivities(current => [...current.slice(-99), event])
           }
         } catch (failure) {
           if (!controller.signal.aborted)
@@ -191,6 +332,7 @@ export const useDemoChat = (
         } finally {
           if (remote.current === controller) {
             remote.current = null
+            currentRun.current = null
             busy.current = false
             streamingChatId.current = null
             setIsStreaming(false)
@@ -274,10 +416,15 @@ export const useDemoChat = (
 
   const send = (
     value: string,
-    selectedPersona?: Persona,
+    selectedPersona?: Persona | APIAttachment[],
     startNew = false,
-    conversationTitle?: string
+    conversationTitle?: string,
+    attachments?: APIAttachment[]
   ) => {
+    if (Array.isArray(selectedPersona)) {
+      attachments = selectedPersona
+      selectedPersona = undefined
+    }
     const prompt = value.trim().slice(0, 32_000)
     if (!prompt || (busy.current && !startNew) || !isReady) return
     if (startNew) stop()
@@ -286,6 +433,7 @@ export const useDemoChat = (
       id: createId(),
       role: 'user',
       text: prompt,
+      attachments,
       persona: selectedPersona ?? detectPersona(prompt),
       outfit: detectOutfit(prompt)
     }
@@ -302,7 +450,13 @@ export const useDemoChat = (
         ].slice(0, 24)
       )
     setActiveId(chatId)
-    streamReply(chatId, history, prompt, selectedPersona)
+    streamReply(
+      chatId,
+      history,
+      prompt,
+      selectedPersona,
+      conversationTitle ?? active?.title
+    )
     return chatId
   }
 
@@ -318,7 +472,8 @@ export const useDemoChat = (
       active.id,
       messages.slice(0, lastUser + 1),
       user.text,
-      user.persona
+      user.persona,
+      active.title
     )
   }
 
@@ -331,10 +486,34 @@ export const useDemoChat = (
     setActiveId(id)
   }
   const deleteChat = (id: string) => {
+    if (client?.api) {
+      void client.api
+        .deleteConversation(id)
+        .then(() => {
+          if (id === activeId) setActiveId(null)
+          setConversations(chats => chats.filter(chat => chat.id !== id))
+        })
+        .catch(() => setError('Unable to delete this conversation.'))
+      return
+    }
     if (id === activeId) newChat()
     setConversations(chats => chats.filter(chat => chat.id !== id))
   }
   const rate = (messageId: string, rating: 'up' | 'down') => {
+    if (client?.api && activeId) {
+      const selected = messages.find(
+        message => message.id === messageId
+      )?.rating
+      void client.api
+        .feedback(
+          activeId,
+          messageId,
+          selected === rating ? '' : rating === 'up' ? 'like' : 'dislike'
+        )
+        .then(acceptConversation)
+        .catch(() => setError('Unable to save feedback.'))
+      return
+    }
     setConversations(chats =>
       chats.map(chat =>
         chat.id === activeId
@@ -356,6 +535,18 @@ export const useDemoChat = (
 
   const branchChat = (messageId: string) => {
     if (!active || busy.current) return
+    if (client?.api)
+      return client.api
+        .branch(active.id, messageId)
+        .then(item => {
+          acceptConversation(item)
+          setActiveId(item.id)
+          return item.id
+        })
+        .catch(() => {
+          setError('Unable to branch this conversation.')
+          return undefined
+        })
     const messageIndex = messages.findIndex(message => message.id === messageId)
     if (messageIndex < 0) return
     const id = createId()
@@ -370,6 +561,19 @@ export const useDemoChat = (
   }
 
   const toggleTask = (messageId: string, index: number, done: boolean) => {
+    if (client?.api && activeId) {
+      const tasks =
+        messages
+          .find(message => message.id === messageId)
+          ?.tasks?.map((task, position) =>
+            position === index ? { ...task, done } : task
+          ) ?? []
+      void client.api
+        .tasks(activeId, messageId, tasks)
+        .then(acceptConversation)
+        .catch(() => setError('Unable to update tasks.'))
+      return
+    }
     setConversations(chats =>
       chats.map(chat =>
         chat.id === activeId
@@ -407,10 +611,34 @@ export const useDemoChat = (
     }
   }
 
+  const refreshModels = async () => {
+    if (!client?.api) return
+    const [catalog, features] = await Promise.all([
+      client.models(),
+      client.api.capabilities()
+    ])
+    setModels(catalog)
+    setCapabilities(features)
+    setError(null)
+  }
+  const providerChanged = useEffectEvent(() => {
+    void refreshModels().catch(() =>
+      setError('Unable to refresh the provider model catalog.')
+    )
+  })
+  useEffect(
+    () => client?.subscribeProviderChanges?.(() => providerChanged()),
+    [client]
+  )
   return {
+    refreshModels,
+    api: client?.api,
+    capabilities,
+    acceptConversation,
     error,
     approvals,
     activities,
+    runEvents,
     models,
     isRemote: Boolean(client),
     approve,

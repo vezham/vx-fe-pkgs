@@ -6,7 +6,17 @@
   "targets": {
     "build": {
       "dependsOn": ["metadata:generate", "deploy:generate", "^build"],
-      "outputs": ["{projectRoot}/.output"]
+      "outputs": ["{projectRoot}/.output"],
+      "inputs": [
+        "production",
+        "^production",
+        {
+          "externalDependencies": ["vite"]
+        },
+        {
+          "env": "V_TAMIZHI_API_URL"
+        }
+      ]
     },
     "dev": {
       "dependsOn": ["metadata:watch"]

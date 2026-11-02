@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 
-import { ArrowUp, CloseCircle, Paperclip, Stop } from '@vezham/icons-react'
+import {
+  ArrowUp,
+  CloseCircle,
+  Microphone,
+  Paperclip,
+  Stop
+} from '@vezham/icons-react'
 import {
   Button,
   Form,
@@ -10,15 +16,21 @@ import {
   TextField,
   Tooltip
 } from '@vezham/react-v3'
-import type { ModelInfo } from '@vezham/tamizhi-contracts'
+import type { TamizhiAPIClient } from '@vezham/tamizhi-client'
+import type { APIAttachment, ModelInfo } from '@vezham/tamizhi-contracts'
 
 import { readTextAttachments } from './attachments'
 import { ComposerControls } from './controls'
 import { FastModeToggle, ModelPicker } from './model-picker'
 import { PermissionPicker } from './permission-picker'
 import { TamizhiPluginSlot } from './plugins'
+import { useVoiceInput } from './use-voice-input'
 
 export interface ComposerProps {
+  api?: TamizhiAPIClient
+  allowImages?: boolean
+  allowPDF?: boolean
+  allowVoice?: boolean
   isStreaming: boolean
   isReady: boolean
   isOffline: boolean
@@ -33,7 +45,7 @@ export interface ComposerProps {
   avatarSlotRef: RefObject<HTMLDivElement | null>
   inputRef: RefObject<HTMLTextAreaElement | null>
   onListeningChange: (isListening: boolean) => void
-  onSend: (prompt: string) => void
+  onSend: (prompt: string, attachments?: APIAttachment[]) => void
   onStop: () => void
 }
 
@@ -43,6 +55,10 @@ interface ComposerLayoutProps extends ComposerProps {
 
 export const ComposerLayout = ({
   variant,
+  api,
+  allowImages,
+  allowPDF,
+  allowVoice,
   isStreaming,
   isReady,
   isOffline,
@@ -61,6 +77,12 @@ export const ComposerLayout = ({
   onStop
 }: ComposerLayoutProps) => {
   const [text, setText] = useState('')
+  const voice = useVoiceInput(
+    api,
+    transcript =>
+      setText(current => [current, transcript].filter(Boolean).join(' ')),
+    onListeningChange
+  )
   const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState<string | null>(null)
   const [isReadingFiles, setIsReadingFiles] = useState(false)
@@ -95,8 +117,16 @@ export const ComposerLayout = ({
     setFileError(null)
     setIsReadingFiles(true)
     try {
-      const content = await readTextAttachments(files)
-      onSend([text, ...content].join('\n\n'))
+      if (files.length > 8) throw new Error('Attach up to eight files.')
+      if (api) {
+        const attachments = await Promise.all(
+          files.map(file => api.upload(file))
+        )
+        onSend(text, attachments)
+      } else {
+        const content = await readTextAttachments(files)
+        onSend([text, ...content].join('\n\n'))
+      }
       setText('')
       setFiles([])
       if (inputRef.current) inputRef.current.style.height = ''
@@ -130,13 +160,17 @@ export const ComposerLayout = ({
           multiple
           className="hidden"
           aria-label="Attach files"
-          accept=".txt,.md,.csv,.json"
+          accept={[
+            '.txt,.md,.csv,.json',
+            allowImages ? '.png,.jpg,.jpeg,.gif,.webp' : '',
+            allowPDF ? '.pdf' : ''
+          ]
+            .filter(Boolean)
+            .join(',')}
           onChange={event => {
-            setFiles(current => [
-              ...current,
-              ...Array.from(event.target.files ?? [])
-            ])
-            event.target.value = ''
+            const selectedFiles = Array.from(event.currentTarget.files ?? [])
+            setFiles(current => [...current, ...selectedFiles])
+            event.currentTarget.value = ''
           }}
         />
         {files.length > 0 && (
@@ -215,6 +249,29 @@ export const ComposerLayout = ({
               </Button>
               <Tooltip.Content>Attach files</Tooltip.Content>
             </Tooltip>
+            {allowVoice && api && (
+              <Tooltip>
+                <Button
+                  type="button"
+                  isIconOnly
+                  size="sm"
+                  variant={voice.isRecording ? 'danger' : 'ghost'}
+                  aria-label={
+                    voice.isRecording ? 'Finish recording' : 'Voice input'
+                  }
+                  isDisabled={isOffline || isStreaming || voice.isTranscribing}
+                  onPress={() => void voice.toggle()}>
+                  <Microphone size={20} aria-hidden="true" />
+                </Button>
+                <Tooltip.Content>
+                  {voice.isRecording
+                    ? 'Finish recording'
+                    : voice.isTranscribing
+                      ? 'Transcribing'
+                      : 'Voice input'}
+                </Tooltip.Content>
+              </Tooltip>
+            )}
             {variant === 'embed' ? (
               <ComposerControls
                 isFastMode={isFastMode}
@@ -265,9 +322,9 @@ export const ComposerLayout = ({
           </div>
         </div>
       </Form>
-      {fileError && (
+      {(fileError || voice.error) && (
         <p role="alert" className="text-danger px-2 pt-1 text-xs">
-          {fileError}
+          {fileError ?? voice.error}
         </p>
       )}
       {note && <div className="tamizhi-composer__note">{note}</div>}

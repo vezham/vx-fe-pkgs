@@ -1,6 +1,7 @@
 import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
 import { useEffect, useEffectEvent } from 'react'
 
+import type { APIAttachment } from '@vezham/tamizhi-contracts'
 import { EXAMPLES, useDemoChat } from '@vezham/tamizhi-ui'
 
 import { tamizhiClient } from '../../app/tamizhi-client'
@@ -44,7 +45,8 @@ export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
 
     if (
       !destination ||
-      (destination !== 'new' &&
+      (!chat.isRemote &&
+        destination !== 'new' &&
         !chat.conversations.some(item => item.id === destination))
     )
       void openChat('new', true)
@@ -61,9 +63,15 @@ export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
     return unsubscribe
   }, [chat.isReady, router])
 
-  const send = (prompt: string) => {
+  const send = (prompt: string, attachments?: APIAttachment[]) => {
     if (isOffline) return
-    const createdId = chat.send(prompt)
+    const createdId = chat.send(
+      prompt,
+      undefined,
+      false,
+      undefined,
+      attachments
+    )
     if (createdId && createdId !== chat.activeId) void openChat(createdId, true)
   }
 
@@ -73,11 +81,19 @@ export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
     void openChat('new')
   }
 
-  const branchChat = (messageId: string) => {
-    const id = chat.branchChat(messageId)
+  const branchChat = async (messageId: string) => {
+    const id = await chat.branchChat(messageId)
     if (id) void openChat(id)
     return id
   }
 
-  return { ...chat, send, branchChat, deleteActiveChat }
+  return {
+    ...chat,
+    send,
+    branchChat,
+    selectChat: (id: string) => {
+      void openChat(id)
+    },
+    deleteActiveChat
+  }
 }
