@@ -20,7 +20,7 @@ The Go backend is linked to [Tamizhi on Neon](https://console.neon.tech/app/proj
 ```tsx
 import { createTamizhiClient } from '@vezham/tamizhi-client'
 import { TamizhiSessionProvider, TamizhiEmbed } from '@vezham/tamizhi-ui'
-import '@vezham/tamizhi-ui/styles.css'
+import '@vezham/tamizhi-ui/index.css'
 
 const client = createTamizhiClient({
   baseURL: 'https://api.example.com/api/tamizhi',

@@ -12,15 +12,15 @@
   "type": "module",
   "exports": {
     ".": {
+      "style": "./dist/index.css",
       "@vx/fe-kit": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "style": "./dist/index.css",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
-    "./styles.css": {
-      "@vx/fe-kit": "./src/lib/styles.css",
+    "./index.css": {
+      "@vx/fe-kit": "./src/index.css",
       "default": "./dist/index.css"
     }
   },
