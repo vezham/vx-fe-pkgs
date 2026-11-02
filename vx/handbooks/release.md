@@ -2,6 +2,18 @@
 
 This handbook documents how Vx app and package versions are managed.
 
+## Package licenses
+
+The repository root `LICENSE` is the source of truth for workspace packages.
+Do not commit copies in individual package roots. Nx release publishes through
+pnpm, whose packaging step includes the workspace-root license when a package
+has no license of its own. Keep `LICENSE` in package `files` allowlists.
+
+Preserve third-party license texts and attribution. Bundle notices with explicit
+names such as `momo-LICENSE.md` and `meshoptimizer-LICENSE.md`; a nested bare
+`LICENSE` can be treated as the package's own license and suppress root-license
+inclusion. Check packed artifacts when changing notice paths.
+
 ## Version Shape
 
 Use SemVer with a yearly major release line:

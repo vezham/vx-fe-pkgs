@@ -40,7 +40,7 @@ export default () => {
             menuActions={[
               {
                 key: 'playground',
-                label: 'Playground',
+                label: 'Tuning',
                 icon: 'vx:tuning',
                 onAction: openPlayground
               },

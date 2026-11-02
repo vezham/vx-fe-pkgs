@@ -28,3 +28,9 @@ Read `vx/handbooks/cli-template-baseline.md` before reviewing, migrating, or
 optimizing `apps/demo` or `apps/school-os`, or when changing conventions for
 CLI-generated applications. Keep durable decisions in that handbook so it remains the single
 source of truth across new and forked chats.
+
+## Baseline development
+
+Treat this codebase as a fresh baseline. Do not add backward-compatibility layers,
+legacy aliases, old-path fallbacks, or migration support unless the user explicitly
+requests them.

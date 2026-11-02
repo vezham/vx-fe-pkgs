@@ -46,11 +46,11 @@ export const PlaygroundPanel = ({
                 {!isExpanded && <Sheet.Handle />}
                 <Sheet.Header className="flex shrink-0 flex-row items-center gap-2 px-4 py-3">
                   <Sheet.Heading className="text-foreground min-w-0 flex-1 truncate text-base font-semibold">
-                    Playground
+                    Tuning
                   </Sheet.Heading>
                   <IconButton
                     size="sm"
-                    label={`${isExpanded ? 'Collapse' : 'Expand'} Playground`}
+                    label={`${isExpanded ? 'Collapse' : 'Expand'} Tuning`}
                     onPress={() => setIsExpanded(value => !value)}>
                     {isExpanded ? (
                       <Minimize size={18} aria-hidden="true" />
@@ -59,7 +59,7 @@ export const PlaygroundPanel = ({
                     )}
                   </IconButton>
                   <Sheet.CloseTrigger
-                    aria-label="Close Playground"
+                    aria-label="Close Tuning"
                     className="static shrink-0"
                   />
                 </Sheet.Header>
@@ -84,9 +84,9 @@ export const PlaygroundPanel = ({
         variant="transparent"
         className="flex h-full min-h-0 flex-col overflow-hidden">
         <div className="tamizhi__playground-header">
-          <h2 id={headingId}>Playground</h2>
+          <h2 id={headingId}>Tuning</h2>
           <CloseButton
-            aria-label="Close Playground"
+            aria-label="Close Tuning"
             onPress={() => onOpenChange(false)}
           />
         </div>

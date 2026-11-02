@@ -97,6 +97,7 @@ export const TamizhiChat = ({
 
   const playground = (
     <>
+      <BackendSettings chat={chat} />
       <Playground
         outfit={outfit}
         expression={expression}
@@ -121,7 +122,6 @@ export const TamizhiChat = ({
         }}
         onInstantChange={setIsInstant}
       />
-      {chat.api && <BackendSettings chat={chat} />}
     </>
   )
 

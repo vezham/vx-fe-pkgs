@@ -14,7 +14,7 @@ import { AccountControls } from './account-controls'
 import type { TamizhiChatProps } from './chat'
 import { ProviderSettings } from './provider-settings'
 
-export const BackendSettings = ({
+const ConnectedBackendSettings = ({
   chat
 }: {
   chat: TamizhiChatProps['chat']
@@ -290,3 +290,35 @@ export const BackendSettings = ({
     </Modal>
   )
 }
+
+export const BackendSettings = ({
+  chat
+}: {
+  chat: TamizhiChatProps['chat']
+}) =>
+  chat.api ? (
+    <ConnectedBackendSettings chat={chat} />
+  ) : (
+    <Modal>
+      <Button size="sm" variant="ghost">
+        AI settings
+      </Button>
+      <Modal.Backdrop>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Tamizhi settings</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-3">
+              <p className="text-sm font-medium">Local demo</p>
+              <p className="text-muted text-sm">
+                Connect this app to the Tamizhi service to sign in and manage AI
+                providers. Your demo conversations remain available.
+              </p>
+            </Modal.Body>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
+  )

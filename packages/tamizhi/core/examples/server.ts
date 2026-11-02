@@ -19,7 +19,9 @@ const model = process.env.TAMIZHI_MODEL ?? 'deepseek-chat'
 const runtime = await createTamizhi({
   defaultModel: model,
   plugins: [
-    fileStoragePlugin(process.env.TAMIZHI_DATA_DIRECTORY ?? '.tamizhi/data'),
+    fileStoragePlugin(
+      process.env.TAMIZHI_DATA_DIRECTORY ?? '.vezham/tamizhi/data'
+    ),
     permissionPolicyPlugin(),
     openaiCompatiblePlugin({
       id: 'primary',

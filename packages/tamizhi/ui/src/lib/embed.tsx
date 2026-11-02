@@ -90,7 +90,7 @@ export const TamizhiEmbed = () => {
               isIconOnly
               size="sm"
               variant="ghost"
-              aria-label="Tamizhi playground"
+              aria-label="Tamizhi tuning"
               onPress={openPlayground}>
               <Tuning size={18} aria-hidden="true" />
             </Button>

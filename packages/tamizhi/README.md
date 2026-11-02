@@ -11,7 +11,7 @@ Tamizhi supports a standalone static/prerendered app and an embedded assistant i
 
 ## Backend connection
 
-Set the public build variable `V_TAMIZHI_API_URL` for the standalone app. Without it, the app retains its local prepared-reply demo. Users add their own provider keys in **Tuning → AI settings** after signing in. Keys are encrypted on the Go backend and never saved in browser local storage.
+Set the public build variable `V_TAMIZHI_API_URL` for the standalone app. Without it, the app retains its local prepared-reply demo. **Tuning → AI settings** remains visible and explains that provider management needs a connected API. Users add their own provider keys in **Tuning → AI settings** after signing in. Keys are encrypted on the Go backend and never saved in browser local storage.
 
 The backend uses **Neon Postgres** through Go `pgx`. Its server-only `DATABASE_URL` comes from Neon Console; keep its TLS options and use a pooled URL for API traffic. The browser only receives `V_TAMIZHI_API_URL` and never connects directly to Postgres. SQLite is reserved for explicit local development and test fixtures.
 
@@ -52,7 +52,7 @@ Configure the broker using the backend's `config/tamizhi.sso.example.json` templ
 
 When the server configures its optional `geminiOAuth` block, select Gemini, enter your authorized Google Cloud project ID and choose **Connect Google account**. The browser performs Google consent without an API key. The backend encrypts and renews tokens, discovers models and handles streaming; disconnect removes the connection and models. That project's API permissions, quota and billing apply; Google consumer subscription credits are not imported. The backend `config/tamizhi.oauth.example.json` documents the required web-client registration and callback.
 
-The backend encrypts saved keys with an owner-bound AES-GCM key. Its server-only `TAMIZHI_ENCRYPTION_KEY` (base64, 32 random bytes) or persistent owner-only `.tamizhi/credential-key` must be backed up separately from Neon. Removing or replacing a key cancels that user's active runs. Provider responses contain connection status and model metadata, never the secret.
+The backend encrypts saved keys with an owner-bound AES-GCM key. Its server-only `TAMIZHI_ENCRYPTION_KEY` (base64, 32 random bytes) or persistent owner-only `.vezham/tamizhi/credential-key` must be backed up separately from Neon. Removing or replacing a key cancels that user's active runs. Provider responses contain connection status and model metadata, never the secret.
 
 ## Available controls
 

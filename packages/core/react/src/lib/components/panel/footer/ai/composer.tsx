@@ -2,10 +2,13 @@ import { useRef } from 'react'
 
 import { AddCircle, Microphone } from '@vezham/icons-react'
 import { ChatAttachment, PromptInput } from '@vezham/react-pro-v3'
+import {
+  FastModeToggle,
+  ModelPicker,
+  PermissionPicker
+} from '@vezham/tamizhi-ui'
 
 import type { Conversation } from './conversation'
-import { FastModeToggle, ModelPicker } from './model-picker'
-import { PermissionPicker } from './permission-picker'
 
 type Props = { conversation: Conversation }
 export const Composer = ({ conversation: c }: Props) => {

@@ -12,7 +12,7 @@ export default defineConfig({
       name: 'tamizhi:avatar-licenses',
       closeBundle() {
         for (const file of [
-          'LICENSE',
+          'momo-LICENSE.md',
           'README.md',
           'vendor/meshoptimizer-LICENSE.md'
         ]) {

@@ -23,6 +23,7 @@ import { something } from '@vezham/something'
 | Workspace toolkit      | Vx                                       |
 | Public package scope   | `@vezham/*`                              |
 | Internal tooling scope | `@vx/*`                                  |
+| Local product state    | `.vezham/<product>/`                     |
 | Config files           | `vx.app.yaml`, `vx.deploy.yaml`          |
 | Env/data attributes    | `V_*`, `data-vx-*`                       |
 | CSS custom properties  | `--vx-*`                                 |

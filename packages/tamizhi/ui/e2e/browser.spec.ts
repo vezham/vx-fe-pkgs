@@ -4,12 +4,11 @@ import type { Page } from '@playwright/test'
 const openSettings = async (page: Page) => {
   await page.getByRole('button', { name: 'More', exact: true }).last().click()
   const menuItem = page.getByRole('menuitem', {
-    name: 'Playground',
+    name: 'Tuning',
     exact: true
   })
   if (await menuItem.count()) await menuItem.click()
-  else
-    await page.getByRole('button', { name: 'Playground', exact: true }).click()
+  else await page.getByRole('button', { name: 'Tuning', exact: true }).click()
   await page.getByRole('button', { name: 'AI settings' }).click()
   await expect(
     page.getByRole('dialog', { name: 'Tamizhi settings' })
@@ -43,7 +42,7 @@ const connect = async (page: Page) => {
   ).toHaveValue('')
   await dialog.getByRole('button', { name: 'Close', exact: true }).click()
   await expect(dialog).toBeHidden()
-  await page.getByRole('button', { name: 'Close Playground' }).click()
+  await page.getByRole('button', { name: 'Close Tuning' }).click()
 }
 test('browser OIDC login, BYOK, image chat, recording and playback', async ({
   page,
@@ -271,7 +270,7 @@ test('Google model account connects without an API key and disconnect removes it
       .googleRevocations
   ).toBeGreaterThan(0)
   await dialog.getByRole('button', { name: 'Close', exact: true }).click()
-  await page.getByRole('button', { name: 'Close Playground' }).click()
+  await page.getByRole('button', { name: 'Close Tuning' }).click()
   await page.getByRole('button', { name: 'AI model', exact: true }).click()
   await expect(
     page.getByText('Gemini account model', { exact: true })
