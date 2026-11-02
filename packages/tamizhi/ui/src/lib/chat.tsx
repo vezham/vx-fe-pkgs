@@ -5,7 +5,7 @@ import { Button, Card, useMediaQuery } from '@vezham/react-v3'
 import type { APIAttachment } from '@vezham/tamizhi-contracts'
 
 import { AccountControls } from './account-controls'
-import { OUTFITS, detectOutfit } from './avatar-data'
+import { OUTFITS } from './avatar-data'
 import { BackendSettings } from './backend-settings'
 import { BotPicker } from './bot-picker'
 import { Companion } from './companion'
@@ -61,7 +61,6 @@ export const TamizhiChat = ({
       : model
   const [isFastMode, setIsFastMode] = useState(false)
   const [permission, setPermission] = useState('Ask for approval')
-  const [botName, setBotName] = useState('Tamizhi')
   const composerInput = useRef<HTMLTextAreaElement>(null)
   const scroll = useRef<HTMLDivElement>(null)
   const shouldFollow = useRef({ chatId: null as string | null, enabled: true })
@@ -83,7 +82,11 @@ export const TamizhiChat = ({
     .reverse()
     .find(message => message.role === 'user')
   const outfit =
-    manualOutfit ?? (lastUser ? detectOutfit(lastUser.text) : 'rest')
+    manualOutfit ??
+    chat.runOutfitOverride ??
+    chat.activityAppearance?.outfit ??
+    lastUser?.outfit ??
+    chat.profile.outfit
   const outfitInfo = OUTFITS.find(item => item.id === outfit) ?? OUTFITS[0]
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export const TamizhiChat = ({
         isInstant={isInstant}
         connection={chat.isRemote ? 'Backend' : 'Local'}
         model={availableModel}
-        lastOutfit={lastUser ? detectOutfit(lastUser.text) : undefined}
+        lastOutfit={lastUser?.outfit}
         onOutfitChange={value => {
           setManualOutfit(value)
           setPalette(undefined)
@@ -150,13 +153,11 @@ export const TamizhiChat = ({
             <div className="tamizhi-welcome__stage" ref={welcomeAvatarSlot} />
             <BotPicker
               headingId={welcomeId}
-              name={botName}
-              outfit={outfit}
-              onSelect={(name, value) => {
-                setBotName(name)
-                setManualOutfit(value)
-                setPalette(undefined)
-                setExpression('neutral')
+              profile={chat.profile}
+              profiles={chat.profiles}
+              onSelect={id => {
+                chat.selectProfile(id)
+                resetAppearance()
               }}
             />
             <TamizhiPluginSlot name="welcome" />
@@ -188,6 +189,7 @@ export const TamizhiChat = ({
         aria-hidden="true">
         <Companion
           outfit={outfit}
+          persona={chat.activityAppearance?.persona ?? chat.persona}
           expression={expression}
           palette={palette}
           isListening={isListening}
@@ -296,7 +298,7 @@ export const TamizhiChat = ({
         onListeningChange={setIsListening}
         onSend={(prompt, attachments) => {
           shouldFollow.current.enabled = true
-          resetAppearance()
+          chat.configureAppearance({ outfit: manualOutfit ?? undefined })
           chat.configureRun({
             model: availableModel,
             fast: isFastMode,

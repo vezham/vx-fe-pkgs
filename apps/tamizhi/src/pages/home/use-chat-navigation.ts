@@ -1,6 +1,7 @@
 import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
 import { useEffect, useEffectEvent } from 'react'
 
+import { useApp } from '@vezham/hooks'
 import type { APIAttachment } from '@vezham/tamizhi-contracts'
 import { EXAMPLES, useDemoChat } from '@vezham/tamizhi-ui'
 
@@ -15,12 +16,14 @@ const getChatId = (itemId?: string) =>
   itemId && itemId !== 'new' && !itemId.startsWith('example-') ? itemId : null
 
 export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
+  const app = useApp()
   const { chatId: itemId } = useParams({ strict: false })
   const chat = useDemoChat(
     isInstant,
     getChatId(itemId),
     undefined,
-    tamizhiClient
+    tamizhiClient,
+    { appId: app?.id }
   )
   const router = useRouter()
   const navigate = useNavigate()

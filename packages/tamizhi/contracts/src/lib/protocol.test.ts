@@ -23,3 +23,29 @@ it('validates chat requests and supplies safe defaults', () => {
     })
   ).toThrow()
 })
+
+it('retains profile metadata on the wire and rejects invalid appearance values', () => {
+  const request = {
+    conversationId: 'chat',
+    messages: [
+      {
+        role: 'user',
+        content: 'Hello',
+        profileId: 'vezham-crm',
+        persona: 'planner',
+        outfit: 'money'
+      }
+    ]
+  }
+  expect(runRequestSchema.parse(request).messages[0]).toMatchObject({
+    profileId: 'vezham-crm',
+    persona: 'planner',
+    outfit: 'money'
+  })
+  expect(
+    runRequestSchema.safeParse({
+      ...request,
+      messages: [{ ...request.messages[0], outfit: 'unknown' }]
+    }).success
+  ).toBe(false)
+})

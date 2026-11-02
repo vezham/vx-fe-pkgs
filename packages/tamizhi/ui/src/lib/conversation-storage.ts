@@ -17,6 +17,12 @@ export const parseConversations = (saved: unknown): Conversation[] => {
           (message: Message) =>
             typeof message?.id === 'string' &&
             typeof message.text === 'string' &&
+            (message.profileId === undefined ||
+              (typeof message.profileId === 'string' &&
+                message.profileId.length > 0 &&
+                message.profileId.length <= 128)) &&
+            (message.outfitLocked === undefined ||
+              typeof message.outfitLocked === 'boolean') &&
             ['user', 'assistant'].includes(message.role) &&
             (message.rating === undefined ||
               message.rating === 'up' ||

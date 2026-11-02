@@ -812,6 +812,9 @@ importers:
 
   apps/tamizhi:
     dependencies:
+      '@vezham/hooks':
+        specifier: workspace:*
+        version: link:../../packages/core/hooks
       '@vezham/tamizhi-client':
         specifier: workspace:*
         version: link:../../packages/tamizhi/client
@@ -869,6 +872,9 @@ importers:
       '@vezham/env':
         specifier: workspace:*
         version: link:../core/env
+      '@vezham/hooks':
+        specifier: workspace:*
+        version: link:../core/hooks
       '@vezham/template':
         specifier: workspace:*
         version: link:../template

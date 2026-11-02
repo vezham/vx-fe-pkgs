@@ -11,14 +11,21 @@ import type {
   RunRequest,
   StoredConversationData,
   StreamEvent,
+  TamizhiAppearance,
+  TamizhiProfileOptions,
   ToolActivity
 } from '@vezham/tamizhi-contracts'
 import type { Conversation, Message, Persona } from '@vezham/tamizhi-contracts'
-import { streamEventSchema } from '@vezham/tamizhi-contracts'
+import { streamEventSchema, wireMessageSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
 import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
 import { createDemoReply, detectPersona } from './demo'
+import {
+  getActivityAppearance,
+  getTamizhiProfile,
+  getTamizhiProfiles
+} from './profiles'
 
 const STORAGE_KEY = 'tamizhi.demo.v1'
 const fromWire = (
@@ -37,8 +44,12 @@ const fromWire = (
       id: message.id ?? createId(),
       role: message.role as 'user' | 'assistant',
       text: message.content,
-      persona: detectPersona(message.content),
-      outfit: detectOutfit(message.content),
+      persona:
+        wireMessageSchema.shape.persona.safeParse(message.persona).data ??
+        'helper',
+      outfit: wireMessageSchema.shape.outfit.safeParse(message.outfit).data,
+      profileId: message.profileId,
+      outfitLocked: message.outfitLocked,
       attachments: message.attachments,
       rating:
         message.rating === 'like'
@@ -66,8 +77,15 @@ export const useDemoChat = (
   isInstant = false,
   selectedChatId?: string | null,
   storageKey = STORAGE_KEY,
-  client?: TamizhiClient
+  client?: TamizhiClient,
+  options: TamizhiProfileOptions = {}
 ) => {
+  const profiles = getTamizhiProfiles(options.profiles)
+  const [selection, setSelection] = useState({
+    appId: options.appId,
+    id: options.appId
+  })
+  const appearance = useRef<Partial<TamizhiAppearance>>({})
   const local = useLocalStore(storageKey, EMPTY_CONVERSATIONS, {
     parse: parseConversations,
     debounceMs: 150
@@ -150,7 +168,18 @@ export const useDemoChat = (
   const streamingChatId = useRef<string | null>(null)
   const active = conversations.find(chat => chat.id === activeId)
   const messages = active?.messages ?? []
-  const persona = messages[messages.length - 1]?.persona ?? 'helper'
+  const lastUser = [...messages]
+    .reverse()
+    .find(message => message.role === 'user')
+  const profile = getTamizhiProfile(
+    lastUser?.profileId ??
+      (selection.appId === options.appId ? selection.id : options.appId),
+    profiles
+  )
+  const persona = messages[messages.length - 1]?.persona ?? profile.persona
+  const activityAppearance = isStreaming
+    ? getActivityAppearance(profile, activities)
+    : undefined
   const acceptRemoteConversation = useEffectEvent(acceptConversation)
   useEffect(() => {
     if (
@@ -236,8 +265,10 @@ export const useDemoChat = (
       const assistant: Message = {
         id,
         role: 'assistant',
-        persona: selectedPersona ?? detectPersona(prompt),
-        outfit: detectOutfit(prompt),
+        persona: history.at(-1)?.persona ?? profile.persona,
+        outfit: history.at(-1)?.outfit ?? profile.outfit,
+        profileId: history.at(-1)?.profileId ?? profile.id,
+        outfitLocked: history.at(-1)?.outfitLocked,
         text: ''
       }
       setConversations(chats =>
@@ -262,10 +293,15 @@ export const useDemoChat = (
                   id: message.id,
                   role: message.role,
                   content: message.text,
-                  attachments: message.attachments
+                  attachments: message.attachments,
+                  persona: message.persona,
+                  outfit: message.outfit,
+                  outfitLocked: message.outfitLocked,
+                  profileId: message.profileId
                 })
               ),
-              ...runOptions.current
+              ...runOptions.current,
+              activityProfiles: profile.activities
             },
             controller.signal
           )) {
@@ -310,6 +346,7 @@ export const useDemoChat = (
               if (
                 child.success &&
                 (child.data.type === 'tool' ||
+                  child.data.type === 'approval' ||
                   child.data.type === 'tool-result')
               )
                 setActivities(current => [
@@ -319,7 +356,11 @@ export const useDemoChat = (
             }
             if (event.type === 'approval')
               setApprovals(current => [...current, event])
-            if (event.type === 'tool' || event.type === 'tool-result')
+            if (
+              event.type === 'tool' ||
+              event.type === 'approval' ||
+              event.type === 'tool-result'
+            )
               setActivities(current => [...current.slice(-99), event])
           }
         } catch (failure) {
@@ -358,7 +399,7 @@ export const useDemoChat = (
     }
     const reply = createDemoReply(
       prompt,
-      selectedPersona ?? detectPersona(prompt)
+      history.at(-1)?.persona ?? selectedPersona ?? profile.persona
     )
     const id = createId()
     const words = reply.text.match(/\S+\s*/g) ?? []
@@ -369,8 +410,10 @@ export const useDemoChat = (
     const assistant: Message = {
       id,
       role: 'assistant',
-      persona: reply.persona,
-      outfit: detectOutfit(prompt),
+      persona: history.at(-1)?.persona ?? reply.persona,
+      outfit: history.at(-1)?.outfit ?? profile.outfit,
+      profileId: history.at(-1)?.profileId ?? profile.id,
+      outfitLocked: history.at(-1)?.outfitLocked,
       text: isInstant ? reply.text : '',
       ...(isInstant && reply.tasks ? { tasks: reply.tasks } : {})
     }
@@ -427,15 +470,28 @@ export const useDemoChat = (
     }
     const prompt = value.trim().slice(0, 32_000)
     if (!prompt || (busy.current && !startNew) || !isReady) return
-    if (startNew) stop()
+    if (startNew) {
+      stop()
+      appearance.current = {}
+    }
     const chatId = (startNew ? null : activeId) ?? createId()
+    const autoDetect =
+      !client &&
+      profile.id === 'vezham-tamizhi' &&
+      !options.profiles?.some(item => item.id === profile.id)
     const user: Message = {
       id: createId(),
       role: 'user',
       text: prompt,
       attachments,
-      persona: selectedPersona ?? detectPersona(prompt),
-      outfit: detectOutfit(prompt)
+      persona:
+        selectedPersona ??
+        (autoDetect ? detectPersona(prompt) : profile.persona),
+      outfit:
+        appearance.current.outfit ??
+        (selectedPersona || autoDetect ? detectOutfit(prompt) : profile.outfit),
+      profileId: profile.id,
+      outfitLocked: Boolean(appearance.current.outfit) || undefined
     }
     const history = [...(startNew ? [] : messages), user].slice(-59)
     if (startNew || !active)
@@ -454,7 +510,7 @@ export const useDemoChat = (
       chatId,
       history,
       prompt,
-      selectedPersona,
+      user.persona,
       conversationTitle ?? active?.title
     )
     return chatId
@@ -479,10 +535,12 @@ export const useDemoChat = (
 
   const newChat = () => {
     stop()
+    appearance.current = {}
     setActiveId(null)
   }
   const selectChat = (id: string) => {
     stop()
+    appearance.current = {}
     setActiveId(id)
   }
   const deleteChat = (id: string) => {
@@ -631,6 +689,19 @@ export const useDemoChat = (
     [client]
   )
   return {
+    profile,
+    profiles,
+    selectProfile: (id: string) => {
+      if (!busy.current && profiles.some(item => item.id === id)) {
+        appearance.current = {}
+        setSelection({ appId: options.appId, id })
+      }
+    },
+    configureAppearance: (value: Partial<TamizhiAppearance>) => {
+      appearance.current = value
+    },
+    activityAppearance,
+    runOutfitOverride: lastUser?.outfitLocked ? lastUser.outfit : undefined,
     refreshModels,
     api: client?.api,
     capabilities,

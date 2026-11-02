@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { useApp } from '@vezham/hooks'
+
 import { defineConfig } from '../next'
 import { ClientDevtools } from './devtools'
 import { createProvider } from './provider'
@@ -129,4 +131,54 @@ describe('provider query isolation', () => {
 it('honors Next document language and defaults to English', () => {
   expect(renderToString(defineConfig({ lang: 'ta' }))).toContain('lang="ta"')
   expect(renderToString(defineConfig({}))).toContain('lang="en"')
+})
+
+it.each(['vite', 'tanstack', 'tanstack-docs', 'next'] as const)(
+  'provides resolved app identity for %s without query providers',
+  runtime => {
+    const Provider = createProvider({ env })
+    const Probe = () => (
+      <span data-testid="app-identity">{JSON.stringify(useApp())}</span>
+    )
+    const view = render(
+      <Provider runtime={runtime} query={false}>
+        <Probe />
+      </Provider>
+    )
+    expect(
+      JSON.parse(screen.getByTestId('app-identity').textContent ?? '{}')
+    ).toEqual({ ...app, runtime })
+    view.rerender(
+      <Provider
+        id="vezham-crm"
+        name="CRM"
+        version="2"
+        runtime={runtime}
+        query={false}>
+        <Probe />
+      </Provider>
+    )
+    expect(
+      JSON.parse(screen.getByTestId('app-identity').textContent ?? '{}')
+    ).toEqual({ ...app, id: 'vezham-crm', name: 'CRM', version: '2', runtime })
+  }
+)
+
+it('keeps runtime app identities isolated across static renders', () => {
+  const Provider = createProvider({ env })
+  const Probe = () => <span>{useApp()?.id}</span>
+  expect(
+    renderToString(
+      <Provider id="vezham-crm" query={false}>
+        <Probe />
+      </Provider>
+    )
+  ).toContain('vezham-crm')
+  const markup = renderToString(
+    <Provider query={false}>
+      <Probe />
+    </Provider>
+  )
+  expect(markup).toContain('test')
+  expect(markup).not.toContain('vezham-crm')
 })

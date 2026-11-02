@@ -41,7 +41,7 @@ export default defineConfig({
       timeout: 120_000
     },
     {
-      command: 'pnpm nx run tamizhi:serve --host=127.0.0.1 --port=4399',
+      command: 'pnpm nx run tamizhi:dev --host=127.0.0.1 --port=4399',
       cwd: '../../../../',
       url: 'http://127.0.0.1:4399/chat/new',
       env: {

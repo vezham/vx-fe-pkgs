@@ -27,6 +27,8 @@ export interface Message {
   rating?: 'up' | 'down'
   text: string
   persona: Persona
+  profileId?: string
+  outfitLocked?: boolean
   attachments?: import('./generated/api').Attachment[]
   outfit?: Outfit
   tasks?: { label: string; done: boolean }[]

@@ -9,7 +9,9 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 
+import { AppContext, type AppIdentity } from '@vezham/hooks'
 import { toast } from '@vezham/react-v3'
+import { useTamizhiSession } from '@vezham/tamizhi-ui'
 
 import { useAppMenu } from '../../components/app-menu'
 import { useToolbarAction } from '../../components/toolbar-actions'
@@ -135,5 +137,54 @@ it.each([false, true])(
     const content = container.querySelector('[data-slot="app-layout-content"]')
     if (settings) expect(content).toHaveClass('p-0', 'overflow-hidden')
     else expect(content).toHaveClass('pt-18')
+  }
+)
+
+it.each([
+  { host: 'vezham-crm', override: undefined, expected: 'vezham-crm' },
+  {
+    host: 'vezham-crm',
+    override: 'vezham-school-os',
+    expected: 'vezham-school-os'
+  },
+  { host: undefined, override: undefined, expected: 'vezham-tamizhi' }
+])(
+  'resolves the embedded profile for host=$host and override=$override',
+  async ({ host, override, expected }) => {
+    const identity: AppIdentity | undefined = host
+      ? {
+          id: host,
+          name: 'Host',
+          version: '1',
+          environment: 'local',
+          runtime: 'tanstack'
+        }
+      : undefined
+    const Probe = () => (
+      <span data-testid="embedded-profile">
+        {useTamizhiSession().chat.profile.id}
+      </span>
+    )
+    const root = createRootRoute({
+      component: () => (
+        <AppContext.Provider value={identity}>
+          <AppLayout navigationItems={[]} tamizhi={{ appId: override }} />
+        </AppContext.Provider>
+      )
+    })
+    const route = createRoute({
+      getParentRoute: () => root,
+      path: '/',
+      component: Probe
+    })
+    const router = createRouter({
+      routeTree: root.addChildren([route]),
+      history: createMemoryHistory({ initialEntries: ['/'] })
+    })
+    await router.load()
+    render(<RouterProvider router={router} />)
+    expect(await screen.findByTestId('embedded-profile')).toHaveTextContent(
+      expected
+    )
   }
 )

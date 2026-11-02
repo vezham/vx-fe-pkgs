@@ -97,6 +97,7 @@
   "dependencies": {
     "@vezham/devtools": "workspace:*",
     "@vezham/env": "workspace:*",
+    "@vezham/hooks": "workspace:*",
     "@vezham/template": "workspace:*",
     "yaml": "catalog:"
   }

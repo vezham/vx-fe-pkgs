@@ -49,6 +49,12 @@ runtime dependency.
   YAML source per config; no legacy JSON input fallback is required.
 - Use [`@vezham/utils`](./system-utils.md) for shared app-agnostic utilities
   instead of duplicating them in generated apps.
+- Runtime adapters in `@vezham/start` read `@vezham/env` through their matching
+  Vite/Next entrypoints and expose resolved app identity through `AppContext` and
+  `useApp` in `@vezham/hooks`. Reusable layouts consume that context, including
+  Tamizhi's default app profile; app roots do not repeat identity props. Explicit
+  feature-level app ID overrides remain supported. Keep context scoped to each
+  provider tree, including static/prerendered renders, rather than global state.
 - Keep the reusable application shell in `@vezham/react`, including layouts,
   menus, panels, shell providers, and their state. Each app owns its routes and
   passes its navigation metadata to the shared shell.

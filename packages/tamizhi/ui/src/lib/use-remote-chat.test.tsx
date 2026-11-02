@@ -81,13 +81,23 @@ it('loads canonical remote IDs and keeps server history out of demo local storag
     updatedAt: 1,
     version: 3,
     messages: [
-      { id: 'server-user', role: 'user', content: 'hello' },
+      {
+        id: 'server-user',
+        role: 'user',
+        content: 'hello',
+        profileId: 'vezham-crm',
+        persona: 'planner',
+        outfit: 'guard'
+      },
       { id: 'server-call', role: 'assistant', content: '' },
       { id: 'server-tool', role: 'tool', content: '{"result":"ok"}' },
       {
         id: 'server-answer',
         role: 'assistant',
         content: 'Saved answer',
+        profileId: 'vezham-crm',
+        persona: 'planner',
+        outfit: 'guard',
         rating: 'like'
       }
     ]
@@ -114,6 +124,9 @@ it('loads canonical remote IDs and keeps server history out of demo local storag
   expect(result.current.messages[1]).toMatchObject({
     id: 'server-answer',
     text: 'Saved answer',
+    profileId: 'vezham-crm',
+    persona: 'planner',
+    outfit: 'guard',
     rating: 'up'
   })
   act(() => result.current.rate('server-answer', 'down'))

@@ -34,6 +34,44 @@ const client = createTamizhiClient({
 
 For menu integration pass `<AppLayout tamizhi={{ client }} ... />`. Browser login uses the Go API's OIDC cookie session; host applications can also supply asynchronous authorization headers. Keep frontend/API on the same site for cookie sessions and configure exact API CORS origins. Static/prerendered output never requires SSR.
 
+## App profiles and appearance
+
+The shared **Who’s helping?** picker lists app names: **Tamizhi**, **CRM**, and **School OS**. Their stable IDs match `APP_ID`: `vezham-tamizhi`, `vezham-crm`, and `vezham-school-os`. Each profile declares its default persona and outfit. Unknown app IDs use Tamizhi. The standalone app lets users choose a profile; embeds start with their host app's profile.
+
+`@vezham/start` reads the app environment once through the runtime adapter and
+provides its resolved identity via `useApp` from `@vezham/hooks`. `AppLayout`
+automatically uses that app ID for its embedded Tamizhi session; app roots do not
+need to import `APP_ID` or pass it again. Custom profiles and clients remain
+explicit configuration:
+
+```tsx
+import type { TamizhiProfile } from '@vezham/tamizhi-ui'
+
+const profiles: TamizhiProfile[] = [{
+  id: 'vezham-crm',
+  name: 'CRM',
+  persona: 'planner',
+  outfit: 'planner',
+  activities: {
+    mcp_crm_revenue_report: { outfit: 'money' },
+    'skill.sales-coaching': { persona: 'helper', outfit: 'coach' }
+  }
+}]
+
+<AppLayout tamizhi={{ profiles, client }} {...layoutProps} />
+```
+
+Use `tamizhi={{ appId: 'vezham-crm' }}` to override the host identity explicitly.
+Standalone integrations can read `useApp()?.id` at their app boundary and pass it
+as the fifth `useTamizhiChat` argument. Outside a runtime provider, the layout uses
+Tamizhi's global default unless an explicit app ID is supplied.
+
+Direct integrations can pass `appId` and `profiles` to `TamizhiSessionProvider`; standalone integrations pass them as the fifth `useTamizhiChat` argument. Host profiles replace built-ins with the same ID and can add new named choices. Tamizhi UI remains independent of runtime environment modules.
+
+Activity keys must match actual execution event names, including the `mcp_<server>_<tool>` names used by the Go MCP plugin. Register skill execution names the same way; arbitrary prompt text does not select a skill. Configuring a mapping does not install a tool or skill. A matching `tool`/`approval` event applies its appearance until the matching `tool-result`, cancellation, or run completion. Concurrent and delegated calls are tracked independently by run/call ID. After an activity finishes, the avatar returns to the selected profile or the next active mapped activity. A manual outfit in Tuning takes precedence. Expressions and connection reactions remain independent.
+
+Messages preserve their profile ID, persona and outfit through local storage, remote history, retries and branches. The Go runtime applies a fixed instruction for recognized personas while preserving host system instructions. App profile selection changes assistant behavior and presentation; backend authorization remains controlled by the authenticated user and configured tools.
+
 When connected, history stays in memory in the browser and persists on the backend. The local demo continues using `useLocalStore`; remote conversations are not written into demo local storage. Incoming server messages retain their IDs so retry, feedback, tasks and branching operate on the canonical conversation.
 
 The server streams durable sequenced events. The client reconnects with the last received sequence after a dropped response, without resubmitting a prompt/tool execution. Stop calls the cancellation API. Server restart preserves replayable events and marks unfinished runs interrupted.

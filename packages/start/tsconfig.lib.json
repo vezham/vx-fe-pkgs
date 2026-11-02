@@ -49,6 +49,9 @@
       "path": "../template/tsconfig.lib.json"
     },
     {
+      "path": "../core/hooks/tsconfig.lib.json"
+    },
+    {
       "path": "../core/env/tsconfig.lib.json"
     },
     {

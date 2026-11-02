@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@vezham/hooks": "workspace:*",
     "@vezham/tamizhi-client": "workspace:*",
     "@vezham/tamizhi-contracts": "workspace:*",
     "@vezham/tamizhi-ui": "workspace:*"

@@ -60,6 +60,9 @@
       "path": "../../packages/tamizhi/client/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/core/hooks/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/start/tsconfig.lib.json"
     }
   ]

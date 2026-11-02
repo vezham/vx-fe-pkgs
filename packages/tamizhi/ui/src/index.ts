@@ -16,3 +16,13 @@ export { ModelLogo } from './lib/model-logo'
 export { MODEL_LOGOS } from './lib/model-logos'
 export { useDemoChat as useTamizhiChat } from './lib/use-demo-chat'
 export * from './lib/plugins'
+export {
+  TAMIZHI_PROFILES,
+  getTamizhiProfiles,
+  getTamizhiProfile
+} from './lib/profiles'
+export type {
+  TamizhiProfile,
+  TamizhiProfileOptions,
+  TamizhiAppearance
+} from '@vezham/tamizhi-contracts'

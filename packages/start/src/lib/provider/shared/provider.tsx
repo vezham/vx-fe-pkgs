@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { StrictMode, useState } from 'react'
 
 import type { DevtoolsApp } from '@vezham/devtools'
+import { AppContext } from '@vezham/hooks'
 import { VezhamProvider, cn } from '@vezham/react-v2'
 import { Toast } from '@vezham/react-v3'
 import { defineLogger } from '@vezham/use-logger'
@@ -86,7 +87,7 @@ const createProvider = ({ env, renderDevtools }: CreateProviderProps) => {
       template = <StrictMode>{template}</StrictMode>
     }
 
-    return template
+    return <AppContext.Provider value={app}>{template}</AppContext.Provider>
   }
 
   return Provider

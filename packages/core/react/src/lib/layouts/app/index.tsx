@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode, useCallback } from 'react'
 
+import { useApp } from '@vezham/hooks'
 import { toast } from '@vezham/react-v3'
 import {
   TamizhiSessionProvider,
@@ -43,7 +44,7 @@ import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
 
 export type AppLayoutProps = {
-  tamizhi?: Pick<TamizhiSessionProviderProps, 'client'>
+  tamizhi?: Pick<TamizhiSessionProviderProps, 'client' | 'appId' | 'profiles'>
 } & Omit<AppFrameProps, 'navigation' | 'children' | 'hasBottomNavigation'> & {
     children?: ReactNode
     navigationItems: AppNavigationItem[]
@@ -78,7 +79,7 @@ export const AppLayoutProviders = ({
       <UserProvider initialUser={user}>
         <CommandProvider items={navigationItems}>
           <InfoPanelProvider>
-            <EmbeddedSession client={tamizhi?.client}>
+            <EmbeddedSession {...tamizhi}>
               <WorkspaceNavigationProvider>
                 <MobileControlsProvider>
                   <ResponsiveToolbarActionProvider>
@@ -202,18 +203,23 @@ export type { AppFrameProps } from './frame'
 
 const EmbeddedSession = ({
   children,
-  client
-}: {
-  children: ReactNode
-  client?: TamizhiSessionProviderProps['client']
-}) => {
+  client,
+  appId,
+  profiles
+}: Pick<
+  TamizhiSessionProviderProps,
+  'children' | 'client' | 'appId' | 'profiles'
+>) => {
   const { user } = useUser()
+  const app = useApp()
   const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}.v1`
   return (
     <TamizhiSessionProvider
       key={storageKey}
       storageKey={storageKey}
-      client={client}>
+      client={client}
+      appId={appId ?? app?.id}
+      profiles={profiles}>
       {children}
     </TamizhiSessionProvider>
   )

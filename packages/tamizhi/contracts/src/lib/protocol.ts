@@ -14,9 +14,46 @@ export const wireMessageSchema = z.object({
   id: z.string().max(128).optional(),
   attachments: z.array(attachmentSchema).max(8).optional(),
   role: z.enum(['user', 'assistant']),
-  content: z.string().max(100_000)
+  content: z.string().max(100_000),
+  outfitLocked: z.boolean().optional(),
+  profileId: z.string().min(1).max(128).optional(),
+  persona: z
+    .enum(['helper', 'coder', 'writer', 'planner', 'tutor', 'explorer'])
+    .optional(),
+  outfit: z
+    .enum([
+      'rest',
+      'cook',
+      'investigate',
+      'write',
+      'builder',
+      'music',
+      'tutor',
+      'garden',
+      'designer',
+      'director',
+      'coach',
+      'traveller',
+      'money',
+      'planner',
+      'captain',
+      'tester',
+      'guard',
+      'bug'
+    ])
+    .optional()
 })
 export const runRequestSchema = z.object({
+  activityProfiles: z
+    .record(
+      z.string().min(1).max(256),
+      z.object({
+        persona: wireMessageSchema.shape.persona,
+        outfit: wireMessageSchema.shape.outfit
+      })
+    )
+    .refine(value => Object.keys(value).length <= 64)
+    .optional(),
   conversationId: z.string().min(1).max(128),
   messages: z.array(wireMessageSchema).min(1).max(200),
   title: z.string().max(128).optional(),
@@ -131,9 +168,7 @@ export const storedConversationSchema = z.object({
         rating: z.string().optional(),
         tasks: z
           .array(z.object({ label: z.string(), done: z.boolean() }))
-          .optional(),
-        persona: z.string().optional(),
-        outfit: z.string().optional()
+          .optional()
       })
     )
     .max(1000),

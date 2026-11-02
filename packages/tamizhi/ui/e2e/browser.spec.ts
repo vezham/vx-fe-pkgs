@@ -276,3 +276,52 @@ test('Google model account connects without an API key and disconnect removes it
     page.getByText('Gemini account model', { exact: true })
   ).toHaveCount(0)
 })
+
+test('named app profiles survive remote chat reloads', async ({ page }) => {
+  await connect(page)
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.getByRole('button', { name: 'Choose an assistant' }).click()
+  await page.getByRole('menuitemradio', { name: 'CRM', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Choose an assistant' })
+  ).toContainText('CRM')
+  await expect(
+    page.locator('.tamizhi__companion-layer [data-outfit]')
+  ).toHaveAttribute('data-outfit', 'planner')
+  await page
+    .getByRole('textbox', { name: 'Message Tamizhi' })
+    .fill('Hello from CRM')
+  await page.getByRole('button', { name: 'Send message', exact: true }).click()
+  await expect(
+    page.locator('.tamizhi-message--assistant').last()
+  ).toContainText('Browser verified reply.')
+  await page.reload()
+  await expect(
+    page.locator('.tamizhi-message--assistant [data-outfit]').last()
+  ).toHaveAttribute('data-outfit', 'planner')
+  await expect(
+    page.locator('.tamizhi__companion-layer [data-outfit]')
+  ).toHaveAttribute('data-outfit', 'planner')
+  expect(errors).toEqual([])
+})
+
+test('named app profiles can be selected on compact screens', async ({
+  page
+}) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/chat/new')
+  await page.getByRole('button', { name: 'Choose an assistant' }).click()
+  await page
+    .getByRole('menuitemradio', { name: 'School OS', exact: true })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'Choose an assistant' })
+  ).toContainText('School OS')
+  await expect(
+    page.locator('.tamizhi__companion-layer [data-outfit]')
+  ).toHaveAttribute('data-outfit', 'tutor')
+  expect(errors).toEqual([])
+})

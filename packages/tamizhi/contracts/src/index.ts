@@ -1,4 +1,5 @@
 export * from './lib/chat'
+export * from './lib/profiles'
 export * from './lib/protocol'
 export type * as TamizhiAPI from './lib/generated/api'
 export type {
