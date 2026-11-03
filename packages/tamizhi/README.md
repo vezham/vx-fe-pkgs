@@ -116,7 +116,7 @@ scripts/sync-tamizhi-contracts /path/to/this-repo
 scripts/sync-tamizhi-contracts /path/to/this-repo --check
 ```
 
-The frontend source keeps only `contracts/src/lib/generated/api.ts`. The optional API reference lives outside source at `contracts/openapi.yaml`, generated from the backend OpenAPI document during synchronization. Backend `schemas.json` and `openapi.json` remain in the Go repository; they are not copied into frontend source or included in the browser package. The sync script checks both the TypeScript contracts and YAML reference with `--check`.
+The frontend source keeps only `contracts/src/lib/generated/api.ts`. The optional API reference lives outside source at `contracts/openapi.yaml`, generated from the backend OpenAPI document during synchronization. The backend generates `openapi.yaml` directly from Go DTOs and sync copies it unchanged into the frontend reference. Backend `schemas.json` remains in the Go repository. Neither reference is included in frontend source or the browser package. The sync script checks both the TypeScript contracts and YAML reference with `--check`.
 
 Do not manually edit `contracts/src/lib/generated/api.ts` or `contracts/openapi.yaml`. Go owns wire DTOs. Changes to browser Zod validation and behavioral adapters must accompany wire changes; integration tests validate the actual server/client combination.
 

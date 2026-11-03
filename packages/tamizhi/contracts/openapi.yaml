@@ -2,267 +2,267 @@
 components:
   schemas:
     APIError:
-      type: object
+      additionalProperties: false
       properties:
         code:
           type: string
         message:
           type: string
       required:
-        - code
-        - message
-      additionalProperties: false
-    ActivityAppearance:
+      - code
+      - message
       type: object
+    ActivityAppearance:
+      additionalProperties: false
       properties:
-        persona:
-          type: string
         outfit:
           type: string
-      additionalProperties: false
-    ApprovalDecision:
+        persona:
+          type: string
       type: object
+    ApprovalDecision:
+      additionalProperties: false
       properties:
-        runId:
-          type: string
-        callId:
-          type: string
         approved:
           type: boolean
+        callId:
+          type: string
+        runId:
+          type: string
       required:
-        - runId
-        - callId
-        - approved
-      additionalProperties: false
-    Attachment:
+      - runId
+      - callId
+      - approved
       type: object
+    Attachment:
+      additionalProperties: false
       properties:
         id:
           type: string
-        name:
-          type: string
         mimeType:
+          type: string
+        name:
           type: string
         size:
           type: integer
         text:
           type: string
       required:
-        - id
-        - name
-        - mimeType
-        - size
-      additionalProperties: false
-    AuthSession:
+      - id
+      - name
+      - mimeType
+      - size
       type: object
+    AuthSession:
+      additionalProperties: false
       properties:
         canLogout:
           type: boolean
+        loginEnabled:
+          type: boolean
         methods:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
               id:
                 type: string
               name:
                 type: string
             required:
-              - id
-              - name
-            additionalProperties: false
-        user:
+            - id
+            - name
+            type: object
           type:
-            - 'null'
-            - object
+          - "null"
+          - array
+        user:
+          additionalProperties: false
           properties:
             id:
               type: string
             name:
               type: string
             roles:
-              type:
-                - 'null'
-                - array
               items:
                 type: string
+              type:
+              - "null"
+              - array
           required:
-            - id
-          additionalProperties: false
-        loginEnabled:
-          type: boolean
+          - id
+          type:
+          - "null"
+          - object
       required:
-        - canLogout
-        - methods
-        - loginEnabled
-      additionalProperties: false
-    BranchRequest:
+      - canLogout
+      - methods
+      - loginEnabled
       type: object
+    BranchRequest:
+      additionalProperties: false
       properties:
         messageId:
           type: string
         title:
           type: string
       required:
-        - messageId
-      additionalProperties: false
-    Capabilities:
+      - messageId
       type: object
+    Capabilities:
+      additionalProperties: false
       properties:
-        version:
-          type: string
+        checkpoints:
+          type: boolean
         images:
-          type: boolean
-        pdf:
-          type: boolean
-        transcription:
-          type: boolean
-        speech:
-          type: boolean
-        oidc:
-          type: boolean
-        sessions:
-          type: boolean
-        replay:
-          type: boolean
-        plugins:
           type: boolean
         memory:
           type: boolean
-        checkpoints:
+        oidc:
           type: boolean
+        pdf:
+          type: boolean
+        plugins:
+          type: boolean
+        replay:
+          type: boolean
+        sessions:
+          type: boolean
+        speech:
+          type: boolean
+        transcription:
+          type: boolean
+        version:
+          type: string
       required:
-        - version
-        - images
-        - pdf
-        - transcription
-        - speech
-        - oidc
-        - sessions
-        - replay
-        - plugins
-        - memory
-        - checkpoints
-      additionalProperties: false
-    Checkpoint:
+      - version
+      - images
+      - pdf
+      - transcription
+      - speech
+      - oidc
+      - sessions
+      - replay
+      - plugins
+      - memory
+      - checkpoints
       type: object
+    Checkpoint:
+      additionalProperties: false
       properties:
-        summary:
-          type: string
-        id:
-          type: string
         conversationId:
+          type: string
+        createdAt:
+          type: integer
+        id:
           type: string
         label:
           type: string
         messages:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
-              id:
-                type: string
-              role:
-                type: string
-              content:
-                type: string
               attachments:
-                type:
-                  - 'null'
-                  - array
                 items:
-                  type: object
+                  additionalProperties: false
                   properties:
                     id:
                       type: string
-                    name:
-                      type: string
                     mimeType:
+                      type: string
+                    name:
                       type: string
                     size:
                       type: integer
                     text:
                       type: string
                   required:
-                    - id
-                    - name
-                    - mimeType
-                    - size
-                  additionalProperties: false
-              toolCalls:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - mimeType
+                  - size
                   type: object
+                type:
+                - "null"
+                - array
+              content:
+                type: string
+              id:
+                type: string
+              outfit:
+                type: string
+              outfitLocked:
+                type: boolean
+              persona:
+                type: string
+              profileId:
+                type: string
+              rating:
+                type: string
+              role:
+                type: string
+              tasks:
+                items:
+                  additionalProperties: false
                   properties:
-                    signature:
+                    done:
+                      type: boolean
+                    label:
+                      type: string
+                  required:
+                  - label
+                  - done
+                  type: object
+                type:
+                - "null"
+                - array
+              toolCallId:
+                type: string
+              toolCalls:
+                items:
+                  additionalProperties: false
+                  properties:
+                    arguments:
                       type: string
                     id:
                       type: string
                     name:
                       type: string
-                    arguments:
+                    signature:
                       type: string
                   required:
-                    - id
-                    - name
-                    - arguments
-                  additionalProperties: false
-              toolCallId:
-                type: string
-              rating:
-                type: string
-              tasks:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - arguments
                   type: object
-                  properties:
-                    label:
-                      type: string
-                    done:
-                      type: boolean
-                  required:
-                    - label
-                    - done
-                  additionalProperties: false
-              outfitLocked:
-                type: boolean
-              profileId:
-                type: string
-              persona:
-                type: string
-              outfit:
-                type: string
+                type:
+                - "null"
+                - array
             required:
-              - role
-              - content
-            additionalProperties: false
-        createdAt:
-          type: integer
+            - role
+            - content
+            type: object
+          type:
+          - "null"
+          - array
+        summary:
+          type: string
       required:
-        - id
-        - conversationId
-        - label
-        - messages
-        - createdAt
-      additionalProperties: false
-    CheckpointRequest:
+      - id
+      - conversationId
+      - label
+      - messages
+      - createdAt
       type: object
+    CheckpointRequest:
+      additionalProperties: false
       properties:
         label:
           type: string
       required:
-        - label
-      additionalProperties: false
-    ClientAction:
+      - label
       type: object
+    ClientAction:
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -271,556 +271,560 @@ components:
         query:
           type: string
       required:
-        - name
-      additionalProperties: false
-    Conversation:
+      - name
       type: object
+    Conversation:
+      additionalProperties: false
       properties:
+        branchFrom:
+          type: string
         id:
           type: string
-        title:
-          type: string
         messages:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
-              id:
-                type: string
-              role:
-                type: string
-              content:
-                type: string
               attachments:
-                type:
-                  - 'null'
-                  - array
                 items:
-                  type: object
+                  additionalProperties: false
                   properties:
                     id:
                       type: string
-                    name:
-                      type: string
                     mimeType:
+                      type: string
+                    name:
                       type: string
                     size:
                       type: integer
                     text:
                       type: string
                   required:
-                    - id
-                    - name
-                    - mimeType
-                    - size
-                  additionalProperties: false
-              toolCalls:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - mimeType
+                  - size
                   type: object
+                type:
+                - "null"
+                - array
+              content:
+                type: string
+              id:
+                type: string
+              outfit:
+                type: string
+              outfitLocked:
+                type: boolean
+              persona:
+                type: string
+              profileId:
+                type: string
+              rating:
+                type: string
+              role:
+                type: string
+              tasks:
+                items:
+                  additionalProperties: false
                   properties:
-                    signature:
+                    done:
+                      type: boolean
+                    label:
+                      type: string
+                  required:
+                  - label
+                  - done
+                  type: object
+                type:
+                - "null"
+                - array
+              toolCallId:
+                type: string
+              toolCalls:
+                items:
+                  additionalProperties: false
+                  properties:
+                    arguments:
                       type: string
                     id:
                       type: string
                     name:
                       type: string
-                    arguments:
+                    signature:
                       type: string
                   required:
-                    - id
-                    - name
-                    - arguments
-                  additionalProperties: false
-              toolCallId:
-                type: string
-              rating:
-                type: string
-              tasks:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - arguments
                   type: object
-                  properties:
-                    label:
-                      type: string
-                    done:
-                      type: boolean
-                  required:
-                    - label
-                    - done
-                  additionalProperties: false
-              outfitLocked:
-                type: boolean
-              profileId:
-                type: string
-              persona:
-                type: string
-              outfit:
-                type: string
+                type:
+                - "null"
+                - array
             required:
-              - role
-              - content
-            additionalProperties: false
+            - role
+            - content
+            type: object
+          type:
+          - "null"
+          - array
+        parentId:
+          type: string
+        summary:
+          type: string
+        title:
+          type: string
         updatedAt:
           type: integer
         version:
           type: integer
-        parentId:
-          type: string
-        branchFrom:
-          type: string
-        summary:
-          type: string
       required:
-        - id
-        - title
-        - messages
-        - updatedAt
-        - version
-      additionalProperties: false
-    ConversationPage:
+      - id
+      - title
+      - messages
+      - updatedAt
+      - version
       type: object
+    ConversationPage:
+      additionalProperties: false
       properties:
         items:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
+              branchFrom:
+                type: string
               id:
                 type: string
-              title:
-                type: string
               messages:
-                type:
-                  - 'null'
-                  - array
                 items:
-                  type: object
+                  additionalProperties: false
                   properties:
-                    id:
-                      type: string
-                    role:
-                      type: string
-                    content:
-                      type: string
                     attachments:
-                      type:
-                        - 'null'
-                        - array
                       items:
-                        type: object
+                        additionalProperties: false
                         properties:
                           id:
                             type: string
-                          name:
-                            type: string
                           mimeType:
+                            type: string
+                          name:
                             type: string
                           size:
                             type: integer
                           text:
                             type: string
                         required:
-                          - id
-                          - name
-                          - mimeType
-                          - size
-                        additionalProperties: false
-                    toolCalls:
-                      type:
-                        - 'null'
-                        - array
-                      items:
+                        - id
+                        - name
+                        - mimeType
+                        - size
                         type: object
+                      type:
+                      - "null"
+                      - array
+                    content:
+                      type: string
+                    id:
+                      type: string
+                    outfit:
+                      type: string
+                    outfitLocked:
+                      type: boolean
+                    persona:
+                      type: string
+                    profileId:
+                      type: string
+                    rating:
+                      type: string
+                    role:
+                      type: string
+                    tasks:
+                      items:
+                        additionalProperties: false
                         properties:
-                          signature:
+                          done:
+                            type: boolean
+                          label:
+                            type: string
+                        required:
+                        - label
+                        - done
+                        type: object
+                      type:
+                      - "null"
+                      - array
+                    toolCallId:
+                      type: string
+                    toolCalls:
+                      items:
+                        additionalProperties: false
+                        properties:
+                          arguments:
                             type: string
                           id:
                             type: string
                           name:
                             type: string
-                          arguments:
+                          signature:
                             type: string
                         required:
-                          - id
-                          - name
-                          - arguments
-                        additionalProperties: false
-                    toolCallId:
-                      type: string
-                    rating:
-                      type: string
-                    tasks:
-                      type:
-                        - 'null'
-                        - array
-                      items:
+                        - id
+                        - name
+                        - arguments
                         type: object
-                        properties:
-                          label:
-                            type: string
-                          done:
-                            type: boolean
-                        required:
-                          - label
-                          - done
-                        additionalProperties: false
-                    outfitLocked:
-                      type: boolean
-                    profileId:
-                      type: string
-                    persona:
-                      type: string
-                    outfit:
-                      type: string
+                      type:
+                      - "null"
+                      - array
                   required:
-                    - role
-                    - content
-                  additionalProperties: false
+                  - role
+                  - content
+                  type: object
+                type:
+                - "null"
+                - array
+              parentId:
+                type: string
+              summary:
+                type: string
+              title:
+                type: string
               updatedAt:
                 type: integer
               version:
                 type: integer
-              parentId:
-                type: string
-              branchFrom:
-                type: string
-              summary:
-                type: string
             required:
-              - id
-              - title
-              - messages
-              - updatedAt
-              - version
-            additionalProperties: false
+            - id
+            - title
+            - messages
+            - updatedAt
+            - version
+            type: object
+          type:
+          - "null"
+          - array
         nextCursor:
           type: string
       required:
-        - items
-      additionalProperties: false
-    FeedbackRequest:
+      - items
       type: object
+    FeedbackRequest:
+      additionalProperties: false
       properties:
         rating:
           type: string
       required:
-        - rating
-      additionalProperties: false
-    LoginMethod:
+      - rating
       type: object
+    LoginMethod:
+      additionalProperties: false
       properties:
         id:
           type: string
         name:
           type: string
       required:
-        - id
-        - name
-      additionalProperties: false
-    Memory:
+      - id
+      - name
       type: object
+    Memory:
+      additionalProperties: false
       properties:
-        id:
-          type: string
-        text:
-          type: string
-        tags:
-          type:
-            - 'null'
-            - array
-          items:
-            type: string
-        score:
-          type: number
         createdAt:
           type: integer
-      required:
-        - id
-        - text
-        - createdAt
-      additionalProperties: false
-    MemoryRequest:
-      type: object
-      properties:
-        text:
-          type: string
-        tags:
-          type:
-            - 'null'
-            - array
-          items:
-            type: string
-      required:
-        - text
-      additionalProperties: false
-    Message:
-      type: object
-      properties:
         id:
           type: string
-        role:
-          type: string
-        content:
-          type: string
-        attachments:
-          type:
-            - 'null'
-            - array
+        score:
+          type: number
+        tags:
           items:
-            type: object
+            type: string
+          type:
+          - "null"
+          - array
+        text:
+          type: string
+      required:
+      - id
+      - text
+      - createdAt
+      type: object
+    MemoryRequest:
+      additionalProperties: false
+      properties:
+        tags:
+          items:
+            type: string
+          type:
+          - "null"
+          - array
+        text:
+          type: string
+      required:
+      - text
+      type: object
+    Message:
+      additionalProperties: false
+      properties:
+        attachments:
+          items:
+            additionalProperties: false
             properties:
               id:
                 type: string
-              name:
-                type: string
               mimeType:
+                type: string
+              name:
                 type: string
               size:
                 type: integer
               text:
                 type: string
             required:
-              - id
-              - name
-              - mimeType
-              - size
-            additionalProperties: false
-        toolCalls:
-          type:
-            - 'null'
-            - array
-          items:
+            - id
+            - name
+            - mimeType
+            - size
             type: object
+          type:
+          - "null"
+          - array
+        content:
+          type: string
+        id:
+          type: string
+        outfit:
+          type: string
+        outfitLocked:
+          type: boolean
+        persona:
+          type: string
+        profileId:
+          type: string
+        rating:
+          type: string
+        role:
+          type: string
+        tasks:
+          items:
+            additionalProperties: false
             properties:
-              signature:
+              done:
+                type: boolean
+              label:
+                type: string
+            required:
+            - label
+            - done
+            type: object
+          type:
+          - "null"
+          - array
+        toolCallId:
+          type: string
+        toolCalls:
+          items:
+            additionalProperties: false
+            properties:
+              arguments:
                 type: string
               id:
                 type: string
               name:
                 type: string
-              arguments:
+              signature:
                 type: string
             required:
-              - id
-              - name
-              - arguments
-            additionalProperties: false
-        toolCallId:
-          type: string
-        rating:
-          type: string
-        tasks:
-          type:
-            - 'null'
-            - array
-          items:
+            - id
+            - name
+            - arguments
             type: object
-            properties:
-              label:
-                type: string
-              done:
-                type: boolean
-            required:
-              - label
-              - done
-            additionalProperties: false
-        outfitLocked:
-          type: boolean
-        profileId:
-          type: string
-        persona:
-          type: string
-        outfit:
-          type: string
-      required:
-        - role
-        - content
-      additionalProperties: false
-    ModelInfo:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        provider:
-          type: string
-        modalities:
           type:
-            - 'null'
-            - array
-          items:
-            type: string
+          - "null"
+          - array
+      required:
+      - role
+      - content
+      type: object
+    ModelInfo:
+      additionalProperties: false
+      properties:
         contextWindow:
           type: integer
         fast:
           type: boolean
-      required:
-        - id
-        - name
-        - provider
-      additionalProperties: false
-    PluginInfo:
-      type: object
-      properties:
-        name:
+        id:
           type: string
-        kind:
-          type: string
-        enabled:
-          type: boolean
-        status:
-          type: string
-        dependencies:
-          type:
-            - 'null'
-            - array
+        modalities:
           items:
             type: string
+          type:
+          - "null"
+          - array
+        name:
+          type: string
+        provider:
+          type: string
       required:
-        - name
-        - kind
-        - enabled
-        - status
-        - dependencies
-      additionalProperties: false
-    PluginUpdate:
+      - id
+      - name
+      - provider
       type: object
+    PluginInfo:
+      additionalProperties: false
+      properties:
+        dependencies:
+          items:
+            type: string
+          type:
+          - "null"
+          - array
+        enabled:
+          type: boolean
+        kind:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+      required:
+      - name
+      - kind
+      - enabled
+      - status
+      - dependencies
+      type: object
+    PluginUpdate:
+      additionalProperties: false
       properties:
         enabled:
           type: boolean
       required:
-        - enabled
-      additionalProperties: false
-    Principal:
+      - enabled
       type: object
+    Principal:
+      additionalProperties: false
       properties:
         id:
           type: string
         name:
           type: string
         roles:
-          type:
-            - 'null'
-            - array
           items:
             type: string
+          type:
+          - "null"
+          - array
       required:
-        - id
-      additionalProperties: false
-    ProviderAuthorization:
+      - id
       type: object
+    ProviderAuthorization:
+      additionalProperties: false
       properties:
         url:
           type: string
       required:
-        - url
-      additionalProperties: false
-    ProviderKeyRequest:
+      - url
       type: object
+    ProviderKeyRequest:
+      additionalProperties: false
       properties:
         apiKey:
           type: string
       required:
-        - apiKey
-      additionalProperties: false
-    ProviderOAuthRequest:
+      - apiKey
       type: object
+    ProviderOAuthRequest:
+      additionalProperties: false
       properties:
         projectId:
           type: string
         returnTo:
           type: string
       required:
-        - projectId
-        - returnTo
-      additionalProperties: false
-    ProviderSettings:
+      - projectId
+      - returnTo
       type: object
+    ProviderSettings:
+      additionalProperties: false
       properties:
-        oauthAvailable:
-          type: boolean
         authMethod:
-          type: string
-        projectId:
-          type: string
-        id:
-          type: string
-        name:
           type: string
         connected:
           type: boolean
+        id:
+          type: string
         models:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
-              id:
-                type: string
-              name:
-                type: string
-              provider:
-                type: string
-              modalities:
-                type:
-                  - 'null'
-                  - array
-                items:
-                  type: string
               contextWindow:
                 type: integer
               fast:
                 type: boolean
+              id:
+                type: string
+              modalities:
+                items:
+                  type: string
+                type:
+                - "null"
+                - array
+              name:
+                type: string
+              provider:
+                type: string
             required:
-              - id
-              - name
-              - provider
-            additionalProperties: false
-        transcriptionModel:
+            - id
+            - name
+            - provider
+            type: object
+          type:
+          - "null"
+          - array
+        name:
+          type: string
+        oauthAvailable:
+          type: boolean
+        projectId:
           type: string
         speechModel:
           type: string
+        transcriptionModel:
+          type: string
       required:
-        - oauthAvailable
-        - id
-        - name
-        - connected
-        - models
-      additionalProperties: false
-    RenameRequest:
+      - oauthAvailable
+      - id
+      - name
+      - connected
+      - models
       type: object
+    RenameRequest:
+      additionalProperties: false
       properties:
         title:
           type: string
       required:
-        - title
-      additionalProperties: false
-    RunInfo:
+      - title
       type: object
+    RunInfo:
+      additionalProperties: false
       properties:
-        id:
-          type: string
         conversationId:
           type: string
-        status:
+        createdAt:
+          type: integer
+        id:
           type: string
         lastSequence:
           type: integer
         parentId:
           type: string
+        status:
+          type: string
+        updatedAt:
+          type: integer
         usage:
-          type: object
+          additionalProperties: false
           properties:
             inputTokens:
               type: integer
@@ -829,214 +833,208 @@ components:
             totalTokens:
               type: integer
           required:
-            - inputTokens
-            - outputTokens
-            - totalTokens
-          additionalProperties: false
-        createdAt:
-          type: integer
-        updatedAt:
-          type: integer
+          - inputTokens
+          - outputTokens
+          - totalTokens
+          type: object
       required:
-        - id
-        - conversationId
-        - status
-        - lastSequence
-        - usage
-        - createdAt
-        - updatedAt
-      additionalProperties: false
-    RunRequest:
+      - id
+      - conversationId
+      - status
+      - lastSequence
+      - usage
+      - createdAt
+      - updatedAt
       type: object
+    RunRequest:
+      additionalProperties: false
       properties:
         activityProfiles:
-          type: object
           additionalProperties:
-            type: object
+            additionalProperties: false
             properties:
-              persona:
-                type: string
               outfit:
                 type: string
-            additionalProperties: false
+              persona:
+                type: string
+            type: object
+          type: object
         conversationId:
           type: string
-        messages:
+        expectedVersion:
           type:
-            - 'null'
-            - array
+          - "null"
+          - integer
+        fast:
+          type: boolean
+        messages:
           items:
-            type: object
+            additionalProperties: false
             properties:
-              id:
-                type: string
-              role:
-                type: string
-              content:
-                type: string
               attachments:
-                type:
-                  - 'null'
-                  - array
                 items:
-                  type: object
+                  additionalProperties: false
                   properties:
                     id:
                       type: string
-                    name:
-                      type: string
                     mimeType:
+                      type: string
+                    name:
                       type: string
                     size:
                       type: integer
                     text:
                       type: string
                   required:
-                    - id
-                    - name
-                    - mimeType
-                    - size
-                  additionalProperties: false
-              toolCalls:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - mimeType
+                  - size
                   type: object
+                type:
+                - "null"
+                - array
+              content:
+                type: string
+              id:
+                type: string
+              outfit:
+                type: string
+              outfitLocked:
+                type: boolean
+              persona:
+                type: string
+              profileId:
+                type: string
+              rating:
+                type: string
+              role:
+                type: string
+              tasks:
+                items:
+                  additionalProperties: false
                   properties:
-                    signature:
+                    done:
+                      type: boolean
+                    label:
+                      type: string
+                  required:
+                  - label
+                  - done
+                  type: object
+                type:
+                - "null"
+                - array
+              toolCallId:
+                type: string
+              toolCalls:
+                items:
+                  additionalProperties: false
+                  properties:
+                    arguments:
                       type: string
                     id:
                       type: string
                     name:
                       type: string
-                    arguments:
+                    signature:
                       type: string
                   required:
-                    - id
-                    - name
-                    - arguments
-                  additionalProperties: false
-              toolCallId:
-                type: string
-              rating:
-                type: string
-              tasks:
-                type:
-                  - 'null'
-                  - array
-                items:
+                  - id
+                  - name
+                  - arguments
                   type: object
-                  properties:
-                    label:
-                      type: string
-                    done:
-                      type: boolean
-                  required:
-                    - label
-                    - done
-                  additionalProperties: false
-              outfitLocked:
-                type: boolean
-              profileId:
-                type: string
-              persona:
-                type: string
-              outfit:
-                type: string
+                type:
+                - "null"
+                - array
             required:
-              - role
-              - content
-            additionalProperties: false
+            - role
+            - content
+            type: object
+          type:
+          - "null"
+          - array
         model:
           type: string
-        fast:
-          type: boolean
         permission:
-          type: string
           enum:
-            - ask
-            - safe
-            - full
+          - ask
+          - safe
+          - full
+          type: string
         title:
           type: string
-        expectedVersion:
-          type:
-            - 'null'
-            - integer
       required:
-        - conversationId
-        - messages
-        - fast
-        - permission
-      additionalProperties: false
-    SessionInfo:
+      - conversationId
+      - messages
+      - fast
+      - permission
       type: object
+    SessionInfo:
+      additionalProperties: false
       properties:
+        expiresAt:
+          type: integer
+        loginUrl:
+          type: string
         user:
-          type: object
+          additionalProperties: false
           properties:
             id:
               type: string
             name:
               type: string
             roles:
-              type:
-                - 'null'
-                - array
               items:
                 type: string
+              type:
+              - "null"
+              - array
           required:
-            - id
-          additionalProperties: false
-        loginUrl:
-          type: string
-        expiresAt:
-          type: integer
+          - id
+          type: object
       required:
-        - user
-      additionalProperties: false
-    SpeechRequest:
+      - user
       type: object
+    SpeechRequest:
+      additionalProperties: false
       properties:
         text:
           type: string
         voice:
           type: string
       required:
-        - text
-      additionalProperties: false
-    StreamEvent:
+      - text
       type: object
+    StreamEvent:
+      additionalProperties: false
       properties:
-        type:
-          type: string
-        runId:
+        callId:
           type: string
         conversationId:
           type: string
-        sequence:
-          type: integer
         delta:
           type: string
-        callId:
+        input: true
+        message:
           type: string
         name:
           type: string
-        input: true
         output: true
-        reason:
-          type: string
-        message:
-          type: string
-        status:
-          type: string
         parentRunId:
           type: string
+        reason:
+          type: string
+        runId:
+          type: string
+        sequence:
+          type: integer
+        status:
+          type: string
+        type:
+          type: string
         usage:
-          type:
-            - 'null'
-            - object
+          additionalProperties: false
           properties:
             inputTokens:
               type: integer
@@ -1045,74 +1043,76 @@ components:
             totalTokens:
               type: integer
           required:
-            - inputTokens
-            - outputTokens
-            - totalTokens
-          additionalProperties: false
+          - inputTokens
+          - outputTokens
+          - totalTokens
+          type:
+          - "null"
+          - object
       required:
-        - type
-        - runId
-        - conversationId
-        - sequence
-      additionalProperties: false
-    Task:
+      - type
+      - runId
+      - conversationId
+      - sequence
       type: object
+    Task:
+      additionalProperties: false
       properties:
-        label:
-          type: string
         done:
           type: boolean
+        label:
+          type: string
       required:
-        - label
-        - done
-      additionalProperties: false
-    TasksRequest:
+      - label
+      - done
       type: object
+    TasksRequest:
+      additionalProperties: false
       properties:
         tasks:
-          type:
-            - 'null'
-            - array
           items:
-            type: object
+            additionalProperties: false
             properties:
-              label:
-                type: string
               done:
                 type: boolean
+              label:
+                type: string
             required:
-              - label
-              - done
-            additionalProperties: false
+            - label
+            - done
+            type: object
+          type:
+          - "null"
+          - array
       required:
-        - tasks
-      additionalProperties: false
-    ToolCall:
+      - tasks
       type: object
+    ToolCall:
+      additionalProperties: false
       properties:
-        signature:
+        arguments:
           type: string
         id:
           type: string
         name:
           type: string
-        arguments:
+        signature:
           type: string
       required:
-        - id
-        - name
-        - arguments
-      additionalProperties: false
-    Transcript:
+      - id
+      - name
+      - arguments
       type: object
+    Transcript:
+      additionalProperties: false
       properties:
         text:
           type: string
       required:
-        - text
-      additionalProperties: false
-    Usage:
+      - text
       type: object
+    Usage:
+      additionalProperties: false
       properties:
         inputTokens:
           type: integer
@@ -1121,10 +1121,10 @@ components:
         totalTokens:
           type: integer
       required:
-        - inputTokens
-        - outputTokens
-        - totalTokens
-      additionalProperties: false
+      - inputTokens
+      - outputTokens
+      - totalTokens
+      type: object
   securitySchemes:
     bearer:
       scheme: bearer
@@ -1147,17 +1147,17 @@ paths:
               $ref: '#/components/schemas/ApprovalDecision'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /attachments:
     post:
@@ -1170,21 +1170,21 @@ paths:
                   format: binary
                   type: string
               required:
-                - file
+              - file
               type: object
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Attachment'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /audio/speech:
     post:
@@ -1195,17 +1195,17 @@ paths:
               $ref: '#/components/schemas/SpeechRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /audio/transcriptions:
     post:
@@ -1218,52 +1218,52 @@ paths:
                   format: binary
                   type: string
               required:
-                - file
+              - file
               type: object
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Transcript'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /auth/session:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthSession'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
       security: []
   /capabilities:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Capabilities'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /chat:
     post:
@@ -1274,77 +1274,75 @@ paths:
               $ref: '#/components/schemas/RunRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             text/event-stream:
               schema:
                 type: string
-          description:
-            Durable SSE events. Resume using sequence in Last-Event-ID or after
-            query.
+          description: Durable SSE events. Resume using sequence in Last-Event-ID or after query.
   /conversations:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConversationPage'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}:
     delete:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
     get:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
     patch:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1352,26 +1350,26 @@ paths:
               $ref: '#/components/schemas/RenameRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/branches:
     post:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1379,28 +1377,28 @@ paths:
               $ref: '#/components/schemas/BranchRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/checkpoints:
     get:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -1410,11 +1408,11 @@ paths:
           description: List
     post:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1422,78 +1420,78 @@ paths:
               $ref: '#/components/schemas/CheckpointRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Checkpoint'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/checkpoints/{checkpoint}/restore:
     post:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: checkpoint
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: checkpoint
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/compact:
     post:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/messages/{message}/feedback:
     put:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: message
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: message
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1501,31 +1499,31 @@ paths:
               $ref: '#/components/schemas/FeedbackRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /conversations/{id}/messages/{message}/tasks:
     put:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: message
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: message
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1533,22 +1531,22 @@ paths:
               $ref: '#/components/schemas/TasksRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Conversation'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /memory:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -1564,43 +1562,43 @@ paths:
               $ref: '#/components/schemas/MemoryRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Memory'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /memory/{id}:
     delete:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /models:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -1611,7 +1609,7 @@ paths:
   /plugins:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -1622,11 +1620,11 @@ paths:
   /plugins/{name}:
     patch:
       parameters:
-        - in: path
-          name: name
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1634,22 +1632,22 @@ paths:
               $ref: '#/components/schemas/PluginUpdate'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PluginInfo'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /providers:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -1657,6 +1655,53 @@ paths:
                   $ref: '#/components/schemas/ProviderSettings'
                 type: array
           description: List
+  /providers/{id}:
+    delete:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Successful response
+        "401":
+          description: Sign in required
+        "403":
+          description: Access denied
+        "409":
+          description: Concurrent update conflict
+    put:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderKeyRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSettings'
+          description: Successful response
+        "401":
+          description: Sign in required
+        "403":
+          description: Access denied
+        "409":
+          description: Concurrent update conflict
   /providers/gemini/oauth:
     post:
       requestBody:
@@ -1666,152 +1711,101 @@ paths:
               $ref: '#/components/schemas/ProviderOAuthRequest'
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProviderAuthorization'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /providers/gemini/oauth/callback:
     get:
-      description:
-        One-use Google model authorization callback, bound to its HttpOnly
-        state cookie and authenticated initiating owner.
+      description: One-use Google model authorization callback, bound to its HttpOnly state cookie and authenticated initiating owner.
       responses:
-        '302':
+        "302":
           description: Return to the allowlisted frontend with connection status
-        '403':
+        "403":
           description: Invalid, expired or mismatched authorization state
       security: []
-  /providers/{id}:
-    delete:
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIError'
-          description: Successful response
-        '401':
-          description: Sign in required
-        '403':
-          description: Access denied
-        '409':
-          description: Concurrent update conflict
-    put:
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProviderKeyRequest'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProviderSettings'
-          description: Successful response
-        '401':
-          description: Sign in required
-        '403':
-          description: Access denied
-        '409':
-          description: Concurrent update conflict
   /runs/{id}:
     get:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RunInfo'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /runs/{id}/cancel:
     post:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
   /runs/{id}/events:
     get:
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           content:
             text/event-stream:
               schema:
                 type: string
-          description:
-            Durable SSE events. Resume using sequence in Last-Event-ID or after
-            query.
+          description: Durable SSE events. Resume using sequence in Last-Event-ID or after query.
   /session:
     get:
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionInfo'
           description: Successful response
-        '401':
+        "401":
           description: Sign in required
-        '403':
+        "403":
           description: Access denied
-        '409':
+        "409":
           description: Concurrent update conflict
 security:
-  - session: []
-  - bearer: []
+- session: []
+- bearer: []
 servers:
-  - url: /api/tamizhi
+- url: /api/tamizhi
