@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { Button, Card, useMediaQuery } from '@vezham/react-v3'
@@ -7,18 +7,18 @@ import type { APIAttachment } from '@vezham/tamizhi-contracts'
 import { AccountControls } from './account-controls'
 import { OUTFITS } from './avatar-data'
 import { BackendSettings } from './backend-settings'
-import { BotPicker } from './bot-picker'
 import { Companion } from './companion'
 import { Composer } from './composer'
 import { ComposerLite } from './composer-lite'
 import { Conversation } from './conversation'
 import { Playground } from './playground'
 import { PlaygroundPanel } from './playground-panel'
-import { TamizhiPluginSlot } from './plugins'
 import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
 import { useSpeechOutput } from './use-speech-output'
 import type { useTamizhiChat } from './use-tamizhi-chat'
+import { Welcome } from './welcome'
+import { EmbedWelcome } from './welcome-embed'
 
 export interface TamizhiChatProps {
   chat: Omit<ReturnType<typeof useTamizhiChat>, 'send'> & {
@@ -46,7 +46,6 @@ export const TamizhiChat = ({
   renderLayout
 }: TamizhiChatProps) => {
   const speech = useSpeechOutput(chat.api)
-  const welcomeId = useId()
   const [isPlaygroundOpen, setIsPlaygroundOpen] = useState(false)
   const isCompact = useMediaQuery('(width < 64rem)', {
     initializeWithValue: false
@@ -149,19 +148,22 @@ export const TamizhiChat = ({
             }
         }}>
         {!hasMessages ? (
-          <section className="tamizhi-welcome" aria-labelledby={welcomeId}>
-            <div className="tamizhi-welcome__stage" ref={welcomeAvatarSlot} />
-            <BotPicker
-              headingId={welcomeId}
+          composerVariant === 'embed' ? (
+            <EmbedWelcome
+              profile={chat.profile}
+              avatarSlotRef={welcomeAvatarSlot}
+            />
+          ) : (
+            <Welcome
               profile={chat.profile}
               profiles={chat.profiles}
+              avatarSlotRef={welcomeAvatarSlot}
               onSelect={id => {
                 chat.selectProfile(id)
                 resetAppearance()
               }}
             />
-            <TamizhiPluginSlot name="welcome" />
-          </section>
+          )
         ) : (
           <Conversation
             messages={chat.messages}
