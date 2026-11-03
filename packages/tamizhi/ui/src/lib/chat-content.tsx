@@ -33,11 +33,13 @@ export const ChatContent = ({
         isStreaming={chat.isStreaming}
         isAnimated={isAnimated}
         isOffline={isOffline}
-        onRetry={onRetry}
-        onToggleTask={chat.toggleTask}
-        onRate={chat.rate}
-        onSpeak={onSpeak}
-        onBranch={chat.branchChat}
+        actions={{
+          onRetry,
+          onToggleTask: chat.toggleTask,
+          onRate: chat.rate,
+          onSpeak,
+          onBranch: chat.branchChat
+        }}
       />
     )
   return variant === 'embed' ? (

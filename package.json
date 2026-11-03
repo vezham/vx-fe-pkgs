@@ -46,7 +46,6 @@
     "@vezham/utils": "catalog:",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "framer-motion": "catalog:",
     "maplibre-gl": "^6.3.0",
     "marked": "^18.0.5",
     "motion": "^12.40.0",

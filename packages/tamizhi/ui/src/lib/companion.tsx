@@ -1,59 +1,16 @@
-import type { RefObject } from 'react'
-
-import type { Outfit, Persona } from '@vezham/tamizhi-contracts'
-
-import { outfitForPersona } from './avatar-data'
-import type { Expression } from './avatar-data'
+import type { CompanionOptions } from './companion-types'
 import { useCompanionRenderer } from './use-companion-renderer'
 
-interface Props {
-  persona?: Persona
-  outfit?: Outfit
-  expression?: Expression
-  palette?: string
-  isListening?: boolean
-  isThinking?: boolean
-  isAnimated?: boolean
-  isOffline?: boolean
-  focusTargetRef?: RefObject<HTMLElement | null> | null
-  size?: 'small' | 'large'
-  previewSize?: 28 | 44 | 72
-  asImage?: boolean
-}
-
-export const Companion = ({
-  persona = 'helper',
-  outfit = outfitForPersona(persona),
-  expression = 'neutral',
-  palette,
-  isListening = false,
-  isThinking = false,
-  isAnimated = true,
-  isOffline = false,
-  focusTargetRef = null,
-  size = 'large',
-  previewSize,
-  asImage = false
-}: Props) => {
-  const renderSize = asImage ? 'small' : size
-  const { host, connectionReaction, status, image } = useCompanionRenderer({
-    outfit,
-    expression,
-    palette,
-    isListening,
-    isThinking,
-    isAnimated,
-    isOffline,
-    focusTargetRef,
-    size: renderSize,
-    previewSize,
-    asImage
-  })
+export const Companion = (props: CompanionOptions) => {
+  const { host, connectionReaction, status, image, appearance } =
+    useCompanionRenderer(props)
+  const { size, previewSize, outfit, expression, isAnimated, asImage } =
+    appearance
 
   return (
     <div
       ref={host}
-      className={`tamizhi-companion tamizhi-companion--${renderSize}`}
+      className={`tamizhi-companion tamizhi-companion--${size}`}
       data-connection-reaction={connectionReaction?.phase}
       style={
         previewSize

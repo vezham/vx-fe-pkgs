@@ -1,9 +1,9 @@
 import type { AppNavigationItem } from '@vezham/react'
-import type { Conversation } from '@vezham/tamizhi-contracts'
+import type { ChatConversationRecord } from '@vezham/tamizhi-contracts'
 import { EXAMPLES } from '@vezham/tamizhi-ui'
 
 export const getSidebarItems = (
-  conversations: Conversation[]
+  conversations: ChatConversationRecord[]
 ): AppNavigationItem[] => [
   {
     key: 'new-chat',

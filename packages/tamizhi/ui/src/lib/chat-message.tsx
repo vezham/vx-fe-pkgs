@@ -10,23 +10,20 @@ import {
 } from '@vezham/icons-react'
 import { ChatMessageActions } from '@vezham/react-pro-v3'
 import { Card, Checkbox, Label } from '@vezham/react-v3'
-import type { Message } from '@vezham/tamizhi-contracts'
+import type { ChatMessageRecord } from '@vezham/tamizhi-contracts'
 
 import { Companion } from './companion'
 import { IconButton } from './icon-button'
+import type { MessageActions } from './message-actions'
 import { TamizhiPluginSlot } from './plugins'
 
 interface Props {
-  message: Message
+  message: ChatMessageRecord
   isStreaming: boolean
   canRetry: boolean
   canBranch: boolean
   isAnimated: boolean
-  onSpeak?: (text: string) => void
-  onRetry: () => void
-  onRate: (messageId: string, rating: 'up' | 'down') => void
-  onBranch: (messageId: string) => void
-  onToggleTask: (messageId: string, index: number, done: boolean) => void
+  actions: MessageActions
 }
 
 export const ChatMessage = ({
@@ -35,12 +32,9 @@ export const ChatMessage = ({
   canRetry,
   canBranch,
   isAnimated,
-  onRetry,
-  onSpeak,
-  onRate,
-  onBranch,
-  onToggleTask
+  actions
 }: Props) => {
+  const { onRetry, onSpeak, onRate, onBranch, onToggleTask } = actions
   const { copy, isCopied, isUnavailable } = useCopyToClipboard()
   const copyResponse = () =>
     void copy(

@@ -15,11 +15,19 @@ import type {
   TamizhiProfileOptions,
   ToolActivity
 } from '@vezham/tamizhi-contracts'
-import type { Conversation, Message, Persona } from '@vezham/tamizhi-contracts'
+import type {
+  ChatConversationRecord,
+  ChatMessageRecord,
+  Persona
+} from '@vezham/tamizhi-contracts'
 import { streamEventSchema, wireMessageSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
-import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
+import {
+  EMPTY_CONVERSATIONS,
+  parseConversations,
+  updateConversationMessage
+} from './conversation-storage'
 import { createId } from './create-id'
 import { createDemoReply, detectPersona } from './demo'
 import {
@@ -31,7 +39,7 @@ import {
 const STORAGE_KEY = 'tamizhi.demo.v1'
 const fromWire = (
   item: StoredConversationData | APIConversation
-): Conversation => ({
+): ChatConversationRecord => ({
   id: item.id,
   title: item.title ?? 'Chat',
   version: item.version,
@@ -80,7 +88,7 @@ export const useTamizhiChat = (
     debounceMs: 150
   })
   const [remoteConversations, setRemoteConversations] = useState<
-    Conversation[]
+    ChatConversationRecord[]
   >([])
   const [loadedClient, setLoadedClient] = useState<TamizhiClient | null>(null)
   const conversations = client
@@ -237,7 +245,7 @@ export const useTamizhiChat = (
 
   const streamReply = (
     chatId: string,
-    history: Message[],
+    history: ChatMessageRecord[],
     prompt: string,
     selectedPersona?: Persona,
     title?: string
@@ -253,7 +261,7 @@ export const useTamizhiChat = (
       setApprovals([])
       setActivities([])
       setRunEvents([])
-      const assistant: Message = {
+      const assistant: ChatMessageRecord = {
         id,
         role: 'assistant',
         persona: history.at(-1)?.persona ?? profile.persona,
@@ -304,18 +312,10 @@ export const useTamizhiChat = (
               text += event.delta
               const current = text
               setConversations(chats =>
-                chats.map(chat =>
-                  chat.id === chatId
-                    ? {
-                        ...chat,
-                        messages: chat.messages.map(message =>
-                          message.id === id
-                            ? { ...message, text: current }
-                            : message
-                        )
-                      }
-                    : chat
-                )
+                updateConversationMessage(chats, chatId, id, message => ({
+                  ...message,
+                  text: current
+                }))
               )
             }
             if (event.type === 'finish' && client.api) {
@@ -401,7 +401,7 @@ export const useTamizhiChat = (
     busy.current = true
     streamingChatId.current = chatId
     setIsStreaming(true)
-    const assistant: Message = {
+    const assistant: ChatMessageRecord = {
       id,
       role: 'assistant',
       persona: history.at(-1)?.persona ?? reply.persona,
@@ -428,24 +428,11 @@ export const useTamizhiChat = (
       position = Math.min(position + 2, words.length)
       const complete = position === words.length
       setConversations(chats =>
-        chats.map(chat =>
-          chat.id === chatId
-            ? {
-                ...chat,
-                messages: chat.messages.map(message =>
-                  message.id === id
-                    ? {
-                        ...message,
-                        text: words.slice(0, position).join(''),
-                        ...(complete && reply.tasks
-                          ? { tasks: reply.tasks }
-                          : {})
-                      }
-                    : message
-                )
-              }
-            : chat
-        )
+        updateConversationMessage(chats, chatId, id, message => ({
+          ...message,
+          text: words.slice(0, position).join(''),
+          ...(complete && reply.tasks ? { tasks: reply.tasks } : {})
+        }))
       )
       if (complete) stop()
     }, 70)
@@ -473,7 +460,7 @@ export const useTamizhiChat = (
       !client &&
       profile.id === 'vezham-tamizhi' &&
       !options.profiles?.some(item => item.id === profile.id)
-    const user: Message = {
+    const user: ChatMessageRecord = {
       id: createId(),
       role: 'user',
       text: prompt,
@@ -567,21 +554,10 @@ export const useTamizhiChat = (
       return
     }
     setConversations(chats =>
-      chats.map(chat =>
-        chat.id === activeId
-          ? {
-              ...chat,
-              messages: chat.messages.map(message =>
-                message.id === messageId
-                  ? {
-                      ...message,
-                      rating: message.rating === rating ? undefined : rating
-                    }
-                  : message
-              )
-            }
-          : chat
-      )
+      updateConversationMessage(chats, activeId, messageId, message => ({
+        ...message,
+        rating: message.rating === rating ? undefined : rating
+      }))
     )
   }
 
@@ -602,7 +578,7 @@ export const useTamizhiChat = (
     const messageIndex = messages.findIndex(message => message.id === messageId)
     if (messageIndex < 0) return
     const id = createId()
-    const branch: Conversation = {
+    const branch: ChatConversationRecord = {
       id,
       title: `Branch: ${active.title}`.slice(0, 48),
       messages: messages.slice(0, messageIndex + 1)
@@ -627,23 +603,12 @@ export const useTamizhiChat = (
       return
     }
     setConversations(chats =>
-      chats.map(chat =>
-        chat.id === activeId
-          ? {
-              ...chat,
-              messages: chat.messages.map(message =>
-                message.id === messageId
-                  ? {
-                      ...message,
-                      tasks: message.tasks?.map((task, taskIndex) =>
-                        taskIndex === index ? { ...task, done } : task
-                      )
-                    }
-                  : message
-              )
-            }
-          : chat
-      )
+      updateConversationMessage(chats, activeId, messageId, message => ({
+        ...message,
+        tasks: message.tasks?.map((task, taskIndex) =>
+          taskIndex === index ? { ...task, done } : task
+        )
+      }))
     )
   }
 

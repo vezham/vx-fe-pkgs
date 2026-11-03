@@ -191,9 +191,6 @@ catalogs:
     '@vezham/utils':
       specifier: workspace:*
       version: workspace:*
-    framer-motion:
-      specifier: ^12.40.0
-      version: 12.43.0
     react-aria-components:
       specifier: 1.21.1
       version: 1.21.1
@@ -323,9 +320,6 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.7)
-      framer-motion:
-        specifier: 'catalog:'
-        version: 12.43.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       maplibre-gl:
         specifier: ^6.3.0
         version: 6.15.0

@@ -1,6 +1,6 @@
 import type {
+  ChatMessageRecord,
   ExampleChat,
-  Message,
   Outfit,
   Persona
 } from '@vezham/tamizhi-contracts'
@@ -103,14 +103,14 @@ export const detectPersona = (text: string): Persona => {
 export const createDemoReply = (
   prompt: string,
   persona: Persona
-): Omit<Message, 'id' | 'role'> => {
+): Omit<ChatMessageRecord, 'id' | 'role'> => {
   if (/வணக்கம்|\b(vanakkam|hello|hi|hey)\b/i.test(prompt))
     return {
       persona: 'helper',
       text: 'Vanakkam! வணக்கம்! I’m Tamizhi, your little thinking companion.\n\nPick an example, bring me an idea, or try a question. '
     }
 
-  const replies: Record<Persona, Omit<Message, 'id' | 'role'>> = {
+  const replies: Record<Persona, Omit<ChatMessageRecord, 'id' | 'role'>> = {
     helper: {
       persona,
       text: 'Let’s give that a little room to grow.\n\nI can help you **build**, **write**, **plan**, **learn**, or **explore**. Try one of the examples to see my look change with the task.\n\n'

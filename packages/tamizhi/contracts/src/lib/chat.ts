@@ -21,7 +21,7 @@ export type Outfit =
 export type Persona =
   'helper' | 'coder' | 'writer' | 'planner' | 'tutor' | 'explorer'
 
-export interface Message {
+export interface ChatMessageRecord {
   id: string
   role: 'user' | 'assistant'
   rating?: 'up' | 'down'
@@ -34,11 +34,11 @@ export interface Message {
   tasks?: { label: string; done: boolean }[]
 }
 
-export interface Conversation {
+export interface ChatConversationRecord {
   version?: number
   id: string
   title: string
-  messages: Message[]
+  messages: ChatMessageRecord[]
 }
 
 export interface ExampleChat {

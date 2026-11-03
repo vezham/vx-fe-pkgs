@@ -23,6 +23,8 @@
     "**/coverage/**",
     "**/test-output/**",
     "**/out-tsc/**",
+    // vx-bot/NOTE: Preserve the vendored MIT-licensed renderer; audit its authored Tamizhi adapter separately.
+    "packages/tamizhi/ui/src/lib/vendor/momo/**",
     "**/*.d.ts",
     ".agents/**",
     ".codex/**",
@@ -59,7 +61,10 @@
     "vx/tools/eslint/tests/*.test.mjs",
     "vx/tools/release/index.ts",
     "vx/tools/release/*.test.ts",
-    "vx/tools/release/version-actions.cjs"
+    "vx/tools/release/version-actions.cjs",
+    // vx-bot/NOTE: Executed directly as a runnable backend example and by Playwright's webServer commands.
+    "packages/tamizhi/core/examples/server.ts",
+    "packages/tamizhi/ui/e2e/{browser.config.ts,provider-fixture.mjs}"
   ],
   "framework": [
     {

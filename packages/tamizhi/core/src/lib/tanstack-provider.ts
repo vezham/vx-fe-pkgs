@@ -10,6 +10,7 @@ import { createOpenaiChatCompletions } from '@tanstack/ai-openai'
 
 import type { ModelInfo } from '@vezham/tamizhi-contracts'
 
+import { createLinkedAbortController } from './linked-abort'
 import type { TamizhiPlugin } from './types'
 
 export interface TanStackProviderOptions {
@@ -31,10 +32,9 @@ export const tanstackProviderPlugin = (
       stream: async function* (request) {
         const model = request.model ?? options.models[0]?.id
         if (!model) throw new Error('No model is configured')
-        const controller = new AbortController()
-        const abort = () => controller.abort()
-        request.signal.addEventListener('abort', abort, { once: true })
-        if (request.signal.aborted) abort()
+        const { controller, cleanup } = createLinkedAbortController(
+          request.signal
+        )
         const tools = request.tools.map(tool =>
           toolDefinition({
             name: tool.name,
@@ -64,7 +64,7 @@ export const tanstackProviderPlugin = (
             if (event.type === 'RUN_ERROR') throw new Error(event.message)
           }
         } finally {
-          request.signal.removeEventListener('abort', abort)
+          cleanup()
         }
       }
     })

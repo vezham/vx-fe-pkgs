@@ -10,7 +10,7 @@ interface Snapshot<T> {
   error: unknown
 }
 
-export const createLocalStore = <T>(
+const createLocalStore = <T>(
   key: string,
   initialValue: T,
   { parse, debounceMs = 0 }: LocalStoreOptions<T>

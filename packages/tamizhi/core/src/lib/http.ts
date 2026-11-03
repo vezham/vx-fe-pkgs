@@ -3,6 +3,7 @@ import {
   runRequestSchema
 } from '@vezham/tamizhi-contracts'
 
+import { createLinkedAbortController } from './linked-abort'
 import type { Principal, TamizhiPlugin } from './types'
 
 export interface HttpTransportOptions {
@@ -117,10 +118,9 @@ export const httpTransportPlugin = (
           return json({ accepted }, accepted ? 200 : 404)
         }
         const input = runRequestSchema.parse(body)
-        const controller = new AbortController()
-        const abort = () => controller.abort()
-        request.signal.addEventListener('abort', abort, { once: true })
-        if (request.signal.aborted) abort()
+        const { controller, abort, cleanup } = createLinkedAbortController(
+          request.signal
+        )
         const iterator = host
           .run(input, principal, controller.signal)
           [Symbol.asyncIterator]()
@@ -134,7 +134,7 @@ export const httpTransportPlugin = (
               const next = pending
               if (next.done) {
                 output.close()
-                request.signal.removeEventListener('abort', abort)
+                cleanup()
                 return
               }
               output.enqueue(
@@ -144,12 +144,12 @@ export const httpTransportPlugin = (
             } catch (error) {
               output.error(error)
               abort()
-              request.signal.removeEventListener('abort', abort)
+              cleanup()
             }
           },
           async cancel() {
             abort()
-            request.signal.removeEventListener('abort', abort)
+            cleanup()
             await iterator.return?.()
           }
         })

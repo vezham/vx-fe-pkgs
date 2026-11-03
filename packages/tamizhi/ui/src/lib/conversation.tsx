@@ -1,17 +1,14 @@
-import type { Message } from '@vezham/tamizhi-contracts'
+import type { ChatMessageRecord } from '@vezham/tamizhi-contracts'
 
 import { ChatMessage } from './chat-message'
+import type { MessageActions } from './message-actions'
 
 interface Props {
-  messages: Message[]
+  messages: ChatMessageRecord[]
   isStreaming: boolean
   isAnimated: boolean
   isOffline: boolean
-  onSpeak?: (text: string) => void
-  onRetry: () => void
-  onRate: (messageId: string, rating: 'up' | 'down') => void
-  onBranch: (messageId: string) => void
-  onToggleTask: (messageId: string, index: number, done: boolean) => void
+  actions: MessageActions
 }
 
 export const Conversation = ({
@@ -19,11 +16,7 @@ export const Conversation = ({
   isStreaming,
   isAnimated,
   isOffline,
-  onRetry,
-  onSpeak,
-  onRate,
-  onBranch,
-  onToggleTask
+  actions
 }: Props) => (
   <section className="tamizhi-conversation" aria-label="Conversation">
     {messages.map((message, index) => (
@@ -34,11 +27,7 @@ export const Conversation = ({
         isAnimated={isAnimated}
         canBranch={!isStreaming}
         canRetry={!isOffline && !isStreaming && index === messages.length - 1}
-        onSpeak={onSpeak}
-        onRetry={onRetry}
-        onRate={onRate}
-        onBranch={onBranch}
-        onToggleTask={onToggleTask}
+        actions={actions}
       />
     ))}
   </section>

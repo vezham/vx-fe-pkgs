@@ -127,3 +127,14 @@ files, so the "split high-impact file" recommendation alone does not justify
 splitting it. Keep this advisory visible rather than excluding the file from
 health analysis. Boundary and policy checks require explicit configuration and
 are not currently measured by this audit.
+
+Tamizhi's preserved upstream Momo renderer is excluded under its exact vendor
+subtree; its authored avatar adapter and UI remain audited. The backend example
+server and Playwright configuration/provider fixture are explicit execution
+entry points because commands launch them without application imports.
+
+Tamizhi's UI records use `ChatMessageRecord` and `ChatConversationRecord` to
+distinguish their local presentation fields from generated API wire types.
+Keep those contracts separate rather than duplicating their exported names.
+The root supplies HeroUI's `motion` peer directly; Framer Motion is provided
+transitively by Motion and needs no separate root dependency or catalog entry.

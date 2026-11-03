@@ -1,15 +1,13 @@
-import type { RefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-import type { Outfit } from '@vezham/tamizhi-contracts'
-
-import type { Expression } from './avatar-data'
+import { outfitForPersona } from './avatar-data'
 import {
   avatarState,
   createAvatarRenderer,
   getSnapshotRenderer
 } from './avatar-renderer'
 import type { AvatarRenderer } from './avatar-renderer'
+import type { CompanionOptions } from './companion-types'
 
 type ConnectionReactionPhase =
   | 'disconnect-surprised'
@@ -34,33 +32,21 @@ const CONNECTION_REACTION_DURATIONS: Record<ConnectionReactionPhase, number> = {
   'reconnect-happy': 1000
 }
 
-interface Props {
-  outfit: Outfit
-  expression: Expression
-  palette?: string
-  isListening: boolean
-  isThinking: boolean
-  isAnimated: boolean
-  isOffline: boolean
-  focusTargetRef: RefObject<HTMLElement | null> | null
-  size: 'small' | 'large'
-  previewSize?: 28 | 44 | 72
-  asImage?: boolean
-}
-
 export const useCompanionRenderer = ({
-  outfit,
-  expression,
+  persona = 'helper',
+  outfit = outfitForPersona(persona),
+  expression = 'neutral',
   palette,
-  isListening,
-  isThinking,
-  isAnimated,
-  isOffline,
-  focusTargetRef,
-  size,
+  isListening = false,
+  isThinking = false,
+  isAnimated = true,
+  isOffline = false,
+  focusTargetRef = null,
+  size: requestedSize = 'large',
   previewSize,
   asImage = false
-}: Props) => {
+}: CompanionOptions) => {
+  const size = asImage ? 'small' : requestedSize
   const host = useRef<HTMLDivElement>(null)
   const redraw = useRef<(() => void) | undefined>(undefined)
   const [connectionReaction, setConnectionReaction] =
@@ -484,5 +470,11 @@ export const useCompanionRenderer = ({
     }
   }, [size, previewSize, asImage])
 
-  return { host, connectionReaction, status, image }
+  return {
+    host,
+    connectionReaction,
+    status,
+    image,
+    appearance: { size, previewSize, outfit, expression, isAnimated, asImage }
+  }
 }

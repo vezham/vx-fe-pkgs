@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 
-import type { Message } from '@vezham/tamizhi-contracts'
+import type { ChatMessageRecord } from '@vezham/tamizhi-contracts'
 
 export type TamizhiUISlot = 'welcome' | 'message-actions' | 'composer-actions'
 export interface TamizhiSlotContext {
-  message?: Message
+  message?: ChatMessageRecord
 }
 export interface TamizhiUIPlugin {
   name: string
@@ -32,7 +32,7 @@ export const TamizhiPluginSlot = ({
   message
 }: {
   name: TamizhiUISlot
-  message?: Message
+  message?: ChatMessageRecord
 }) => {
   const plugins = useContext(UIPluginsContext)
   return plugins.map(plugin => {
