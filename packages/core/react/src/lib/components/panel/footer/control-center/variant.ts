@@ -112,7 +112,7 @@ export const optionTileVariants = tv({
   base: 'h-auto w-full justify-start rounded-lg px-3 py-2 text-start text-sm font-normal transition-colors',
   variants: {
     selected: {
-      true: 'bg-primary/10 text-primary',
+      true: 'bg-accent/10 text-accent',
       false: 'hover:bg-surface text-muted hover:text-foreground'
     }
   },

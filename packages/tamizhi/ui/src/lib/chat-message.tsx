@@ -10,9 +10,9 @@ import {
 } from '@vezham/icons-react'
 import { ChatMessageActions } from '@vezham/react-pro-v3'
 import { Card, Checkbox, Label } from '@vezham/react-v3'
+import type { Message } from '@vezham/tamizhi-contracts'
 
 import { Companion } from './companion'
-import type { Message } from './demo'
 import { IconButton } from './icon-button'
 import { TamizhiPluginSlot } from './plugins'
 

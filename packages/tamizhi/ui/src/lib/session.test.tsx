@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
 import { TamizhiSessionProvider, useTamizhiSession } from './session'
-import { useDemoChat } from './use-demo-chat'
+import { useTamizhiChat } from './use-tamizhi-chat'
 
 beforeEach(() => {
   localStorage.clear()
@@ -21,7 +21,7 @@ it('keeps the embedded session across panel unmounts and independent from the st
     </TamizhiSessionProvider>
   )
   const host = renderHook(() => useTamizhiSession(), { wrapper })
-  const standalone = renderHook(() => useDemoChat(true))
+  const standalone = renderHook(() => useTamizhiChat(true))
   act(() => host.result.current.chat.send('Plan my day'))
   act(() => vi.advanceTimersByTime(5000))
   const id = host.result.current.chat.activeId

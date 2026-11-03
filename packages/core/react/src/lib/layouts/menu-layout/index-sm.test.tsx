@@ -48,7 +48,8 @@ vi.mock('../section/toolbar', () => ({
 vi.mock('../../components/toolbar-actions', () => ({
   useToolbarActions: () => ({ emit: actions.emit })
 }))
-vi.mock('../../components/command', () => ({
+vi.mock('@vezham/hooks', async importOriginal => ({
+  ...(await importOriginal<typeof import('@vezham/hooks')>()),
   useCommand: () => actions
 }))
 vi.mock('../../components/panel/info-panel', () => ({

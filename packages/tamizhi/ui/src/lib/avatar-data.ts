@@ -1,7 +1,5 @@
 import type { Outfit, Persona } from '@vezham/tamizhi-contracts'
 
-export type { Outfit } from '@vezham/tamizhi-contracts'
-
 export const OUTFITS = [
   {
     id: 'rest',

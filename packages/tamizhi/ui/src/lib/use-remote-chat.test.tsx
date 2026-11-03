@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { createTamizhiClient } from '@vezham/tamizhi-client'
 import type { TamizhiClient } from '@vezham/tamizhi-client'
 
-import { useDemoChat } from './use-demo-chat'
+import { useTamizhiChat } from './use-tamizhi-chat'
 
 afterEach(() => {
   cleanup()
@@ -28,7 +28,7 @@ it('streams backend replies and forwards model and permission choices', async ()
     })
   }
   const { result } = renderHook(() =>
-    useDemoChat(false, undefined, 'test:remote', client)
+    useTamizhiChat(false, undefined, 'test:remote', client)
   )
   await waitFor(() => expect(result.current.models).toHaveLength(1))
   act(() => {
@@ -65,7 +65,7 @@ it('shows backend failure without inserting a prepared demo reply', async () => 
     }
   }
   const { result } = renderHook(() =>
-    useDemoChat(false, undefined, 'test:failure', client)
+    useTamizhiChat(false, undefined, 'test:failure', client)
   )
   act(() => {
     result.current.send('Hello')
@@ -118,7 +118,7 @@ it('loads canonical remote IDs and keeps server history out of demo local storag
     fetch
   })
   const { result } = renderHook(() =>
-    useDemoChat(false, 'remote-chat', 'test:server-owned', client)
+    useTamizhiChat(false, 'remote-chat', 'test:server-owned', client)
   )
   await waitFor(() => expect(result.current.messages).toHaveLength(2))
   expect(result.current.messages[1]).toMatchObject({

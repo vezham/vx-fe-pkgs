@@ -27,13 +27,13 @@ const tva = tv({
       default: {
         item: 'data-[focus-visible]:ring-focus',
         itemDropTarget: 'ring-accent',
-        backgroundFallback: 'from-default-200 to-default-300',
+        backgroundFallback: 'from-surface-secondary to-surface-tertiary',
         avatarFallback: 'bg-transparent'
       },
       subtle: {
         item: 'bg-default/30 data-[focus-visible]:ring-focus',
         itemDropTarget: 'ring-accent',
-        backgroundFallback: 'from-default-100 to-default-300',
+        backgroundFallback: 'from-surface-secondary to-surface-tertiary',
         avatarFallback: 'bg-transparent'
       },
       glass: {

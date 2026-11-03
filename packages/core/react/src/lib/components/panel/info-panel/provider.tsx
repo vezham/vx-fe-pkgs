@@ -30,8 +30,7 @@ const parsePanelState = (value: unknown): StoredInfoPanelState => {
   if (!value || typeof value !== 'object') return INITIAL_PANEL_STATE
   const parsedValue = value as Partial<StoredInfoPanelState>
   const storedPanel: unknown = parsedValue.activeInfoPanel
-  const migratedPanel = storedPanel === 'disc' ? 'storage' : storedPanel
-  const activeInfoPanel = isInfoPanel(migratedPanel) ? migratedPanel : null
+  const activeInfoPanel = isInfoPanel(storedPanel) ? storedPanel : null
   return {
     activeInfoPanel,
     isOpen: Boolean(parsedValue.isOpen && activeInfoPanel)

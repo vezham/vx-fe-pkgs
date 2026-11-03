@@ -18,7 +18,10 @@ const actions = vi.hoisted(() => ({
   toggleInfoPanel: vi.fn()
 }))
 
-vi.mock('../../command', () => ({ useCommand: () => actions }))
+vi.mock('@vezham/hooks', async importOriginal => ({
+  ...(await importOriginal<typeof import('@vezham/hooks')>()),
+  useCommand: () => actions
+}))
 vi.mock('../info-panel', () => ({
   useInfoPanel: () => ({ toggleInfoPanel: actions.toggleInfoPanel })
 }))

@@ -109,7 +109,6 @@
     "@types/yargs": "^17.0.35",
     "@vezham/config": "catalog:",
     "@vezham/icons-react": "1.0.7",
-    "@vezham/react-v2": "npm:@vx-oss/heroui-v2-react@2.9.0-beta.1",
     "@vezham/start": "catalog:",
     "@vezham/use-logger": "0.3.3",
     "@vitejs/plugin-react": "^6.0.2",

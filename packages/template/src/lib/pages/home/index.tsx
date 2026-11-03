@@ -3,7 +3,6 @@
 import { useState } from 'react'
 
 import { CheckCircle, QuestionCircle } from '@vezham/icons-react'
-import { Button as ButtonV2 } from '@vezham/react-v2'
 import {
   Avatar,
   Button,
@@ -105,11 +104,6 @@ export const Home = ({ onPress }: Props) => {
       </TextField>
 
       <Button children="Hello World :) - v3" />
-      <ButtonV2
-        children="Hello World :) - v2"
-        color="success"
-        variant="solid"
-      />
 
       <Link onPress={onPress}>
         Pro - Demo

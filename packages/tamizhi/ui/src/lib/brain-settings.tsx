@@ -1,7 +1,8 @@
 import { useId } from 'react'
 
+import type { Outfit } from '@vezham/tamizhi-contracts'
+
 import { OUTFITS } from './avatar-data'
-import type { Outfit } from './avatar-data'
 
 interface Props {
   connection: string

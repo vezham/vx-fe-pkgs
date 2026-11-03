@@ -10,10 +10,6 @@ import { defineConfig } from '../next'
 import { ClientDevtools } from './devtools'
 import { createProvider } from './provider'
 
-vi.mock('@vezham/react-v2', () => ({
-  VezhamProvider: ({ children }: { children: ReactNode }) => children,
-  cn: (...names: string[]) => names.join(' ')
-}))
 vi.mock('@vezham/use-logger', () => ({ defineLogger: vi.fn() }))
 vi.mock('@vezham/env/next', () => ({
   APP_ID: 'test',

@@ -1,5 +1,6 @@
+import type { Message } from '@vezham/tamizhi-contracts'
+
 import { ChatMessage } from './chat-message'
-import type { Message } from './demo'
 
 interface Props {
   messages: Message[]

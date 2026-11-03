@@ -3,7 +3,7 @@ import { useEffect, useEffectEvent } from 'react'
 
 import { useApp } from '@vezham/hooks'
 import type { APIAttachment } from '@vezham/tamizhi-contracts'
-import { EXAMPLES, useDemoChat } from '@vezham/tamizhi-ui'
+import { EXAMPLES, useTamizhiChat } from '@vezham/tamizhi-ui'
 
 import { tamizhiClient } from '../../app/tamizhi-client'
 
@@ -18,7 +18,7 @@ const getChatId = (itemId?: string) =>
 export const useChatNavigation = ({ isInstant, isOffline }: Props) => {
   const app = useApp()
   const { chatId: itemId } = useParams({ strict: false })
-  const chat = useDemoChat(
+  const chat = useTamizhiChat(
     isInstant,
     getChatId(itemId),
     undefined,

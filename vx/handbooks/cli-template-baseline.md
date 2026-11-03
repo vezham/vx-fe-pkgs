@@ -252,6 +252,13 @@ The shared app preset owns `ssr.noExternal` for `@vezham/start` and
 Vitest keeps runtime packages in `server.deps.inline` so Vite transforms
 `import.meta.env` and applies test mocks when testing compiled package output.
 
+Workspace theming uses HeroUI V3 CSS and its native semantic tokens. Do not add
+V2 providers, JavaScript theme plugins, numbered color utilities, or legacy HSL
+variable adapters. Use `accent`, `surface`, `default`, `muted`, `border`, and other
+V3 tokens. Control Center writes only `--accent` and `--accent-foreground`;
+focus, links, and component states derive from the V3 theme. Runtime providers
+supply app/query context and toasts without a styling provider.
+
 Workspace CSS remains under `packages/vx/styles`. Generated apps import this
 workspace stylesheet from `src/app/global.css`; documentation apps also import
 its `docs` entry. Calculate relative imports from the generated project location

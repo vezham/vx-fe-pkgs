@@ -7,8 +7,6 @@ import type {
 
 import { detectOutfit } from './avatar-data'
 
-export type { Conversation, Message, Persona } from '@vezham/tamizhi-contracts'
-
 export const EXAMPLES: ExampleChat[] = [
   {
     id: 'build',

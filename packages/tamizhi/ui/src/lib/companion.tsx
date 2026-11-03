@@ -1,8 +1,9 @@
 import type { RefObject } from 'react'
 
+import type { Outfit, Persona } from '@vezham/tamizhi-contracts'
+
 import { outfitForPersona } from './avatar-data'
-import type { Expression, Outfit } from './avatar-data'
-import type { Persona } from './demo'
+import type { Expression } from './avatar-data'
 import { useCompanionRenderer } from './use-companion-renderer'
 
 interface Props {

@@ -2,9 +2,10 @@ import { useId } from 'react'
 
 import { AltArrowDown } from '@vezham/icons-react'
 import { Button, Dropdown, Switch, Tabs } from '@vezham/react-v3'
+import type { Outfit } from '@vezham/tamizhi-contracts'
 
 import { COLOURS, EXPRESSIONS, OUTFITS, PALETTE_COLOURS } from './avatar-data'
-import type { Expression, Outfit } from './avatar-data'
+import type { Expression } from './avatar-data'
 import { BrainSettings } from './brain-settings'
 import { Companion } from './companion'
 

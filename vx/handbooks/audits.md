@@ -89,9 +89,6 @@ The Fallow dependency exceptions cover these indirect uses:
   The exact names in `ignoreDependencies` were checked against the root manifest.
 - `@testing-library/jest-dom`: the shared Vitest setup imports matchers from the
   root development dependency. Keep that declaration at the root.
-- `@vezham/react-v2`: intentionally retained as a build-time demo dependency.
-  Revisit its placement if deployment starts installing production dependencies
-  to execute code that imports it directly.
 
 Use exact package names. `ignoreDependencies` suppresses both unused and
 unlisted dependency findings, so keep these packages declared and review the

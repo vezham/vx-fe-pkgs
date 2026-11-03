@@ -86,7 +86,7 @@ const FolderModal = ({
                 </Label>
                 <Input
                   value={form.name}
-                  className="border-default-200 focus:border-primary focus:ring-primary/25 h-12 w-full rounded-xl border bg-white px-4 text-base outline-none focus:ring-4"
+                  className="border-border focus:border-accent focus:ring-accent/25 h-12 w-full rounded-xl border bg-white px-4 text-base outline-none focus:ring-4"
                   onChange={event => updateForm({ name: event.target.value })}
                 />
               </div>
@@ -102,7 +102,7 @@ const FolderModal = ({
                         key={color}
                         type="button"
                         aria-label={`Use ${color} folder color`}
-                        className="ring-primary/70 flex h-8 w-8 items-center justify-center rounded-full border border-black/10 shadow-sm transition-transform outline-none hover:scale-105 focus-visible:ring-2"
+                        className="ring-accent/70 flex h-8 w-8 items-center justify-center rounded-full border border-black/10 shadow-sm transition-transform outline-none hover:scale-105 focus-visible:ring-2"
                         style={{ backgroundColor: color }}
                         onClick={() => updateForm({ color })}>
                         {form.color === color && (
@@ -161,7 +161,7 @@ const FolderModal = ({
                           <button
                             type="button"
                             aria-label="Choose icon"
-                            className="focus-visible:ring-primary rounded-full outline-none focus-visible:ring-2">
+                            className="focus-visible:ring-accent rounded-full outline-none focus-visible:ring-2">
                             <FolderVisualPreview
                               color={
                                 form.visualType === 'icon'
@@ -184,7 +184,7 @@ const FolderModal = ({
                                 key={icon}
                                 type="button"
                                 aria-label={`Use ${icon} icon`}
-                                className="bg-default-200 text-default-700 ring-primary hover:bg-default-300 flex h-10 w-10 items-center justify-center rounded-full transition outline-none focus-visible:ring-2"
+                                className="bg-default-hover text-foreground ring-accent hover:bg-surface-tertiary flex h-10 w-10 items-center justify-center rounded-full transition outline-none focus-visible:ring-2"
                                 data-selected={
                                   form.visualType === 'icon' &&
                                   form.icon === icon
@@ -233,7 +233,7 @@ const FolderModal = ({
                 </div>
               </div>
 
-              <div className="border-default-200 flex items-center gap-3 border-t pt-5">
+              <div className="border-border flex items-center gap-3 border-t pt-5">
                 <FolderVisualPreview
                   color={form.color}
                   visualType={form.visualType}
@@ -247,7 +247,7 @@ const FolderModal = ({
               </div>
             </Modal.Body>
 
-            <Modal.Footer className="border-default-200 flex justify-end gap-3 border-t px-8 py-5">
+            <Modal.Footer className="border-border flex justify-end gap-3 border-t px-8 py-5">
               <Button
                 variant="secondary"
                 className="min-w-24 rounded-xl"

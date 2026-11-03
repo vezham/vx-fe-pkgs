@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import type { TamizhiClient } from '@vezham/tamizhi-client'
 import type { TamizhiProfileOptions } from '@vezham/tamizhi-contracts'
 
-import { useDemoChat } from './use-demo-chat'
+import { useTamizhiChat } from './use-tamizhi-chat'
 
 const useSession = (
   storageKey: string,
@@ -13,7 +13,7 @@ const useSession = (
 ) => {
   const [isInstant, setIsInstant] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
-  const chat = useDemoChat(isInstant, undefined, storageKey, client, options)
+  const chat = useTamizhiChat(isInstant, undefined, storageKey, client, options)
   return { chat, isInstant, setIsInstant, isOffline, setIsOffline }
 }
 const SessionContext = createContext<ReturnType<typeof useSession> | null>(null)

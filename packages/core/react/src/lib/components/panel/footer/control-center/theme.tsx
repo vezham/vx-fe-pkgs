@@ -1,10 +1,5 @@
 import { Palette } from '@vezham/icons-react'
-import {
-  Button,
-  ColorSwatch,
-  ColorSwatchPicker,
-  parseColor
-} from '@vezham/react-v3'
+import { Button, ColorSwatch, ColorSwatchPicker } from '@vezham/react-v3'
 
 import { useRootAttribute } from './document'
 import { ActionTile } from './tile'
@@ -21,23 +16,12 @@ const colors = [
   { id: 'graphite', label: 'Graphite', color: '#62646a', foreground: '#ffffff' }
 ] as const
 
-const properties = [
-  '--accent',
-  '--accent-foreground',
-  '--heroui-primary',
-  '--heroui-primary-foreground',
-  '--heroui-focus'
-] as const
+const properties = ['--accent', '--accent-foreground'] as const
 const originalStyles = new WeakMap<
   HTMLElement,
   { value: string; priority: string }[]
 >()
 const styles = controlCenterVariants()
-
-const hslChannels = (color: string) => {
-  const hsl = parseColor(color).toFormat('hsl')
-  return `${hsl.getChannelValue('hue')} ${hsl.getChannelValue('saturation')}% ${hsl.getChannelValue('lightness')}%`
-}
 
 const applyColor = (id: string) => {
   const root = document.documentElement
@@ -54,13 +38,6 @@ const applyColor = (id: string) => {
     }
     root.style.setProperty('--accent', option.color)
     root.style.setProperty('--accent-foreground', option.foreground)
-    // vx-bot/NOTE: Existing primary utilities use the legacy theme's HSL tokens.
-    root.style.setProperty('--heroui-primary', hslChannels(option.color))
-    root.style.setProperty(
-      '--heroui-primary-foreground',
-      hslChannels(option.foreground)
-    )
-    root.style.setProperty('--heroui-focus', hslChannels(option.color))
   } else {
     const originals = originalStyles.get(root)
     originals?.forEach((original, index) => {

@@ -17,8 +17,8 @@ export const classNames = {
   legend: 'flex flex-wrap items-center gap-1.5',
   tableContent: 'text-[#4d5a76]',
   paginationFooter: '',
-  tableRow: 'hover:bg-primary/5 cursor-pointer transition-colors',
-  tableRowActive: 'bg-primary/10 ring-primary/20 ring-1 ring-inset',
+  tableRow: 'hover:bg-accent/5 cursor-pointer transition-colors',
+  tableRowActive: 'bg-accent/10 ring-accent/20 ring-1 ring-inset',
   selectionColumn: 'w-12',
   rowActions: 'flex items-center gap-1',
   dangerIcon: 'text-danger',
@@ -45,7 +45,7 @@ export const classNames = {
   gradeDanger: 'text-[#f12c58]',
   percentBadge:
     'inline-flex min-w-8 items-center justify-center rounded-md px-1.5 py-0.5 text-xs font-semibold text-white',
-  link: 'text-primary whitespace-pre-line font-medium',
+  link: 'text-accent whitespace-pre-line font-medium',
   toast:
     'fixed top-10 left-1/2 z-[9999] w-[min(320px,calc(100vw-2rem))] -translate-x-1/2',
   drawerDialog:

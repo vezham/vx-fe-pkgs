@@ -68,7 +68,7 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
           variant="transparent"
           role="group"
           aria-label="Mobile navigation controls"
-          className="border-default-200 bg-background/90 pointer-events-auto flex h-12 shrink-0 items-center rounded-full border px-2 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
+          className="border-border bg-background/90 pointer-events-auto flex h-12 shrink-0 items-center rounded-full border px-2 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
           <Header
             compact
             className="flex-shrink-0"
@@ -84,7 +84,7 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
           variant="transparent"
           role="group"
           aria-label="Mobile account actions"
-          className="border-default-200 bg-background/90 pointer-events-auto flex h-12 shrink-0 items-center rounded-full border px-2 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
+          className="border-border bg-background/90 pointer-events-auto flex h-12 shrink-0 items-center rounded-full border px-2 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
           <Footer
             user={{
               id: user?.id ?? '',

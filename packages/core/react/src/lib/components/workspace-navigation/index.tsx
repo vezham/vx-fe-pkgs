@@ -10,7 +10,8 @@ import {
   useState
 } from 'react'
 
-import { useCommand } from '../command'
+import { useCommand } from '@vezham/hooks'
+
 import { useInfoPanel } from '../panel/info-panel'
 
 type MobileSidebarControl = {

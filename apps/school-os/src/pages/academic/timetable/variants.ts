@@ -74,7 +74,7 @@ export const classNames = {
   currentTimeLine: 'h-0.5 flex-1 bg-[var(--agenda-current-time-color)]/75',
   eventCard:
     'flex w-full min-w-0 flex-col gap-0.5 rounded-[var(--agenda-event-radius)] border p-2 text-left text-xs shadow-sm transition hover:shadow-md',
-  eventCardSelected: 'ring-2 ring-primary/40',
+  eventCardSelected: 'ring-2 ring-accent/40',
   eventTitle: 'font-semibold leading-tight',
   eventContent:
     'flex h-full min-h-0 min-w-0 flex-col justify-start gap-0.5 overflow-hidden leading-tight',
@@ -94,7 +94,7 @@ export const classNames = {
     'mb-1 flex items-center gap-1 text-[11px] font-semibold text-danger before:h-0.5 before:flex-1 before:bg-danger/70',
   monthEvents: 'flex flex-col gap-1',
   monthEvent:
-    'truncate rounded-md bg-primary/10 px-2 py-1 text-left text-xs font-medium text-primary-700',
+    'truncate rounded-md bg-accent/10 px-2 py-1 text-left text-xs font-medium text-accent',
   moreEvents: 'text-xs text-muted',
   todayBadge:
     'inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-danger px-1.5 text-sm font-semibold leading-none text-white',

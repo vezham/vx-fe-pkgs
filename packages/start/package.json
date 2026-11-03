@@ -99,6 +99,7 @@
     "@vezham/env": "workspace:*",
     "@vezham/hooks": "workspace:*",
     "@vezham/template": "workspace:*",
+    "tailwind-variants": "3.3.1",
     "yaml": "catalog:"
   }
 }

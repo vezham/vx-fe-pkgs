@@ -1,6 +1,8 @@
+import type { Outfit } from '@vezham/tamizhi-contracts'
+
 import { resolveAvatarAsset } from './avatar-assets'
 import { EXPRESSIONS, OUTFITS } from './avatar-data'
-import type { Expression, Outfit } from './avatar-data'
+import type { Expression } from './avatar-data'
 
 type RenderState = Record<
   string,

@@ -1,5 +1,6 @@
 import { type ReactElement, useCallback, useState } from 'react'
 
+import { useCommand } from '@vezham/hooks'
 import {
   AltArrowDown as AltArrowDownIcon,
   Archive as ArchiveIcon,
@@ -20,7 +21,6 @@ import {
 
 import { AppIcon } from '../../app-icon'
 import { useAppMenu } from '../../app-menu'
-import { useCommand } from '../../command'
 import { ShortcutKey, ShortcutTooltipLabel } from '../../shortcut-key'
 import { useInfoPanel } from '../info-panel'
 import { APPLICATION_MENU_SHEET_MEDIA_QUERY } from '../responsive'

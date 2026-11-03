@@ -176,7 +176,7 @@ const CommandItemContent = ({
 }) => {
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <div className="bg-default-100 text-default-600 flex h-8 w-8 shrink-0 items-center justify-center rounded-md">
+      <div className="bg-default text-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-md">
         <AppIcon icon={icon} size={18} aria-hidden="true" />
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">

@@ -54,7 +54,7 @@ const QuickAccess = ({
               aria-label="Back to bookmarks"
               size="sm"
               variant="ghost"
-              className="text-default-600 shrink-0"
+              className="text-muted shrink-0"
               onPress={onBackToNormalView}>
               <ArrowLeftIcon size={16} aria-hidden="true" />
             </Button>
@@ -84,7 +84,7 @@ const QuickAccess = ({
                   ) : item.backgroundImage ? (
                     <Avatar.Image src={item.backgroundImage} alt={item.name} />
                   ) : null}
-                  <Avatar.Fallback className="bg-default-500 text-white">
+                  <Avatar.Fallback className="bg-default text-default-foreground">
                     <Pin
                       className="text-warning"
                       size="1em"
@@ -183,19 +183,19 @@ const QuickAccess = ({
         {hasMorePins && (
           <button
             onClick={onViewAllPins}
-            className="group bg-default-100 hover:bg-default-200 relative flex aspect-square w-[120px] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl transition-[transform,background-color] hover:scale-[1.02] active:scale-[0.98]">
+            className="group bg-default hover:bg-default-hover relative flex aspect-square w-[120px] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl transition-[transform,background-color] hover:scale-[1.02] active:scale-[0.98]">
             <div className="flex flex-col items-center gap-2 p-4">
               <EyeIcon
                 size={32}
-                className="text-primary"
+                className="text-accent"
                 weight="filled"
                 aria-hidden="true"
               />
               <div className="text-center">
-                <Typography.Paragraph className="text-default-700 text-sm font-semibold">
+                <Typography.Paragraph className="text-foreground text-sm font-semibold">
                   View All
                 </Typography.Paragraph>
-                <Typography.Paragraph className="text-default-500 text-xs">
+                <Typography.Paragraph className="text-muted text-xs">
                   {pins.length - 6} more
                 </Typography.Paragraph>
               </div>
@@ -215,7 +215,7 @@ const QuickAccess = ({
       <section {...getSectionProps()}>
         <div {...getSectionHeaderProps()}>
           <Heart
-            {...getSectionIconProps('text-primary')}
+            {...getSectionIconProps('text-accent')}
             weight="filled"
             aria-hidden="true"
           />
@@ -234,7 +234,7 @@ const QuickAccess = ({
         <div {...getSectionHeaderProps()}>
           <div className="flex flex-1 items-center gap-2">
             <Pin
-              {...getSectionIconProps('text-primary')}
+              {...getSectionIconProps('text-accent')}
               weight="filled"
               aria-hidden="true"
             />
@@ -252,7 +252,7 @@ const QuickAccess = ({
                 size="sm"
                 variant="ghost"
                 onPress={onToggleScrollFavorites}
-                className="text-default-400">
+                className="text-muted">
                 {isScrollFavoritesOpen ? (
                   <AltArrowUpIcon size={18} aria-hidden="true" />
                 ) : (

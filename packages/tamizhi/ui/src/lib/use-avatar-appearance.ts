@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-import type { Expression, Outfit } from './avatar-data'
+import type { Outfit } from '@vezham/tamizhi-contracts'
+
+import type { Expression } from './avatar-data'
 
 interface Appearance {
   manualOutfit: Outfit | null

@@ -82,17 +82,17 @@ const Menu = forwardRef<HTMLDivElement, Props>((props, ref) => {
           onClick={() => handleDrawerItemClick(item)}
           className={cn(
             'flex w-full cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent px-4 py-2.5 text-left transition-all duration-200',
-            'hover:bg-default-100',
+            'hover:bg-default',
             !hasSubmenu &&
               selectedKey === item.key &&
-              'bg-primary/10 text-primary'
+              'bg-accent/10 text-accent'
           )}
           style={{ paddingLeft: `${paddingLeft}px` }}>
           {item.icon && (
             <AppIcon
               icon={item.icon}
               size={18}
-              className="text-default-600"
+              className="text-muted"
               aria-hidden="true"
             />
           )}
@@ -101,7 +101,7 @@ const Menu = forwardRef<HTMLDivElement, Props>((props, ref) => {
             <AppIcon
               icon={isExpanded ? 'vx:chevron-down' : 'vx:chevron-right'}
               size={16}
-              className="text-default-400 transition-transform duration-200"
+              className="text-muted transition-transform duration-200"
               aria-hidden="true"
             />
           )}
@@ -181,7 +181,7 @@ const Menu = forwardRef<HTMLDivElement, Props>((props, ref) => {
         <Drawer.Content placement="left">
           <Drawer.Dialog className="bg-black/5 backdrop-blur-sm md:translate-x-[106px]">
             <Drawer.CloseTrigger />
-            <div className="border-default-200 flex items-center justify-between border-b p-4">
+            <div className="border-border flex items-center justify-between border-b p-4">
               <Drawer.Header className="text-lg font-semibold">
                 {currentTitle}
               </Drawer.Header>

@@ -171,7 +171,7 @@ describe('shared control center tiles', () => {
         expect(purple.getAttribute('aria-selected')).toBe('true')
       )
       expect(root.style.getPropertyValue('--accent')).toBe('#7d3fc8')
-      expect(root.style.getPropertyValue('--heroui-primary')).toContain('%')
+      expect(root.style.getPropertyValue('--accent-foreground')).toBe('#ffffff')
       expect(root.classList.contains('dark')).toBe(true)
       fireEvent.click(
         screen.getByRole('button', { name: 'Back to Control Center' })
@@ -190,7 +190,7 @@ describe('shared control center tiles', () => {
         expect(root.style.getPropertyValue('--accent')).toBe('#123456')
       )
       expect(root.style.getPropertyPriority('--accent')).toBe('important')
-      expect(root.style.getPropertyValue('--heroui-primary')).toBe('')
+      expect(root.style.getPropertyValue('--accent-foreground')).toBe('')
     } finally {
       if (originalStyle === null) root.removeAttribute('style')
       else root.setAttribute('style', originalStyle)

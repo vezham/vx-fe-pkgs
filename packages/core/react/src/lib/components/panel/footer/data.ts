@@ -8,7 +8,7 @@ import type {
 const STATUS_OPTIONS = [
   { id: 'active', label: 'Available', icon: '🟢', color: 'bg-success' },
   { id: 'away', label: 'Away', icon: '🌙', color: 'bg-warning' },
-  { id: 'idle', label: 'Idle', icon: '💤', color: 'bg-primary' },
+  { id: 'idle', label: 'Idle', icon: '💤', color: 'bg-accent' },
   { id: 'busy', label: 'Busy', icon: '🔴', color: 'bg-danger' },
   { id: 'dnd', label: 'Do not disturb', icon: '⛔', color: 'bg-muted' }
 ] as const satisfies readonly UserStatusOption[]

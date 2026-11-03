@@ -12,9 +12,5 @@
 @import '@vezham/react-pro-v3/css';
 @import '@vezham/react-pro-v3/themes/glass';
 
-@plugin './plugin.mts';
-
-@source '../../../node_modules/@vx-oss/heroui-v2-theme/dist/**/*.{js,ts,jsx,tsx}';
-
 /* @custom-variant - @vx/ds */
 @custom-variant dark (&:is(.dark *));

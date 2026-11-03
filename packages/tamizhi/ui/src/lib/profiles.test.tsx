@@ -19,7 +19,7 @@ import {
   getTamizhiProfiles
 } from './profiles'
 import { TamizhiSessionProvider, useTamizhiSession } from './session'
-import { useDemoChat } from './use-demo-chat'
+import { useTamizhiChat } from './use-tamizhi-chat'
 
 afterEach(() => {
   cleanup()
@@ -58,7 +58,7 @@ it('lists app names in the welcome picker, independently of outfit choices', asy
 
 it('persists selected profiles and manual outfits through history, retries, and branching', () => {
   vi.useFakeTimers()
-  const first = renderHook(() => useDemoChat(true))
+  const first = renderHook(() => useTamizhiChat(true))
   act(() => first.result.current.selectProfile('vezham-crm'))
   act(() => {
     first.result.current.configureAppearance({ outfit: 'guard' })
@@ -84,7 +84,7 @@ it('persists selected profiles and manual outfits through history, retries, and 
   expect(first.result.current.messages[0].outfit).toBe('planner')
   act(() => vi.advanceTimersByTime(200))
   first.unmount()
-  const restored = renderHook(() => useDemoChat(true, chatId))
+  const restored = renderHook(() => useTamizhiChat(true, chatId))
   expect(restored.result.current.runOutfitOverride).toBe('guard')
   expect(restored.result.current.profile.id).toBe('vezham-crm')
   expect(restored.result.current.messages[1]).toMatchObject(appearance)
@@ -185,7 +185,7 @@ it('sends profile metadata and applies declared tool appearances only while the 
     })
   }
   const { result } = renderHook(() =>
-    useDemoChat(false, undefined, 'profile:remote', client, {
+    useTamizhiChat(false, undefined, 'profile:remote', client, {
       appId: 'vezham-crm'
     })
   )
@@ -222,7 +222,7 @@ it('sends profile metadata and applies declared tool appearances only while the 
 
 it('honors a host override of the default Tamizhi profile instead of detecting from demo text', () => {
   const { result } = renderHook(() =>
-    useDemoChat(true, undefined, 'custom-default', undefined, {
+    useTamizhiChat(true, undefined, 'custom-default', undefined, {
       profiles: [
         {
           id: 'vezham-tamizhi',

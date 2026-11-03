@@ -17,11 +17,11 @@ import { PlaygroundPanel } from './playground-panel'
 import { TamizhiPluginSlot } from './plugins'
 import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
-import type { useDemoChat } from './use-demo-chat'
 import { useSpeechOutput } from './use-speech-output'
+import type { useTamizhiChat } from './use-tamizhi-chat'
 
 export interface TamizhiChatProps {
-  chat: Omit<ReturnType<typeof useDemoChat>, 'send'> & {
+  chat: Omit<ReturnType<typeof useTamizhiChat>, 'send'> & {
     send: (prompt: string, attachments?: APIAttachment[]) => unknown
   }
   isInstant: boolean

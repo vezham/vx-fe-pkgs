@@ -73,7 +73,7 @@ const createId = () => {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 }
 
-export const useDemoChat = (
+export const useTamizhiChat = (
   isInstant = false,
   selectedChatId?: string | null,
   storageKey = STORAGE_KEY,

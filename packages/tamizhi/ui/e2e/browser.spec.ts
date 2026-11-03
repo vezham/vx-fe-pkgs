@@ -325,3 +325,99 @@ test('named app profiles can be selected on compact screens', async ({
   ).toHaveAttribute('data-outfit', 'tutor')
   expect(errors).toEqual([])
 })
+
+test('V3 theme applies accent colors and appearance without legacy tokens', async ({
+  page
+}) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('/chat/new')
+  await expect(
+    page.getByRole('button', { name: 'Choose an assistant' })
+  ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Control center', exact: true })
+    .click()
+  const dialog = page.getByRole('dialog', {
+    name: 'Control Center',
+    exact: true
+  })
+  await expect(dialog).toBeVisible()
+  const lightToggle = dialog
+    .getByRole('button', {
+      name: 'Switch to light mode',
+      exact: true
+    })
+    .first()
+  if (await lightToggle.count()) await lightToggle.click()
+  await expect
+    .poll(() =>
+      page
+        .locator('html')
+        .evaluate(element => element.classList.contains('dark'))
+    )
+    .toBe(false)
+  const lightBackground = await page
+    .locator('html')
+    .evaluate(element =>
+      getComputedStyle(element).getPropertyValue('--background').trim()
+    )
+  const primary = page.locator('button[aria-label="Send message"]')
+  const beforeAccent = await primary.evaluate(
+    element => getComputedStyle(element).backgroundColor
+  )
+  await dialog.getByRole('button', { name: 'Theme', exact: true }).click()
+  await dialog.getByRole('option', { name: 'Purple', exact: true }).click()
+  await expect
+    .poll(() =>
+      page
+        .locator('html')
+        .evaluate(element =>
+          getComputedStyle(element).getPropertyValue('--accent').trim()
+        )
+    )
+    .toBe('#7d3fc8')
+  await expect
+    .poll(() =>
+      primary.evaluate(element => getComputedStyle(element).backgroundColor)
+    )
+    .not.toBe(beforeAccent)
+  await expect
+    .poll(() =>
+      page
+        .locator('html')
+        .evaluate(element =>
+          getComputedStyle(element).getPropertyValue('--focus').trim()
+        )
+    )
+    .toBe('#7d3fc8')
+  await dialog
+    .getByRole('button', { name: 'Back to Control Center', exact: true })
+    .click()
+  await dialog
+    .getByRole('button', { name: 'Switch to dark mode', exact: true })
+    .first()
+    .click()
+  await expect
+    .poll(() =>
+      page
+        .locator('html')
+        .evaluate(element => element.classList.contains('dark'))
+    )
+    .toBe(true)
+  const darkBackground = await page
+    .locator('html')
+    .evaluate(element =>
+      getComputedStyle(element).getPropertyValue('--background').trim()
+    )
+  expect(darkBackground).not.toBe(lightBackground)
+  const tokens = await page.locator('html').evaluate(element => {
+    const styles = getComputedStyle(element)
+    return {
+      accent: styles.getPropertyValue('--accent').trim(),
+      legacy: styles.getPropertyValue('--heroui-primary').trim()
+    }
+  })
+  expect(tokens).toEqual({ accent: '#7d3fc8', legacy: '' })
+  expect(errors).toEqual([])
+})

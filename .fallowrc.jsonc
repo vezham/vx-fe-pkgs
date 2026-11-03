@@ -117,7 +117,6 @@
     "@vezham/docs-story",
     "@vezham/icons-react",
     "@vezham/react-pro-v3",
-    "@vezham/react-v2",
     "@vezham/react-v3",
     // vx-bot/NOTE: Shared docs CSS imports its generated stylesheet export.
     "@vezham/start",

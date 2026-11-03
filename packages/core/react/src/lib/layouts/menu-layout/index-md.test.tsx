@@ -29,7 +29,8 @@ vi.mock('../../components/workspace-navigation', () => ({
   useWorkspaceNavigation: () => state,
   useSidebarShortcut: vi.fn()
 }))
-vi.mock('../../components/command', () => ({
+vi.mock('@vezham/hooks', async importOriginal => ({
+  ...(await importOriginal<typeof import('@vezham/hooks')>()),
   useCommand: () => state
 }))
 vi.mock('../../components/panel/info-panel', () => ({

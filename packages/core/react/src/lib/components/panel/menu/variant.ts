@@ -24,8 +24,8 @@ const tva = tv({
         label: 'text-muted'
       },
       primary: {
-        icon: 'text-primary',
-        label: 'text-primary font-medium'
+        icon: 'text-accent',
+        label: 'text-accent font-medium'
       },
       muted: {
         icon: 'text-muted-foreground',
@@ -92,8 +92,8 @@ const tva = tv({
     {
       variant: 'primary',
       class: {
-        icon: 'data-[active=true]:text-primary',
-        label: 'data-[active=true]:text-primary data-[active=true]:font-medium'
+        icon: 'data-[active=true]:text-accent',
+        label: 'data-[active=true]:text-accent data-[active=true]:font-medium'
       }
     },
     {

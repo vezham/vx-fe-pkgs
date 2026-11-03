@@ -49,7 +49,7 @@ const SettingsSidebar = ({ active, onSelect }: Props) => {
             type="button"
             onClick={() => onSelect(item.id)}
             className={`flex w-full items-center gap-4 rounded-xl p-2 px-2 ${
-              active === item.id ? 'bg-default-100' : 'hover:bg-default-50'
+              active === item.id ? 'bg-default' : 'hover:bg-default-soft'
             }`}>
             {avatar ? (
               <img
@@ -65,7 +65,7 @@ const SettingsSidebar = ({ active, onSelect }: Props) => {
 
             <div className="flex flex-col items-start">
               <span className="text-sm font-medium">{names}</span>
-              <span className="text-default-500 text-xs">Edit Profile</span>
+              <span className="text-muted text-xs">Edit Profile</span>
             </div>
           </button>
         </div>
@@ -88,8 +88,8 @@ const SettingsSidebar = ({ active, onSelect }: Props) => {
           }}
           className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm ${
             active === item.id || isChildActive
-              ? 'bg-default-100 font-medium'
-              : 'hover:bg-default-50'
+              ? 'bg-default font-medium'
+              : 'hover:bg-default-soft'
           }`}
           style={{ paddingLeft: 12 + level * 16 }}>
           <div className="flex items-center gap-2">
@@ -104,8 +104,8 @@ const SettingsSidebar = ({ active, onSelect }: Props) => {
                   : isChildActive
                     ? 'text-foreground'
                     : level > 0
-                      ? 'text-default-400'
-                      : 'text-default-600'
+                      ? 'text-muted'
+                      : 'text-muted'
               }`}>
               {item.label}
             </span>
@@ -135,7 +135,7 @@ const SettingsSidebar = ({ active, onSelect }: Props) => {
         {settingsSidebar.map(section => (
           <div key={section.title}>
             {section.title && (
-              <p className="text-default-500 mb-2 px-3 text-xs font-semibold">
+              <p className="text-muted mb-2 px-3 text-xs font-semibold">
                 {section.title}
               </p>
             )}

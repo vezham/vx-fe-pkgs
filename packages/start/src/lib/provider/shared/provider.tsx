@@ -4,7 +4,6 @@ import { StrictMode, useState } from 'react'
 
 import type { DevtoolsApp } from '@vezham/devtools'
 import { AppContext } from '@vezham/hooks'
-import { VezhamProvider, cn } from '@vezham/react-v2'
 import { Toast } from '@vezham/react-v3'
 import { defineLogger } from '@vezham/use-logger'
 
@@ -48,7 +47,7 @@ const createProvider = ({ env, renderDevtools }: CreateProviderProps) => {
   }) => {
     // vx-bot/NOTE: Keep caches isolated between server renders and provider instances.
     const [queryClient] = useState(createQueryClient)
-    const classList = cn('vx-app', className)
+    const classList = `vx-app ${className}`.trim()
     const app = {
       environment: env.APP_ENV,
       id,
@@ -58,19 +57,10 @@ const createProvider = ({ env, renderDevtools }: CreateProviderProps) => {
     } satisfies DevtoolsApp
     let template = (
       <>
-        <VezhamProvider>
-          <div data-vx-app-version={version} className={classList}>
-            {children}
-          </div>
-          <Toast.Provider />
-          {/* vx-bot/TODO: Restore the theme provider with lockscreen, announcement,
-            search spotlight, and portal support.
-            <ThemeProvider classTarget={classTarget} vmode={vmode}>
-              <Lockscreen />
-              <NoInternetConnection />
-              <div id="portal"></div>
-            </ThemeProvider> */}
-        </VezhamProvider>
+        <div data-vx-app-version={version} className={classList}>
+          {children}
+        </div>
+        <Toast.Provider />
         {renderDevtools?.({ app, query })}
       </>
     )

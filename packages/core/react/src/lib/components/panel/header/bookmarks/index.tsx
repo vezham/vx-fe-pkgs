@@ -327,7 +327,7 @@ const BookmarksContent = forwardRef<HTMLDivElement, Props>((props, ref) => {
             <section {...getSectionProps()}>
               <div {...getSectionHeaderProps()}>
                 <BookmarkIcon
-                  {...getSectionIconProps('text-primary')}
+                  {...getSectionIconProps('text-accent')}
                   weight="filled"
                   aria-hidden="true"
                 />

@@ -22,21 +22,21 @@ const shortcut = {
   ctrlKey: detectPlatform() !== 'mac'
 }
 
-it('migrates the saved Disc panel to Storage', () => {
-  window.localStorage.setItem(
-    'vx-app:info-panel',
-    JSON.stringify({ activeInfoPanel: 'disc', isOpen: true })
-  )
-  render(
-    <InfoPanelProvider>
-      <PanelState />
-    </InfoPanelProvider>
-  )
-  expect(screen.getByRole('status')).toHaveTextContent('storage')
-  expect(
-    JSON.parse(window.localStorage.getItem('vx-app:info-panel') ?? '{}')
-  ).toEqual({ activeInfoPanel: 'storage', isOpen: true })
-})
+it.each(['unregistered', 42, null])(
+  'closes invalid saved panel IDs: %s',
+  activeInfoPanel => {
+    window.localStorage.setItem(
+      'vx-app:info-panel',
+      JSON.stringify({ activeInfoPanel, isOpen: true })
+    )
+    render(
+      <InfoPanelProvider>
+        <PanelState />
+      </InfoPanelProvider>
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('closed')
+  }
+)
 
 describe.each([
   ['B', 'bookmarks'],

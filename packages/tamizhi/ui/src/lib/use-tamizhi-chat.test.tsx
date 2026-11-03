@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useDemoChat } from './use-demo-chat'
+import { useTamizhiChat } from './use-tamizhi-chat'
 
 const mountChat = () => {
-  const hook = renderHook(useDemoChat)
+  const hook = renderHook(useTamizhiChat)
   act(() => vi.advanceTimersByTime(0))
   return hook
 }
@@ -92,7 +92,7 @@ describe('Tamizhi local conversations', () => {
   })
 
   it('returns a complete reply immediately when Instant is selected', () => {
-    const { result } = renderHook(() => useDemoChat(true))
+    const { result } = renderHook(() => useTamizhiChat(true))
     act(() => vi.advanceTimersByTime(0))
     act(() => result.current.send('Suggest a quick dinner recipe'))
     expect(result.current.isStreaming).toBe(false)
@@ -103,7 +103,7 @@ describe('Tamizhi local conversations', () => {
   it('uses route selection and cancels a stream when leaving its conversation', () => {
     const initialProps: { chatId: string | null } = { chatId: null }
     const hook = renderHook(
-      ({ chatId }: { chatId: string | null }) => useDemoChat(false, chatId),
+      ({ chatId }: { chatId: string | null }) => useTamizhiChat(false, chatId),
       {
         initialProps
       }

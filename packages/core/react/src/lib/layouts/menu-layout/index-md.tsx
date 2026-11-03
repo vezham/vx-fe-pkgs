@@ -1,9 +1,9 @@
 import { useLocation } from '@tanstack/react-router'
 import { useState } from 'react'
 
+import { useCommand } from '@vezham/hooks'
 import { Surface } from '@vezham/react-v3'
 
-import { useCommand } from '../../components/command'
 import { Footer } from '../../components/panel/footer'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
 import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
@@ -146,7 +146,7 @@ const NavigationPanel = ({
 }: Props) => (
   <Surface
     variant="transparent"
-    className={`border-default-300 sticky top-0 left-0 z-[10] flex h-[100dvh] shrink-0 flex-col overflow-hidden transition-[width,padding,gap] duration-300 ease-out ${navigationWidth} ${
+    className={`border-border-secondary sticky top-0 left-0 z-[10] flex h-[100dvh] shrink-0 flex-col overflow-hidden transition-[width,padding,gap] duration-300 ease-out ${navigationWidth} ${
       collapsed ? 'border-0 p-0' : 'gap-6 px-4 pt-3 pb-4'
     }`}
     data-vx="menu-layout">
@@ -204,7 +204,7 @@ const CollapsedNavigation = ({
   return (
     <Surface
       variant="transparent"
-      className="border-default-200 bg-background/90 fixed top-3 left-3 z-40 flex h-[45px] w-fit items-center rounded-full border px-2 py-0 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
+      className="border-border bg-background/90 fixed top-3 left-3 z-40 flex h-[45px] w-fit items-center rounded-full border px-2 py-0 shadow-[0_14px_28px_rgba(15,23,42,0.14)] backdrop-blur-xl">
       <Header
         compact
         users={headerUsers}

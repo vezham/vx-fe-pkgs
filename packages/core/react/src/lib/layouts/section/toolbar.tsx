@@ -487,7 +487,7 @@ const ToolbarActions = ({
   <div
     role="group"
     aria-label="Toolbar actions"
-    className="scrollbar-hide col-start-2 row-start-1 -m-1 hidden max-w-[calc(100vw-2rem)] min-w-0 items-center gap-2 overflow-x-auto p-1 md:flex">
+    className="col-start-2 row-start-1 -m-1 hidden max-w-[calc(100vw-2rem)] min-w-0 [scrollbar-width:none] items-center gap-2 overflow-x-auto p-1 md:flex [&::-webkit-scrollbar]:hidden">
     {search && <SectionSearchField search={search} />}
     {sync && (
       <ShortcutButton

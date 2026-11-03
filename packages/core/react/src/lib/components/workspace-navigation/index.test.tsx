@@ -7,7 +7,8 @@ import {
   useWorkspaceNavigation
 } from './index'
 
-vi.mock('../command', () => ({
+vi.mock('@vezham/hooks', async importOriginal => ({
+  ...(await importOriginal<typeof import('@vezham/hooks')>()),
   useCommand: () => ({ closeCommand: vi.fn() })
 }))
 vi.mock('../panel/info-panel', () => ({
