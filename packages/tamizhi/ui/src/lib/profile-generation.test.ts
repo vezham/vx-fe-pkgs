@@ -25,6 +25,7 @@ const config = {
       name: 'Tamizhi',
       persona: 'helper',
       outfit: 'rest',
+      suggestions: [{ title: 'Plan my day', prompt: 'Help me plan my day.' }],
       activities: { 'skill.sales-coaching': { outfit: 'coach' } }
     }
   ]
@@ -50,6 +51,8 @@ it('generates typed profile data from root YAML without rewriting unchanged outp
   expect(generated).toContain('satisfies readonly TamizhiProfile[]')
   expect(generated).toContain('"skill.sales-coaching"')
   expect(generated).toContain('"outfit": "coach"')
+  expect(generated).toContain('"title": "Plan my day"')
+  expect(generated).toContain('"prompt": "Help me plan my day."')
   expect(generated).not.toContain("from 'yaml'")
   const timestamp = new Date('2020-01-01T00:00:00Z')
   utimesSync(file, timestamp, timestamp)
@@ -94,4 +97,25 @@ it('regenerates watched configuration after an editor replaces the YAML file', a
     expect(generated).toContain('"name": "Updated assistant"')
     expect(generated).toContain('"outfit": "money"')
   })
+})
+
+it('rejects empty suggestion prompts without replacing generated output', async () => {
+  const root = createRoot()
+  const file = await generateProfiles(root)
+  const original = readFileSync(file, 'utf8')
+  writeFileSync(
+    path.join(root, 'vx.tamizhi.yaml'),
+    stringify({
+      profiles: [
+        {
+          ...config.profiles[0],
+          suggestions: [{ title: 'Start', prompt: ' ' }]
+        }
+      ]
+    })
+  )
+  await expect(generateProfiles(root)).rejects.toThrow(
+    'Invalid Tamizhi configuration'
+  )
+  expect(readFileSync(file, 'utf8')).toBe(original)
 })

@@ -7,12 +7,22 @@ profiles:
     name: Tamizhi
     persona: helper
     outfit: rest
+    suggestions:
+      - title: 'Plan my day'
+        prompt: 'Help me plan my day. Ask about my priorities, available time, and commitments first.'
+      - title: 'Help me write'
+        prompt: 'Help me write a clear message. Ask who it is for and what I want to say.'
 
   - id: vezham-crm
     category: Business
     name: CRM
     persona: planner
     outfit: planner
+    suggestions:
+      - title: 'Draft a follow-up'
+        prompt: 'Help me draft a sales follow-up email. Ask about the prospect and our last conversation first.'
+      - title: 'Review my pipeline'
+        prompt: 'Help me review my sales pipeline. Ask me to share my opportunities, stages, and next steps.'
     activities:
       mcp_crm_revenue_report:
         persona: planner
@@ -26,93 +36,173 @@ profiles:
     name: School OS
     persona: tutor
     outfit: tutor
+    suggestions:
+      - title: 'Plan a lesson'
+        prompt: 'Help me plan a lesson. Ask about the subject, grade, learning goals, and lesson duration.'
+      - title: 'Explain a topic'
+        prompt: 'Help me understand a topic. Ask what I am learning and my current level first.'
 
   - id: vezham-kitchen
     category: Everyday
     name: Kitchen
     persona: helper
     outfit: cook
+    suggestions:
+      - title: 'Plan a quick dinner'
+        prompt: 'Suggest a quick dinner. Ask what ingredients I have, my dietary preferences, and available time.'
+      - title: 'Build a meal plan'
+        prompt: 'Help me plan meals for the week. Ask about the number of people, dietary needs, and budget.'
 
   - id: vezham-research
     category: Learning
     name: Research
     persona: explorer
     outfit: investigate
+    suggestions:
+      - title: 'Explore a topic'
+        prompt: 'Help me research a topic. Ask about my question, goals, and what sources I already have.'
+      - title: 'Compare my sources'
+        prompt: 'Help me compare research sources. Ask me to share them and identify the claims I want to check.'
 
   - id: vezham-mail
     category: Business
     name: Mail
     persona: writer
     outfit: write
+    suggestions:
+      - title: 'Draft an email'
+        prompt: 'Help me draft an email. Ask about the recipient, purpose, and tone first.'
+      - title: 'Polish my message'
+        prompt: 'Help me improve a message. Ask me to paste the draft and describe the audience.'
 
   - id: vezham-dev-studio
     category: Development
     name: Dev Studio
     persona: coder
     outfit: builder
+    suggestions:
+      - title: 'Build a feature'
+        prompt: 'Help me plan a software feature. Ask about the desired behavior, stack, and constraints.'
+      - title: 'Review my code'
+        prompt: 'Help me review some code. Ask me to share it and explain what it should do.'
 
   - id: vezham-music
     category: Creative
     name: Music
     persona: explorer
     outfit: music
+    suggestions:
+      - title: 'Make a playlist'
+        prompt: 'Help me put together a playlist. Ask about my mood, preferred genres, and listening activity.'
+      - title: 'Explore a new genre'
+        prompt: 'Help me explore a music genre. Ask what I already enjoy and what I want to discover.'
 
   - id: vezham-garden
     category: Everyday
     name: Garden
     persona: helper
     outfit: garden
+    suggestions:
+      - title: 'Care for my plant'
+        prompt: 'Help me care for a plant. Ask about the plant, light, watering routine, and any symptoms.'
+      - title: 'Plan my garden'
+        prompt: 'Help me plan a garden. Ask about the space, climate, sunlight, and what I want to grow.'
 
   - id: vezham-design-studio
     category: Creative
     name: Design Studio
     persona: coder
     outfit: designer
+    suggestions:
+      - title: 'Review a design'
+        prompt: 'Help me review an interface design. Ask me to share it, the target users, and the main task.'
+      - title: 'Shape an interface'
+        prompt: 'Help me plan an interface. Ask about its purpose, users, and essential actions.'
 
   - id: vezham-video-studio
     category: Creative
     name: Video Studio
     persona: writer
     outfit: director
+    suggestions:
+      - title: 'Draft a storyboard'
+        prompt: 'Help me draft a video storyboard. Ask about the audience, message, length, and style.'
+      - title: 'Plan a video'
+        prompt: 'Help me plan a video. Ask about its goal, format, available resources, and deadline.'
 
   - id: vezham-wellness
     category: Everyday
     name: Wellness
     persona: planner
     outfit: coach
+    suggestions:
+      - title: 'Build a routine'
+        prompt: 'Help me build a manageable daily routine. Ask about my goals, current habits, and available time.'
+      - title: 'Plan a small step'
+        prompt: 'Help me choose a small step toward a personal goal. Ask what I want to work on and what feels difficult.'
 
   - id: vezham-travel
     category: Everyday
     name: Travel
     persona: explorer
     outfit: traveller
+    suggestions:
+      - title: 'Plan a trip'
+        prompt: 'Help me plan a trip. Ask about the destination, dates, travelers, interests, and budget.'
+      - title: 'Make a packing list'
+        prompt: 'Help me make a packing list. Ask about the destination, weather, trip length, and planned activities.'
 
   - id: vezham-finance
     category: Business
     name: Finance
     persona: planner
     outfit: money
+    suggestions:
+      - title: 'Make a budget'
+        prompt: 'Help me make a personal budget. Ask about my income, regular expenses, and savings goals.'
+      - title: 'Organize my expenses'
+        prompt: 'Help me organize my expenses. Ask me to share the categories and amounts I want to review.'
 
   - id: vezham-releases
     category: Development
     name: Releases
     persona: coder
     outfit: captain
+    suggestions:
+      - title: 'Plan a release'
+        prompt: 'Help me plan a software release. Ask about the changes, target date, risks, and release process.'
+      - title: 'Draft release notes'
+        prompt: 'Help me draft release notes. Ask me to share the changes, audience, and version.'
 
   - id: vezham-qa
     category: Development
     name: QA
     persona: coder
     outfit: tester
+    suggestions:
+      - title: 'Create a test plan'
+        prompt: 'Help me create a test plan. Ask about the feature, expected behavior, platforms, and main risks.'
+      - title: 'Find edge cases'
+        prompt: 'Help me identify edge cases. Ask me to describe the feature, inputs, and constraints.'
 
   - id: vezham-security
     category: Development
     name: Security
     persona: coder
     outfit: guard
+    suggestions:
+      - title: 'Review access controls'
+        prompt: 'Help me review access controls. Ask about the system, user roles, protected resources, and current rules.'
+      - title: 'Assess a security risk'
+        prompt: 'Help me assess a security concern. Ask about the system, observed behavior, and potential impact.'
 
   - id: vezham-bug-tracker
     category: Development
     name: Bug Tracker
     persona: coder
     outfit: bug
+    suggestions:
+      - title: 'Find a bug'
+        prompt: 'Help me debug an error. Ask for the error message, relevant code, and steps to reproduce it.'
+      - title: 'Write a bug report'
+        prompt: 'Help me write a useful bug report. Ask about expected behavior, actual behavior, and reproduction steps.'

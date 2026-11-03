@@ -19,6 +19,7 @@ import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
 import { useSpeechOutput } from './use-speech-output'
 import type { useTamizhiChat } from './use-tamizhi-chat'
+import { WelcomeSuggestions } from './welcome-suggestions'
 
 export interface TamizhiChatProps {
   chat: Omit<ReturnType<typeof useTamizhiChat>, 'send'> & {
@@ -100,6 +101,23 @@ export const TamizhiChat = ({
     if (hasMessages) chat.newChat()
     chat.selectProfile(id)
     resetAppearance()
+  }
+
+  const sendMessage = (prompt: string, attachments?: APIAttachment[]) => {
+    if (isOffline || !chat.isReady || chat.isStreaming) return
+    shouldFollow.current.enabled = true
+    chat.configureAppearance({ outfit: manualOutfit ?? undefined })
+    chat.configureRun({
+      model: availableModel,
+      fast: isFastMode,
+      permission:
+        permission === 'Full access'
+          ? 'full'
+          : permission === 'Approve for me'
+            ? 'safe'
+            : 'ask'
+    })
+    chat.send(prompt, attachments)
   }
 
   const playground = (
@@ -197,6 +215,14 @@ export const TamizhiChat = ({
         </span>
       )}
       <ChatFeedback chat={chat} speechError={speech.error} />
+      {!hasMessages && composerVariant === 'app' && (
+        <WelcomeSuggestions
+          profile={chat.profile}
+          profiles={chat.profiles}
+          onSuggest={sendMessage}
+          isDisabled={isOffline || !chat.isReady || chat.isStreaming}
+        />
+      )}
       <ComposerComponent
         api={chat.api}
         allowImages={chat.capabilities?.images}
@@ -216,21 +242,7 @@ export const TamizhiChat = ({
         avatarSlotRef={chatAvatarSlot}
         inputRef={composerInput}
         onListeningChange={setIsListening}
-        onSend={(prompt, attachments) => {
-          shouldFollow.current.enabled = true
-          chat.configureAppearance({ outfit: manualOutfit ?? undefined })
-          chat.configureRun({
-            model: availableModel,
-            fast: isFastMode,
-            permission:
-              permission === 'Full access'
-                ? 'full'
-                : permission === 'Approve for me'
-                  ? 'safe'
-                  : 'ask'
-          })
-          chat.send(prompt, attachments)
-        }}
+        onSend={sendMessage}
         onStop={chat.stop}
       />
     </section>

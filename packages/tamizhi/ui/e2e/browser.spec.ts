@@ -450,7 +450,7 @@ test('V3 theme applies accent colors and appearance without legacy tokens', asyn
 test('welcome assistant picker supports search, keyboard selection, and recent choices', async ({
   page
 }) => {
-  await page.goto('/chat/new')
+  await connect(page)
   const trigger = page.getByRole('button', { name: 'Choose an assistant' })
   await trigger.click()
   const search = page.getByRole('searchbox', { name: 'Search assistants' })
@@ -463,25 +463,91 @@ test('welcome assistant picker supports search, keyboard selection, and recent c
   await search.press('ArrowDown')
   await search.press('Enter')
   await expect(trigger).toContainText('Bug Tracker')
+  await expect(
+    page
+      .getByRole('group', { name: 'Suggestions for Bug Tracker', exact: true })
+      .getByRole('button', { name: 'Find a bug', exact: true })
+  ).toBeVisible()
   await trigger.click()
   await expect(search).toHaveValue('')
   await expect(
     page.getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
   ).toHaveCount(1)
   await expect(
-    page
-      .getByRole('group', { name: 'Recent', exact: true })
-      .getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
+    page.getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
   ).toHaveAttribute('aria-checked', 'true')
   await search.press('Escape')
   await expect(trigger).toBeFocused()
-  await page.reload()
   await trigger.click()
+  await search.fill('CRM')
+  await page.getByRole('menuitemradio', { name: 'CRM', exact: true }).click()
+  const recent = page.getByRole('group', {
+    name: 'Recent assistants',
+    exact: true
+  })
+  const bugChip = recent.getByRole('button', {
+    name: 'Bug Tracker',
+    exact: true
+  })
+  await expect(bugChip).toBeVisible()
   await expect(
-    page
-      .getByRole('group', { name: 'Recent', exact: true })
-      .getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
+    recent.getByRole('button', { name: 'CRM', exact: true })
+  ).toHaveCount(0)
+  await expect(bugChip.locator('img')).toHaveAttribute('width', '28')
+  await expect
+    .poll(() =>
+      bugChip
+        .locator('img')
+        .evaluate((image: HTMLImageElement) => image.naturalWidth)
+    )
+    .toBeGreaterThan(0)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await bugChip.click()
+  await expect(trigger).toContainText('Bug Tracker')
+  await expect(
+    recent.getByRole('button', { name: 'CRM', exact: true })
   ).toBeVisible()
+  await expect(
+    recent.getByRole('button', { name: 'Bug Tracker', exact: true })
+  ).toHaveCount(0)
+  await page.reload()
+  await expect(
+    recent.getByRole('button', { name: 'CRM', exact: true })
+  ).toBeVisible()
+  await expect(page.locator('body')).toHaveJSProperty(
+    'scrollWidth',
+    await page.locator('body').evaluate(body => body.clientWidth)
+  )
+  await recent.getByRole('button', { name: 'CRM', exact: true }).click()
+  const suggestions = page.getByRole('group', {
+    name: 'Suggestions for CRM',
+    exact: true
+  })
+  await expect(suggestions.getByRole('button')).toHaveCount(2)
+  const composer = page.getByRole('textbox', { name: 'Message Tamizhi' })
+  const composerNode = await composer.elementHandle()
+  const suggestionBounds = await suggestions.boundingBox()
+  const composerBounds = await composer.boundingBox()
+  expect(
+    suggestionBounds &&
+      composerBounds &&
+      suggestionBounds.y + suggestionBounds.height <= composerBounds.y
+  ).toBeTruthy()
+  await composer.focus()
+  await expect(suggestions).toBeVisible()
+  await suggestions
+    .getByRole('button', { name: 'Draft a follow-up', exact: true })
+    .click()
+  await expect(
+    page.getByRole('article', { name: 'Your message', exact: true })
+  ).toContainText('Help me draft a sales follow-up email.')
+  await expect(
+    page.getByRole('article', { name: 'Tamizhi’s response', exact: true })
+  ).toBeVisible()
+  await expect(suggestions).toHaveCount(0)
+  expect(await composerNode?.evaluate(element => element.isConnected)).toBe(
+    true
+  )
 })
 
 test('Tuning profiles display outfit image previews', async ({ page }) => {

@@ -8,10 +8,16 @@ export interface TamizhiAppearance {
   outfit: Outfit
 }
 
+export interface TamizhiSuggestion {
+  title: string
+  prompt: string
+}
+
 export interface TamizhiProfile extends TamizhiAppearance {
   id: string
   name: string
   category?: string
+  suggestions?: readonly TamizhiSuggestion[]
   activities?: Readonly<Record<string, Partial<TamizhiAppearance>>>
 }
 
@@ -29,6 +35,21 @@ export const tamizhiProfileSchema = appearanceSchema.extend({
   id: z.string().trim().min(1).max(128),
   name: z.string().trim().min(1).max(128),
   category: z.string().trim().min(1).max(64).optional(),
+  suggestions: z
+    .array(
+      z.strictObject({
+        title: z.string().trim().min(1).max(80),
+        prompt: z.string().trim().min(1).max(2000)
+      })
+    )
+    .max(3)
+    .refine(
+      items => new Set(items.map(item => item.title)).size === items.length,
+      {
+        message: 'Suggestion titles must be unique within a profile'
+      }
+    )
+    .optional(),
   activities: z
     .record(z.string().min(1).max(256), appearanceSchema.partial())
     .optional()

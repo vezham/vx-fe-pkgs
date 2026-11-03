@@ -11,6 +11,12 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { BotPicker } from './bot-picker'
 import { getTamizhiProfiles } from './profiles'
 
+vi.mock('./companion', () => ({
+  Companion: ({ previewSize }: { previewSize: number }) => (
+    <img alt="" width={previewSize} height={previewSize} />
+  )
+}))
+
 afterEach(() => {
   cleanup()
   localStorage.clear()
@@ -31,6 +37,7 @@ it('searches names and categories, handles empty results, and clears the filter'
       onSelect={vi.fn()}
     />
   )
+  expect(screen.queryByRole('group', { name: 'Recent assistants' })).toBeNull()
   const search = await openPicker()
   expect(screen.getAllByRole('menuitemradio')).toHaveLength(profiles.length)
   fireEvent.change(search, { target: { value: ' BuSiNeSs ' } })
@@ -55,7 +62,7 @@ it('searches names and categories, handles empty results, and clears the filter'
   )
 })
 
-it('keeps Tamizhi first and restores recent choices once each after remounting', async () => {
+it('shows unique recent choices as chips outside the dropdown and excludes the selected profile', async () => {
   localStorage.setItem(
     'tamizhi.recent-profiles',
     JSON.stringify(['missing-app', 'vezham-crm', 'vezham-crm', 'vezham-qa'])
@@ -69,34 +76,44 @@ it('keeps Tamizhi first and restores recent choices once each after remounting',
     onSelect
   }
   const view = render(<BotPicker {...props} />)
+  const recent = await screen.findByRole('group', { name: 'Recent assistants' })
+  expect(within(recent).getAllByRole('button')).toHaveLength(2)
+  expect(within(recent).getByRole('button', { name: 'CRM' })).toBeTruthy()
+  expect(
+    within(within(recent).getByRole('button', { name: 'CRM' })).getByRole(
+      'presentation'
+    )
+  ).toHaveAttribute('width', '28')
   const search = await openPicker()
   expect(screen.getAllByRole('menuitemradio')[0]).toBe(
     screen.getByRole('menuitemradio', { name: 'Tamizhi' })
   )
-  expect(
-    within(screen.getByRole('group', { name: 'Recent' })).getAllByRole(
-      'menuitemradio'
-    )
-  ).toHaveLength(2)
+  expect(screen.queryByRole('group', { name: 'Recent' })).toBeNull()
+  expect(screen.getAllByRole('menuitemradio')).toHaveLength(profiles.length)
   fireEvent.change(search, { target: { value: 'Bug Tracker' } })
   fireEvent.click(
     await screen.findByRole('menuitemradio', { name: 'Bug Tracker' })
   )
   expect(onSelect).toHaveBeenCalledWith('vezham-bug-tracker')
   view.unmount()
-  render(<BotPicker {...props} />)
-  await openPicker()
-  const recent = within(screen.getByRole('group', { name: 'Recent' }))
-  expect(recent.getAllByRole('menuitemradio')[0]).toBe(
-    recent.getByRole('menuitemradio', { name: 'Bug Tracker' })
+  const restored = render(<BotPicker {...props} />)
+  const chips = within(
+    await screen.findByRole('group', { name: 'Recent assistants' })
   )
-  expect(
-    screen.getAllByRole('menuitemradio', { name: 'Bug Tracker' })
-  ).toHaveLength(1)
+  expect(chips.getAllByRole('button')).toHaveLength(3)
+  expect(chips.getAllByRole('button')[0]).toHaveTextContent('Bug Tracker')
+  fireEvent.click(chips.getByRole('button', { name: 'CRM' }))
+  expect(onSelect).toHaveBeenLastCalledWith('vezham-crm')
+  const crm = profiles.find(item => item.id === 'vezham-crm')
+  if (!crm) throw new Error('Missing CRM profile fixture')
+  restored.rerender(<BotPicker {...props} profile={crm} />)
+  expect(chips.queryByRole('button', { name: 'CRM' })).toBeNull()
+  await openPicker()
+  expect(screen.getByRole('menuitemradio', { name: 'CRM' })).toHaveAttribute(
+    'aria-checked',
+    'true'
+  )
   expect(screen.getAllByRole('menuitemradio')).toHaveLength(profiles.length)
-  expect(
-    screen.getByRole('searchbox', { name: 'Search assistants' })
-  ).toHaveValue('')
 })
 
 it('keeps host-defined profiles without categories discoverable', async () => {
