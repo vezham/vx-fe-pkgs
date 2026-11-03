@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { outfitForPersona } from './avatar-data'
+import type { Expression } from './avatar-data'
 import {
   avatarState,
   createAvatarRenderer,
