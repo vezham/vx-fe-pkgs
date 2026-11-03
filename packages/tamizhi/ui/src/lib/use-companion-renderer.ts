@@ -45,6 +45,7 @@ interface Props {
   focusTargetRef: RefObject<HTMLElement | null> | null
   size: 'small' | 'large'
   previewSize?: 28 | 44 | 72
+  asImage?: boolean
 }
 
 export const useCompanionRenderer = ({
@@ -57,7 +58,8 @@ export const useCompanionRenderer = ({
   isOffline,
   focusTargetRef,
   size,
-  previewSize
+  previewSize,
+  asImage = false
 }: Props) => {
   const host = useRef<HTMLDivElement>(null)
   const redraw = useRef<(() => void) | undefined>(undefined)
@@ -76,6 +78,7 @@ export const useCompanionRenderer = ({
   })
   const previousOffline = useRef(isOffline)
   const [status, setStatus] = useState('loading')
+  const [image, setImage] = useState<string>()
   useEffect(() => {
     latest.current = {
       outfit,
@@ -192,7 +195,7 @@ export const useCompanionRenderer = ({
           size === 'small' ? document.createElement('canvas') : renderer.canvas
         canvas.width = canvas.height = size === 'small' ? 72 : 340
         canvas.setAttribute('aria-hidden', 'true')
-        element.appendChild(canvas)
+        if (!asImage) element.appendChild(canvas)
         let lastDraw = 0
         let previous = ''
         let shownOutfit = latest.current.outfit
@@ -417,6 +420,7 @@ export const useCompanionRenderer = ({
                     })
                   : renderer.draw(null, pixels, renderState)
               if (result && !cancelled) {
+                if (asImage) setImage(canvas.toDataURL('image/png'))
                 previous = key
                 shownFace = Number(state.face)
                 setStatus('ready')
@@ -478,7 +482,7 @@ export const useCompanionRenderer = ({
       if (size === 'large')
         renderer?.gl?.getExtension('WEBGL_lose_context')?.loseContext()
     }
-  }, [size, previewSize])
+  }, [size, previewSize, asImage])
 
-  return { host, connectionReaction, status }
+  return { host, connectionReaction, status, image }
 }

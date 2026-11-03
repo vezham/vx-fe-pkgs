@@ -78,6 +78,16 @@ export const Playground = ({
                   id={item.id}
                   textValue={item.name}
                   onAction={() => onProfileChange(item.id)}>
+                  <div className="shrink-0" aria-hidden="true">
+                    <Companion
+                      asImage
+                      size="small"
+                      previewSize={28}
+                      persona={item.persona}
+                      outfit={item.outfit}
+                      isAnimated={false}
+                    />
+                  </div>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span>{item.name}</span>
                     <span className="text-muted text-xs">

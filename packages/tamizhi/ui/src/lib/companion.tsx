@@ -18,6 +18,7 @@ interface Props {
   focusTargetRef?: RefObject<HTMLElement | null> | null
   size?: 'small' | 'large'
   previewSize?: 28 | 44 | 72
+  asImage?: boolean
 }
 
 export const Companion = ({
@@ -31,9 +32,11 @@ export const Companion = ({
   isOffline = false,
   focusTargetRef = null,
   size = 'large',
-  previewSize
+  previewSize,
+  asImage = false
 }: Props) => {
-  const { host, connectionReaction, status } = useCompanionRenderer({
+  const renderSize = asImage ? 'small' : size
+  const { host, connectionReaction, status, image } = useCompanionRenderer({
     outfit,
     expression,
     palette,
@@ -42,14 +45,15 @@ export const Companion = ({
     isAnimated,
     isOffline,
     focusTargetRef,
-    size,
-    previewSize
+    size: renderSize,
+    previewSize,
+    asImage
   })
 
   return (
     <div
       ref={host}
-      className={`tamizhi-companion tamizhi-companion--${size}`}
+      className={`tamizhi-companion tamizhi-companion--${renderSize}`}
       data-connection-reaction={connectionReaction?.phase}
       style={
         previewSize
@@ -64,6 +68,16 @@ export const Companion = ({
       data-animated={isAnimated}
       data-status={status}
       aria-label={status === 'error' ? 'Avatar unavailable' : undefined}>
+      {asImage && image && (
+        <img
+          src={image}
+          alt=""
+          aria-hidden="true"
+          width={previewSize ?? 36}
+          height={previewSize ?? 36}
+          className="h-full w-full object-contain"
+        />
+      )}
       {status === 'error' && (
         <span className="tamizhi-companion__error">Avatar unavailable</span>
       )}

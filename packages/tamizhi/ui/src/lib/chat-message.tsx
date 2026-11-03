@@ -72,7 +72,9 @@ export const ChatMessage = ({
       aria-label="Tamizhi’s response">
       <div className="tamizhi-message__identity">
         <Companion
+          asImage
           size="small"
+          previewSize={28}
           persona={message.persona}
           outfit={message.outfit}
           isAnimated={false}

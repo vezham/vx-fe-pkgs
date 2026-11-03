@@ -296,6 +296,24 @@ test('named app profiles survive remote chat reloads', async ({ page }) => {
   await expect(
     page.locator('.tamizhi-message--assistant').last()
   ).toContainText('Browser verified reply.')
+  const identity = page
+    .locator('.tamizhi-message--assistant .tamizhi-message__identity')
+    .last()
+  const avatar = identity.locator('img')
+  await expect(avatar).toBeVisible()
+  await expect(avatar).toHaveAttribute('width', '28')
+  await expect(avatar).toHaveAttribute('height', '28')
+  await expect
+    .poll(() =>
+      avatar.evaluate(
+        image =>
+          image instanceof HTMLImageElement &&
+          image.complete &&
+          image.naturalWidth > 0
+      )
+    )
+    .toBe(true)
+  await expect(identity.locator('canvas')).toHaveCount(0)
   await page.reload()
   await expect(
     page.locator('.tamizhi-message--assistant [data-outfit]').last()
@@ -464,4 +482,37 @@ test('welcome assistant picker supports search, keyboard selection, and recent c
       .getByRole('group', { name: 'Recent', exact: true })
       .getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
   ).toBeVisible()
+})
+
+test('Tuning profiles display outfit image previews', async ({ page }) => {
+  await page.goto('/chat/new')
+  await page.getByRole('button', { name: 'More', exact: true }).last().click()
+  await page.getByRole('menuitem', { name: 'Tuning', exact: true }).click()
+  await page.getByRole('button', { name: 'Choose test profile' }).click()
+  const menu = page.getByRole('menu', { name: 'Choose test profile' })
+  const options = menu.getByRole('menuitemradio')
+  await expect(options).toHaveCount(18)
+  for (const option of await options.all()) {
+    await option.scrollIntoViewIfNeeded()
+    await expect(option.locator('img')).toHaveCount(1, { timeout: 45_000 })
+  }
+  const images = menu.locator('img')
+  await expect(images).toHaveCount(18)
+  await expect
+    .poll(
+      () =>
+        images.evaluateAll(items =>
+          items.every(image => image.complete && image.naturalWidth > 0)
+        ),
+      { timeout: 45_000 }
+    )
+    .toBe(true)
+  await expect(menu.locator('canvas')).toHaveCount(0)
+  await menu.getByRole('menuitemradio', { name: /^School OS/ }).click()
+  await expect(
+    page.getByRole('button', { name: 'Choose test profile' })
+  ).toContainText('School OS')
+  await expect(
+    page.locator('.tamizhi__companion-layer [data-outfit]')
+  ).toHaveAttribute('data-outfit', 'tutor')
 })
