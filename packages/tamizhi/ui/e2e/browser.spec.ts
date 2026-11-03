@@ -516,3 +516,51 @@ test('Tuning profiles display outfit image previews', async ({ page }) => {
     page.locator('.tamizhi__companion-layer [data-outfit]')
   ).toHaveAttribute('data-outfit', 'tutor')
 })
+
+test('backend settings actions preserve conversations, checkpoints, and memory', async ({
+  page
+}) => {
+  await connect(page)
+  await page
+    .getByRole('textbox', { name: 'Message Tamizhi' })
+    .fill('Audit settings regression')
+  await page.getByRole('button', { name: 'Send message', exact: true }).click()
+  await expect(
+    page.locator('.tamizhi-message--assistant').last()
+  ).toContainText('Browser verified reply.')
+  await openSettings(page)
+  const dialog = page.getByRole('dialog', { name: 'Tamizhi settings' })
+  await dialog.getByLabel('Search chats').fill('Audit settings regression')
+  await dialog.getByRole('button', { name: 'Search', exact: true }).click()
+  await dialog
+    .getByRole('button', { name: 'Audit settings regression', exact: true })
+    .click()
+  await expect(dialog).toBeHidden()
+  await openSettings(page)
+  await dialog
+    .getByLabel('Title', { exact: true })
+    .fill('Audit renamed conversation')
+  const renamed = page.waitForResponse(
+    response =>
+      response.request().method() === 'PATCH' &&
+      /\/conversations\/[^/]+$/.test(new URL(response.url()).pathname) &&
+      response.status() === 200
+  )
+  await dialog.getByRole('button', { name: 'Rename', exact: true }).click()
+  await renamed
+  await expect(dialog.getByLabel('Title', { exact: true })).toHaveValue('')
+  await dialog
+    .getByRole('button', { name: 'Save checkpoint', exact: true })
+    .click()
+  await expect(dialog.getByText(/^Saved checkpoint ·.* UTC$/)).toBeVisible()
+  await dialog.getByLabel('Remember a fact').fill('Audit memory regression')
+  await dialog.getByRole('button', { name: 'Remember', exact: true }).click()
+  const fact = dialog.getByText('Audit memory regression', { exact: true })
+  await expect(fact).toBeVisible()
+  await expect(dialog.getByLabel('Remember a fact')).toHaveValue('')
+  await fact
+    .locator('..')
+    .getByRole('button', { name: 'Forget', exact: true })
+    .click()
+  await expect(fact).toHaveCount(0)
+})

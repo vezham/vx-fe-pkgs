@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { FC, ReactNode } from 'react'
-import { StrictMode, useState } from 'react'
+import { StrictMode, useMemo, useState } from 'react'
 
 import type { DevtoolsApp } from '@vezham/devtools'
 import { AppContext } from '@vezham/hooks'
@@ -48,13 +48,17 @@ const createProvider = ({ env, renderDevtools }: CreateProviderProps) => {
     // vx-bot/NOTE: Keep caches isolated between server renders and provider instances.
     const [queryClient] = useState(createQueryClient)
     const classList = `vx-app ${className}`.trim()
-    const app = {
-      environment: env.APP_ENV,
-      id,
-      name,
-      runtime,
-      version
-    } satisfies DevtoolsApp
+    const app = useMemo(
+      () =>
+        ({
+          environment: env.APP_ENV,
+          id,
+          name,
+          runtime,
+          version
+        }) satisfies DevtoolsApp,
+      [id, name, runtime, version]
+    )
     let template = (
       <>
         <div data-vx-app-version={version} className={classList}>

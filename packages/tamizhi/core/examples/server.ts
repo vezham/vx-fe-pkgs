@@ -9,6 +9,8 @@ import {
 } from '../src/index'
 import { createTamizhiServer, fileStoragePlugin } from '../src/lib/node'
 
+const timeFormatters = new Map<string, Intl.DateTimeFormat>()
+
 const apiKey = process.env.TAMIZHI_PROVIDER_API_KEY
 const token = process.env.TAMIZHI_API_TOKEN
 if (!apiKey || !token)
@@ -37,14 +39,16 @@ const runtime = await createTamizhi({
       inputSchema: z.object({ timeZone: z.string().default('UTC') }),
       execute: async input => {
         const { timeZone } = z.object({ timeZone: z.string() }).parse(input)
-        return {
-          timeZone,
-          time: new Intl.DateTimeFormat('en', {
+        let formatter = timeFormatters.get(timeZone)
+        if (!formatter) {
+          formatter = new Intl.DateTimeFormat('en', {
             timeZone,
             dateStyle: 'full',
             timeStyle: 'long'
-          }).format(new Date())
+          })
+          timeFormatters.set(timeZone, formatter)
         }
+        return { timeZone, time: formatter.format(new Date()) }
       }
     }),
     httpTransportPlugin({

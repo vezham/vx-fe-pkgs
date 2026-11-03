@@ -1,3 +1,5 @@
+import type { ModelInfo } from '@vezham/tamizhi-contracts'
+
 export type PreviewModel = {
   name: string
   provider: string
@@ -76,3 +78,11 @@ export const PREVIEW_MODELS: readonly PreviewModel[] = [
     [3, 3, 2, 2]
   )
 ]
+
+export const getAvailableModel = (
+  model: string,
+  catalog?: readonly ModelInfo[]
+) => {
+  if (!catalog || model === 'Auto') return model
+  return catalog.some(item => item.id === model) ? model : 'Auto'
+}

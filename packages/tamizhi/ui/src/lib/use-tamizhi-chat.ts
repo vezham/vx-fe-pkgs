@@ -20,6 +20,7 @@ import { streamEventSchema, wireMessageSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
 import { EMPTY_CONVERSATIONS, parseConversations } from './conversation-storage'
+import { createId } from './create-id'
 import { createDemoReply, detectPersona } from './demo'
 import {
   getActivityAppearance,
@@ -61,18 +62,6 @@ const fromWire = (
     }))
 })
 
-const createId = () => {
-  if (typeof crypto !== 'undefined') {
-    if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
-    if (typeof crypto.getRandomValues === 'function') {
-      return Array.from(crypto.getRandomValues(new Uint32Array(4)), value =>
-        value.toString(36)
-      ).join('-')
-    }
-  }
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
-}
-
 export const useTamizhiChat = (
   isInstant = false,
   selectedChatId?: string | null,
@@ -109,7 +98,9 @@ export const useTamizhiChat = (
   const [error, setError] = useState<string | null>(null)
   const [approvals, setApprovals] = useState<ApprovalRequest[]>([])
   const [activities, setActivities] = useState<ToolActivity[]>([])
-  const [runEvents, setRunEvents] = useState<StreamEvent[]>([])
+  const [runEvents, setRunEvents] = useState<
+    (StreamEvent & { uiId: string })[]
+  >([])
   const [models, setModels] = useState<ModelInfo[]>([])
   const runOptions = useRef<Pick<RunRequest, 'model' | 'fast' | 'permission'>>({
     model: 'Auto',
@@ -278,16 +269,17 @@ export const useTamizhiChat = (
             : chat
         )
       )
+      const chatTitle =
+        title ??
+        conversations.find(item => item.id === chatId)?.title ??
+        prompt.slice(0, 48)
       const consume = async () => {
         let text = ''
         try {
           for await (const event of client.stream(
             {
               conversationId: chatId,
-              title:
-                title ??
-                conversations.find(item => item.id === chatId)?.title ??
-                prompt.slice(0, 48),
+              title: chatTitle,
               messages: (client.api ? history.slice(-1) : history).map(
                 message => ({
                   id: message.id,
@@ -334,8 +326,10 @@ export const useTamizhiChat = (
               event.type === 'status' ||
               event.type === 'subagent' ||
               event.type === 'client-action'
-            )
-              setRunEvents(current => [...current.slice(-99), event])
+            ) {
+              const notice = { ...event, uiId: createId() }
+              setRunEvents(current => [...current.slice(-99), notice])
+            }
             if (event.type === 'subagent-event') {
               const child = streamEventSchema.safeParse(event.output)
               if (child.success && child.data.type === 'approval')

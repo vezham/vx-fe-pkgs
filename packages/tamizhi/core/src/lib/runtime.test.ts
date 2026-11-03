@@ -217,3 +217,27 @@ it('loads encoded session ids through the typed client', async () => {
     void event
   expect((await client.conversation(id)).messages.at(-1)?.content).toBe('Hello')
 })
+
+it('finishes installing each plugin before mounting dependent plugins', async () => {
+  const order: string[] = []
+  const host = await createTamizhi({
+    plugins: [
+      {
+        name: 'first',
+        apply: async () => {
+          await new Promise<void>(resolve => queueMicrotask(resolve))
+          order.push('first')
+        }
+      },
+      {
+        name: 'second',
+        apply: () => {
+          expect(order).toEqual(['first'])
+          order.push('second')
+        }
+      }
+    ]
+  })
+  hosts.push(host)
+  expect(order).toEqual(['first', 'second'])
+})

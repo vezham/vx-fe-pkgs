@@ -139,3 +139,34 @@ it('loads canonical remote IDs and keeps server history out of demo local storag
   )
   expect(localStorage.getItem('test:server-owned')).toBeNull()
 })
+
+it('assigns stable distinct UI identities to repeated run notices without server sequences', async () => {
+  const client: TamizhiClient = {
+    conversation: vi.fn(),
+    models: async () => [],
+    approve: vi.fn(),
+    stream: async function* (input) {
+      const identity = {
+        runId: 'same-run',
+        conversationId: input.conversationId
+      }
+      yield { ...identity, type: 'status' as const, name: 'Working' }
+      yield { ...identity, type: 'status' as const, name: 'Working' }
+      yield { ...identity, type: 'text' as const, delta: 'Done' }
+      yield {
+        ...identity,
+        type: 'finish' as const,
+        reason: 'complete' as const
+      }
+    }
+  }
+  const view = renderHook(() =>
+    useTamizhiChat(false, undefined, 'test:notice-ids', client)
+  )
+  act(() => view.result.current.send('Hello'))
+  await waitFor(() => expect(view.result.current.runEvents).toHaveLength(2))
+  const ids = view.result.current.runEvents.map(event => event.uiId)
+  expect(new Set(ids).size).toBe(2)
+  view.rerender()
+  expect(view.result.current.runEvents.map(event => event.uiId)).toEqual(ids)
+})

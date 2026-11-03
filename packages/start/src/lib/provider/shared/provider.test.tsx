@@ -178,3 +178,31 @@ it('keeps runtime app identities isolated across static renders', () => {
   expect(markup).toContain('test')
   expect(markup).not.toContain('vezham-crm')
 })
+
+it('preserves context identity across unchanged provider props', () => {
+  const identities: ReturnType<typeof useApp>[] = []
+  const Capture = () => {
+    identities.push(useApp())
+    return null
+  }
+  const Provider = createProvider({ env })
+  const view = render(
+    <Provider strict={false} query={false}>
+      <Capture />
+    </Provider>
+  )
+  const first = identities.at(-1)
+  view.rerender(
+    <Provider strict={false} query={false}>
+      <Capture />
+    </Provider>
+  )
+  expect(identities.at(-1)).toBe(first)
+  view.rerender(
+    <Provider strict={false} query={false} name="Changed app">
+      <Capture />
+    </Provider>
+  )
+  expect(identities.at(-1)).not.toBe(first)
+  expect(identities.at(-1)?.name).toBe('Changed app')
+})

@@ -244,7 +244,11 @@ export const createTamizhi = async (options: RuntimeOptions) => {
     }
   }
   try {
-    for (const plugin of options.plugins) await mount(plugin)
+    // vx-bot/NOTE: Later plugins may inject services installed by earlier plugins.
+    await options.plugins.reduce<Promise<unknown>>(
+      (ready, plugin) => ready.then(() => mount(plugin)),
+      Promise.resolve()
+    )
   } catch (error) {
     await foundation.dispose()
     throw error

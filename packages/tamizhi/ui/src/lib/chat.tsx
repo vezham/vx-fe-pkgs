@@ -1,24 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
-import { Button, Card, useMediaQuery } from '@vezham/react-v3'
+import { useMediaQuery } from '@vezham/react-v3'
 import type { APIAttachment } from '@vezham/tamizhi-contracts'
 
 import { AccountControls } from './account-controls'
 import { OUTFITS } from './avatar-data'
 import { BackendSettings } from './backend-settings'
+import { ChatContent } from './chat-content'
+import { ChatFeedback } from './chat-feedback'
 import { Companion } from './companion'
 import { Composer } from './composer'
 import { ComposerLite } from './composer-lite'
-import { Conversation } from './conversation'
+import { getAvailableModel } from './models'
 import { Playground } from './playground'
 import { PlaygroundPanel } from './playground-panel'
 import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
 import { useSpeechOutput } from './use-speech-output'
 import type { useTamizhiChat } from './use-tamizhi-chat'
-import { Welcome } from './welcome'
-import { EmbedWelcome } from './welcome-embed'
 
 export interface TamizhiChatProps {
   chat: Omit<ReturnType<typeof useTamizhiChat>, 'send'> & {
@@ -52,12 +52,10 @@ export const TamizhiChat = ({
   })
   const [isAnimated, setIsAnimated] = useState(true)
   const [model, setModel] = useState('Auto')
-  const availableModel =
-    chat.isRemote &&
-    model !== 'Auto' &&
-    !chat.models.some(item => item.id === model)
-      ? 'Auto'
-      : model
+  const availableModel = getAvailableModel(
+    model,
+    chat.isRemote ? chat.models : undefined
+  )
   const [isFastMode, setIsFastMode] = useState(false)
   const [permission, setPermission] = useState('Ask for approval')
   const composerInput = useRef<HTMLTextAreaElement>(null)
@@ -159,40 +157,23 @@ export const TamizhiChat = ({
                 100
             }
         }}>
-        {!hasMessages ? (
-          composerVariant === 'embed' ? (
-            <EmbedWelcome
-              profile={chat.profile}
-              avatarSlotRef={welcomeAvatarSlot}
-            />
-          ) : (
-            <Welcome
-              profile={chat.profile}
-              profiles={chat.profiles}
-              avatarSlotRef={welcomeAvatarSlot}
-              onSelect={selectProfile}
-            />
-          )
-        ) : (
-          <Conversation
-            messages={chat.messages}
-            isStreaming={chat.isStreaming}
-            isAnimated={isAnimated}
-            isOffline={isOffline}
-            onRetry={() => {
-              shouldFollow.current.enabled = true
-              chat.retry()
-            }}
-            onToggleTask={chat.toggleTask}
-            onRate={chat.rate}
-            onSpeak={
-              chat.capabilities?.speech
-                ? text => void speech.speak(text)
-                : undefined
-            }
-            onBranch={chat.branchChat}
-          />
-        )}
+        <ChatContent
+          chat={chat}
+          variant={composerVariant}
+          avatarSlotRef={welcomeAvatarSlot}
+          isAnimated={isAnimated}
+          isOffline={isOffline}
+          onSelectProfile={selectProfile}
+          onRetry={() => {
+            shouldFollow.current.enabled = true
+            chat.retry()
+          }}
+          onSpeak={
+            chat.capabilities?.speech
+              ? text => void speech.speak(text)
+              : undefined
+          }
+        />
       </div>
       <div
         ref={avatarLayer}
@@ -215,79 +196,7 @@ export const TamizhiChat = ({
           {outfitInfo.name} mode
         </span>
       )}
-      {chat.error && (
-        <p role="alert" className="text-danger px-4 py-2 text-sm">
-          {chat.error}
-        </p>
-      )}
-      {speech.error && (
-        <p role="alert" className="text-danger px-4 text-xs">
-          {speech.error}
-        </p>
-      )}
-      {chat.runEvents.length > 0 && (
-        <div
-          className="text-muted flex flex-wrap gap-2 px-4 py-1 text-xs"
-          role="status">
-          {chat.runEvents
-            .filter(event => event.type !== 'subagent-event')
-            .slice(-3)
-            .map((event, index) =>
-              event.type === 'client-action' ? (
-                <a
-                  key={`${event.runId}-${index}`}
-                  href={event.output.path}
-                  className="text-accent underline">
-                  Open {event.output.path}
-                </a>
-              ) : (
-                <span key={`${event.runId}-${index}`}>
-                  {event.type === 'status' ? event.name : 'Delegated task'}
-                </span>
-              )
-            )}
-        </div>
-      )}
-      {chat.approvals.map(approval => (
-        <Card
-          key={`${approval.runId}-${approval.callId}`}
-          className="mx-4 mb-2"
-          variant="secondary">
-          <Card.Header>
-            <Card.Title>Allow {approval.name}?</Card.Title>
-            <Card.Description>
-              Review the requested action before continuing.
-            </Card.Description>
-          </Card.Header>
-          <Card.Content>
-            <pre className="max-h-32 overflow-auto text-xs whitespace-pre-wrap">
-              {JSON.stringify(approval.input, null, 2)}
-            </pre>
-          </Card.Content>
-          <Card.Footer className="gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              onPress={() => void chat.approve(approval, false)}>
-              Deny
-            </Button>
-            <Button
-              size="sm"
-              variant="primary"
-              onPress={() => void chat.approve(approval, true)}>
-              Allow
-            </Button>
-          </Card.Footer>
-        </Card>
-      ))}
-      {chat.activities.length > 0 && (
-        <p role="status" className="text-muted truncate px-4 py-1 text-xs">
-          {chat.activities.at(-1)?.name} ·{' '}
-          {chat.activities.at(-1)?.type === 'tool-result'
-            ? 'Complete'
-            : 'Running'}
-        </p>
-      )}
+      <ChatFeedback chat={chat} speechError={speech.error} />
       <ComposerComponent
         api={chat.api}
         allowImages={chat.capabilities?.images}
@@ -335,13 +244,6 @@ export const TamizhiChat = ({
         onOpenChange={setIsPlaygroundOpen}>
         {playground}
       </PlaygroundPanel>
-      <span className="sr-only" role="status">
-        {chat.isStreaming
-          ? 'Tamizhi is responding.'
-          : chat.messages.length
-            ? 'Response complete.'
-            : 'Ready for a conversation.'}
-      </span>
     </div>
   )
 }

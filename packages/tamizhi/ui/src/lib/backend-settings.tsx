@@ -14,6 +14,12 @@ import { AccountControls } from './account-controls'
 import type { TamizhiChatProps } from './chat'
 import { ProviderSettings } from './provider-settings'
 
+const checkpointDate = new Intl.DateTimeFormat('en', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: 'UTC'
+})
+
 const ConnectedBackendSettings = ({
   chat
 }: {
@@ -60,11 +66,12 @@ const ConnectedBackendSettings = ({
       canceled = true
     }
   }, [api, open, chat.activeId])
+  const isAdmin = session?.user?.roles?.includes('admin') ?? false
   if (!api) return null
-  const action = (work: () => Promise<unknown>) => {
+  const runAction = (work: Promise<unknown>) => {
     setBusy(true)
     setError(null)
-    void work()
+    void work
       .catch(failure =>
         setError(
           failure instanceof Error
@@ -108,11 +115,12 @@ const ConnectedBackendSettings = ({
                   variant="secondary"
                   isDisabled={busy}
                   onPress={() =>
-                    action(async () => {
-                      const page = await api.conversations(query)
-                      setResults(page.items)
-                      setCursor(page.nextCursor ?? '')
-                    })
+                    runAction(
+                      api.conversations(query).then(page => {
+                        setResults(page.items)
+                        setCursor(page.nextCursor ?? '')
+                      })
+                    )
                   }>
                   Search
                 </Button>
@@ -135,11 +143,12 @@ const ConnectedBackendSettings = ({
                     variant="ghost"
                     isDisabled={busy}
                     onPress={() =>
-                      action(async () => {
-                        const page = await api.conversations(query, cursor)
-                        setResults(current => [...current, ...page.items])
-                        setCursor(page.nextCursor ?? '')
-                      })
+                      runAction(
+                        api.conversations(query, cursor).then(page => {
+                          setResults(current => [...current, ...page.items])
+                          setCursor(page.nextCursor ?? '')
+                        })
+                      )
                     }>
                     Load more
                   </Button>
@@ -158,12 +167,12 @@ const ConnectedBackendSettings = ({
                       variant="secondary"
                       isDisabled={busy || chat.isStreaming || !title.trim()}
                       onPress={() =>
-                        action(async () => {
-                          chat.acceptConversation(
-                            await api.rename(chatId, title)
-                          )
-                          setTitle('')
-                        })
+                        runAction(
+                          api.rename(chatId, title).then(item => {
+                            chat.acceptConversation(item)
+                            setTitle('')
+                          })
+                        )
                       }>
                       Rename
                     </Button>
@@ -172,10 +181,12 @@ const ConnectedBackendSettings = ({
                       variant="secondary"
                       isDisabled={busy || chat.isStreaming}
                       onPress={() =>
-                        action(async () => {
-                          await api.checkpoint(chatId, 'Saved checkpoint')
-                          setCheckpoints(await api.checkpoints(chatId))
-                        })
+                        runAction(
+                          api
+                            .checkpoint(chatId, 'Saved checkpoint')
+                            .then(() => api.checkpoints(chatId))
+                            .then(setCheckpoints)
+                        )
                       }>
                       Save checkpoint
                     </Button>
@@ -184,9 +195,9 @@ const ConnectedBackendSettings = ({
                       variant="ghost"
                       isDisabled={busy || chat.isStreaming}
                       onPress={() =>
-                        action(async () => {
-                          chat.acceptConversation(await api.compact(chatId))
-                        })
+                        runAction(
+                          api.compact(chatId).then(chat.acceptConversation)
+                        )
                       }>
                       Compact context
                     </Button>
@@ -197,18 +208,18 @@ const ConnectedBackendSettings = ({
                       className="flex items-center justify-between gap-2 text-sm">
                       <span>
                         {item.label} ·{' '}
-                        {new Date(item.createdAt).toLocaleString()}
+                        {checkpointDate.format(new Date(item.createdAt))} UTC
                       </span>
                       <Button
                         size="sm"
                         variant="ghost"
                         isDisabled={busy || chat.isStreaming}
                         onPress={() =>
-                          action(async () => {
-                            chat.acceptConversation(
-                              await api.restore(chatId, item.id)
-                            )
-                          })
+                          runAction(
+                            api
+                              .restore(chatId, item.id)
+                              .then(chat.acceptConversation)
+                          )
                         }>
                         Restore
                       </Button>
@@ -227,11 +238,15 @@ const ConnectedBackendSettings = ({
                   variant="secondary"
                   isDisabled={busy || !fact.trim()}
                   onPress={() =>
-                    action(async () => {
-                      await api.remember(fact)
-                      setFact('')
-                      setMemory(await api.memory())
-                    })
+                    runAction(
+                      api
+                        .remember(fact)
+                        .then(() => {
+                          setFact('')
+                          return api.memory()
+                        })
+                        .then(setMemory)
+                    )
                   }>
                   Remember
                 </Button>
@@ -245,10 +260,12 @@ const ConnectedBackendSettings = ({
                       variant="danger-soft"
                       isDisabled={busy}
                       onPress={() =>
-                        action(async () => {
-                          await api.forget(item.id)
-                          setMemory(await api.memory())
-                        })
+                        runAction(
+                          api
+                            .forget(item.id)
+                            .then(() => api.memory())
+                            .then(setMemory)
+                        )
                       }>
                       Forget
                     </Button>
@@ -261,13 +278,11 @@ const ConnectedBackendSettings = ({
                   <Switch
                     key={plugin.name}
                     isSelected={plugin.enabled}
-                    isDisabled={
-                      busy || !session?.user?.roles?.includes('admin')
-                    }
+                    isDisabled={busy || !isAdmin}
                     onChange={enabled =>
-                      action(async () => {
-                        setPlugins(await api.setPlugin(plugin.name, enabled))
-                      })
+                      runAction(
+                        api.setPlugin(plugin.name, enabled).then(setPlugins)
+                      )
                     }>
                     <Switch.Content>
                       <Switch.Control>
