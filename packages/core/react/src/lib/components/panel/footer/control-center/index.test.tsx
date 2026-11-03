@@ -107,11 +107,13 @@ describe('ControlCenter', () => {
 
   it('places compact account actions inside the user sheet', async () => {
     viewport.compact = true
+    const onTamizhi = vi.fn()
     render(
       <UserProvider>
         <Footer
           user={{ id: 'guest', name: 'Guest' }}
           showAI
+          onTamizhi={onTamizhi}
           showControlCenter
           showNotifications
         />
@@ -144,6 +146,13 @@ describe('ControlCenter', () => {
       ).toBeNull()
     )
     expect(accountSheet).toBeVisible()
+    expect(
+      within(accountSheet).getAllByRole('button', { name: 'Tamizhi AI' })
+    ).toHaveLength(1)
+    fireEvent.click(
+      within(accountSheet).getByRole('button', { name: 'Tamizhi AI' })
+    )
+    expect(onTamizhi).toHaveBeenCalledOnce()
   })
   it('renders an app-provided control center once in the footer', async () => {
     render(
@@ -230,4 +239,41 @@ describe('ControlCenter', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     await waitFor(() => expect(document.activeElement).toBe(trigger))
   })
+})
+
+it('exposes one desktop assistant action connected to the shared Tamizhi embed', () => {
+  const onTamizhi = vi.fn()
+  render(
+    <UserProvider>
+      <Footer
+        user={{ id: 'guest', name: 'Guest' }}
+        showAI
+        showUserInfo={false}
+        onTamizhi={onTamizhi}
+      />
+    </UserProvider>
+  )
+  const actions = screen.getAllByRole('button', { name: 'Tamizhi AI' })
+  expect(actions).toHaveLength(1)
+  fireEvent.click(actions[0])
+  expect(onTamizhi).toHaveBeenCalledOnce()
+})
+
+it('exposes one assistant action in the compact footer menu', async () => {
+  const onTamizhi = vi.fn()
+  render(
+    <UserProvider>
+      <Footer
+        user={{ id: 'guest', name: 'Guest' }}
+        showAI
+        showUserInfo={false}
+        onTamizhi={onTamizhi}
+      />
+    </UserProvider>
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Open footer actions' }))
+  const actions = await screen.findAllByRole('menuitem', { name: 'Tamizhi AI' })
+  expect(actions).toHaveLength(1)
+  fireEvent.click(actions[0])
+  expect(onTamizhi).toHaveBeenCalledOnce()
 })

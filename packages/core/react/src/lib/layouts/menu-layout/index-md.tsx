@@ -5,7 +5,6 @@ import { Surface } from '@vezham/react-v3'
 
 import { useCommand } from '../../components/command'
 import { Footer } from '../../components/panel/footer'
-import { aiPanel } from '../../components/panel/footer/ai'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
 import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
 import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
@@ -83,7 +82,6 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
         controlCenter={controlCenter}
         navigationWidth={navigationWidth}
         selectedKey={selectedKey}
-        onAI={() => openInfoPanel('ai')}
         onTamizhi={() => openInfoPanel('tamizhi')}
         onToggleDock={toggleDock}
         onNotifications={() => setNotificationsOpen(true)}
@@ -110,7 +108,6 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
         panels={{
           bookmarks: bookmarksPanel,
           storage: storagePanel,
-          ai: aiPanel,
           tamizhi: tamizhiPanel
         }}
       />
@@ -130,7 +127,6 @@ type Props = Pick<MenuLayoutProps, 'controlCenter'> & {
   navigationWidth: string
   selectedKey?: string
   onTamizhi: () => void
-  onAI: () => void
   onToggleDock?: () => void
   onNotifications: () => void
   onUser: (entryPoint: string) => void
@@ -143,7 +139,6 @@ const NavigationPanel = ({
   controlCenter,
   navigationWidth,
   selectedKey,
-  onAI,
   onTamizhi,
   onToggleDock,
   onNotifications,
@@ -178,7 +173,6 @@ const NavigationPanel = ({
           controlCenter={controlCenter}
           showNotifications
           showUserInfo
-          onAI={onAI}
           onTamizhi={onTamizhi}
           onNotificationsClick={onNotifications}
           onUserClick={(_user, entryPoint = 'account') => onUser(entryPoint)}

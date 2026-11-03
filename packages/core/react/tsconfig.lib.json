@@ -49,9 +49,6 @@
       "path": "../../tamizhi/ui/tsconfig.lib.json"
     },
     {
-      "path": "../../tamizhi/contracts/tsconfig.lib.json"
-    },
-    {
       "path": "../hooks/tsconfig.lib.json"
     }
   ]

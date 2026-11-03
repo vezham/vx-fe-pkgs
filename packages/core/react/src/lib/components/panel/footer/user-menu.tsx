@@ -48,7 +48,6 @@ type Props = {
   showControlCenter?: boolean
   showNotifications?: boolean
   notificationCount?: number
-  onAI?: () => void
   onTamizhi?: () => void
   onControlCenter?: () => void
   onNotifications?: () => void
@@ -441,7 +440,6 @@ const UserMenu = ({
   showControlCenter = false,
   showNotifications = false,
   notificationCount = 0,
-  onAI,
   onTamizhi,
   onControlCenter,
   onNotifications
@@ -492,13 +490,6 @@ const UserMenu = ({
         }
       : null,
     showAI
-      ? {
-          label: 'Tamizhi AI',
-          icon: <VezhamTamizhi size={24} aria-hidden="true" />,
-          onPress: onAI
-        }
-      : null,
-    showAI && onTamizhi
       ? {
           label: 'Tamizhi AI',
           icon: <VezhamTamizhi size={24} aria-hidden="true" />,

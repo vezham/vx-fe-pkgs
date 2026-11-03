@@ -57,7 +57,6 @@ const CompactActions = ({
   onControlCenter,
   showNotifications,
   notificationCount = 0,
-  onAI,
   onTamizhi,
   onNotificationsClick
 }: Omit<FooterActionsProps, 'user' | 'showUserInfo' | 'onUserClick'> & {
@@ -94,12 +93,6 @@ const CompactActions = ({
             </Dropdown.Item>
           ) : null}
           {showAI ? (
-            <Dropdown.Item onPress={onAI}>
-              <VezhamTamizhi size={20} aria-hidden="true" />
-              Tamizhi AI
-            </Dropdown.Item>
-          ) : null}
-          {showAI && onTamizhi ? (
             <Dropdown.Item onPress={onTamizhi}>
               <VezhamTamizhi size={20} aria-hidden="true" />
               Tamizhi AI
@@ -120,7 +113,6 @@ const Footer = ({
   showUserInfo = true,
   hideSeparator = false,
   notificationCount = 0,
-  onAI,
   onTamizhi,
   onNotificationsClick,
   onUserClick,
@@ -149,12 +141,6 @@ const Footer = ({
         className={`flex items-center justify-center gap-2 md:flex-col md:gap-3 ${className ?? ''}`}>
         <div className="hidden md:contents">
           {showAI ? (
-            <FooterAction label="Tamizhi AI" onPress={onAI}>
-              <VezhamTamizhi size={20} aria-hidden="true" />
-            </FooterAction>
-          ) : null}
-
-          {showAI && onTamizhi ? (
             <FooterAction label="Tamizhi AI" onPress={onTamizhi}>
               <VezhamTamizhi size={20} aria-hidden="true" />
             </FooterAction>
@@ -188,7 +174,6 @@ const Footer = ({
             showControlCenter={showControlCenter}
             showNotifications={showNotifications}
             notificationCount={notificationCount}
-            onAI={onAI}
             onTamizhi={onTamizhi}
             onControlCenter={() => setControlCenterOpen(true)}
             onNotifications={onNotificationsClick}
@@ -204,7 +189,6 @@ const Footer = ({
               showAI={showAI}
               showNotifications={showNotifications}
               notificationCount={notificationCount}
-              onAI={onAI}
               onTamizhi={onTamizhi}
               onNotificationsClick={onNotificationsClick}
             />

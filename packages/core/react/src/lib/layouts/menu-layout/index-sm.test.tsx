@@ -80,7 +80,6 @@ vi.mock('../../components/menu', () => ({
 vi.mock('../../components/panel/footer', () => ({
   Footer: () => <button>Account</button>
 }))
-vi.mock('../../components/panel/footer/ai', () => ({ aiPanel: {} }))
 vi.mock('../../components/panel/header/bookmarks', () => ({
   bookmarksPanel: {}
 }))

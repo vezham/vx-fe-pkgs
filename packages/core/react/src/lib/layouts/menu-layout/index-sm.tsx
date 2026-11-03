@@ -6,7 +6,6 @@ import { Surface, toast } from '@vezham/react-v3'
 import { BottomNavbar } from '../../components/menu'
 import { useMobileControls } from '../../components/mobile-controls'
 import { Footer } from '../../components/panel/footer'
-import { aiPanel } from '../../components/panel/footer/ai'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
 import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
 import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
@@ -100,7 +99,6 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
             controlCenter={controlCenter}
             showNotifications
             showUserInfo
-            onAI={() => openInfoPanel('ai')}
             onTamizhi={() => openInfoPanel('tamizhi')}
             onNotificationsClick={() => setNotificationsOpen(true)}
             onUserClick={(_user, entryPoint = 'account') => {
@@ -126,7 +124,6 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
         panels={{
           bookmarks: bookmarksPanel,
           storage: storagePanel,
-          ai: aiPanel,
           tamizhi: tamizhiPanel
         }}
       />

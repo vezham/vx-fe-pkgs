@@ -10,7 +10,6 @@ const STORAGE_KEY = 'vx-app:info-panel'
 const VALID_INFO_PANELS: Array<Exclude<ActiveInfoPanel, null>> = [
   'bookmarks',
   'storage',
-  'ai',
   'tamizhi'
 ]
 

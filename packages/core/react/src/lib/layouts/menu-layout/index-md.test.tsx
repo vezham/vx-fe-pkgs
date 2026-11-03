@@ -68,7 +68,6 @@ vi.mock('../../components/panel/header', () => ({
 }))
 vi.mock('../../components/panel/menu', () => ({ Menu: () => null }))
 vi.mock('../../components/panel/footer', () => ({ Footer: () => null }))
-vi.mock('../../components/panel/footer/ai', () => ({ aiPanel: {} }))
 vi.mock('../../components/panel/header/bookmarks', () => ({
   bookmarksPanel: {}
 }))
