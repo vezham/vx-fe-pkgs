@@ -15,11 +15,8 @@ export { PREVIEW_MODELS, type PreviewModel } from './lib/models'
 export { ModelLogo } from './lib/model-logo'
 export { MODEL_LOGOS } from './lib/model-logos'
 export * from './lib/plugins'
-export {
-  TAMIZHI_PROFILES,
-  getTamizhiProfiles,
-  getTamizhiProfile
-} from './lib/profiles'
+export { TAMIZHI_PROFILES } from './generated/profiles'
+export { getTamizhiProfiles, getTamizhiProfile } from './lib/profiles'
 export type {
   TamizhiProfile,
   TamizhiProfileOptions,

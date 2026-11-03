@@ -4,7 +4,7 @@ Tamizhi supports a standalone static/prerendered app and an embedded assistant i
 
 | Package                     | Responsibility                                                                                         |
 | --------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `@vezham/tamizhi-contracts` | Generated Go API types/OpenAPI/JSON Schema plus browser runtime validation                             |
+| `@vezham/tamizhi-contracts` | Generated Go API types plus browser runtime validation                                                 |
 | `@vezham/tamizhi-client`    | Authenticated API requests, SSE streaming/reconnect, explicit cancellation and typed feature endpoints |
 | `@vezham/tamizhi-ui`        | Standalone composer, compact composer-lite, avatar, embed, messages and capability-driven controls     |
 | `@vezham/tamizhi-core`      | Earlier TypeScript prototype; retained for comparison/tests, not the production backend                |
@@ -116,7 +116,9 @@ scripts/sync-tamizhi-contracts /path/to/this-repo
 scripts/sync-tamizhi-contracts /path/to/this-repo --check
 ```
 
-Do not manually edit `contracts/src/lib/generated`. Go owns wire DTOs. Changes to browser Zod validation and behavioral adapters must accompany wire changes; integration tests validate the actual server/client combination.
+The frontend source keeps only `contracts/src/lib/generated/api.ts`. The optional API reference lives outside source at `contracts/openapi.yaml`, generated from the backend OpenAPI document during synchronization. Backend `schemas.json` and `openapi.json` remain in the Go repository; they are not copied into frontend source or included in the browser package. The sync script checks both the TypeScript contracts and YAML reference with `--check`.
+
+Do not manually edit `contracts/src/lib/generated/api.ts` or `contracts/openapi.yaml`. Go owns wire DTOs. Changes to browser Zod validation and behavioral adapters must accompany wire changes; integration tests validate the actual server/client combination.
 
 ## Verification
 

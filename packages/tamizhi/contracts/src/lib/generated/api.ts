@@ -1,4 +1,4 @@
-// Generated from Go contracts. Run the backend contracts:generate target.
+// vx-bot/NOTE: Generated from Go contracts. Run the backend contracts:generate target.
 export type PermissionMode = 'ask' | 'safe' | 'full'
 
 export interface Task {
