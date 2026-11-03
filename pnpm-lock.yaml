@@ -940,6 +940,9 @@ importers:
       react-dom:
         specifier: 19.2.7
         version: 19.2.7(react@19.2.7)
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
 
   packages/template: {}
 

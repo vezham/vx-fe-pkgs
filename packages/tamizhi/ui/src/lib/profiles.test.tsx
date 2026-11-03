@@ -12,6 +12,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import type { TamizhiClient } from '@vezham/tamizhi-client'
 import type { ToolActivity } from '@vezham/tamizhi-contracts'
 
+import { OUTFITS } from './avatar-data'
 import { BotPicker } from './bot-picker'
 import {
   getActivityAppearance,
@@ -242,4 +243,39 @@ it('honors a host override of the default Tamizhi profile instead of detecting f
     persona: 'coder',
     outfit: 'builder'
   })
+})
+
+it('covers every available outfit with uniquely identified app profiles', () => {
+  const profiles = getTamizhiProfiles()
+  expect(new Set(profiles.map(profile => profile.outfit))).toEqual(
+    new Set(OUTFITS.map(outfit => outfit.id))
+  )
+  expect(new Set(profiles.map(profile => profile.id)).size).toBe(
+    profiles.length
+  )
+  expect(getTamizhiProfile('vezham-mail', profiles)).toMatchObject({
+    name: 'Mail',
+    persona: 'writer',
+    outfit: 'write'
+  })
+})
+
+it('selects a newly added app profile from the welcome dropdown', async () => {
+  const onSelect = vi.fn()
+  const profiles = getTamizhiProfiles()
+  render(
+    <BotPicker
+      headingId="welcome-all-outfits"
+      profile={profiles[0]}
+      profiles={profiles}
+      onSelect={onSelect}
+    />
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Choose an assistant' }))
+  fireEvent.click(
+    await screen.findByRole('menuitemradio', {
+      name: /^Bug Tracker$/
+    })
+  )
+  expect(onSelect).toHaveBeenCalledWith('vezham-bug-tracker')
 })

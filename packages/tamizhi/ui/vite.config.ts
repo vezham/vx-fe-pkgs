@@ -3,11 +3,14 @@ import path from 'node:path'
 
 import { defineConfig } from '@vezham/config/vite-lib/react'
 
+import { tamizhiProfilesPlugin } from './tools/generate-profiles'
+
 export default defineConfig({
   root: import.meta.dirname,
   base: './',
   build: { lib: { entry: path.join(import.meta.dirname, 'src/index.ts') } },
   plugins: [
+    tamizhiProfilesPlugin(import.meta.dirname),
     {
       name: 'tamizhi:avatar-licenses',
       closeBundle() {

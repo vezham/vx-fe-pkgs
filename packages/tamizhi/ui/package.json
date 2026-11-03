@@ -44,7 +44,8 @@
   },
   "devDependencies": {
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "yaml": "catalog:"
   },
   "peerDependencies": {
     "react": "19.2.7",

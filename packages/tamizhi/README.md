@@ -36,7 +36,11 @@ For menu integration pass `<AppLayout tamizhi={{ client }} ... />`. Browser logi
 
 ## App profiles and appearance
 
-The shared **Who’s helping?** picker lists app names: **Tamizhi**, **CRM**, and **School OS**. Their stable IDs match `APP_ID`: `vezham-tamizhi`, `vezham-crm`, and `vezham-school-os`. Each profile declares its default persona and outfit. Unknown app IDs use Tamizhi. The standalone app lets users choose a profile; embeds start with their host app's profile.
+The shared **Who’s helping?** picker lists named app/domain profiles covering all 18 available outfits. **Tamizhi**, **CRM**, **Mail**, and **School OS** use their workspace app IDs; the remaining entries are domain presets such as Kitchen, Research, Dev Studio, Finance, and Security. See the [YAML profile registry](ui/vx.tamizhi.yaml) for names, stable IDs, personas, and outfits. Each profile declares its default persona and outfit. Unknown app IDs use Tamizhi. The standalone app lets users choose a profile; embeds start with their host app's profile.
+
+Edit the top-level `profiles:` list in `ui/vx.tamizhi.yaml` to configure the built-in profiles. The generator validates personas, outfits, activity overrides, unique IDs, and the required `vezham-tamizhi` default using the shared contracts. It writes typed data to `ui/src/generated/profiles.ts`; that file is ignored by Git and must not be edited manually. The browser imports the generated data and does not load or parse YAML. Host-provided `profiles` overrides remain typed TypeScript values.
+
+Nx generates the registry before UI builds, tests, typechecks, and lint, with the YAML and generator included in its cache inputs. Run `pnpm nx run tamizhi-ui:profiles:generate` to regenerate explicitly, or `pnpm nx run tamizhi-ui:profiles:watch` while editing source consumers. The library's Vite dev server, tests, and `pnpm nx run tamizhi-ui:build --watch` also regenerate when the YAML changes. Use the library build watcher when a running app consumes the compiled package.
 
 `@vezham/start` reads the app environment once through the runtime adapter and
 provides its resolved identity via `useApp` from `@vezham/hooks`. `AppLayout`

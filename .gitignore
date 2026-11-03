@@ -211,3 +211,6 @@ firebase-debug.*.log*
 .vitest
 
 .tamizhi/
+
+# vx-bot/NOTE: Regenerated from the package vx.tamizhi.yaml configuration.
+/packages/tamizhi/ui/src/generated/

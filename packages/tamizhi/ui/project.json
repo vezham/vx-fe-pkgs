@@ -12,6 +12,47 @@
       "options": {
         "command": "pnpm exec playwright test --config packages/tamizhi/ui/e2e/browser.config.ts"
       }
+    },
+    "profiles:generate": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["tamizhi-contracts"]
+        }
+      ],
+      "inputs": [
+        "{projectRoot}/vx.tamizhi.yaml",
+        "{projectRoot}/tools/generate-profiles.ts",
+        "^production"
+      ],
+      "outputs": ["{projectRoot}/src/generated/profiles.ts"],
+      "options": {
+        "cwd": "packages/tamizhi/ui",
+        "command": "node tools/generate-profiles.ts"
+      }
+    },
+    "profiles:watch": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["profiles:generate"],
+      "options": {
+        "cwd": "packages/tamizhi/ui",
+        "command": "node tools/generate-profiles.ts --watch"
+      }
+    },
+    "build": {
+      "dependsOn": ["profiles:generate", "^build"]
+    },
+    "test": {
+      "dependsOn": ["profiles:generate", "^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["profiles:generate", "build", "^typecheck"]
+    },
+    "lint": {
+      "dependsOn": ["profiles:generate"]
     }
   }
 }

@@ -4,25 +4,7 @@ import type {
   ToolActivity
 } from '@vezham/tamizhi-contracts'
 
-export const TAMIZHI_PROFILES: readonly TamizhiProfile[] = [
-  { id: 'vezham-tamizhi', name: 'Tamizhi', persona: 'helper', outfit: 'rest' },
-  {
-    id: 'vezham-crm',
-    name: 'CRM',
-    persona: 'planner',
-    outfit: 'planner',
-    activities: {
-      mcp_crm_revenue_report: { persona: 'planner', outfit: 'money' },
-      'skill.sales-coaching': { persona: 'helper', outfit: 'coach' }
-    }
-  },
-  {
-    id: 'vezham-school-os',
-    name: 'School OS',
-    persona: 'tutor',
-    outfit: 'tutor'
-  }
-]
+import { TAMIZHI_PROFILES } from '../generated/profiles'
 
 export const getTamizhiProfiles = (
   profiles: readonly TamizhiProfile[] = []
