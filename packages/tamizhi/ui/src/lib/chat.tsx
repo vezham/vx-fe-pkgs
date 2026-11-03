@@ -97,10 +97,22 @@ export const TamizhiChat = ({
       scroll.current.scrollTop = scroll.current.scrollHeight
   }, [chat.messages, chat.activeId])
 
+  const selectProfile = (id: string) => {
+    if (chat.isStreaming || id === chat.profile.id) return
+    if (hasMessages) chat.newChat()
+    chat.selectProfile(id)
+    resetAppearance()
+  }
+
   const playground = (
     <>
       <BackendSettings chat={chat} />
       <Playground
+        profile={chat.profile}
+        profiles={chat.profiles}
+        isProfileDisabled={chat.isStreaming}
+        startsNewChat={hasMessages}
+        onProfileChange={selectProfile}
         outfit={outfit}
         expression={expression}
         palette={palette}
@@ -158,10 +170,7 @@ export const TamizhiChat = ({
               profile={chat.profile}
               profiles={chat.profiles}
               avatarSlotRef={welcomeAvatarSlot}
-              onSelect={id => {
-                chat.selectProfile(id)
-                resetAppearance()
-              }}
+              onSelect={selectProfile}
             />
           )
         ) : (

@@ -2,7 +2,7 @@ import { useId } from 'react'
 
 import { AltArrowDown } from '@vezham/icons-react'
 import { Button, Dropdown, Switch, Tabs } from '@vezham/react-v3'
-import type { Outfit } from '@vezham/tamizhi-contracts'
+import type { Outfit, TamizhiProfile } from '@vezham/tamizhi-contracts'
 
 import { COLOURS, EXPRESSIONS, OUTFITS, PALETTE_COLOURS } from './avatar-data'
 import type { Expression } from './avatar-data'
@@ -10,6 +10,11 @@ import { BrainSettings } from './brain-settings'
 import { Companion } from './companion'
 
 interface Props {
+  profile: TamizhiProfile
+  profiles: readonly TamizhiProfile[]
+  isProfileDisabled: boolean
+  startsNewChat: boolean
+  onProfileChange: (id: string) => void
   outfit: Outfit
   expression: Expression
   palette?: string
@@ -28,6 +33,11 @@ interface Props {
 }
 
 export const Playground = ({
+  profile,
+  profiles,
+  isProfileDisabled,
+  startsNewChat,
+  onProfileChange,
   outfit,
   expression,
   palette,
@@ -47,6 +57,45 @@ export const Playground = ({
   const sizesId = useId()
   return (
     <div className="tamizhi-playground">
+      <section>
+        <h2>Profile</h2>
+        <Dropdown>
+          <Dropdown.Trigger
+            className="tamizhi-playground__select"
+            aria-label="Choose test profile"
+            isDisabled={isProfileDisabled}>
+            {profile.name}
+            <AltArrowDown size={16} aria-hidden="true" />
+          </Dropdown.Trigger>
+          <Dropdown.Popover className="tamizhi-playground__menu">
+            <Dropdown.Menu
+              aria-label="Test profiles"
+              selectionMode="single"
+              selectedKeys={[profile.id]}>
+              {profiles.map(item => (
+                <Dropdown.Item
+                  key={item.id}
+                  id={item.id}
+                  textValue={item.name}
+                  onAction={() => onProfileChange(item.id)}>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span>{item.name}</span>
+                    <span className="text-muted text-xs">
+                      {item.persona} · {item.outfit}
+                    </span>
+                  </span>
+                  <Dropdown.ItemIndicator />
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown.Popover>
+        </Dropdown>
+        {startsNewChat && (
+          <p className="text-muted text-xs">
+            Changing profile starts a new chat.
+          </p>
+        )}
+      </section>
       <section>
         <h2>Outfit</h2>
         <Dropdown>
