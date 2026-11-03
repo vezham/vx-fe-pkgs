@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
+import { TAMIZHI_PROFILES } from '../src/generated/profiles'
+
 const openSettings = async (page: Page) => {
   await page.getByRole('button', { name: 'More', exact: true }).last().click()
   const menuItem = page.getByRole('menuitem', {
@@ -469,8 +471,8 @@ test('welcome assistant picker supports search, keyboard selection, and recent c
   await expect(
     page
       .getByRole('group', { name: 'Suggestions for Bug Tracker', exact: true })
-      .getByRole('button', { name: 'Find a bug', exact: true })
-  ).toBeVisible()
+      .getByRole('button')
+  ).toHaveCount(3)
   await trigger.click()
   await expect(search).toHaveValue('')
   await expect(
@@ -526,7 +528,7 @@ test('welcome assistant picker supports search, keyboard selection, and recent c
     name: 'Suggestions for CRM',
     exact: true
   })
-  await expect(suggestions.getByRole('button')).toHaveCount(2)
+  await expect(suggestions.getByRole('button')).toHaveCount(3)
   const composer = page.getByRole('textbox', { name: 'Message Tamizhi' })
   const composerNode = await composer.elementHandle()
   const suggestionBounds = await suggestions.boundingBox()
@@ -536,14 +538,21 @@ test('welcome assistant picker supports search, keyboard selection, and recent c
       composerBounds &&
       suggestionBounds.y + suggestionBounds.height <= composerBounds.y
   ).toBeTruthy()
-  await composer.focus()
+  const titles = await suggestions.getByRole('button').allTextContents()
+  await composer.fill('A draft')
   await expect(suggestions).toBeVisible()
-  await suggestions
-    .getByRole('button', { name: 'Draft a follow-up', exact: true })
-    .click()
+  expect(await suggestions.getByRole('button').allTextContents()).toEqual(
+    titles
+  )
+  await composer.fill('')
+  const selected = TAMIZHI_PROFILES.find(
+    profile => profile.id === 'vezham-crm'
+  )?.suggestions?.find(item => item.title === titles[0])
+  expect(selected).toBeTruthy()
+  await suggestions.getByRole('button').first().click()
   await expect(
     page.getByRole('article', { name: 'Your message', exact: true })
-  ).toContainText('Help me draft a sales follow-up email.')
+  ).toContainText(selected?.prompt ?? '')
   await expect(
     page.getByRole('article', { name: 'Tamizhi’s response', exact: true })
   ).toBeVisible()

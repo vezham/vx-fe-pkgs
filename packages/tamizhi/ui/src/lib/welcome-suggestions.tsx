@@ -1,7 +1,15 @@
+import { useEffect, useState } from 'react'
+
 import { Button } from '@vezham/react-v3'
-import type { TamizhiProfile } from '@vezham/tamizhi-contracts'
+import type {
+  TamizhiProfile,
+  TamizhiSuggestion
+} from '@vezham/tamizhi-contracts'
 
 import { getTamizhiProfile } from './profiles'
+import { sampleSuggestions } from './sample-suggestions'
+
+const EMPTY_SUGGESTIONS: readonly TamizhiSuggestion[] = []
 
 interface Props {
   variant?: 'app' | 'embed'
@@ -21,10 +29,33 @@ export const WelcomeSuggestions = ({
   const suggestions =
     profile.suggestions ??
     getTamizhiProfile('vezham-tamizhi', profiles).suggestions ??
-    []
+    EMPTY_SUGGESTIONS
+  const limit = variant === 'embed' ? 2 : 3
+  const [selection, setSelection] = useState<{
+    profileId: string
+    pool: readonly TamizhiSuggestion[]
+    limit: number
+    items: TamizhiSuggestion[]
+  } | null>(null)
+  useEffect(() => {
+    // vx-bot/NOTE: Sample after hydration; keep the choice stable across draft and status updates.
+    const timer = window.setTimeout(() => {
+      setSelection({
+        profileId: profile.id,
+        pool: suggestions,
+        limit,
+        items: sampleSuggestions(suggestions, limit)
+      })
+    }, 0)
+    return () => window.clearTimeout(timer)
+  }, [profile.id, suggestions, limit])
   const visibleSuggestions =
-    variant === 'embed' ? suggestions.slice(0, 2) : suggestions
-  if (suggestions.length === 0) return null
+    selection?.profileId === profile.id &&
+    selection.pool === suggestions &&
+    selection.limit === limit
+      ? selection.items
+      : EMPTY_SUGGESTIONS
+  if (visibleSuggestions.length === 0) return null
   return (
     <div
       role="group"

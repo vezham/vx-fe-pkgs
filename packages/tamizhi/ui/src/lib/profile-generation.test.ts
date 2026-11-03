@@ -119,3 +119,28 @@ it('rejects empty suggestion prompts without replacing generated output', async 
   )
   expect(readFileSync(file, 'utf8')).toBe(original)
 })
+
+it('accepts ten suggestions and rejects oversized or duplicate pools', async () => {
+  const root = createRoot()
+  const configFile = path.join(root, 'vx.tamizhi.yaml')
+  const suggestions = Array.from({ length: 10 }, (_, index) => ({
+    title: `Task ${index}`,
+    prompt: `Prompt ${index}`
+  }))
+  const writePool = (items: typeof suggestions) =>
+    writeFileSync(
+      configFile,
+      stringify({ profiles: [{ ...config.profiles[0], suggestions: items }] })
+    )
+  writePool(suggestions)
+  const file = await generateProfiles(root)
+  expect(readFileSync(file, 'utf8')).toContain('"title": "Task 9"')
+  writePool([...suggestions, { title: 'Eleventh', prompt: 'Too many' }])
+  await expect(generateProfiles(root)).rejects.toThrow(
+    'Invalid Tamizhi configuration'
+  )
+  writePool([suggestions[0], suggestions[0]])
+  await expect(generateProfiles(root)).rejects.toThrow(
+    'Invalid Tamizhi configuration'
+  )
+})

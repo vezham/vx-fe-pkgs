@@ -19,14 +19,6 @@ it.each([
       </TamizhiSessionProvider>
     )
     expect(markup).toContain(greeting)
-    expect(markup).toContain('Suggestions for ')
-    expect(markup).toContain(
-      appId === 'vezham-crm'
-        ? 'Draft a follow-up'
-        : appId === 'vezham-school-os'
-          ? 'Plan a lesson'
-          : 'Plan my day'
-    )
     expect(markup).not.toContain('Who’s helping?')
     expect(markup).not.toContain('Choose an assistant')
   }

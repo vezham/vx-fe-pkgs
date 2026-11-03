@@ -42,7 +42,7 @@ export const tamizhiProfileSchema = appearanceSchema.extend({
         prompt: z.string().trim().min(1).max(2000)
       })
     )
-    .max(3)
+    .max(10)
     .refine(
       items => new Set(items.map(item => item.title)).size === items.length,
       {
