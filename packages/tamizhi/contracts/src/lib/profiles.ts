@@ -11,6 +11,7 @@ export interface TamizhiAppearance {
 export interface TamizhiProfile extends TamizhiAppearance {
   id: string
   name: string
+  category?: string
   activities?: Readonly<Record<string, Partial<TamizhiAppearance>>>
 }
 
@@ -27,6 +28,7 @@ const appearanceSchema = z.strictObject({
 export const tamizhiProfileSchema = appearanceSchema.extend({
   id: z.string().trim().min(1).max(128),
   name: z.string().trim().min(1).max(128),
+  category: z.string().trim().min(1).max(64).optional(),
   activities: z
     .record(z.string().min(1).max(256), appearanceSchema.partial())
     .optional()

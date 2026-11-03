@@ -3,11 +3,13 @@ profiles:
   # vx-bot/INFO: Activities use the exact MCP tool or skill name.
 
   - id: vezham-tamizhi
+    category: General
     name: Tamizhi
     persona: helper
     outfit: rest
 
   - id: vezham-crm
+    category: Business
     name: CRM
     persona: planner
     outfit: planner
@@ -20,81 +22,97 @@ profiles:
         outfit: coach
 
   - id: vezham-school-os
+    category: Learning
     name: School OS
     persona: tutor
     outfit: tutor
 
   - id: vezham-kitchen
+    category: Everyday
     name: Kitchen
     persona: helper
     outfit: cook
 
   - id: vezham-research
+    category: Learning
     name: Research
     persona: explorer
     outfit: investigate
 
   - id: vezham-mail
+    category: Business
     name: Mail
     persona: writer
     outfit: write
 
   - id: vezham-dev-studio
+    category: Development
     name: Dev Studio
     persona: coder
     outfit: builder
 
   - id: vezham-music
+    category: Creative
     name: Music
     persona: explorer
     outfit: music
 
   - id: vezham-garden
+    category: Everyday
     name: Garden
     persona: helper
     outfit: garden
 
   - id: vezham-design-studio
+    category: Creative
     name: Design Studio
     persona: coder
     outfit: designer
 
   - id: vezham-video-studio
+    category: Creative
     name: Video Studio
     persona: writer
     outfit: director
 
   - id: vezham-wellness
+    category: Everyday
     name: Wellness
     persona: planner
     outfit: coach
 
   - id: vezham-travel
+    category: Everyday
     name: Travel
     persona: explorer
     outfit: traveller
 
   - id: vezham-finance
+    category: Business
     name: Finance
     persona: planner
     outfit: money
 
   - id: vezham-releases
+    category: Development
     name: Releases
     persona: coder
     outfit: captain
 
   - id: vezham-qa
+    category: Development
     name: QA
     persona: coder
     outfit: tester
 
   - id: vezham-security
+    category: Development
     name: Security
     persona: coder
     outfit: guard
 
   - id: vezham-bug-tracker
+    category: Development
     name: Bug Tracker
     persona: coder
     outfit: bug

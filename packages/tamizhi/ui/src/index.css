@@ -60,8 +60,25 @@
 }
 
 .tamizhi-bots {
-  max-height: 25rem;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: min(30rem, var(--available-height, 30rem));
+  overflow: hidden;
+}
+
+.tamizhi-bots__search {
+  padding: 0.5rem;
+}
+
+.tamizhi-bots__list {
+  max-height: min(23rem, calc(var(--available-height, 30rem) - 5rem));
   overflow-y: auto;
+}
+
+.tamizhi-bots__empty {
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
 }
 
 .tamizhi-composer {

@@ -15,6 +15,7 @@ it('validates app profiles and partial activity overrides', () => {
     {
       id: 'vezham-crm',
       name: 'CRM',
+      category: 'Business',
       persona: 'planner',
       outfit: 'planner',
       activities: {
@@ -30,6 +31,8 @@ it.each([
   { persona: 'unknown' },
   { outfit: 'unknown' },
   { name: ' ' },
+  { category: ' ' },
+  { category: 123 },
   { activities: { tool: { outfit: 'unknown' } } },
   { activities: { tool: { persona: 'unknown' } } },
   { activities: { tool: { oufit: 'money' } } },

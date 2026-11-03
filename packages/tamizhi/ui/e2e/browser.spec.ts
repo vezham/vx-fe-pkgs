@@ -315,6 +315,13 @@ test('named app profiles can be selected on compact screens', async ({
   await page.goto('/chat/new')
   await page.getByRole('button', { name: 'Choose an assistant' }).click()
   await page
+    .getByRole('searchbox', { name: 'Search assistants' })
+    .fill('School')
+  const popup = await page.locator('.tamizhi-bots').boundingBox()
+  if (!popup) throw new Error('Assistant picker is not visible')
+  expect(popup.x).toBeGreaterThanOrEqual(0)
+  expect(popup.x + popup.width).toBeLessThanOrEqual(390)
+  await page
     .getByRole('menuitemradio', { name: 'School OS', exact: true })
     .click()
   await expect(
@@ -420,4 +427,41 @@ test('V3 theme applies accent colors and appearance without legacy tokens', asyn
   })
   expect(tokens).toEqual({ accent: '#7d3fc8', legacy: '' })
   expect(errors).toEqual([])
+})
+
+test('welcome assistant picker supports search, keyboard selection, and recent choices', async ({
+  page
+}) => {
+  await page.goto('/chat/new')
+  const trigger = page.getByRole('button', { name: 'Choose an assistant' })
+  await trigger.click()
+  const search = page.getByRole('searchbox', { name: 'Search assistants' })
+  await expect(search).toBeFocused()
+  await search.fill('DEVELOPMENT')
+  await expect(page.getByRole('menuitemradio')).toHaveCount(5)
+  await search.fill('nothing-matches')
+  await expect(page.getByText('No matching assistants.')).toBeVisible()
+  await search.fill('Bug Tracker')
+  await search.press('ArrowDown')
+  await search.press('Enter')
+  await expect(trigger).toContainText('Bug Tracker')
+  await trigger.click()
+  await expect(search).toHaveValue('')
+  await expect(
+    page.getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
+  ).toHaveCount(1)
+  await expect(
+    page
+      .getByRole('group', { name: 'Recent', exact: true })
+      .getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
+  ).toHaveAttribute('aria-checked', 'true')
+  await search.press('Escape')
+  await expect(trigger).toBeFocused()
+  await page.reload()
+  await trigger.click()
+  await expect(
+    page
+      .getByRole('group', { name: 'Recent', exact: true })
+      .getByRole('menuitemradio', { name: 'Bug Tracker', exact: true })
+  ).toBeVisible()
 })
