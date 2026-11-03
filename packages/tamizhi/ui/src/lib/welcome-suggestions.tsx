@@ -4,6 +4,7 @@ import type { TamizhiProfile } from '@vezham/tamizhi-contracts'
 import { getTamizhiProfile } from './profiles'
 
 interface Props {
+  variant?: 'app' | 'embed'
   profile: TamizhiProfile
   profiles: readonly TamizhiProfile[]
   onSuggest: (prompt: string) => void
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const WelcomeSuggestions = ({
+  variant = 'app',
   profile,
   profiles,
   onSuggest,
@@ -20,13 +22,15 @@ export const WelcomeSuggestions = ({
     profile.suggestions ??
     getTamizhiProfile('vezham-tamizhi', profiles).suggestions ??
     []
+  const visibleSuggestions =
+    variant === 'embed' ? suggestions.slice(0, 2) : suggestions
   if (suggestions.length === 0) return null
   return (
     <div
       role="group"
       aria-label={`Suggestions for ${profile.name}`}
-      className="mx-auto flex w-full max-w-4xl shrink-0 flex-wrap items-center justify-center gap-2 px-4 pb-3">
-      {suggestions.map(suggestion => (
+      className={`mx-auto flex w-full max-w-4xl shrink-0 flex-wrap items-center justify-center gap-2 ${variant === 'embed' ? 'px-1 pb-2' : 'px-4 pb-3'}`}>
+      {visibleSuggestions.map(suggestion => (
         <Button
           key={suggestion.title}
           size="sm"

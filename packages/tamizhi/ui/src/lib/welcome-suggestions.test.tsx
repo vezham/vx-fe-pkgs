@@ -64,3 +64,40 @@ it('lets host profiles inherit default suggestions or hide them explicitly', () 
     screen.queryByRole('group', { name: 'Suggestions for Custom' })
   ).toBeNull()
 })
+
+it('limits embedded suggestions to two without limiting standalone suggestions', () => {
+  const profile = {
+    id: 'custom',
+    name: 'Custom',
+    persona: 'helper',
+    outfit: 'rest',
+    suggestions: [
+      { title: 'First task', prompt: 'First prompt' },
+      { title: 'Second task', prompt: 'Second prompt' },
+      { title: 'Third task', prompt: 'Third prompt' }
+    ]
+  } as const
+  const onSuggest = vi.fn()
+  const view = render(
+    <WelcomeSuggestions
+      variant="embed"
+      profile={profile}
+      profiles={[profile]}
+      onSuggest={onSuggest}
+      isDisabled={false}
+    />
+  )
+  expect(screen.getAllByRole('button')).toHaveLength(2)
+  fireEvent.click(screen.getByRole('button', { name: 'Second task' }))
+  expect(onSuggest).toHaveBeenCalledWith('Second prompt')
+  view.rerender(
+    <WelcomeSuggestions
+      variant="app"
+      profile={profile}
+      profiles={[profile]}
+      onSuggest={onSuggest}
+      isDisabled={false}
+    />
+  )
+  expect(screen.getAllByRole('button')).toHaveLength(3)
+})

@@ -215,8 +215,9 @@ export const TamizhiChat = ({
         </span>
       )}
       <ChatFeedback chat={chat} speechError={speech.error} />
-      {!hasMessages && composerVariant === 'app' && (
+      {!hasMessages && (
         <WelcomeSuggestions
+          variant={composerVariant}
           profile={chat.profile}
           profiles={chat.profiles}
           onSuggest={sendMessage}

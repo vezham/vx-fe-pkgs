@@ -145,10 +145,13 @@ test('browser OIDC login, BYOK, image chat, recording and playback', async ({
   await expect(
     embed.getByRole('button', { name: 'Voice input', exact: true })
   ).toBeVisible()
-  await embed
-    .getByRole('textbox', { name: 'Message Tamizhi' })
-    .fill('Hello from embed')
-  await embed.getByRole('button', { name: 'Send message', exact: true }).click()
+  const suggestions = embed.getByRole('group', { name: /^Suggestions for / })
+  await expect(suggestions.getByRole('button')).toHaveCount(2)
+  await expect(
+    embed.getByRole('button', { name: 'Choose an assistant' })
+  ).toHaveCount(0)
+  await suggestions.getByRole('button').first().click()
+  await expect(suggestions).toHaveCount(0)
   await expect(
     embed.locator('.tamizhi-message--assistant').last()
   ).toContainText('Browser verified reply.')
