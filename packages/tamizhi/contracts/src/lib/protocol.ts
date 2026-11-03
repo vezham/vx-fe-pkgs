@@ -81,6 +81,8 @@ export const modelInfoSchema = z.object({
 })
 export type ModelInfo = z.infer<typeof modelInfoSchema>
 export const pluginInfoSchema = z.object({
+  required: z.boolean().optional(),
+  error: z.string().optional(),
   name: z.string(),
   services: z.array(z.string()).optional(),
   kind: z.string().optional(),

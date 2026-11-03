@@ -642,3 +642,36 @@ test('backend settings actions preserve conversations, checkpoints, and memory',
     .click()
   await expect(fact).toHaveCount(0)
 })
+
+test('optional plugin activation failure remains visible and explicitly retryable', async ({
+  page
+}) => {
+  await connect(page)
+  await openSettings(page)
+  const dialog = page.getByRole('dialog', { name: 'Tamizhi settings' })
+  const retry = dialog.getByRole('button', {
+    name: 'Retry optional.browser-retry'
+  })
+  await expect(retry).toBeVisible()
+  await expect(
+    dialog.getByRole('switch', { name: /optional.browser-retry/ })
+  ).toBeChecked()
+  await expect(
+    dialog.getByText(
+      'Activation failed. Check the server configuration and retry.'
+    )
+  ).toBeVisible()
+  await retry.click()
+  await expect(retry).toHaveCount(0)
+  await expect(
+    dialog.getByRole('switch', { name: /optional.browser-retry/ })
+  ).toHaveAccessibleName(/optional\.browser-retry.*active/)
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click()
+  await openSettings(page)
+  await expect(
+    dialog.getByRole('button', { name: 'Retry optional.browser-retry' })
+  ).toHaveCount(0)
+  await expect(
+    dialog.getByRole('switch', { name: /optional.browser-retry/ })
+  ).toBeChecked()
+})

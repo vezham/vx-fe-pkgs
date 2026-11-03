@@ -130,3 +130,11 @@ TAMIZHI_BACKEND_DIR=/path/to/vx-be-kit-lab pnpm nx run tamizhi-client:test --ski
 ```
 
 The Go integration test uses a local mocked provider and temporary SQLite database. Running it requires the built API binary in the supplied repository. Real paid provider requests require a user-supplied BYOK key; the fixtures do not verify a vendor account. The optional Chromium suite checks login, BYOK settings, image forwarding, microphone recording/denial and native audio playback against local Go/OIDC/provider fixtures. Run it with `TAMIZHI_BACKEND_DIR=/path/to/vx-be-kit-lab pnpm nx run tamizhi-ui:browser-test`. Docker, deployment and CI verification are excluded from this work. The backend README describes setup, plugin configuration, execution boundaries and current single-process deployment constraints.
+
+## Upstream review history
+
+See the [Tamizhi upstream sync handbook](https://github.com/vezham-labs/vx-be-kit-lab/blob/timeline/vx/handbooks/tamizhi-upstream-sync.md)
+for reviewed DSH commits, adopted behaviors, verification, and deferred work.
+Optional integration failures and saved-versus-applied settings status follow
+that ledger. Failed optional plugins remain visible in AI settings and can be
+retried explicitly.

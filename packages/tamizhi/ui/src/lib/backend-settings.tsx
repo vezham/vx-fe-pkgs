@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import {
-  Button,
-  Input,
-  Label,
-  Modal,
-  Switch,
-  TextField
-} from '@vezham/react-v3'
+import { Button, Input, Label, Modal, TextField } from '@vezham/react-v3'
 import type { TamizhiAPI } from '@vezham/tamizhi-contracts'
 
 import { AccountControls } from './account-controls'
+import { BackendPlugins } from './backend-plugins'
 import type { TamizhiChatProps } from './chat'
 import { ProviderSettings } from './provider-settings'
 
@@ -80,6 +74,23 @@ const ConnectedBackendSettings = ({
         )
       )
       .finally(() => setBusy(false))
+  }
+  const updatePlugin = (name: string, enabled: boolean) => {
+    runAction(
+      api
+        .setPlugin(name, enabled)
+        .then(setPlugins)
+        .catch(async () => {
+          try {
+            setPlugins(await api.plugins())
+          } catch {
+            /* vx-bot/NOTE: Preserve the mutation failure if reconciliation is unavailable. */
+          }
+          throw new Error(
+            'Unable to confirm the plugin change. Reopen settings to refresh its status before retrying.'
+          )
+        })
+    )
   }
   return (
     <Modal isOpen={open} onOpenChange={setOpen}>
@@ -272,32 +283,11 @@ const ConnectedBackendSettings = ({
                   </div>
                 ))}
               </section>
-              <section className="flex flex-col gap-3">
-                <h3 className="font-medium">Plugins</h3>
-                {plugins.map(plugin => (
-                  <Switch
-                    key={plugin.name}
-                    isSelected={plugin.enabled}
-                    isDisabled={busy || !isAdmin}
-                    onChange={enabled =>
-                      runAction(
-                        api.setPlugin(plugin.name, enabled).then(setPlugins)
-                      )
-                    }>
-                    <Switch.Content>
-                      <Switch.Control>
-                        <Switch.Thumb />
-                      </Switch.Control>
-                      <span className="flex flex-col text-sm">
-                        <span>{plugin.name}</span>
-                        <span className="text-muted text-xs">
-                          {plugin.kind} · {plugin.status}
-                        </span>
-                      </span>
-                    </Switch.Content>
-                  </Switch>
-                ))}
-              </section>
+              <BackendPlugins
+                plugins={plugins}
+                isDisabled={busy || !isAdmin}
+                onUpdate={updatePlugin}
+              />
             </Modal.Body>
           </Modal.Dialog>
         </Modal.Container>

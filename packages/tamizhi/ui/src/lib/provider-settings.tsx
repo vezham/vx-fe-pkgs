@@ -41,15 +41,21 @@ export const ProviderSettings = ({
       setProviders(current =>
         current.map(item => (item.id === saved.id ? saved : item))
       )
-      await onChange()
       setNotice(
         `${saved.name} connected. ${saved.models.length} chat models available.`
       )
+      try {
+        await onChange()
+      } catch {
+        setError(
+          'Connection saved, but the model list could not refresh. Refresh status to try again.'
+        )
+      }
     } catch (failure) {
       setError(
         failure instanceof Error
-          ? failure.message
-          : 'Unable to connect this provider.'
+          ? `${failure.message} Refresh status before retrying if the connection was interrupted.`
+          : 'Unable to confirm the provider connection. Refresh status before retrying.'
       )
     } finally {
       setBusy(false)
@@ -81,11 +87,45 @@ export const ProviderSettings = ({
     try {
       await api.removeProvider(selected)
       setAPIKey('')
-      setProviders(await api.providers())
-      await onChange()
+      setProviders(current =>
+        current.map(item =>
+          item.id === selected
+            ? {
+                ...item,
+                connected: false,
+                models: [],
+                authMethod: undefined,
+                projectId: undefined,
+                transcriptionModel: undefined,
+                speechModel: undefined
+              }
+            : item
+        )
+      )
       setNotice('Provider connection removed.')
+      try {
+        await Promise.all([api.providers().then(setProviders), onChange()])
+      } catch {
+        setError(
+          'Connection removed, but its status could not refresh. Refresh status to try again.'
+        )
+      }
     } catch {
-      setError('Unable to remove the provider key.')
+      setError('Unable to confirm removal. Refresh status before retrying.')
+    } finally {
+      setBusy(false)
+    }
+  }
+  const refresh = async () => {
+    if (busy) return
+    setBusy(true)
+    setError(null)
+    try {
+      await Promise.all([api.providers().then(setProviders), onChange()])
+    } catch {
+      setError(
+        'Unable to refresh connection status. Try again when the connection is available.'
+      )
     } finally {
       setBusy(false)
     }
@@ -197,6 +237,15 @@ export const ProviderSettings = ({
             : ''}
           {provider.speechModel ? ` · Speech: ${provider.speechModel}` : ''}
         </p>
+      )}
+      {error && (
+        <Button
+          size="sm"
+          variant="secondary"
+          isDisabled={busy}
+          onPress={() => void refresh()}>
+          Refresh status
+        </Button>
       )}
       {error && (
         <p role="alert" className="text-danger text-xs">
