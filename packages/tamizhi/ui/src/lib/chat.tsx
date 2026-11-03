@@ -15,6 +15,7 @@ import { ComposerLite } from './composer-lite'
 import { getAvailableModel } from './models'
 import { Playground } from './playground'
 import { PlaygroundPanel } from './playground-panel'
+import { resolveOutfit } from './resolve-outfit'
 import { useAvatarAppearance } from './use-avatar-appearance'
 import { useAvatarPlacement } from './use-avatar-placement'
 import { useSpeechOutput } from './use-speech-output'
@@ -79,12 +80,13 @@ export const TamizhiChat = ({
   const lastUser = [...chat.messages]
     .reverse()
     .find(message => message.role === 'user')
-  const outfit =
-    manualOutfit ??
-    chat.runOutfitOverride ??
-    chat.activityAppearance?.outfit ??
-    lastUser?.outfit ??
-    chat.profile.outfit
+  const outfit = resolveOutfit({
+    manual: manualOutfit,
+    run: chat.runOutfitOverride,
+    activity: chat.activityAppearance?.outfit,
+    message: lastUser?.outfit,
+    profile: chat.profile.outfit
+  })
   const outfitInfo = OUTFITS.find(item => item.id === outfit) ?? OUTFITS[0]
 
   useEffect(() => {

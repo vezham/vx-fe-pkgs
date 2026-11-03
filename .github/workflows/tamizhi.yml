@@ -21,6 +21,7 @@ on:
       - 'vx/handbooks/ci.md'
       # - 'packages/**'
       - 'apps/tamizhi/**'
+      - 'packages/tamizhi/**'
 
 jobs:
   run_if:
@@ -41,6 +42,7 @@ jobs:
             deploy:
               - 'apps/tamizhi/**'
               - 'packages/**'
+              - 'packages/tamizhi/**'
 
   deploy:
     needs: run_if
