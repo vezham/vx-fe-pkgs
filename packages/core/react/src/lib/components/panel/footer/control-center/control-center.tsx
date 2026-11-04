@@ -91,7 +91,7 @@ export const ControlCenter = <Context extends object>({
               changeOpen(false)
               openSettings('Control Center')
             }}>
-            Control Center
+            Edit Controls
           </Button>
         </div>
       )}

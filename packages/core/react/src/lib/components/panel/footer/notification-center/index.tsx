@@ -86,7 +86,7 @@ const NotificationDrawer = forwardRef<HTMLDivElement, Props>((props, ref) => {
       size="sm"
       {...getEditButtonProps()}
       onPress={handleEdit}>
-      Widget Center
+      Edit Widgets
     </Button>
   )
 
