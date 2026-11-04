@@ -1,3 +1,57 @@
+## 26.2.0 (2026-11-04)
+
+### 🚀 Features
+
+- **core:** add shared Tamizhi UI and local store ([a6a8c396](https://github.com/vezham/vx-fe-pkgs/commit/a6a8c396))
+- **tamizhi:** added tamizhi for testing ([bc2b0e2b](https://github.com/vezham/vx-fe-pkgs/commit/bc2b0e2b))
+- **tamizhi:** add composer controls ([1fac90c5](https://github.com/vezham/vx-fe-pkgs/commit/1fac90c5))
+- **tamizhi:** add embed composer variant ([d9d3a365](https://github.com/vezham/vx-fe-pkgs/commit/d9d3a365))
+- **tamizhi:** add feedback and branch actions ([f3e832fd](https://github.com/vezham/vx-fe-pkgs/commit/f3e832fd))
+- **tamizhi:** extract packages and wire app ([49e34084](https://github.com/vezham/vx-fe-pkgs/commit/49e34084))
+- **tamizhi:** add Go API sync and browser client ([a1d202d1](https://github.com/vezham/vx-fe-pkgs/commit/a1d202d1))
+- **tamizhi:** add app-aware profiles ([2028e46c](https://github.com/vezham/vx-fe-pkgs/commit/2028e46c))
+- **tamizhi:** add generated profile registry ([bac670f3](https://github.com/vezham/vx-fe-pkgs/commit/bac670f3))
+- **tamizhi:** add searchable assistant picker ([455989a3](https://github.com/vezham/vx-fe-pkgs/commit/455989a3))
+- **tamizhi:** add embed welcome ([9fd1b5db](https://github.com/vezham/vx-fe-pkgs/commit/9fd1b5db))
+- **tamizhi:** add profile tuning controls ([68e9303d](https://github.com/vezham/vx-fe-pkgs/commit/68e9303d))
+- **tamizhi:** add profile welcome prompts ([654fcdc0](https://github.com/vezham/vx-fe-pkgs/commit/654fcdc0))
+- **tamizhi:** retry failed optional plugins ([d84f533d](https://github.com/vezham/vx-fe-pkgs/commit/d84f533d))
+- **tamizhi-ui:** show embed suggestions ([b2bd1feb](https://github.com/vezham/vx-fe-pkgs/commit/b2bd1feb))
+- **tamizhi-ui:** show embed suggestions ([0f4a9e8a](https://github.com/vezham/vx-fe-pkgs/commit/0f4a9e8a))
+
+### 🩹 Fixes
+
+- **playground-docs:** resolve import paths ([c157c72b](https://github.com/vezham/vx-fe-pkgs/commit/c157c72b))
+- **tamizhi:** improve composer sizing ([58a534b7](https://github.com/vezham/vx-fe-pkgs/commit/58a534b7))
+- **tamizhi:** rename playground to tuning ([6267effc](https://github.com/vezham/vx-fe-pkgs/commit/6267effc))
+- **tamizhi:** expose css via package entry ([2e8c91bd](https://github.com/vezham/vx-fe-pkgs/commit/2e8c91bd))
+- **tamizhi:** stabilize chat and plugin behavior ([9beca837](https://github.com/vezham/vx-fe-pkgs/commit/9beca837))
+- **tamizhi:** link abort and clarify chat types ([e7d7196c](https://github.com/vezham/vx-fe-pkgs/commit/e7d7196c))
+- **tamizhi-ui:** import Expression type ([28cd80c6](https://github.com/vezham/vx-fe-pkgs/commit/28cd80c6))
+
+### 💅 Refactors
+
+- **react:** drop legacy Tamizhi AI panel ([8ef9c1e7](https://github.com/vezham/vx-fe-pkgs/commit/8ef9c1e7))
+- **react:** drop legacy @vezham/react-v2, fwd pkgs ([dd42c60c](https://github.com/vezham/vx-fe-pkgs/commit/dd42c60c))
+- **tamizhi:** add profile outfit previews ([82ad3dee](https://github.com/vezham/vx-fe-pkgs/commit/82ad3dee))
+- **tamizhi-ui:** extract outfit resolver ([79cd11a0](https://github.com/vezham/vx-fe-pkgs/commit/79cd11a0))
+
+### 📖 Documentation
+
+- **tamizhi:** keep OpenAPI reference external ([edc86fd0](https://github.com/vezham/vx-fe-pkgs/commit/edc86fd0))
+
+### 🏡 Chore
+
+- **tamizhi:** preserve generated OpenAPI output ([4927d1a7](https://github.com/vezham/vx-fe-pkgs/commit/4927d1a7))
+
+### 🤖 CI
+
+- **tamizhi:** add Tamizhi deploy workflow ([ddfce27e](https://github.com/vezham/vx-fe-pkgs/commit/ddfce27e))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.1.0 (2026-11-01)
 
 ### 🚀 Features
