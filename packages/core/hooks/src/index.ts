@@ -5,3 +5,8 @@ export {
   useCopyToClipboard,
   type CopyToClipboardStatus
 } from './lib/use-copy-to-clipboard'
+
+export {
+  useIndexedDBStore,
+  type IndexedDBStoreOptions
+} from './lib/use-indexed-db-store'

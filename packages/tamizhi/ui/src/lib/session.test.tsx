@@ -14,7 +14,7 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
-it('keeps the embedded session across panel unmounts and independent from the standalone history', () => {
+it('keeps the embedded session across panel unmounts and independent from the standalone history', async () => {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <TamizhiSessionProvider storageKey="test:embed">
       {children}
@@ -22,14 +22,19 @@ it('keeps the embedded session across panel unmounts and independent from the st
   )
   const host = renderHook(() => useTamizhiSession(), { wrapper })
   const standalone = renderHook(() => useTamizhiChat(true))
+  await vi.waitFor(() => expect(host.result.current.chat.isReady).toBe(true))
+  await vi.waitFor(() => expect(standalone.result.current.isReady).toBe(true))
   act(() => host.result.current.chat.send('Plan my day'))
-  act(() => vi.advanceTimersByTime(5000))
+  await act(async () => vi.advanceTimersByTimeAsync(5000))
   const id = host.result.current.chat.activeId
   host.rerender()
   expect(host.result.current.chat.activeId).toBe(id)
   expect(host.result.current.chat.messages).toHaveLength(2)
   expect(standalone.result.current.conversations).toHaveLength(0)
+  await vi.waitFor(() => expect(host.result.current.chat.isSaved).toBe(true))
   host.unmount()
   const reopened = renderHook(() => useTamizhiSession(), { wrapper })
-  expect(reopened.result.current.chat.conversations[0].id).toBe(id)
+  await vi.waitFor(() =>
+    expect(reopened.result.current.chat.conversations[0]?.id).toBe(id)
+  )
 })

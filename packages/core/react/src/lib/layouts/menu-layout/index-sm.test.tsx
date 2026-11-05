@@ -88,9 +88,6 @@ vi.mock('../../components/panel/header/storage', () => ({ storagePanel: {} }))
 vi.mock('../../components/panel/footer/notification-center', () => ({
   NotificationDrawer: () => null
 }))
-vi.mock('../../components/panel/footer/preferences/modal', () => ({
-  UserInfoModal: () => null
-}))
 
 const items = [
   { key: 'home', title: 'Home', href: '/' },

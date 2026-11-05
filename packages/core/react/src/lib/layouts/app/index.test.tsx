@@ -17,6 +17,7 @@ import { useAppMenu } from '../../components/app-menu'
 import { useToolbarAction } from '../../components/toolbar-actions'
 import { useSettingsNavigation } from '../../pages/settings/navigation'
 import { useUser } from '../../store/users/useUserStore'
+import { WorkspaceProvider, useWorkspace } from '../../workspace'
 import { AppFrame, AppLayout } from './index'
 
 vi.mock('../menu-layout', () => ({ MenuLayout: () => null }))
@@ -185,6 +186,78 @@ it.each([
     render(<RouterProvider router={router} />)
     expect(await screen.findByTestId('embedded-profile')).toHaveTextContent(
       expected
+    )
+  }
+)
+
+it.each([false, true])(
+  'provides app-scoped workspaces globally and reuses an explicit scope (custom: %s)',
+  async custom => {
+    const identity: AppIdentity = {
+      id: `global-workspace-${custom}`,
+      name: 'Host',
+      version: '1',
+      environment: 'local',
+      runtime: 'tanstack'
+    }
+    const Probe = () => {
+      const workspace = useWorkspace()
+      return (
+        <>
+          <span data-testid="workspace-name">{workspace.active.name}</span>
+          <span data-testid="workspace-app">{workspace.appId}</span>
+          <button
+            disabled={!workspace.isReady}
+            onClick={() => void workspace.create('Project workspace')}>
+            Create local workspace
+          </button>
+        </>
+      )
+    }
+    const root = createRootRoute({
+      component: () => {
+        const layout = (
+          <AppLayout navigationItems={[]}>
+            <Probe />
+          </AppLayout>
+        )
+        return (
+          <AppContext.Provider value={identity}>
+            {custom ? (
+              <WorkspaceProvider
+                appId="custom-scope"
+                defaultName="Custom workspace">
+                {layout}
+              </WorkspaceProvider>
+            ) : (
+              layout
+            )}
+          </AppContext.Provider>
+        )
+      }
+    })
+    const home = createRoute({ getParentRoute: () => root, path: '/' })
+    const router = createRouter({
+      routeTree: root.addChildren([home]),
+      history: createMemoryHistory({ initialEntries: ['/'] })
+    })
+    await router.load()
+    render(<RouterProvider router={router} />)
+    expect(await screen.findByTestId('workspace-name')).toHaveTextContent(
+      custom ? 'Custom workspace' : 'My Workspace'
+    )
+    expect(screen.getByTestId('workspace-app')).toHaveTextContent(
+      custom ? 'custom-scope' : identity.id
+    )
+    const create = screen.getByRole('button', {
+      name: 'Create local workspace'
+    })
+    await waitFor(() => expect(create).toBeEnabled())
+    fireEvent.click(create)
+    await waitFor(() =>
+      expect(screen.getByTestId('workspace-name')).toHaveTextContent(
+        'Project workspace'
+      )
     )
   }
 )

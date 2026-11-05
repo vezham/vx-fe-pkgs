@@ -6,7 +6,6 @@ import { Surface } from '@vezham/react-v3'
 
 import { Footer } from '../../components/panel/footer'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
-import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
 import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
 import { Header } from '../../components/panel/header'
 import { bookmarksPanel } from '../../components/panel/header/bookmarks'
@@ -34,8 +33,6 @@ const headerUsers = {
 }
 
 const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
-  const [openSettings, setOpenSettings] = useState(false)
-  const [settingsEntryPoint, setSettingsEntryPoint] = useState('account')
   const location = useLocation()
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const { openInfoPanel, closeInfoPanel } = useInfoPanel()
@@ -57,7 +54,6 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
     } else {
       toggleNavigation()
     }
-    setOpenSettings(false)
     setNotificationsOpen(false)
   }
 
@@ -85,20 +81,11 @@ const MenuMD = ({ items, controlCenter }: MenuLayoutProps) => {
         onTamizhi={() => openInfoPanel('tamizhi')}
         onToggleDock={toggleDock}
         onNotifications={() => setNotificationsOpen(true)}
-        onUser={entryPoint => {
-          setSettingsEntryPoint(entryPoint)
-          setOpenSettings(true)
-        }}
       />
       <CollapsedNavigation
         collapsed={isNavigationCollapsed}
         isHome={isHome}
         onToggleDock={toggleDock}
-      />
-      <UserInfoModal
-        open={openSettings && !isNavigationCollapsed}
-        onClose={() => setOpenSettings(false)}
-        defaultActiveTab={settingsEntryPoint}
       />
       <NotificationDrawer
         isOpen={notificationsOpen && !isNavigationCollapsed}
@@ -129,7 +116,6 @@ type Props = Pick<MenuLayoutProps, 'controlCenter'> & {
   onTamizhi: () => void
   onToggleDock?: () => void
   onNotifications: () => void
-  onUser: (entryPoint: string) => void
 }
 
 const NavigationPanel = ({
@@ -141,8 +127,7 @@ const NavigationPanel = ({
   selectedKey,
   onTamizhi,
   onToggleDock,
-  onNotifications,
-  onUser
+  onNotifications
 }: Props) => (
   <Surface
     variant="transparent"
@@ -175,7 +160,6 @@ const NavigationPanel = ({
           showUserInfo
           onTamizhi={onTamizhi}
           onNotificationsClick={onNotifications}
-          onUserClick={(_user, entryPoint = 'account') => onUser(entryPoint)}
         />
       </>
     )}

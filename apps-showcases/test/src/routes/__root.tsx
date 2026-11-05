@@ -12,6 +12,7 @@ export const Route = createRootRoute({
     lang: vxI18n.defaultLanguage,
     children: (
       <AppLayout
+        user={null}
         settings
         navigationItems={navigationItems}
         appMenu={appMenu}

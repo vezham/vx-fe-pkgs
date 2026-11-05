@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
-import { useLocalStore } from '@vezham/hooks'
+import { useIndexedDBStore } from '@vezham/hooks'
 import type { TamizhiClient } from '@vezham/tamizhi-client'
 import type {
   APIAttachment,
@@ -70,6 +70,11 @@ const fromWire = (
     }))
 })
 
+const isClientReady = (
+  client: TamizhiClient,
+  loadedClient: TamizhiClient | null
+) => !client.api || loadedClient === client
+
 export const useTamizhiChat = (
   isInstant = false,
   selectedChatId?: string | null,
@@ -83,9 +88,9 @@ export const useTamizhiChat = (
     id: options.appId
   })
   const appearance = useRef<Partial<TamizhiAppearance>>({})
-  const local = useLocalStore(storageKey, EMPTY_CONVERSATIONS, {
+  const local = useIndexedDBStore(storageKey, EMPTY_CONVERSATIONS, {
     parse: parseConversations,
-    debounceMs: 150
+    enabled: !client
   })
   const [remoteConversations, setRemoteConversations] = useState<
     ChatConversationRecord[]
@@ -97,7 +102,7 @@ export const useTamizhiChat = (
       : remoteConversations
     : local.value
   const setConversations = client ? setRemoteConversations : local.setValue
-  const isReady = client?.api ? loadedClient === client : local.isReady
+  const isReady = client ? isClientReady(client, loadedClient) : local.isReady
   const isSaved = client ? true : local.isSaved
   const [capabilities, setCapabilities] = useState<APICapabilities | null>(null)
   const [sessionChatId, setActiveId] = useState<string | null>(null)
@@ -427,10 +432,11 @@ export const useTamizhiChat = (
     timer.current = setInterval(() => {
       position = Math.min(position + 2, words.length)
       const complete = position === words.length
+      const text = words.slice(0, position).join('')
       setConversations(chats =>
         updateConversationMessage(chats, chatId, id, message => ({
           ...message,
-          text: words.slice(0, position).join(''),
+          text,
           ...(complete && reply.tasks ? { tasks: reply.tasks } : {})
         }))
       )

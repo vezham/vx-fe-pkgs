@@ -27,8 +27,6 @@ export interface StatusTimingOption {
   label: string
 }
 
-export type UserSettingsEntryPoint = 'account' | 'profiles'
-
 export interface FooterActionsProps {
   user: UserInfo
 
@@ -43,7 +41,6 @@ export interface FooterActionsProps {
 
   onTamizhi?: () => void
   onNotificationsClick?: () => void
-  onUserClick?: (user: UserInfo, entryPoint?: UserSettingsEntryPoint) => void
 
   toolbarAction?: ReactNode
   className?: string

@@ -41,9 +41,7 @@ describe('configured control center', () => {
       )
       fireEvent.click(screen.getByRole('button', { name: 'Control center' }))
       await screen.findByRole('dialog', { name: 'Control Center' })
-      expect(
-        screen.queryByRole('button', { name: 'Control Center' })
-      ).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Edit Controls' })).toBeNull()
     }
   )
 
@@ -58,15 +56,15 @@ describe('configured control center', () => {
       </SettingsNavigationContext.Provider>
     )
     fireEvent.click(screen.getByRole('button', { name: 'Control center' }))
-    await screen.findByRole('button', { name: 'Control Center' })
+    await screen.findByRole('button', { name: 'Edit Controls' })
     fireEvent.click(screen.getByRole('button', { name: 'Direction' }))
     await screen.findByRole('button', { name: 'Back to Control Center' })
-    expect(screen.queryByRole('button', { name: 'Control Center' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Edit Controls' })).toBeNull()
     fireEvent.click(
       screen.getByRole('button', { name: 'Back to Control Center' })
     )
     fireEvent.click(
-      await screen.findByRole('button', { name: 'Control Center' })
+      await screen.findByRole('button', { name: 'Edit Controls' })
     )
     expect(openSettings).toHaveBeenCalledExactlyOnceWith('Control Center')
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())

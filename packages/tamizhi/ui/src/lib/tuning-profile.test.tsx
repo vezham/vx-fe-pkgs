@@ -8,6 +8,7 @@ import {
 import type { ReactNode } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 
+import { seedIndexedDB } from '../../test-setup'
 import { TamizhiEmbed } from './embed'
 import { TamizhiSessionProvider } from './session'
 
@@ -71,37 +72,39 @@ it('switches embedded test profiles and clears manual avatar overrides', async (
 })
 
 it('starts a fresh test profile conversation and preserves the previous history', async () => {
-  localStorage.setItem(
-    'test:tuning-history.vezham-crm',
-    JSON.stringify([
-      {
-        id: 'saved-chat',
-        title: 'Saved conversation',
-        messages: [
-          {
-            id: 'user',
-            role: 'user',
-            text: 'Previous question',
-            persona: 'planner',
-            profileId: 'vezham-crm',
-            outfit: 'planner'
-          },
-          {
-            id: 'answer',
-            role: 'assistant',
-            text: 'Previous answer',
-            persona: 'planner',
-            profileId: 'vezham-crm',
-            outfit: 'planner'
-          }
-        ]
-      }
-    ])
-  )
+  await seedIndexedDB('test:tuning-history.vezham-crm', [
+    {
+      id: 'saved-chat',
+      title: 'Saved conversation',
+      messages: [
+        {
+          id: 'user',
+          role: 'user',
+          text: 'Previous question',
+          persona: 'planner',
+          profileId: 'vezham-crm',
+          outfit: 'planner'
+        },
+        {
+          id: 'answer',
+          role: 'assistant',
+          text: 'Previous answer',
+          persona: 'planner',
+          profileId: 'vezham-crm',
+          outfit: 'planner'
+        }
+      ]
+    }
+  ])
   render(
     <TamizhiSessionProvider appId="vezham-crm" storageKey="test:tuning-history">
       <TamizhiEmbed />
     </TamizhiSessionProvider>
+  )
+  await waitFor(() =>
+    expect(
+      screen.getByRole('button', { name: 'Choose a Tamizhi chat' })
+    ).toBeEnabled()
   )
   fireEvent.click(screen.getByRole('button', { name: 'Choose a Tamizhi chat' }))
   fireEvent.click(
@@ -120,6 +123,11 @@ it('starts a fresh test profile conversation and preserves the previous history'
     })
   ).toBeTruthy()
   expect(screen.queryByText('Previous answer')).toBeNull()
+  await waitFor(() =>
+    expect(
+      screen.getByRole('button', { name: 'Choose a Tamizhi chat' })
+    ).toBeEnabled()
+  )
   fireEvent.click(screen.getByRole('button', { name: 'Choose a Tamizhi chat' }))
   fireEvent.click(
     await screen.findByRole('menuitem', { name: 'Saved conversation' })

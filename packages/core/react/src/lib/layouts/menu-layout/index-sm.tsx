@@ -7,7 +7,6 @@ import { BottomNavbar } from '../../components/menu'
 import { useMobileControls } from '../../components/mobile-controls'
 import { Footer } from '../../components/panel/footer'
 import { NotificationDrawer } from '../../components/panel/footer/notification-center'
-import { UserInfoModal } from '../../components/panel/footer/preferences/modal'
 import { tamizhiPanel } from '../../components/panel/footer/tamizhi'
 import { Header } from '../../components/panel/header'
 import { bookmarksPanel } from '../../components/panel/header/bookmarks'
@@ -26,8 +25,6 @@ import type { MenuLayoutProps } from './index'
 
 const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
   const [selectedKey, setSelectedKey] = React.useState(items[0]?.key ?? '')
-  const [openSettings, setOpenSettings] = useState(false)
-  const [settingsEntryPoint, setSettingsEntryPoint] = useState('account')
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const { openInfoPanel } = useInfoPanel()
   const { isFooterHidden } = useMobileControls()
@@ -101,20 +98,11 @@ const MenuSM = ({ items, controlCenter }: MenuLayoutProps) => {
             showUserInfo
             onTamizhi={() => openInfoPanel('tamizhi')}
             onNotificationsClick={() => setNotificationsOpen(true)}
-            onUserClick={(_user, entryPoint = 'account') => {
-              setSettingsEntryPoint(entryPoint)
-              setOpenSettings(true)
-            }}
             toolbarAction={toolbarAction}
           />
         </Surface>
       </div>
 
-      <UserInfoModal
-        open={openSettings}
-        onClose={() => setOpenSettings(false)}
-        defaultActiveTab={settingsEntryPoint}
-      />
       <NotificationDrawer
         isOpen={notificationsOpen}
         onClose={() => setNotificationsOpen(false)}

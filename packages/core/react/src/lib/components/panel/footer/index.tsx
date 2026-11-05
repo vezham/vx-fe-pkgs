@@ -16,6 +16,7 @@ import {
   useMediaQuery
 } from '@vezham/react-v3'
 
+import { useSettingsNavigation } from '../../../pages/settings/navigation'
 import { useUser } from '../../../store/users/useUserStore'
 import { ACCOUNT_BUBBLE_MEDIA_QUERY } from '../responsive'
 import { DefaultControlCenter } from './control-center/default'
@@ -59,7 +60,7 @@ const CompactActions = ({
   notificationCount = 0,
   onTamizhi,
   onNotificationsClick
-}: Omit<FooterActionsProps, 'user' | 'showUserInfo' | 'onUserClick'> & {
+}: Omit<FooterActionsProps, 'user' | 'showUserInfo'> & {
   onControlCenter: () => void
 }) => {
   if (!showAI && !showNotifications && !showControlCenter) return null
@@ -115,11 +116,11 @@ const Footer = ({
   notificationCount = 0,
   onTamizhi,
   onNotificationsClick,
-  onUserClick,
   toolbarAction,
   className
 }: FooterActionsProps) => {
   const { clearUser } = useUser()
+  const openSettings = useSettingsNavigation()
   const compact = useMediaQuery(ACCOUNT_BUBBLE_MEDIA_QUERY, {
     initializeWithValue: false
   })
@@ -177,8 +178,8 @@ const Footer = ({
             onTamizhi={onTamizhi}
             onControlCenter={() => setControlCenterOpen(true)}
             onNotifications={onNotificationsClick}
-            onProfile={() => onUserClick?.(user, 'profiles')}
-            onPreferences={() => onUserClick?.(user, 'account')}
+            onProfile={() => openSettings?.('Account')}
+            onPreferences={() => openSettings?.('Account')}
             onLogout={clearUser}
           />
         ) : (

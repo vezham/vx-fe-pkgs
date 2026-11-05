@@ -7,6 +7,7 @@ import {
   CheckRead,
   Logout2 as LogoutIcon,
   Settings as SettingsIcon,
+  VezhamAccounts,
   VezhamTamizhi
 } from '@vezham/icons-react'
 import {
@@ -19,6 +20,13 @@ import {
   useMediaQuery
 } from '@vezham/react-v3'
 
+import { useOptionalWorkspace } from '../../../workspace'
+import { CreateWorkspaceDialog } from '../../../workspace/create-dialog'
+import {
+  WorkspaceSheetItems,
+  WorkspaceSheetTrigger,
+  renderWorkspaceMenuSection
+} from '../../../workspace/menu'
 import { MenuSheet } from '../../menu/sheet'
 import {
   ACCOUNT_BUBBLE_MEDIA_QUERY,
@@ -200,7 +208,13 @@ const AccountIdentity = ({
         {user.avatar ? (
           <Avatar.Image src={user.avatar} alt={user.name} />
         ) : null}
-        <Avatar.Fallback className="text-xl">{user.name?.[0]}</Avatar.Fallback>
+        <Avatar.Fallback className="text-xl">
+          {user.id ? (
+            user.name?.[0]
+          ) : (
+            <VezhamAccounts size={36} aria-hidden="true" />
+          )}
+        </Avatar.Fallback>
       </Avatar>
       <Badge
         placement="bottom-right"
@@ -254,6 +268,8 @@ const AccountSectionItems = ({
 )
 
 const AccountSheetContent = ({
+  workspaceItems,
+  guest,
   user,
   currentStatus,
   actions,
@@ -262,6 +278,8 @@ const AccountSheetContent = ({
   onPreferences,
   onLogout
 }: {
+  workspaceItems?: ReactNode
+  guest: boolean
   user: UserInfo
   currentStatus: UserStatusOption
   actions: AccountAction[]
@@ -273,6 +291,7 @@ const AccountSheetContent = ({
   <div className="flex flex-col items-center gap-5 py-2">
     <AccountIdentity user={user} currentStatus={currentStatus} />
     <AccountActions actions={actions} />
+    {workspaceItems}
     <Separator className="self-stretch" />
     <div className="flex w-full flex-col gap-1 p-2">
       {sections.map(item => (
@@ -295,18 +314,22 @@ const AccountSheetContent = ({
         <SettingsIcon size={18} aria-hidden="true" />
         Preferences
       </Button>
-      <Button
-        variant="ghost"
-        className="text-danger h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
-        onPress={onLogout}>
-        <LogoutIcon size={18} aria-hidden="true" />
-        Logout
-      </Button>
+      {!guest && (
+        <Button
+          variant="ghost"
+          className="text-danger h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 text-start"
+          onPress={onLogout}>
+          <LogoutIcon size={18} aria-hidden="true" />
+          Logout
+        </Button>
+      )}
     </div>
   </div>
 )
 
 const AccountDropdownContent = ({
+  workspaceItems,
+  guest,
   user,
   currentStatus,
   sections,
@@ -314,6 +337,8 @@ const AccountDropdownContent = ({
   onPreferences,
   onLogout
 }: {
+  workspaceItems?: ReactNode
+  guest: boolean
   user: UserInfo
   currentStatus: UserStatusOption
   sections: AccountSection[]
@@ -330,7 +355,13 @@ const AccountDropdownContent = ({
         {user.avatar ? (
           <Avatar.Image src={user.avatar} alt={user.name} />
         ) : null}
-        <Avatar.Fallback>{user.name?.[0]}</Avatar.Fallback>
+        <Avatar.Fallback>
+          {user.id ? (
+            user.name?.[0]
+          ) : (
+            <VezhamAccounts size={20} aria-hidden="true" />
+          )}
+        </Avatar.Fallback>
       </Avatar>
       <span>
         <span className="block font-medium">{user.name}</span>
@@ -371,15 +402,18 @@ const AccountDropdownContent = ({
           </Dropdown.Popover>
         </Dropdown.SubmenuTrigger>
       ))}
+      {workspaceItems}
       <Separator />
       <Dropdown.Item id="preferences" onAction={onPreferences}>
         <SettingsIcon size={18} aria-hidden="true" />
         Preferences
       </Dropdown.Item>
-      <Dropdown.Item id="logout" variant="danger" onAction={onLogout}>
-        <LogoutIcon size={18} aria-hidden="true" />
-        Logout
-      </Dropdown.Item>
+      {!guest && (
+        <Dropdown.Item id="logout" variant="danger" onAction={onLogout}>
+          <LogoutIcon size={18} aria-hidden="true" />
+          Logout
+        </Dropdown.Item>
+      )}
     </Dropdown.Menu>
   </>
 )
@@ -403,27 +437,31 @@ const UserMenuTrigger = ({
 
   return (
     <Tooltip delay={0}>
-      <Tooltip.Trigger>
-        <Trigger
-          onPress={small ? onPress : undefined}
-          aria-label={`Open ${user.name || 'user'} menu`}
-          className={`button button--ghost relative flex h-12 w-12 items-center justify-center ${bubble ? 'rounded-full' : 'rounded-xl'}`}>
-          <Badge.Anchor>
-            <Avatar size="sm" className="h-6 w-6 rounded-md">
-              {user.avatar ? (
-                <Avatar.Image src={user.avatar} alt={user.name} />
-              ) : null}
-              <Avatar.Fallback>{user.name?.[0]}</Avatar.Fallback>
-            </Avatar>
-            <Badge
-              placement="bottom-right"
-              size="sm"
-              className="border-background flex items-center justify-center border">
-              <StatusVisual status={currentStatus} />
-            </Badge>
-          </Badge.Anchor>
-        </Trigger>
-      </Tooltip.Trigger>
+      <Trigger
+        onPress={small ? onPress : undefined}
+        aria-label={`Open ${user.name || 'user'} menu`}
+        className={`button button--ghost relative flex h-12 w-12 items-center justify-center ${bubble ? 'rounded-full' : 'rounded-xl'}`}>
+        <Badge.Anchor>
+          <Avatar size="sm" className="h-6 w-6 rounded-md">
+            {user.avatar ? (
+              <Avatar.Image src={user.avatar} alt={user.name} />
+            ) : null}
+            <Avatar.Fallback>
+              {user.id ? (
+                user.name?.[0]
+              ) : (
+                <VezhamAccounts size={20} aria-hidden="true" />
+              )}
+            </Avatar.Fallback>
+          </Avatar>
+          <Badge
+            placement="bottom-right"
+            size="sm"
+            className="border-background flex items-center justify-center border">
+            <StatusVisual status={currentStatus} />
+          </Badge>
+        </Badge.Anchor>
+      </Trigger>
       <Tooltip.Content placement={bubble ? 'bottom' : 'right'}>
         {tooltipText}
       </Tooltip.Content>
@@ -431,39 +469,25 @@ const UserMenuTrigger = ({
   )
 }
 
-const UserMenu = ({
-  user,
-  onLogout,
-  onProfile,
-  onPreferences,
-  showAI = false,
-  showControlCenter = false,
-  showNotifications = false,
+const getCompactActions = ({
+  showControlCenter,
+  showNotifications,
   notificationCount = 0,
-  onTamizhi,
+  showAI,
   onControlCenter,
-  onNotifications
-}: Props) => {
-  const small = useMediaQuery(APPLICATION_MENU_SHEET_MEDIA_QUERY, {
-    initializeWithValue: false
-  })
-  const bubble = useMediaQuery(ACCOUNT_BUBBLE_MEDIA_QUERY, {
-    initializeWithValue: false
-  })
-  const [open, setOpen] = useState(false)
-  const [section, setSection] = useState<string | null>(null)
-  const { currentStatus, tooltipText, accountSections } =
-    useAccountSections(user)
-  const activeSection = accountSections.find(item => item.id === section)
-  const changeOpen = (value: boolean) => {
-    setOpen(value)
-    if (!value) setSection(null)
-  }
-  const closeAndRun = (action?: () => void) => {
-    setOpen(false)
-    action?.()
-  }
-  const compactActions: AccountAction[] = [
+  onNotifications,
+  onTamizhi
+}: Pick<
+  Props,
+  | 'showControlCenter'
+  | 'showNotifications'
+  | 'notificationCount'
+  | 'showAI'
+  | 'onControlCenter'
+  | 'onNotifications'
+  | 'onTamizhi'
+>): AccountAction[] => {
+  return [
     showControlCenter
       ? {
           label: 'Control center',
@@ -497,18 +521,78 @@ const UserMenu = ({
         }
       : null
   ].filter((action): action is NonNullable<typeof action> => action !== null)
+}
+
+const UserMenu = ({
+  user,
+  onLogout,
+  onProfile,
+  onPreferences,
+  showAI = false,
+  showControlCenter = false,
+  showNotifications = false,
+  notificationCount = 0,
+  onTamizhi,
+  onControlCenter,
+  onNotifications
+}: Props) => {
+  const small = useMediaQuery(APPLICATION_MENU_SHEET_MEDIA_QUERY, {
+    initializeWithValue: false
+  })
+  const bubble = useMediaQuery(ACCOUNT_BUBBLE_MEDIA_QUERY, {
+    initializeWithValue: false
+  })
+  const workspace = useOptionalWorkspace()
+  const guest = !user.id
+  const accountUser = guest ? { ...user, name: 'Guest' } : user
+  const [isCreating, setIsCreating] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [section, setSection] = useState<string | null>(null)
+  const { currentStatus, tooltipText, accountSections } =
+    useAccountSections(accountUser)
+  const activeSection = accountSections.find(item => item.id === section)
+  const changeOpen = (value: boolean) => {
+    setOpen(value)
+    if (!value) setSection(null)
+  }
+  const closeAndRun = (action?: () => void) => {
+    setOpen(false)
+    action?.()
+  }
+  const compactActions = getCompactActions({
+    showControlCenter,
+    showNotifications,
+    notificationCount,
+    showAI,
+    onControlCenter,
+    onNotifications,
+    onTamizhi
+  })
+  const workspaceActions = workspace
+    ? {
+        workspace,
+        select: (id: string) => {
+          workspace.select(id)
+          changeOpen(false)
+        },
+        create: () => {
+          changeOpen(false)
+          setIsCreating(true)
+        }
+      }
+    : null
   const trigger = (
     <UserMenuTrigger
       small={small}
       bubble={bubble}
-      user={user}
+      user={accountUser}
       currentStatus={currentStatus}
       tooltipText={tooltipText}
       onPress={() => setOpen(true)}
     />
   )
 
-  return small ? (
+  const menu = small ? (
     <>
       {trigger}
       <MenuSheet
@@ -516,14 +600,28 @@ const UserMenu = ({
         hideTitle
         isOpen={open}
         onOpenChange={changeOpen}>
-        {activeSection ? (
+        {section === 'workspaces' && workspaceActions ? (
+          <WorkspaceSheetItems
+            {...workspaceActions}
+            onBack={() => setSection(null)}
+          />
+        ) : activeSection ? (
           <AccountSectionItems
             section={activeSection}
             onBack={() => setSection(null)}
           />
         ) : (
           <AccountSheetContent
-            user={user}
+            workspaceItems={
+              workspaceActions && (
+                <WorkspaceSheetTrigger
+                  name={workspaceActions.workspace.active.name}
+                  onPress={() => setSection('workspaces')}
+                />
+              )
+            }
+            guest={guest}
+            user={accountUser}
             currentStatus={currentStatus}
             actions={compactActions}
             sections={accountSections}
@@ -540,9 +638,13 @@ const UserMenu = ({
       <Dropdown.Popover
         placement={bubble ? 'bottom end' : 'right'}
         offset={8}
-        className="w-72 max-w-[calc(100vw-2rem)]">
+        className="max-h-[80vh] w-72 max-w-[calc(100vw-2rem)] overflow-y-auto">
         <AccountDropdownContent
-          user={user}
+          workspaceItems={
+            workspaceActions && renderWorkspaceMenuSection(workspaceActions)
+          }
+          guest={guest}
+          user={accountUser}
           currentStatus={currentStatus}
           sections={accountSections}
           onProfile={() => closeAndRun(onProfile)}
@@ -551,6 +653,17 @@ const UserMenu = ({
         />
       </Dropdown.Popover>
     </Dropdown>
+  )
+  return (
+    <>
+      {menu}
+      {workspace && (
+        <CreateWorkspaceDialog
+          isOpen={isCreating}
+          onOpenChange={setIsCreating}
+        />
+      )}
+    </>
   )
 }
 

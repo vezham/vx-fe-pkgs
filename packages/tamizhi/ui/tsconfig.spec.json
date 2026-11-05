@@ -2,9 +2,11 @@
   "extends": ["../../../tsconfig.base.json", "../../../tsconfig.spec.json"],
   "compilerOptions": {
     "outDir": "./out-tsc/vitest",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },
   "include": [
+    "test-setup.ts",
     "vite.config.ts",
     "vite.config.mts",
     "vitest.config.ts",

@@ -5,6 +5,7 @@
     "outDir": "out-tsc/playwright",
     "sourceMap": false,
     "types": ["node"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "ignoreDeprecations": "6.0",
     "rootDir": "."
   },

@@ -39,6 +39,7 @@ import {
   UserProvider,
   useUser
 } from '../../store/users/useUserStore'
+import { WorkspaceProvider, useOptionalWorkspace } from '../../workspace'
 import { MenuLayout } from '../menu-layout'
 import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
@@ -76,24 +77,33 @@ export const AppLayoutProviders = ({
 >) => (
   <ToolbarActionsProvider>
     <AppMenuShell items={appMenu} navigationItems={navigationItems}>
-      <UserProvider initialUser={user}>
-        <CommandProvider items={navigationItems}>
-          <InfoPanelProvider>
-            <EmbeddedSession {...tamizhi}>
-              <WorkspaceNavigationProvider>
-                <MobileControlsProvider>
-                  <ResponsiveToolbarActionProvider>
-                    {children}
-                  </ResponsiveToolbarActionProvider>
-                </MobileControlsProvider>
-              </WorkspaceNavigationProvider>
-            </EmbeddedSession>
-          </InfoPanelProvider>
-        </CommandProvider>
-      </UserProvider>
+      <AppWorkspaces>
+        <UserProvider initialUser={user}>
+          <CommandProvider items={navigationItems}>
+            <InfoPanelProvider>
+              <EmbeddedSession {...tamizhi}>
+                <WorkspaceNavigationProvider>
+                  <MobileControlsProvider>
+                    <ResponsiveToolbarActionProvider>
+                      {children}
+                    </ResponsiveToolbarActionProvider>
+                  </MobileControlsProvider>
+                </WorkspaceNavigationProvider>
+              </EmbeddedSession>
+            </InfoPanelProvider>
+          </CommandProvider>
+        </UserProvider>
+      </AppWorkspaces>
     </AppMenuShell>
   </ToolbarActionsProvider>
 )
+
+const AppWorkspaces = ({ children }: { children: ReactNode }) => {
+  const app = useApp()
+  const workspace = useOptionalWorkspace()
+  if (workspace || !app?.id) return children
+  return <WorkspaceProvider appId={app.id}>{children}</WorkspaceProvider>
+}
 
 export const AppLayoutView = ({
   children,
@@ -212,7 +222,9 @@ const EmbeddedSession = ({
 >) => {
   const { user } = useUser()
   const app = useApp()
-  const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}.v1`
+  const workspace = useOptionalWorkspace()
+  const scope = workspace ? `.workspace.${workspace.active.id}` : ''
+  const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}${scope}.v1`
   return (
     <TamizhiSessionProvider
       key={storageKey}

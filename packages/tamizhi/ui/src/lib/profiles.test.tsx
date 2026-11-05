@@ -57,9 +57,10 @@ it('lists app names in the welcome picker, independently of outfit choices', asy
   expect(screen.queryByRole('menuitemradio', { name: 'Chef' })).toBeNull()
 })
 
-it('persists selected profiles and manual outfits through history, retries, and branching', () => {
+it('persists selected profiles and manual outfits through history, retries, and branching', async () => {
   vi.useFakeTimers()
   const first = renderHook(() => useTamizhiChat(true))
+  await vi.waitFor(() => expect(first.result.current.isReady).toBe(true))
   act(() => first.result.current.selectProfile('vezham-crm'))
   act(() => {
     first.result.current.configureAppearance({ outfit: 'guard' })
@@ -84,15 +85,17 @@ it('persists selected profiles and manual outfits through history, retries, and 
   act(() => first.result.current.send('Another conversation'))
   expect(first.result.current.messages[0].outfit).toBe('planner')
   act(() => vi.advanceTimersByTime(200))
+  await vi.waitFor(() => expect(first.result.current.isSaved).toBe(true))
   first.unmount()
   const restored = renderHook(() => useTamizhiChat(true, chatId))
+  await vi.waitFor(() => expect(restored.result.current.isReady).toBe(true))
   expect(restored.result.current.runOutfitOverride).toBe('guard')
   expect(restored.result.current.profile.id).toBe('vezham-crm')
   expect(restored.result.current.messages[1]).toMatchObject(appearance)
   act(() => restored.result.current.newChat())
 })
 
-it('keeps embedded defaults and local histories isolated by app ID', () => {
+it('keeps embedded defaults and local histories isolated by app ID', async () => {
   vi.useFakeTimers()
   const crm = renderHook(() => useTamizhiSession(), {
     wrapper: ({ children }) => (
@@ -108,10 +111,11 @@ it('keeps embedded defaults and local histories isolated by app ID', () => {
       </TamizhiSessionProvider>
     )
   })
+  await vi.waitFor(() => expect(crm.result.current.chat.isReady).toBe(true))
   expect(crm.result.current.chat.profile.name).toBe('CRM')
   expect(school.result.current.chat.profile.name).toBe('School OS')
   act(() => crm.result.current.chat.send('Hello'))
-  act(() => vi.advanceTimersByTime(5000))
+  await act(async () => vi.advanceTimersByTimeAsync(5000))
   expect(crm.result.current.chat.messages[1].outfit).toBe('planner')
   expect(school.result.current.chat.conversations).toHaveLength(0)
 })
@@ -221,7 +225,7 @@ it('sends profile metadata and applies declared tool appearances only while the 
   })
 })
 
-it('honors a host override of the default Tamizhi profile instead of detecting from demo text', () => {
+it('honors a host override of the default Tamizhi profile instead of detecting from demo text', async () => {
   const { result } = renderHook(() =>
     useTamizhiChat(true, undefined, 'custom-default', undefined, {
       profiles: [
@@ -234,6 +238,7 @@ it('honors a host override of the default Tamizhi profile instead of detecting f
       ]
     })
   )
+  await vi.waitFor(() => expect(result.current.isReady).toBe(true))
   act(() => result.current.send('Hello'))
   expect(result.current.messages[0]).toMatchObject({
     persona: 'coder',
