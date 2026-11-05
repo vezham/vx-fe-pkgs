@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 
-import { Button, Dropdown, Input, Label, TextField } from '@vezham/react-v3'
+import {
+  Button,
+  Dropdown,
+  Input,
+  Label,
+  Switch,
+  TextField
+} from '@vezham/react-v3'
 import type { TamizhiAPIClient } from '@vezham/tamizhi-client'
 import type { TamizhiAPI } from '@vezham/tamizhi-contracts'
 
@@ -93,6 +100,7 @@ export const ProviderSettings = ({
             ? {
                 ...item,
                 connected: false,
+                searchEnabled: false,
                 models: [],
                 authMethod: undefined,
                 projectId: undefined,
@@ -112,6 +120,29 @@ export const ProviderSettings = ({
       }
     } catch {
       setError('Unable to confirm removal. Refresh status before retrying.')
+    } finally {
+      setBusy(false)
+    }
+  }
+  const updateSearch = async (enabled: boolean) => {
+    if (busy || !provider?.connected) return
+    setBusy(true)
+    setError(null)
+    setNotice(null)
+    try {
+      const saved = await api.setProviderSearch(provider.id, enabled)
+      setProviders(current =>
+        current.map(item => (item.id === saved.id ? saved : item))
+      )
+      setNotice(
+        enabled
+          ? 'Leo web search enabled. DeepSeek search charges apply.'
+          : 'Leo web search disabled.'
+      )
+    } catch {
+      setError(
+        'Unable to confirm the search setting. Refresh status before retrying.'
+      )
     } finally {
       setBusy(false)
     }
@@ -226,6 +257,38 @@ export const ProviderSettings = ({
           </Button>
         )}
       </div>
+      {provider?.id === 'deepseek' && (
+        <div className="flex flex-col gap-2">
+          <Switch
+            aria-label="Leo web search"
+            isSelected={provider.searchEnabled ?? false}
+            isDisabled={busy || !provider.connected}
+            onChange={enabled => void updateSearch(enabled)}>
+            <Switch.Content className="flex w-full flex-row-reverse items-center justify-between gap-3">
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+              Leo web search
+            </Switch.Content>
+          </Switch>
+          <p className="text-muted text-xs">
+            Search with your DeepSeek key. Leo reads source pages directly and
+            does not call a language model or DeepSeek Fetch.{' '}
+            <a
+              className="underline"
+              href="https://api-docs.deepseek.com/quick_start/pricing/"
+              target="_blank"
+              rel="noopener noreferrer">
+              Search API pricing
+            </a>
+          </p>
+          {!provider.connected && (
+            <p className="text-muted text-xs">
+              Connect your key first. Web search stays off until you enable it.
+            </p>
+          )}
+        </div>
+      )}
       {provider?.connected && (
         <p className="text-muted text-xs">
           {provider.authMethod === 'oauth'

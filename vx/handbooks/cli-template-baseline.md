@@ -295,3 +295,12 @@ asset types. Apps can extend their existing base plus this root test config.
 TypeScript replaces inherited arrays, so avoid repeating `types` when using the
 shared config. Keep test declarations out of production configs. The shared
 `@vezham/config` Vitest setup registers matchers at runtime.
+
+## Local companion development
+
+The shared Vite app preset supplies a development-only Tamizhi relay for HTTP
+`*.vezham.local` apps. It accepts same-origin requests from loopback peers and
+forwards only to `127.0.0.1:7331/api/tamizhi`, retaining the app's Origin for Go
+pairing and token validation. Discovery is explicit; the UI never falls back to
+an arbitrary proxy. Build, prerender, and preview do not expose this relay.
+Production apps use HTTPS and connect directly to the loopback companion.

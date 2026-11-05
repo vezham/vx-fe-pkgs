@@ -18,6 +18,7 @@ import {
   routePathFromFile,
   routeRootFromGlob
 } from '../route-files'
+import { companionDevProxy } from './companion-proxy'
 
 type TsConfigWithPaths = {
   compilerOptions?: {
@@ -96,6 +97,7 @@ const getViteDefaults = (projectRoot = process.cwd()): ViteConfig => ({
   envPrefix: ['V_'],
   ssr: { noExternal: ['@vezham/start', '@vezham/env'] },
   server: getServerConfig(),
+  plugins: [companionDevProxy()],
   resolve: {
     alias: getTsConfigPathAliases(projectRoot),
     tsconfigPaths: true

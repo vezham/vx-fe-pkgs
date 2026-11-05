@@ -7,3 +7,5 @@ export type {
   Capabilities as APICapabilities,
   Conversation as APIConversation
 } from './lib/generated/api'
+
+export * from './lib/web'

@@ -40,6 +40,10 @@ export interface TamizhiAPIClient {
     apiKey: string,
     signal?: AbortSignal
   ) => Promise<TamizhiAPI.ProviderSettings>
+  setProviderSearch: (
+    id: string,
+    enabled: boolean
+  ) => Promise<TamizhiAPI.ProviderSettings>
   removeProvider: (id: string) => Promise<void>
   capabilities: (signal?: AbortSignal) => Promise<TamizhiAPI.Capabilities>
   session: (signal?: AbortSignal) => Promise<TamizhiAPI.SessionInfo>
@@ -117,7 +121,11 @@ export const createTamizhiClient = (options: ClientOptions): TamizhiClient => {
       headers.set('Accept', 'text/event-stream')
     const response = await (options.fetch ?? globalThis.fetch)(
       `${base}${path}`,
-      { ...init, headers, credentials: options.credentials ?? 'same-origin' }
+      {
+        ...init,
+        headers,
+        credentials: options.credentials ?? 'same-origin'
+      }
     )
     if (!response.ok) {
       const details: unknown = await response.json().catch(() => null)
@@ -166,7 +174,18 @@ export const createTamizhiClient = (options: ClientOptions): TamizhiClient => {
     connectProvider: async (id, apiKey, signal) => {
       const result = await json<TamizhiAPI.ProviderSettings>(
         `/providers/${segment(id)}`,
-        { ...body({ apiKey }, 'PUT'), signal }
+        {
+          ...body({ apiKey }, 'PUT'),
+          signal
+        }
+      )
+      changed()
+      return result
+    },
+    setProviderSearch: async (id, enabled) => {
+      const result = await json<TamizhiAPI.ProviderSettings>(
+        `/providers/${segment(id)}/search`,
+        body({ enabled }, 'PUT')
       )
       changed()
       return result
@@ -228,8 +247,14 @@ export const createTamizhiClient = (options: ClientOptions): TamizhiClient => {
       await fetchRequest(`/memory/${segment(id)}`, { method: 'DELETE' })
     },
     plugins: () => json('/plugins'),
-    setPlugin: (name, enabled) =>
-      json(`/plugins/${segment(name)}`, body({ enabled }, 'PATCH')),
+    setPlugin: async (name, enabled) => {
+      const installed = await json<TamizhiAPI.PluginInfo[]>(
+        `/plugins/${segment(name)}`,
+        body({ enabled }, 'PATCH')
+      )
+      changed()
+      return installed
+    },
     run: (id, signal) => json(`/runs/${segment(id)}`, { signal }),
     cancel: async id => {
       await fetchRequest(`/runs/${segment(id)}/cancel`, { method: 'POST' })
@@ -290,7 +315,9 @@ export const createTamizhiClient = (options: ClientOptions): TamizhiClient => {
           })
           current = await fetchRequest(
             `/runs/${segment(runId)}/events?after=${sequence}`,
-            { signal }
+            {
+              signal
+            }
           )
         }
       }

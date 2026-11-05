@@ -10,6 +10,7 @@ import { BackendSettings } from './backend-settings'
 import { ChatContent } from './chat-content'
 import { ChatFeedback } from './chat-feedback'
 import { Companion } from './companion'
+import { CompanionSettings } from './companion-settings'
 import { Composer } from './composer'
 import { ComposerLite } from './composer-lite'
 import { getAvailableModel } from './models'
@@ -123,38 +124,35 @@ export const TamizhiChat = ({
   }
 
   const playground = (
-    <>
-      <BackendSettings chat={chat} />
-      <Playground
-        profile={chat.profile}
-        profiles={chat.profiles}
-        isProfileDisabled={chat.isStreaming}
-        startsNewChat={hasMessages}
-        onProfileChange={selectProfile}
-        outfit={outfit}
-        expression={expression}
-        palette={palette}
-        isAnimated={isAnimated}
-        isOffline={isOffline}
-        isInstant={isInstant}
-        connection={chat.isRemote ? 'Backend' : 'Local'}
-        model={availableModel}
-        lastOutfit={lastUser?.outfit}
-        onOutfitChange={value => {
-          setManualOutfit(value)
-          setPalette(undefined)
-        }}
-        onExpressionChange={setExpression}
-        onPaletteChange={setPalette}
-        onAnimatedChange={setIsAnimated}
-        onOfflineChange={value => {
-          if (value === isOffline) return
-          if (value) chat.stop()
-          setIsOffline(value)
-        }}
-        onInstantChange={setIsInstant}
-      />
-    </>
+    <Playground
+      profile={chat.profile}
+      profiles={chat.profiles}
+      isProfileDisabled={chat.isStreaming}
+      startsNewChat={hasMessages}
+      onProfileChange={selectProfile}
+      outfit={outfit}
+      expression={expression}
+      palette={palette}
+      isAnimated={isAnimated}
+      isOffline={isOffline}
+      isInstant={isInstant}
+      connection={chat.isRemote ? 'Backend' : 'Local'}
+      model={availableModel}
+      lastOutfit={lastUser?.outfit}
+      onOutfitChange={value => {
+        setManualOutfit(value)
+        setPalette(undefined)
+      }}
+      onExpressionChange={setExpression}
+      onPaletteChange={setPalette}
+      onAnimatedChange={setIsAnimated}
+      onOfflineChange={value => {
+        if (value === isOffline) return
+        if (value) chat.stop()
+        setIsOffline(value)
+      }}
+      onInstantChange={setIsInstant}
+    />
   )
 
   const ComposerComponent =
@@ -226,6 +224,11 @@ export const TamizhiChat = ({
           isDisabled={isOffline || !chat.isReady || chat.isStreaming}
         />
       )}
+      <div
+        className={`tamizhi__connection-controls${hasMessages ? 'tamizhi__connection-controls--perched' : ''}`}>
+        <CompanionSettings isDisabled={chat.isStreaming} />
+        {chat.api && <BackendSettings chat={chat} />}
+      </div>
       <ComposerComponent
         api={chat.api}
         allowImages={chat.capabilities?.images}
@@ -240,7 +243,7 @@ export const TamizhiChat = ({
         onPermissionChange={setPermission}
         note={composerNote}
         isStreaming={chat.isStreaming}
-        isReady={chat.isReady}
+        isReady={chat.isReady && !chat.needsProvider}
         isOffline={isOffline}
         avatarSlotRef={chatAvatarSlot}
         inputRef={composerInput}

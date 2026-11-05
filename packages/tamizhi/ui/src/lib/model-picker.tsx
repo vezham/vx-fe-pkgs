@@ -12,7 +12,7 @@ import {
 import type { ModelInfo } from '@vezham/tamizhi-contracts'
 
 import { ModelLogo } from './model-logo'
-import { PREVIEW_MODELS, type PreviewModel } from './models'
+import { LEO_MODEL_ID, PREVIEW_MODELS, type PreviewModel } from './models'
 
 const ModelFeatures = ({ model }: { model: PreviewModel }) => (
   <div className="w-64 max-w-[calc(100vw-2rem)] p-2 text-xs">
@@ -177,31 +177,43 @@ export const ModelPicker = (props: {
 }) =>
   props.catalog ? (
     <Dropdown>
-      <Dropdown.Trigger
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
         aria-label="AI model"
-        className="button button--ghost button--sm gap-1 px-2">
+        isDisabled={props.catalog.length === 0}
+        className="min-w-0 flex-row flex-nowrap gap-1 px-2">
         <Stars size={16} aria-hidden="true" />
         <span className="max-w-28 truncate text-xs">
-          {props.catalog.find(item => item.id === props.model)?.name ??
-            props.model}
+          {props.catalog.length === 0
+            ? 'No model'
+            : (props.catalog.find(item => item.id === props.model)?.name ??
+              props.model)}
         </span>
         <AltArrowDown size={12} aria-hidden="true" />
-      </Dropdown.Trigger>
+      </Button>
       <Dropdown.Popover placement="top end" className="w-64">
         <Dropdown.Menu
           aria-label="Available AI models"
           selectionMode="single"
           selectedKeys={[props.model]}
           onAction={key => props.onModelChange(String(key))}>
-          <Dropdown.Item id="Auto" textValue="Auto">
-            Auto
-            <Dropdown.ItemIndicator />
-          </Dropdown.Item>
+          {!props.catalog.some(item => item.id === LEO_MODEL_ID) && (
+            <Dropdown.Item id="Auto" textValue="Auto">
+              Auto
+              <Dropdown.ItemIndicator />
+            </Dropdown.Item>
+          )}
           {props.catalog.map(item => (
             <Dropdown.Item key={item.id} id={item.id} textValue={item.name}>
               <span className="flex min-w-0 flex-1 flex-col">
                 <span>{item.name}</span>
-                <span className="text-muted text-xs">{item.provider}</span>
+                <span className="text-muted text-xs">
+                  {item.id === LEO_MODEL_ID
+                    ? 'Vezham · Connected tools and workflows'
+                    : item.provider}
+                </span>
               </span>
               <Dropdown.ItemIndicator />
             </Dropdown.Item>

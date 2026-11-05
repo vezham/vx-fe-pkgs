@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import { useIndexedDBStore } from '@vezham/hooks'
-import type { TamizhiClient } from '@vezham/tamizhi-client'
+import { type TamizhiClient, runTamizhiChat } from '@vezham/tamizhi-client'
 import type {
   APIAttachment,
   APICapabilities,
@@ -23,6 +23,7 @@ import type {
 import { streamEventSchema, wireMessageSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
+import { useCompanionClient } from './companion-connection'
 import {
   EMPTY_CONVERSATIONS,
   parseConversations,
@@ -30,6 +31,7 @@ import {
 } from './conversation-storage'
 import { createId } from './create-id'
 import { createDemoReply, detectPersona } from './demo'
+import { MODEL_SETUP_MESSAGE } from './models'
 import {
   getActivityAppearance,
   getTamizhiProfile,
@@ -79,9 +81,10 @@ export const useTamizhiChat = (
   isInstant = false,
   selectedChatId?: string | null,
   storageKey = STORAGE_KEY,
-  client?: TamizhiClient,
+  configuredClient?: TamizhiClient,
   options: TamizhiProfileOptions = {}
 ) => {
+  const client = useCompanionClient(configuredClient)
   const profiles = getTamizhiProfiles(options.profiles)
   const [selection, setSelection] = useState({
     appId: options.appId,
@@ -102,7 +105,6 @@ export const useTamizhiChat = (
       : remoteConversations
     : local.value
   const setConversations = client ? setRemoteConversations : local.setValue
-  const isReady = client ? isClientReady(client, loadedClient) : local.isReady
   const isSaved = client ? true : local.isSaved
   const [capabilities, setCapabilities] = useState<APICapabilities | null>(null)
   const [sessionChatId, setActiveId] = useState<string | null>(null)
@@ -114,7 +116,25 @@ export const useTamizhiChat = (
   const [runEvents, setRunEvents] = useState<
     (StreamEvent & { uiId: string })[]
   >([])
-  const [models, setModels] = useState<ModelInfo[]>([])
+  const [catalog, setCatalog] = useState<{
+    client: TamizhiClient | null
+    models: ModelInfo[]
+  }>({ client: null, models: [] })
+  const models = catalog.client === client ? catalog.models : []
+  const catalogReady = !client?.api || catalog.client === client
+  const needsProvider = Boolean(
+    client?.api && catalogReady && models.length === 0
+  )
+  const isReady =
+    (client ? isClientReady(client, loadedClient) : local.isReady) &&
+    catalogReady
+  const canRespond = () => {
+    if (client?.api && models.length === 0) {
+      setError(MODEL_SETUP_MESSAGE)
+      return false
+    }
+    return true
+  }
   const runOptions = useRef<Pick<RunRequest, 'model' | 'fast' | 'permission'>>({
     model: 'Auto',
     fast: false,
@@ -160,7 +180,9 @@ export const useTamizhiChat = (
     const controller = new AbortController()
     void client
       .models(controller.signal)
-      .then(setModels)
+      .then(models => {
+        if (!controller.signal.aborted) setCatalog({ client, models })
+      })
       .catch(() => {
         if (!controller.signal.aborted)
           setError('Unable to load AI models. Check the Tamizhi connection.')
@@ -256,6 +278,7 @@ export const useTamizhiChat = (
     title?: string
   ) => {
     if (client) {
+      if (!canRespond()) return
       const controller = new AbortController()
       const id = createId()
       remote.current = controller
@@ -289,7 +312,8 @@ export const useTamizhiChat = (
       const consume = async () => {
         let text = ''
         try {
-          for await (const event of client.stream(
+          await runTamizhiChat(
+            client,
             {
               conversationId: chatId,
               title: chatTitle,
@@ -308,60 +332,66 @@ export const useTamizhiChat = (
               ...runOptions.current,
               activityProfiles: profile.activities
             },
+            {
+              onText: current => {
+                text = current
+                if (controller.signal.aborted) return
+                setConversations(chats =>
+                  updateConversationMessage(chats, chatId, id, message => ({
+                    ...message,
+                    text: current
+                  }))
+                )
+              },
+              onEvent: async event => {
+                if (controller.signal.aborted) return
+                currentRun.current = event.runId
+                if (event.type === 'error') throw new Error(event.message)
+                if (event.type === 'finish' && client.api) {
+                  const saved = await client.conversation(
+                    chatId,
+                    controller.signal
+                  )
+                  if (!controller.signal.aborted) acceptConversation(saved)
+                }
+                if (
+                  event.type === 'status' ||
+                  event.type === 'subagent' ||
+                  event.type === 'client-action'
+                ) {
+                  const notice = { ...event, uiId: createId() }
+                  setRunEvents(current => [...current.slice(-99), notice])
+                }
+                if (event.type === 'subagent-event') {
+                  const child = streamEventSchema.safeParse(event.output)
+                  if (child.success && child.data.type === 'approval')
+                    setApprovals(current => [
+                      ...current,
+                      child.data as ApprovalRequest
+                    ])
+                  if (
+                    child.success &&
+                    (child.data.type === 'tool' ||
+                      child.data.type === 'approval' ||
+                      child.data.type === 'tool-result')
+                  )
+                    setActivities(current => [
+                      ...current.slice(-99),
+                      child.data as ToolActivity
+                    ])
+                }
+                if (event.type === 'approval')
+                  setApprovals(current => [...current, event])
+                if (
+                  event.type === 'tool' ||
+                  event.type === 'approval' ||
+                  event.type === 'tool-result'
+                )
+                  setActivities(current => [...current.slice(-99), event])
+              }
+            },
             controller.signal
-          )) {
-            if (controller.signal.aborted) break
-            currentRun.current = event.runId
-            if (event.type === 'error') throw new Error(event.message)
-            if (event.type === 'text') {
-              text += event.delta
-              const current = text
-              setConversations(chats =>
-                updateConversationMessage(chats, chatId, id, message => ({
-                  ...message,
-                  text: current
-                }))
-              )
-            }
-            if (event.type === 'finish' && client.api) {
-              const saved = await client.conversation(chatId, controller.signal)
-              if (!controller.signal.aborted) acceptConversation(saved)
-            }
-            if (
-              event.type === 'status' ||
-              event.type === 'subagent' ||
-              event.type === 'client-action'
-            ) {
-              const notice = { ...event, uiId: createId() }
-              setRunEvents(current => [...current.slice(-99), notice])
-            }
-            if (event.type === 'subagent-event') {
-              const child = streamEventSchema.safeParse(event.output)
-              if (child.success && child.data.type === 'approval')
-                setApprovals(current => [
-                  ...current,
-                  child.data as ApprovalRequest
-                ])
-              if (
-                child.success &&
-                (child.data.type === 'tool' ||
-                  child.data.type === 'approval' ||
-                  child.data.type === 'tool-result')
-              )
-                setActivities(current => [
-                  ...current.slice(-99),
-                  child.data as ToolActivity
-                ])
-            }
-            if (event.type === 'approval')
-              setApprovals(current => [...current, event])
-            if (
-              event.type === 'tool' ||
-              event.type === 'approval' ||
-              event.type === 'tool-result'
-            )
-              setActivities(current => [...current.slice(-99), event])
-          }
+          )
         } catch (failure) {
           if (!controller.signal.aborted)
             setError(
@@ -457,6 +487,7 @@ export const useTamizhiChat = (
     }
     const prompt = value.trim().slice(0, 32_000)
     if (!prompt || (busy.current && !startNew) || !isReady) return
+    if (!canRespond()) return
     if (startNew) {
       stop()
       appearance.current = {}
@@ -640,7 +671,7 @@ export const useTamizhiChat = (
       client.models(),
       client.api.capabilities()
     ])
-    setModels(catalog)
+    setCatalog({ client, models: catalog })
     setCapabilities(features)
     setError(null)
   }
@@ -676,6 +707,7 @@ export const useTamizhiChat = (
     activities,
     runEvents,
     models,
+    needsProvider,
     isRemote: Boolean(client),
     approve,
     configureRun: (

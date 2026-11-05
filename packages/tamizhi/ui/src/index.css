@@ -291,6 +291,22 @@
   text-align: center;
 }
 
+.tamizhi__connection-controls {
+  display: flex;
+  width: min(100%, 60rem);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  place-content: center flex-end;
+  gap: 0.25rem;
+  margin-inline: auto;
+  padding: 0.25rem 1rem;
+}
+
+.tamizhi__connection-controls--perched {
+  min-height: 5.5rem;
+  padding-inline-start: 6.5rem;
+}
+
 .tamizhi__perch {
   position: absolute;
   bottom: calc(100% - 1rem);

@@ -77,3 +77,54 @@ it('uses the cancellation endpoint and preserves FormData upload boundaries', as
   )
   expect(fetch.mock.calls[0]?.[1]?.method).toBe('POST')
 })
+
+it('notifies model subscribers after provider plugin enablement changes', async () => {
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockResolvedValueOnce(Response.json([]))
+    .mockResolvedValueOnce(
+      Response.json({ message: 'Access denied' }, { status: 403 })
+    )
+  const client = createTamizhiClient({
+    baseURL: 'http://localhost/api/tamizhi',
+    fetch
+  })
+  const changed = vi.fn()
+  client.subscribeProviderChanges?.(changed)
+  await client.api?.setPlugin('provider.leo', false)
+  expect(changed).toHaveBeenCalledTimes(1)
+  await expect(client.api?.setPlugin('provider.leo', true)).rejects.toThrow(
+    'Access denied'
+  )
+  expect(changed).toHaveBeenCalledTimes(1)
+})
+
+it('saves search opt-in without sending a provider key and notifies after confirmation', async () => {
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockResolvedValueOnce(
+      Response.json({ id: 'deepseek', searchEnabled: true })
+    )
+    .mockResolvedValueOnce(
+      Response.json({ message: 'Unavailable' }, { status: 503 })
+    )
+  const client = createTamizhiClient({
+    baseURL: 'http://localhost/api/tamizhi',
+    fetch
+  })
+  const changed = vi.fn()
+  client.subscribeProviderChanges?.(changed)
+  await client.api?.setProviderSearch('deepseek', true)
+  expect(fetch.mock.calls[0]?.[0]).toBe(
+    'http://localhost/api/tamizhi/providers/deepseek/search'
+  )
+  expect(fetch.mock.calls[0]?.[1]?.method).toBe('PUT')
+  expect(JSON.parse(String(fetch.mock.calls[0]?.[1]?.body))).toEqual({
+    enabled: true
+  })
+  expect(changed).toHaveBeenCalledTimes(1)
+  await expect(
+    client.api?.setProviderSearch('deepseek', false)
+  ).rejects.toThrow('Unavailable')
+  expect(changed).toHaveBeenCalledTimes(1)
+})

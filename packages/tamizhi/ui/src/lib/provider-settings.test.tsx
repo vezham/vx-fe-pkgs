@@ -78,3 +78,87 @@ it('retains a confirmed disconnect when status refresh fails', async () => {
   expect(screen.queryByRole('button', { name: 'Disconnect' })).toBeNull()
   expect(api.removeProvider).toHaveBeenCalledTimes(1)
 })
+
+it('requires separate search opt-in after connecting a DeepSeek key', async () => {
+  const deepseek = {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    connected: false,
+    searchEnabled: false,
+    oauthAvailable: false,
+    models: []
+  }
+  const saved = { ...deepseek, connected: true }
+  const api = {
+    providers: vi.fn().mockResolvedValue([provider, deepseek]),
+    connectProvider: vi.fn().mockResolvedValue(saved),
+    setProviderSearch: vi
+      .fn()
+      .mockResolvedValue({ ...saved, searchEnabled: true })
+  }
+  render(
+    <ProviderSettings
+      api={api as unknown as TamizhiAPIClient}
+      onChange={vi.fn().mockResolvedValue(undefined)}
+    />
+  )
+  await screen.findByLabelText('API key')
+  fireEvent.click(screen.getByRole('button', { name: 'Choose AI provider' }))
+  fireEvent.click(
+    await screen.findByRole('menuitemradio', { name: 'DeepSeek' })
+  )
+  const toggle = screen.getByRole('switch', { name: 'Leo web search' })
+  expect(toggle).toBeDisabled()
+  fireEvent.change(screen.getByLabelText('API key'), {
+    target: { value: 'fixture-key' }
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Test & save key' }))
+  await waitFor(() => expect(toggle).not.toBeDisabled())
+  expect(toggle).not.toBeChecked()
+  expect(api.setProviderSearch).not.toHaveBeenCalled()
+  fireEvent.click(toggle)
+  await waitFor(() => expect(toggle).toBeChecked())
+  expect(api.setProviderSearch).toHaveBeenCalledWith('deepseek', true)
+  expect(
+    screen.getByRole('link', { name: 'Search API pricing' })
+  ).toHaveAttribute(
+    'href',
+    'https://api-docs.deepseek.com/quick_start/pricing/'
+  )
+})
+
+it('keeps search disabled when enablement fails and refreshes without retrying the mutation', async () => {
+  const deepseek = {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    connected: true,
+    searchEnabled: false,
+    oauthAvailable: false,
+    models: []
+  }
+  const api = {
+    providers: vi.fn().mockResolvedValue([provider, deepseek]),
+    setProviderSearch: vi.fn().mockRejectedValue(new Error('offline'))
+  }
+  render(
+    <ProviderSettings
+      api={api as unknown as TamizhiAPIClient}
+      onChange={vi.fn().mockResolvedValue(undefined)}
+    />
+  )
+  await screen.findByLabelText('API key')
+  fireEvent.click(screen.getByRole('button', { name: 'Choose AI provider' }))
+  fireEvent.click(
+    await screen.findByRole('menuitemradio', { name: /DeepSeek/ })
+  )
+  fireEvent.click(screen.getByRole('switch', { name: 'Leo web search' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'Unable to confirm the search setting'
+  )
+  expect(
+    screen.getByRole('switch', { name: 'Leo web search' })
+  ).not.toBeChecked()
+  fireEvent.click(screen.getByRole('button', { name: 'Refresh status' }))
+  await waitFor(() => expect(screen.queryByRole('alert')).toBeNull())
+  expect(api.setProviderSearch).toHaveBeenCalledTimes(1)
+})

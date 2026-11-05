@@ -170,3 +170,47 @@ it('assigns stable distinct UI identities to repeated run notices without server
   view.rerender()
   expect(view.result.current.runEvents.map(event => event.uiId)).toEqual(ids)
 })
+
+it('requires a connected model before creating a user message and refreshes after setup', async () => {
+  let catalog: { id: string; name: string; provider: string }[] = []
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockImplementation(async input => {
+      const path = new URL(String(input)).pathname
+      if (path.endsWith('/models')) return Response.json(catalog)
+      if (path.endsWith('/capabilities'))
+        return Response.json({ version: '1', sessions: true })
+      if (path.endsWith('/conversations')) return Response.json({ items: [] })
+      if (path.endsWith('/providers/openai'))
+        return Response.json({ id: 'openai', connected: true, models: catalog })
+      throw new Error('Unexpected request: ' + path)
+    })
+  const client = createTamizhiClient({
+    baseURL: 'https://api.example/api/tamizhi',
+    fetch
+  })
+  const { result } = renderHook(() =>
+    useTamizhiChat(false, undefined, 'test:no-model', client)
+  )
+  await waitFor(() => expect(result.current.isReady).toBe(true))
+  expect(result.current.needsProvider).toBe(true)
+  act(() => {
+    result.current.send('hi')
+  })
+  act(() => {
+    result.current.send('hi')
+  })
+  expect(result.current.conversations).toHaveLength(0)
+  expect(result.current.messages).toHaveLength(0)
+  expect(result.current.error).toContain('Open AI settings')
+  expect(
+    fetch.mock.calls.some(([input]) => String(input).endsWith('/chat'))
+  ).toBe(false)
+  catalog = [{ id: 'openai/connected', name: 'Connected', provider: 'openai' }]
+  await act(async () => {
+    await client.api?.connectProvider('openai', 'fixture-key')
+  })
+  await waitFor(() => expect(result.current.needsProvider).toBe(false))
+  expect(result.current.models).toEqual(catalog)
+  expect(result.current.error).toBeNull()
+})

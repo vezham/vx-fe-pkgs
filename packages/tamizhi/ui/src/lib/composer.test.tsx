@@ -61,3 +61,35 @@ it('removes exactly one same-named attachment and sends the remaining file', asy
   )
   expect(screen.queryByRole('button', { name: 'Remove notes.txt' })).toBeNull()
 })
+
+it('uses a disabled HeroUI model button for an empty connected catalog', async () => {
+  const { ModelPicker } = await import('./model-picker')
+  render(<ModelPicker model="Auto" onModelChange={vi.fn()} catalog={[]} />)
+  const picker = screen.getByRole('button', { name: 'AI model' })
+  expect(picker).toBeDisabled()
+  expect(picker).toHaveTextContent('No model')
+})
+
+it('offers Leo and connected BYOK choices without a duplicate Auto item', async () => {
+  const { ModelPicker } = await import('./model-picker')
+  const onModelChange = vi.fn()
+  render(
+    <ModelPicker
+      model="leo/default"
+      onModelChange={onModelChange}
+      catalog={[
+        { id: 'leo/default', name: 'Leo', provider: 'leo' },
+        { id: 'openai/example', name: 'Connected model', provider: 'openai' }
+      ]}
+    />
+  )
+  const picker = screen.getByRole('button', { name: 'AI model' })
+  expect(picker).toHaveTextContent('Leo')
+  fireEvent.click(picker)
+  expect(await screen.findByRole('menuitemradio', { name: /Leo/ })).toBeTruthy()
+  expect(screen.queryByRole('menuitemradio', { name: /^Auto$/ })).toBeNull()
+  fireEvent.click(
+    screen.getByRole('menuitemradio', { name: /Connected model/ })
+  )
+  expect(onModelChange).toHaveBeenCalledWith('openai/example')
+})

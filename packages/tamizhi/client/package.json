@@ -25,6 +25,13 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@vezham/tamizhi-contracts": "workspace:*"
+    "@tanstack/ai": "1.0.0",
+    "@tanstack/ai-client": "1.0.0",
+    "@vezham/tamizhi-contracts": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "vite": "8.1.6"
   }
 }
