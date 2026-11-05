@@ -22,7 +22,7 @@ export const workspaceDataKey = (
 ) =>
   `vezham:${encodeURIComponent(appId)}:workspace:${encodeURIComponent(workspaceId)}:${encodeURIComponent(key)}`
 
-const normalizeWorkspaceName = (name: string) => {
+export const normalizeWorkspaceName = (name: string) => {
   const trimmed = name.trim()
   if (!trimmed || trimmed.length > 64)
     throw new Error('Use a workspace name between 1 and 64 characters.')

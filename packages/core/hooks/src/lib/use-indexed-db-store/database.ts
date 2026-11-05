@@ -1,5 +1,11 @@
 export const INDEXED_DB_NAME = 'vezham'
 const RECORDS = 'records'
+const DELETED_PREFIXES = '\0deleted-prefixes'
+
+export interface IndexedDBMutationOptions {
+  optimistic?: boolean
+  deletePrefixes?: readonly string[]
+}
 
 const openDatabase = (factory: IDBFactory | undefined): Promise<IDBDatabase> =>
   new Promise((resolve, reject) => {
@@ -35,7 +41,8 @@ export const updateIndexedDBValue = async <T>(
   key: string,
   initialValue: T,
   parse?: (value: unknown) => T,
-  update?: (current: T) => T
+  update?: (current: T) => T,
+  options: IndexedDBMutationOptions = {}
 ): Promise<T> => {
   const database = await openDatabase(factory)
   return new Promise((resolve, reject) => {
@@ -43,21 +50,53 @@ export const updateIndexedDBValue = async <T>(
     let failure: unknown
     const transaction = database.transaction(RECORDS, 'readwrite')
     const records = transaction.objectStore(RECORDS)
-    const request = records.get(key)
-    request.onsuccess = () => {
-      try {
-        const stored: unknown = request.result
-        const current =
-          stored === undefined
-            ? initialValue
-            : parse
-              ? parse(stored)
-              : (stored as T)
-        value = update ? update(current) : current
-        if (update || stored === undefined) records.put(value, key)
-      } catch (cause) {
-        failure = cause
+    const deletedRequest = records.get(DELETED_PREFIXES)
+    deletedRequest.onsuccess = () => {
+      const deleted: string[] = deletedRequest.result ?? []
+      if (deleted.some(prefix => key.startsWith(prefix))) {
+        failure = new Error('This data scope has been deleted.')
         transaction.abort()
+        return
+      }
+      const request = records.get(key)
+      request.onsuccess = () => {
+        try {
+          const stored: unknown = request.result
+          const current =
+            stored === undefined
+              ? initialValue
+              : parse
+                ? parse(stored)
+                : (stored as T)
+          value = update ? update(current) : current
+          if (update || stored === undefined) records.put(value, key)
+          const prefixes = options.deletePrefixes ?? []
+          if (prefixes.length) {
+            if (
+              !update ||
+              prefixes.some(prefix => !prefix || key.startsWith(prefix))
+            )
+              throw new Error('Invalid IndexedDB deletion scope.')
+            records.put(
+              [...new Set([...deleted, ...prefixes])],
+              DELETED_PREFIXES
+            )
+            const cursor = records.openCursor()
+            cursor.onsuccess = () => {
+              const entry = cursor.result
+              if (!entry) return
+              if (
+                typeof entry.key === 'string' &&
+                prefixes.some(prefix => entry.key.toString().startsWith(prefix))
+              )
+                entry.delete()
+              entry.continue()
+            }
+          }
+        } catch (cause) {
+          failure = cause
+          transaction.abort()
+        }
       }
     }
     transaction.oncomplete = () => {

@@ -8,5 +8,6 @@ export {
 
 export {
   useIndexedDBStore,
+  type IndexedDBMutationOptions,
   type IndexedDBStoreOptions
 } from './lib/use-indexed-db-store'

@@ -1,4 +1,4 @@
-import { updateIndexedDBValue } from './database'
+import { type IndexedDBMutationOptions, updateIndexedDBValue } from './database'
 
 export interface IndexedDBStoreOptions<T> {
   parse?: (value: unknown) => T
@@ -58,7 +58,10 @@ const createIndexedDBStore = <T>(
     queue = queue.then(read)
     return queue.then(() => undefined)
   }
-  const setValue = (update: T | ((current: T) => T)): Promise<boolean> => {
+  const setValue = (
+    update: T | ((current: T) => T),
+    options?: IndexedDBMutationOptions
+  ): Promise<boolean> => {
     if (!snapshot.isReady || snapshot.error) return Promise.resolve(false)
     const apply = (current: T) =>
       typeof update === 'function'
@@ -73,7 +76,12 @@ const createIndexedDBStore = <T>(
     }
     const version = ++revision
     pending++
-    snapshot = { value: optimistic, isReady: true, isSaved: false, error: null }
+    snapshot = {
+      value: options?.optimistic === false ? snapshot.value : optimistic,
+      isReady: true,
+      isSaved: false,
+      error: null
+    }
     emit()
     const operation = queue.then(async () => {
       try {
@@ -82,7 +90,8 @@ const createIndexedDBStore = <T>(
           key,
           initialValue,
           parse,
-          apply
+          apply,
+          options
         )
         pending--
         if (version === revision) {

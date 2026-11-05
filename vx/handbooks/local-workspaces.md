@@ -57,3 +57,12 @@ Cloud workspaces, account linking, remote IDs, document synchronization, and
 collaboration remain future work. Local workspaces do not claim cloud sync or
 cross-device persistence. Static/prerendered markup uses stable defaults and
 browser storage is loaded on subscription after mount.
+
+Each workspace has an overflow menu with Rename and Delete. Renaming preserves
+its ID and records. Deletion requires confirmation, protects the last workspace,
+and switches an active deleted workspace to a remaining one. Catalog changes,
+scoped notes, and local embedded chat history are deleted in one IndexedDB
+transaction. Scoped deletion markers prevent delayed or cross-tab writes from
+recreating removed records. Destructive changes update the UI only after commit.
+Only records stored through the workspace namespace are deleted; unrelated app
+preferences and remote API data are not part of local workspace deletion.

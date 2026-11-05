@@ -21,6 +21,10 @@ import {
 } from '@vezham/react-v3'
 
 import { useOptionalWorkspace } from '../../../workspace'
+import {
+  type WorkspaceAction,
+  WorkspaceActionDialog
+} from '../../../workspace/action-dialog'
 import { CreateWorkspaceDialog } from '../../../workspace/create-dialog'
 import {
   WorkspaceSheetItems,
@@ -545,6 +549,8 @@ const UserMenu = ({
   const workspace = useOptionalWorkspace()
   const guest = !user.id
   const accountUser = guest ? { ...user, name: 'Guest' } : user
+  const [workspaceAction, setWorkspaceAction] =
+    useState<WorkspaceAction | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [open, setOpen] = useState(false)
   const [section, setSection] = useState<string | null>(null)
@@ -571,6 +577,10 @@ const UserMenu = ({
   const workspaceActions = workspace
     ? {
         workspace,
+        onAction: (action: WorkspaceAction) => {
+          changeOpen(false)
+          setWorkspaceAction(action)
+        },
         select: (id: string) => {
           workspace.select(id)
           changeOpen(false)
@@ -657,6 +667,13 @@ const UserMenu = ({
   return (
     <>
       {menu}
+      {workspaceAction && (
+        <WorkspaceActionDialog
+          key={`${workspaceAction.type}:${workspaceAction.id}`}
+          action={workspaceAction}
+          onClose={() => setWorkspaceAction(null)}
+        />
+      )}
       {workspace && (
         <CreateWorkspaceDialog
           isOpen={isCreating}

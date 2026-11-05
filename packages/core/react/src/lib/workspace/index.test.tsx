@@ -158,3 +158,55 @@ it('rejects empty catalogs and duplicate IDs', () => {
     })
   ).toThrow()
 })
+
+it('renames without changing workspace identity or its data and persists the new name', async () => {
+  const first = await mountWorkspace()
+  await act(async () => {
+    await first.result.current.notes.setValue('Keep these notes')
+  })
+  await act(async () => {
+    expect(
+      await first.result.current.workspace.rename('default', '  Personal  ')
+    ).toBe(true)
+  })
+  expect(first.result.current.workspace.active).toMatchObject({
+    id: 'default',
+    name: 'Personal'
+  })
+  expect(first.result.current.notes.value).toBe('Keep these notes')
+  await expect(
+    first.result.current.workspace.rename('default', ' ')
+  ).rejects.toThrow('between 1 and 64')
+  first.unmount()
+  const restored = await mountWorkspace()
+  expect(restored.result.current.workspace.active.name).toBe('Personal')
+})
+
+it('deletes the active workspace, chooses a remaining one, and protects the last workspace', async () => {
+  const first = await mountWorkspace()
+  await act(async () => {
+    expect(await first.result.current.workspace.remove('default')).toBe(false)
+  })
+  await act(async () => {
+    await first.result.current.workspace.create('Remaining workspace')
+  })
+  const remaining = first.result.current.workspace.active.id
+  act(() => first.result.current.workspace.select('default'))
+  await waitFor(() => expect(first.result.current.notes.isReady).toBe(true))
+  await act(async () => {
+    await first.result.current.notes.setValue('Remove these notes')
+  })
+  await act(async () => {
+    expect(await first.result.current.workspace.remove('default')).toBe(true)
+  })
+  expect(first.result.current.workspace.active.id).toBe(remaining)
+  expect(first.result.current.workspace.workspaces).toHaveLength(1)
+  await act(async () => {
+    expect(await first.result.current.workspace.remove(remaining)).toBe(false)
+  })
+  first.unmount()
+  const restored = await mountWorkspace()
+  expect(restored.result.current.workspace.active.id).toBe(remaining)
+  expect(restored.result.current.workspace.workspaces).toHaveLength(1)
+  expect(restored.result.current.notes.value).toBe('')
+})

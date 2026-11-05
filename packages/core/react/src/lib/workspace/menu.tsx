@@ -7,15 +7,23 @@ import {
 } from '@vezham/icons-react'
 import { Button, Dropdown, Header, Label } from '@vezham/react-v3'
 
+import type { WorkspaceAction } from './action-dialog'
+import { WorkspaceActionsMenu } from './actions-menu'
 import type { useWorkspace } from './index'
 
 type Props = {
   workspace: ReturnType<typeof useWorkspace>
   select: (id: string) => void
   create: () => void
+  onAction: (action: WorkspaceAction) => void
 }
 
-const renderWorkspaceItems = ({ workspace, select, create }: Props) => (
+const renderWorkspaceItems = ({
+  workspace,
+  select,
+  create,
+  onAction
+}: Props) => (
   <>
     <Dropdown.Section>
       <Header>Local storage</Header>
@@ -30,6 +38,11 @@ const renderWorkspaceItems = ({ workspace, select, create }: Props) => (
           onAction={() => select(item.id)}>
           <Laptop size={18} aria-hidden="true" />
           <Label className="min-w-0 flex-1 truncate">{item.name}</Label>
+          <WorkspaceActionsMenu
+            workspace={item}
+            canDelete={workspace.workspaces.length > 1}
+            onAction={onAction}
+          />
           {item.id === workspace.active.id && (
             <CheckRead size={18} aria-hidden="true" />
           )}
@@ -92,6 +105,7 @@ export const WorkspaceSheetItems = ({
   workspace,
   select,
   create,
+  onAction,
   onBack
 }: Props & { onBack: () => void }) => (
   <div className="w-full">
@@ -106,21 +120,27 @@ export const WorkspaceSheetItems = ({
     <p className="text-muted px-3 pb-2 text-xs">Local storage</p>
     <div className="flex flex-col gap-1">
       {workspace.workspaces.map(item => (
-        <Button
-          key={item.id}
-          variant={item.id === workspace.active.id ? 'secondary' : 'ghost'}
-          className="h-auto min-h-11 w-full justify-start gap-3 whitespace-normal"
-          isDisabled={!workspace.isReady || Boolean(workspace.error)}
-          aria-pressed={item.id === workspace.active.id}
-          onPress={() => select(item.id)}>
-          <Laptop size={18} className="shrink-0" aria-hidden="true" />
-          <span className="min-w-0 flex-1 text-start wrap-anywhere">
-            {item.name}
-          </span>
-          {item.id === workspace.active.id && (
-            <CheckRead size={18} className="shrink-0" aria-hidden="true" />
-          )}
-        </Button>
+        <div key={item.id} className="flex items-center gap-1">
+          <Button
+            variant={item.id === workspace.active.id ? 'secondary' : 'ghost'}
+            className="h-auto min-h-11 w-full justify-start gap-3 whitespace-normal"
+            isDisabled={!workspace.isReady || Boolean(workspace.error)}
+            aria-pressed={item.id === workspace.active.id}
+            onPress={() => select(item.id)}>
+            <Laptop size={18} className="shrink-0" aria-hidden="true" />
+            <span className="min-w-0 flex-1 text-start wrap-anywhere">
+              {item.name}
+            </span>
+            {item.id === workspace.active.id && (
+              <CheckRead size={18} className="shrink-0" aria-hidden="true" />
+            )}
+          </Button>
+          <WorkspaceActionsMenu
+            workspace={item}
+            canDelete={workspace.workspaces.length > 1}
+            onAction={onAction}
+          />
+        </div>
       ))}
       <Button
         variant="ghost"

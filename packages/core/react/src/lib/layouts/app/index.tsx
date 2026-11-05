@@ -40,6 +40,7 @@ import {
   useUser
 } from '../../store/users/useUserStore'
 import { WorkspaceProvider, useOptionalWorkspace } from '../../workspace'
+import { workspaceDataKey } from '../../workspace/model'
 import { MenuLayout } from '../menu-layout'
 import { SettingsLayout } from '../settings'
 import { AppFrame, type AppFrameProps } from './frame'
@@ -223,8 +224,10 @@ const EmbeddedSession = ({
   const { user } = useUser()
   const app = useApp()
   const workspace = useOptionalWorkspace()
-  const scope = workspace ? `.workspace.${workspace.active.id}` : ''
-  const storageKey = `tamizhi.embed.${user?.id ?? 'guest'}${scope}.v1`
+  const sessionKey = `tamizhi.embed.${user?.id ?? 'guest'}.v1`
+  const storageKey = workspace
+    ? workspaceDataKey(workspace.appId, workspace.active.id, sessionKey)
+    : sessionKey
   return (
     <TamizhiSessionProvider
       key={storageKey}

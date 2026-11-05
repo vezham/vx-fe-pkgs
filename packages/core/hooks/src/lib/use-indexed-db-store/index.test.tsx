@@ -107,3 +107,69 @@ it('preserves invalid saved records when schema validation fails', async () => {
     invalid: true
   })
 })
+
+it('atomically deletes scoped records and blocks stale writes from resurrecting them', async () => {
+  const prefix = 'app:workspace:removed:'
+  await updateIndexedDBValue(indexedDB, prefix + 'notes', 'private notes')
+  await updateIndexedDBValue(indexedDB, prefix + 'chat', ['private chat'])
+  await updateIndexedDBValue(indexedDB, 'app:workspace:kept:notes', 'keep me')
+  await updateIndexedDBValue(
+    indexedDB,
+    'catalog',
+    ['removed', 'kept'],
+    undefined,
+    () => ['kept'],
+    { deletePrefixes: [prefix] }
+  )
+  expect(await updateIndexedDBValue(indexedDB, 'catalog', [])).toEqual(['kept'])
+  expect(
+    await updateIndexedDBValue(indexedDB, 'app:workspace:kept:notes', '')
+  ).toBe('keep me')
+  await expect(
+    updateIndexedDBValue(
+      indexedDB,
+      prefix + 'notes',
+      '',
+      undefined,
+      () => 'stale write'
+    )
+  ).rejects.toThrow('deleted')
+  const db = await new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open('vezham', 1)
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+  const keys = await new Promise<IDBValidKey[]>((resolve, reject) => {
+    const request = db
+      .transaction('records', 'readonly')
+      .objectStore('records')
+      .getAllKeys()
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+  db.close()
+  expect(keys.some(key => String(key).startsWith(prefix))).toBe(false)
+})
+
+it('rolls back both the catalog and deletion when a database transaction fails', async () => {
+  await updateIndexedDBValue(indexedDB, 'rollback-catalog', ['one', 'two'])
+  await updateIndexedDBValue(indexedDB, 'rollback-scope:notes', 'keep me')
+  await expect(
+    updateIndexedDBValue(
+      indexedDB,
+      'rollback-catalog',
+      [],
+      undefined,
+      () => {
+        throw new Error('Keep at least one workspace.')
+      },
+      { deletePrefixes: ['rollback-scope:'] }
+    )
+  ).rejects.toThrow('Keep at least one')
+  expect(await updateIndexedDBValue(indexedDB, 'rollback-catalog', [])).toEqual(
+    ['one', 'two']
+  )
+  expect(
+    await updateIndexedDBValue(indexedDB, 'rollback-scope:notes', '')
+  ).toBe('keep me')
+})
