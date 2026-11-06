@@ -15,7 +15,7 @@ import {
 } from './model'
 import type { LocalWorkspace } from './model'
 
-interface WorkspaceContextValue {
+export interface WorkspaceContextValue {
   appId: string
   active: LocalWorkspace
   workspaces: readonly LocalWorkspace[]

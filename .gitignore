@@ -5,6 +5,7 @@
 
 .vezham
 vx/deploy
+apps/crm
 
 # **/**/public/og/*
 # !**/**/public/og/.vx-generated.json
@@ -214,3 +215,5 @@ firebase-debug.*.log*
 
 # vx-bot/NOTE: Regenerated from the package vx.tamizhi.yaml configuration.
 /packages/tamizhi/ui/src/generated/
+
+test-output

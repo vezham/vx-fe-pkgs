@@ -1,0 +1,32 @@
+{
+  "name": "@vezham/workspace-contracts",
+  "version": "26.2.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-kit.git",
+    "directory": "packages/workspace/contracts"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "LICENSE",
+    "schema"
+  ],
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

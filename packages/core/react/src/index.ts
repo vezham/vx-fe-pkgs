@@ -16,4 +16,10 @@ export {
   useWorkspace,
   useWorkspaceStore
 } from './lib/workspace'
-export type { LocalWorkspace, WorkspaceProviderProps } from './lib/workspace'
+export type {
+  LocalWorkspace,
+  WorkspaceProviderProps,
+  WorkspaceContextValue
+} from './lib/workspace'
+
+export { workspaceDataKey } from './lib/workspace/model'

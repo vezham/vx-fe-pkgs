@@ -40,6 +40,8 @@
     "packages/vx/styles"
   ],
   "entry": [
+    // vx-bot/NOTE: CRM runs this postbuild script directly from its Nx build command.
+    "apps/crm/tools/offline.mjs",
     // vx-bot/NOTE: Generated apps import these shared stylesheet roots directly.
     "packages/vx/styles/{index.css,docs/index.css}",
     // vx-bot/NOTE: Public package CSS is copied to dist and consumed through package exports.

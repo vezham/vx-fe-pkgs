@@ -3,7 +3,7 @@ import { IDBObjectStore } from 'fake-indexeddb'
 import { renderToString } from 'react-dom/server'
 import { expect, it, vi } from 'vitest'
 
-import { updateIndexedDBValue } from './database'
+import { readIndexedDBValue, updateIndexedDBValue } from './database'
 import { useIndexedDBStore } from './index'
 
 it('updates immediately, saves asynchronously, and restores structured data after remount', async () => {
@@ -67,6 +67,7 @@ it('reports write failures and leaves the last durable value intact', async () =
   })
   expect(hook.result.current.error).toBeTruthy()
   expect(hook.result.current.isSaved).toBe(false)
+  expect(hook.result.current.isLoaded).toBe(true)
   put.mockRestore()
   expect(await updateIndexedDBValue(indexedDB, 'failure', '')).toBe('saved')
 })
@@ -102,6 +103,7 @@ it('preserves invalid saved records when schema validation fails', async () => {
     useIndexedDBStore<string>('corrupt', '', { parse })
   )
   await waitFor(() => expect(hook.result.current.error).toBeTruthy())
+  expect(hook.result.current.isLoaded).toBe(false)
   expect(await hook.result.current.setValue('overwrite')).toBe(false)
   expect(await updateIndexedDBValue(indexedDB, 'corrupt', {})).toEqual({
     invalid: true
@@ -172,4 +174,40 @@ it('rolls back both the catalog and deletion when a database transaction fails',
   expect(
     await updateIndexedDBValue(indexedDB, 'rollback-scope:notes', '')
   ).toBe('keep me')
+})
+
+it('commits file bytes and metadata together and rolls both back on batch failures', async () => {
+  await updateIndexedDBValue(indexedDB, 'atomic:root', { count: 0 })
+  await updateIndexedDBValue(
+    indexedDB,
+    'atomic:root',
+    { count: 0 },
+    undefined,
+    () => ({ count: 1 }),
+    { putRecords: { 'atomic:file': new Uint8Array([1, 2, 3]) } }
+  )
+  expect(
+    Array.from((await readIndexedDBValue<Uint8Array>('atomic:file')) ?? [])
+  ).toEqual([1, 2, 3])
+  await expect(
+    updateIndexedDBValue(
+      indexedDB,
+      'atomic:root',
+      { count: 0 },
+      undefined,
+      () => ({ count: 2 }),
+      { putRecords: { 'atomic:second': 'bytes', 'atomic:root': 'invalid' } }
+    )
+  ).rejects.toThrow('Invalid batch')
+  expect(await readIndexedDBValue('atomic:root')).toEqual({ count: 1 })
+  expect(await readIndexedDBValue('atomic:second')).toBeUndefined()
+  await updateIndexedDBValue(
+    indexedDB,
+    'atomic:root',
+    { count: 0 },
+    undefined,
+    () => ({ count: 0 }),
+    { deleteKeys: ['atomic:file'] }
+  )
+  expect(await readIndexedDBValue('atomic:file')).toBeUndefined()
 })

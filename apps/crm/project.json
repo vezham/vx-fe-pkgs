@@ -3,11 +3,15 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/crm/src",
-  "implicitDependencies": ["devtools", "react", "template"],
+  "implicitDependencies": ["devtools", "react"],
   "targets": {
     "build": {
       "dependsOn": ["metadata:generate", "deploy:generate", "^build"],
-      "outputs": ["{projectRoot}/.output"]
+      "outputs": ["{projectRoot}/.output"],
+      "options": {
+        "command": "vite build && node tools/offline.mjs",
+        "cwd": "apps/crm"
+      }
     },
     "dev": {
       "dependsOn": ["metadata:watch"]
@@ -16,7 +20,27 @@
     "deploy:generate": {},
     "metadata:generate": {},
     "metadata:watch": {},
-    "routes:tanstack": {}
+    "routes:tanstack": {},
+    "serve-static": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/preview.mjs",
+        "cwd": "apps/crm"
+      }
+    },
+    "e2e": {
+      "dependsOn": ["build"]
+    },
+    "lint-style": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "stylelint src/app/global.css",
+        "cwd": "apps/crm"
+      }
+    }
   },
   "tags": ["category:apps"]
 }

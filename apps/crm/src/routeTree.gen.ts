@@ -8,15 +8,14 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ApiHeartbeatRouteRouteImport } from './routes/api/heartbeat/route'
 import { Route as ApiPulseRouteRouteImport } from './routes/api/pulse/route'
-
-const ProLazyRouteImport = createFileRoute('/pro')()
+import { Route as BrowseSectionRouteImport } from './routes/browse.$section'
+import { Route as NodeNodeIdRouteImport } from './routes/node.$nodeId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,11 +27,11 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProLazyRoute = ProLazyRouteImport.update({
-  id: '/pro',
-  path: '/pro',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/pro.lazy').then((d) => d.Route))
+} as any)
 const ApiHeartbeatRouteRoute = ApiHeartbeatRouteRouteImport.update({
   id: '/api/heartbeat',
   path: '/api/heartbeat',
@@ -43,43 +42,83 @@ const ApiPulseRouteRoute = ApiPulseRouteRouteImport.update({
   path: '/api/pulse',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrowseSectionRoute = BrowseSectionRouteImport.update({
+  id: '/browse/$section',
+  path: '/browse/$section',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NodeNodeIdRoute = NodeNodeIdRouteImport.update({
+  id: '/node/$nodeId',
+  path: '/node/$nodeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
-  '/pro': typeof ProLazyRoute
+  '/settings': typeof SettingsRoute
   '/api/heartbeat': typeof ApiHeartbeatRouteRoute
   '/api/pulse': typeof ApiPulseRouteRoute
+  '/browse/$section': typeof BrowseSectionRoute
+  '/node/$nodeId': typeof NodeNodeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
-  '/pro': typeof ProLazyRoute
+  '/settings': typeof SettingsRoute
   '/api/heartbeat': typeof ApiHeartbeatRouteRoute
   '/api/pulse': typeof ApiPulseRouteRoute
+  '/browse/$section': typeof BrowseSectionRoute
+  '/node/$nodeId': typeof NodeNodeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
-  '/pro': typeof ProLazyRoute
+  '/settings': typeof SettingsRoute
   '/api/heartbeat': typeof ApiHeartbeatRouteRoute
   '/api/pulse': typeof ApiPulseRouteRoute
+  '/browse/$section': typeof BrowseSectionRoute
+  '/node/$nodeId': typeof NodeNodeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$' | '/pro' | '/api/heartbeat' | '/api/pulse'
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/settings'
+    | '/api/heartbeat'
+    | '/api/pulse'
+    | '/browse/$section'
+    | '/node/$nodeId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/pro' | '/api/heartbeat' | '/api/pulse'
-  id: '__root__' | '/' | '/$' | '/pro' | '/api/heartbeat' | '/api/pulse'
+  to:
+    | '/'
+    | '/$'
+    | '/settings'
+    | '/api/heartbeat'
+    | '/api/pulse'
+    | '/browse/$section'
+    | '/node/$nodeId'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/settings'
+    | '/api/heartbeat'
+    | '/api/pulse'
+    | '/browse/$section'
+    | '/node/$nodeId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
-  ProLazyRoute: typeof ProLazyRoute
+  SettingsRoute: typeof SettingsRoute
   ApiHeartbeatRouteRoute: typeof ApiHeartbeatRouteRoute
   ApiPulseRouteRoute: typeof ApiPulseRouteRoute
+  BrowseSectionRoute: typeof BrowseSectionRoute
+  NodeNodeIdRoute: typeof NodeNodeIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -98,11 +137,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pro': {
-      id: '/pro'
-      path: '/pro'
-      fullPath: '/pro'
-      preLoaderRoute: typeof ProLazyRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/heartbeat': {
@@ -119,15 +158,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPulseRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/browse/$section': {
+      id: '/browse/$section'
+      path: '/browse/$section'
+      fullPath: '/browse/$section'
+      preLoaderRoute: typeof BrowseSectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/node/$nodeId': {
+      id: '/node/$nodeId'
+      path: '/node/$nodeId'
+      fullPath: '/node/$nodeId'
+      preLoaderRoute: typeof NodeNodeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
-  ProLazyRoute: ProLazyRoute,
+  SettingsRoute: SettingsRoute,
   ApiHeartbeatRouteRoute: ApiHeartbeatRouteRoute,
   ApiPulseRouteRoute: ApiPulseRouteRoute,
+  BrowseSectionRoute: BrowseSectionRoute,
+  NodeNodeIdRoute: NodeNodeIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

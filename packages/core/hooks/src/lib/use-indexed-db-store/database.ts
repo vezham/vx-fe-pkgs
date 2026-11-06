@@ -3,6 +3,8 @@ const RECORDS = 'records'
 const DELETED_PREFIXES = '\0deleted-prefixes'
 
 export interface IndexedDBMutationOptions {
+  putRecords?: Readonly<Record<string, unknown>>
+  deleteKeys?: readonly string[]
   optimistic?: boolean
   deletePrefixes?: readonly string[]
 }
@@ -70,6 +72,22 @@ export const updateIndexedDBValue = async <T>(
                 : (stored as T)
           value = update ? update(current) : current
           if (update || stored === undefined) records.put(value, key)
+          for (const [recordKey, recordValue] of Object.entries(
+            options.putRecords ?? {}
+          )) {
+            if (
+              recordKey === key ||
+              recordKey === DELETED_PREFIXES ||
+              deleted.some(prefix => recordKey.startsWith(prefix))
+            )
+              throw new Error('Invalid batch record scope.')
+            records.put(recordValue, recordKey)
+          }
+          for (const recordKey of options.deleteKeys ?? []) {
+            if (recordKey === key || recordKey === DELETED_PREFIXES)
+              throw new Error('Invalid batch record deletion.')
+            records.delete(recordKey)
+          }
           const prefixes = options.deletePrefixes ?? []
           if (prefixes.length) {
             if (
@@ -113,6 +131,28 @@ export const updateIndexedDBValue = async <T>(
     }
     transaction.onerror = () => {
       failure ??= transaction.error
+    }
+  })
+}
+
+export const readIndexedDBValue = async <T>(
+  key: string
+): Promise<T | undefined> => {
+  const database = await openDatabase(globalThis.indexedDB)
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(RECORDS, 'readonly')
+    const request = transaction.objectStore(RECORDS).get(key)
+    let value: T | undefined
+    request.onsuccess = () => {
+      value = request.result as T | undefined
+    }
+    transaction.oncomplete = () => {
+      database.close()
+      resolve(value)
+    }
+    transaction.onabort = () => {
+      database.close()
+      reject(transaction.error)
     }
   })
 }

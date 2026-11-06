@@ -8,6 +8,7 @@ export interface IndexedDBStoreOptions<T> {
 interface Snapshot<T> {
   value: T
   isReady: boolean
+  isLoaded: boolean
   isSaved: boolean
   error: unknown
 }
@@ -20,6 +21,7 @@ const createIndexedDBStore = <T>(
   const initial: Snapshot<T> = {
     value: initialValue,
     isReady: false,
+    isLoaded: false,
     isSaved: true,
     error: null
   }
@@ -37,7 +39,13 @@ const createIndexedDBStore = <T>(
   }
   const acceptRead = (value: T, version: number) => {
     if (revision !== version || pending) return
-    snapshot = { value, isReady: true, isSaved: true, error: null }
+    snapshot = {
+      value,
+      isReady: true,
+      isLoaded: true,
+      isSaved: true,
+      error: null
+    }
     emit()
   }
   const read = async () => {
@@ -79,6 +87,7 @@ const createIndexedDBStore = <T>(
     snapshot = {
       value: options?.optimistic === false ? snapshot.value : optimistic,
       isReady: true,
+      isLoaded: true,
       isSaved: false,
       error: null
     }
@@ -98,6 +107,7 @@ const createIndexedDBStore = <T>(
           snapshot = {
             value,
             isReady: true,
+            isLoaded: true,
             isSaved: pending === 0,
             error: null
           }

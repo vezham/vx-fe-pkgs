@@ -31,3 +31,5 @@ export const useIndexedDBStore = <T>(
 export type { IndexedDBStoreOptions } from './indexed-db-store'
 
 export type { IndexedDBMutationOptions } from './database'
+
+export { readIndexedDBValue } from './database'
