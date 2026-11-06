@@ -1,4 +1,4 @@
-export const INDEXED_DB_NAME = 'vezham'
+const INDEXED_DB_NAME = 'vezham'
 const RECORDS = 'records'
 const DELETED_PREFIXES = '\0deleted-prefixes'
 

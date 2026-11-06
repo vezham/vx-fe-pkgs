@@ -79,10 +79,19 @@ export const PREVIEW_MODELS: readonly PreviewModel[] = [
   )
 ]
 
+export const LEO_MODEL_ID = 'leo/default'
+
 export const getAvailableModel = (
   model: string,
   catalog?: readonly ModelInfo[]
 ) => {
-  if (!catalog || model === 'Auto') return model
-  return catalog.some(item => item.id === model) ? model : 'Auto'
+  if (!catalog) return model
+  const fallback = catalog.some(item => item.id === LEO_MODEL_ID)
+    ? LEO_MODEL_ID
+    : 'Auto'
+  if (model === 'Auto') return fallback
+  return catalog.some(item => item.id === model) ? model : fallback
 }
+
+export const MODEL_SETUP_MESSAGE =
+  'No AI model is available. Open AI settings to connect a provider, then choose a model.'

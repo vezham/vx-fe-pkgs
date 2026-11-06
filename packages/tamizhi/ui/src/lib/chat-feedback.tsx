@@ -1,6 +1,8 @@
 import { Button, Card } from '@vezham/react-v3'
 
 import type { TamizhiChatProps } from './chat'
+import { MODEL_SETUP_MESSAGE } from './models'
+import { ResearchSources } from './research-sources'
 
 interface Props {
   chat: TamizhiChatProps['chat']
@@ -9,11 +11,17 @@ interface Props {
 
 export const ChatFeedback = ({ chat, speechError }: Props) => (
   <>
-    {chat.error && (
-      <p role="alert" className="text-danger px-4 py-2 text-sm">
-        {chat.error}
+    {chat.needsProvider && (
+      <p role="status" className="text-muted px-4 py-2 text-sm">
+        {MODEL_SETUP_MESSAGE}
       </p>
     )}
+    {chat.error &&
+      !(chat.needsProvider && chat.error === MODEL_SETUP_MESSAGE) && (
+        <p role="alert" className="text-danger px-4 py-2 text-sm">
+          {chat.error}
+        </p>
+      )}
     {speechError && (
       <p role="alert" className="text-danger px-4 text-xs">
         {speechError}
@@ -82,6 +90,7 @@ export const ChatFeedback = ({ chat, speechError }: Props) => (
           : 'Running'}
       </p>
     )}
+    <ResearchSources activities={chat.activities} />
     <span className="sr-only" role="status">
       {chat.isStreaming
         ? 'Tamizhi is responding.'

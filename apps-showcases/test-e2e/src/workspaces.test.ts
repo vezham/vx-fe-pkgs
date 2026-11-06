@@ -5,26 +5,46 @@ import { expect, test } from '@vezham/config/playwright/test'
 const openAccount = async (page: Page) => {
   await page.getByRole('button', { name: 'Open Guest menu' }).click()
 }
-const openWorkspaces = async (page: Page) => {
-  await openAccount(page)
-  const desktop = page.getByRole('menuitem', {
-    name: 'Choose workspace',
+const openAssistant = async (page: Page) => {
+  if (await page.locator('.tamizhi-embed').isVisible()) return
+  const trigger = page
+    .getByRole('button', { name: 'Tamizhi AI', exact: true })
+    .last()
+  if (!(await trigger.isVisible())) await openAccount(page)
+  await trigger.click()
+  const expand = page.getByRole('button', {
+    name: 'Expand Tamizhi AI',
     exact: true
   })
-  if (await desktop.count()) await desktop.click()
-  else
-    await page
-      .getByRole('button', { name: 'Choose workspace', exact: true })
-      .click()
+  if (await expand.isVisible()) await expand.click()
 }
-const createWorkspace = async (page: Page, name: string, small = false) => {
+const closeAssistantSheet = async (page: Page) => {
+  const close = page.getByRole('button', {
+    name: 'Close Tamizhi AI',
+    exact: true
+  })
+  if (await close.isVisible()) {
+    await close.click()
+    await expect(close).toHaveCount(0)
+    const account = page.getByRole('dialog', { name: 'Account', exact: true })
+    await account
+      .getByRole('button', { name: 'Close Account', exact: true })
+      .click()
+    await expect(account).toHaveCount(0)
+  }
+}
+const menuAction = (page: Page, name: string) =>
+  page
+    .getByRole('menuitem', { name, exact: true })
+    .or(page.getByRole('button', { name, exact: true }))
+
+const openWorkspaces = async (page: Page) => {
+  await openAccount(page)
+  await menuAction(page, 'Choose workspace').click()
+}
+const createWorkspace = async (page: Page, name: string) => {
   await openWorkspaces(page)
-  await page
-    .getByRole(small ? 'button' : 'menuitem', {
-      name: 'Create workspace',
-      exact: true
-    })
-    .click()
+  await menuAction(page, 'Create workspace').click()
   const dialog = page.getByRole('dialog', { name: 'Name your workspace' })
   await expect(
     dialog.getByRole('button', { name: 'Create workspace', exact: true })
@@ -57,27 +77,20 @@ test('local workspaces keep isolated notes across switching, reloads, and offlin
   ).toBeVisible()
   await expect(notes).toHaveValue('Design notes')
   await openWorkspaces(page)
-  await page
-    .getByRole('menuitem', { name: 'My Workspace', exact: true })
-    .click()
+  await menuAction(page, 'My Workspace').click()
   await expect(notes).toHaveValue('Notes in the default workspace')
   await context.setOffline(true)
   await createWorkspace(page, 'Offline project')
   await notes.fill('Written offline')
   await openWorkspaces(page)
-  await page.getByRole('menuitem', { name: 'Design team', exact: true }).click()
+  await menuAction(page, 'Design team').click()
   await expect(notes).toHaveValue('Design notes')
   await context.setOffline(false)
   await page.reload()
   await openWorkspaces(page)
-  await page
-    .getByRole('menuitem', { name: 'Offline project', exact: true })
-    .click()
+  await menuAction(page, 'Offline project').click()
   await expect(notes).toHaveValue('Written offline')
-  await page
-    .getByRole('button', { name: 'Tamizhi AI', exact: true })
-    .last()
-    .click()
+  await openAssistant(page)
   const assistant = page.locator('.tamizhi-embed')
   await assistant
     .getByRole('textbox', { name: 'Message Tamizhi' })
@@ -88,8 +101,10 @@ test('local workspaces keep isolated notes across switching, reloads, and offlin
   await expect(
     assistant.getByRole('article', { name: 'Your message' })
   ).toContainText('Hello from the offline project')
+  await closeAssistantSheet(page)
   await openWorkspaces(page)
-  await page.getByRole('menuitem', { name: 'Design team', exact: true }).click()
+  await menuAction(page, 'Design team').click()
+  await openAssistant(page)
   await expect(
     assistant.getByRole('article', { name: 'Your message' })
   ).toHaveCount(0)
@@ -102,10 +117,10 @@ test('local workspaces keep isolated notes across switching, reloads, and offlin
   ).toHaveCount(0)
   await page.keyboard.press('Escape')
 
+  await closeAssistantSheet(page)
   await openWorkspaces(page)
-  await page
-    .getByRole('menuitem', { name: 'Offline project', exact: true })
-    .click()
+  await menuAction(page, 'Offline project').click()
+  await openAssistant(page)
   await assistant.getByRole('button', { name: 'Choose a Tamizhi chat' }).click()
   await page
     .getByRole('menuitem', {
@@ -123,7 +138,7 @@ test('compact workspace switcher opens a bottom sheet and creates local workspac
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
-  await createWorkspace(page, 'Mobile project', true)
+  await createWorkspace(page, 'Mobile project')
   await openAccount(page)
   const sheet = page.getByRole('dialog', { name: 'Account', exact: true })
   await expect(sheet).toBeVisible()
@@ -207,18 +222,18 @@ test('combined guest menu opens account settings without signing in', async ({
   ).toHaveCount(1)
   await openAccount(page)
   await expect(
-    page.getByRole('button', { name: /Guest.*Available/ })
+    page
+      .getByRole('button', { name: /Guest.*Available/ })
+      .or(
+        page
+          .getByRole('dialog', { name: 'Account', exact: true })
+          .getByText('Guest', { exact: true })
+      )
   ).toBeVisible()
-  await expect(
-    page.getByRole('menuitem', { name: 'Available', exact: true })
-  ).toBeVisible()
-  await expect(
-    page.getByRole('menuitem', { name: 'Update your status', exact: true })
-  ).toBeVisible()
-  await expect(
-    page.getByRole('menuitem', { name: 'Logout', exact: true })
-  ).toHaveCount(0)
-  await page.getByRole('menuitem', { name: 'Preferences', exact: true }).click()
+  await expect(menuAction(page, 'Available')).toBeVisible()
+  await expect(menuAction(page, 'Update your status')).toBeVisible()
+  await expect(menuAction(page, 'Logout')).toHaveCount(0)
+  await menuAction(page, 'Preferences').click()
   await expect(page).toHaveURL(/\/settings\?section=Account$/)
   await expect(
     page.getByRole('heading', { name: 'Account', exact: true })
@@ -233,12 +248,13 @@ for (const mobile of [false, true]) {
   const viewport = mobile
     ? { width: 390, height: 844 }
     : { width: 1280, height: 900 }
+
   test(`rename and delete workspaces independently of selection (${mobile ? 'mobile' : 'desktop'})`, async ({
     page
   }) => {
     await page.setViewportSize(viewport)
     await page.goto('/')
-    await createWorkspace(page, 'Disposable workspace', mobile)
+    await createWorkspace(page, 'Disposable workspace')
     const notes = page.getByRole('textbox', { name: 'Workspace notes' })
     await notes.fill('Workspace data to remove')
     await expect(page.getByRole('status')).toHaveText('Saved in this browser')

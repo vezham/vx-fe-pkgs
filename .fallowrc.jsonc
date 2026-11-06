@@ -26,6 +26,8 @@
     // vx-bot/NOTE: Preserve the vendored MIT-licensed renderer; audit its authored Tamizhi adapter separately.
     "packages/tamizhi/ui/src/lib/vendor/momo/**",
     "**/*.d.ts",
+    // vx-bot/NOTE: Planning MDX documents are not application modules.
+    "vx/TODO/**",
     ".agents/**",
     ".codex/**",
     ".vezham/**",
@@ -64,7 +66,10 @@
     "vx/tools/release/version-actions.cjs",
     // vx-bot/NOTE: Executed directly as a runnable backend example and by Playwright's webServer commands.
     "packages/tamizhi/core/examples/server.ts",
-    "packages/tamizhi/ui/e2e/{browser.config.ts,provider-fixture.mjs}"
+    "packages/tamizhi/ui/e2e/{browser.config.ts,provider-fixture.mjs}",
+    // vx-bot/NOTE: Nx launches this verifier, and Vitest loads these setup paths dynamically.
+    "packages/tamizhi/client/tools/verify-companion.mjs",
+    "packages/core/{hooks,react}/test-setup.ts"
   ],
   "framework": [
     {
@@ -106,6 +111,8 @@
     // vx-bot/NOTE: Shared Vitest setup uses this dependency declared at the workspace root.
     "@testing-library/jest-dom",
     "@testing-library/react",
+    // vx-bot/NOTE: Package Vitest setup files use this test dependency declared at the workspace root.
+    "fake-indexeddb",
     "@tiptap/core",
     "@tiptap/extension-link",
     "@tiptap/extension-underline",

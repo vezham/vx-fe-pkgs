@@ -9,11 +9,39 @@ Tamizhi supports a standalone static/prerendered app and an embedded assistant i
 | `@vezham/tamizhi-ui`        | Standalone composer, compact composer-lite, avatar, embed, messages and capability-driven controls     |
 | `@vezham/tamizhi-core`      | Earlier TypeScript prototype; retained for comparison/tests, not the production backend                |
 
+## Local companion
+
+In the Go backend repository, run `pnpm exec nx run tamizhi-api:build` and
+`./dist/tamizhi serve`. In standalone or embed, choose **Connect companion →
+Connect**. The app supplies its origin automatically. For a new origin, compare
+its verification code with the terminal and approve (`y`) or reject (`n`/Enter).
+Approved origins are stored privately in `~/.vezham/tamizhi/allowed-origins.json`
+and reused after restart. `--origin` is optional preapproval. Reloaded UIs click
+Connect again; browser session tokens stay in memory. AI settings appears beside
+the connection control after pairing. Local mode uses SQLite and needs neither
+Neon nor OIDC. See [client setup](./client/README.md).
+
+## Leo
+
+Connected standalone and embedded chats select **Leo** (`leo/default`) by default.
+Leo is built into the Go companion and needs no model-provider key. It uses
+predefined workflows and installed tools. Write normally: “Leo movie”, “What is
+the latest React version?”, “Remember my launch is Friday”, or “Show my notes
+about the launch”. You can also ask what tools are available or paste a public
+page URL to read. Slash commands remain optional shortcuts. Installed skills/MCP tools are available
+through `/tool name {"argument":"value"}`. Existing permissions and approvals
+apply. Web answers quote retrieved source content; unsupported requests ask for
+clarification. Other tool services may require their own connections.
+
+Leo is a tool-driven assistant. BYOK models remain optional for broader reasoning
+and language generation. The disconnected browser demo keeps its sample presets;
+it does not claim to execute Leo's Go workflows locally in the page.
+
 ## Backend connection
 
 Set the public build variable `V_TAMIZHI_API_URL` for the standalone app. Without it, the app retains its local prepared-reply demo. **Tuning → AI settings** remains visible and explains that provider management needs a connected API. Users add their own provider keys in **Tuning → AI settings** after signing in. Keys are encrypted on the Go backend and never saved in browser local storage.
 
-The backend uses **Neon Postgres** through Go `pgx`. Its server-only `DATABASE_URL` comes from Neon Console; keep its TLS options and use a pooled URL for API traffic. The browser only receives `V_TAMIZHI_API_URL` and never connects directly to Postgres. SQLite is reserved for explicit local development and test fixtures.
+The backend uses **Neon Postgres** through Go `pgx`. Its server-only `DATABASE_URL` comes from Neon Console; keep its TLS options and use a pooled URL for API traffic. The browser only receives `V_TAMIZHI_API_URL` and never connects directly to Postgres. The local companion uses SQLite; Neon applies to configured hosted mode.
 
 The Go backend is linked to [Tamizhi on Neon](https://console.neon.tech/app/projects/late-flower-50992894/) in Singapore. Credentials stay in the backend repository’s git-ignored `.env.local`; project-scoped MCP and Neon skills are configured there.
 
@@ -138,3 +166,14 @@ for reviewed DSH commits, adopted behaviors, verification, and deferred work.
 Optional integration failures and saved-versus-applied settings status follow
 that ledger. Failed optional plugins remain visible in AI settings and can be
 retried explicitly.
+
+### Leo web search
+
+Open **AI settings → DeepSeek**, connect your key, then turn on **Leo web search**.
+The switch defaults to off and is separate from connecting a model provider.
+Leo uses DeepSeek Search for ranked links and the companion's HTTP reader for
+source content, with no DeepSeek Fetch or LLM calls. Search API charges apply;
+the settings link to [current pricing](https://api-docs.deepseek.com/quick_start/pricing/).
+The Google HTML search and browser-verification fallback have been removed.
+
+Tests use deterministic search and page fixtures and make no paid requests.
