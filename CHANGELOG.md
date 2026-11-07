@@ -1,3 +1,23 @@
+## 26.3.0 (2026-11-07)
+
+### 🚀 Features
+
+- **react:** add local workspaces ([273df531](https://github.com/vezham/vx-fe-pkgs/commit/273df531))
+- **tamizhi:** add local companion ([9eabaeaf](https://github.com/vezham/vx-fe-pkgs/commit/9eabaeaf))
+- **workspace:** add rename and delete actions ([048d4ea8](https://github.com/vezham/vx-fe-pkgs/commit/048d4ea8))
+
+### 🩹 Fixes
+
+- **react:** clarify panel edit labels ([5e993f5f](https://github.com/vezham/vx-fe-pkgs/commit/5e993f5f))
+
+### 🏡 Chore
+
+- **tamizhi-core:** ignore @tanstack/ai check ([3a636050](https://github.com/vezham/vx-fe-pkgs/commit/3a636050))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.2.0 (2026-11-04)
 
 ### 🚀 Features
