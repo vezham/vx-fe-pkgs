@@ -37,6 +37,37 @@ export interface TamizhiChatProps {
   renderLayout: (content: ReactNode, openPlayground: () => void) => ReactNode
 }
 
+const ChatConnectionControls = ({
+  chat,
+  hasMessages
+}: Pick<TamizhiChatProps, 'chat'> & { hasMessages: boolean }) => (
+  <div
+    className={`tamizhi__connection-controls${hasMessages ? 'tamizhi__connection-controls--perched' : ''}`}>
+    <CompanionSettings isDisabled={chat.isStreaming} />
+    {chat.api && <BackendSettings chat={chat} />}
+  </div>
+)
+
+const ChatWelcomeSuggestions = ({
+  chat,
+  isOffline,
+  composerVariant,
+  onSuggest
+}: Pick<TamizhiChatProps, 'chat' | 'isOffline' | 'composerVariant'> & {
+  onSuggest: (prompt: string, attachments?: APIAttachment[]) => void
+}) => {
+  if (chat.messages.length > 0) return null
+  return (
+    <WelcomeSuggestions
+      variant={composerVariant}
+      profile={chat.profile}
+      profiles={chat.profiles}
+      onSuggest={onSuggest}
+      isDisabled={isOffline || !chat.isReady || chat.isStreaming}
+    />
+  )
+}
+
 export const TamizhiChat = ({
   chat,
   isInstant,
@@ -215,20 +246,13 @@ export const TamizhiChat = ({
         </span>
       )}
       <ChatFeedback chat={chat} speechError={speech.error} />
-      {!hasMessages && (
-        <WelcomeSuggestions
-          variant={composerVariant}
-          profile={chat.profile}
-          profiles={chat.profiles}
-          onSuggest={sendMessage}
-          isDisabled={isOffline || !chat.isReady || chat.isStreaming}
-        />
-      )}
-      <div
-        className={`tamizhi__connection-controls${hasMessages ? 'tamizhi__connection-controls--perched' : ''}`}>
-        <CompanionSettings isDisabled={chat.isStreaming} />
-        {chat.api && <BackendSettings chat={chat} />}
-      </div>
+      <ChatWelcomeSuggestions
+        chat={chat}
+        isOffline={isOffline}
+        composerVariant={composerVariant}
+        onSuggest={sendMessage}
+      />
+      <ChatConnectionControls chat={chat} hasMessages={hasMessages} />
       <ComposerComponent
         api={chat.api}
         allowImages={chat.capabilities?.images}

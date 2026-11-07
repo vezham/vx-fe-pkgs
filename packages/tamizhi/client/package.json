@@ -3,7 +3,7 @@
   "version": "26.2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vezham/vx-fe-kit.git",
+    "url": "git+https://github.com/vezham/vx-fe-pkgs.git",
     "directory": "packages/tamizhi/client"
   },
   "type": "module",

@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 import {
   Button,
   Dropdown,
@@ -11,6 +9,97 @@ import {
 import type { TamizhiAPIClient } from '@vezham/tamizhi-client'
 import type { TamizhiAPI } from '@vezham/tamizhi-contracts'
 
+import { useProviderSettings } from './use-provider-settings'
+
+const ProviderAccountConnection = ({
+  projectId,
+  setProjectId,
+  busy,
+  connectAccount
+}: Pick<
+  ReturnType<typeof useProviderSettings>,
+  'projectId' | 'setProjectId' | 'busy' | 'connectAccount'
+>) => (
+  <div className="flex flex-col items-start gap-2">
+    <TextField value={projectId} onChange={setProjectId} isDisabled={busy}>
+      <Label>Google Cloud project ID</Label>
+      <Input
+        placeholder="my-google-project"
+        maxLength={30}
+        autoComplete="off"
+      />
+    </TextField>
+    <p className="text-muted text-xs">
+      This project's Gemini API quota and billing apply. Enable the Generative
+      Language API and use a project you are authorized to access.
+    </p>
+    <Button
+      size="sm"
+      variant="primary"
+      isDisabled={!projectId.trim()}
+      isPending={busy}
+      onPress={() => void connectAccount()}>
+      Connect Google account
+    </Button>
+  </div>
+)
+
+const ProviderSearchSettings = ({
+  provider,
+  busy,
+  updateSearch
+}: Pick<ReturnType<typeof useProviderSettings>, 'busy' | 'updateSearch'> & {
+  provider: TamizhiAPI.ProviderSettings
+}) => (
+  <div className="flex flex-col gap-2">
+    <Switch
+      aria-label="Leo web search"
+      isSelected={provider.searchEnabled ?? false}
+      isDisabled={busy || !provider.connected}
+      onChange={enabled => void updateSearch(enabled)}>
+      <Switch.Content className="flex w-full flex-row-reverse items-center justify-between gap-3">
+        <Switch.Control>
+          <Switch.Thumb />
+        </Switch.Control>
+        Leo web search
+      </Switch.Content>
+    </Switch>
+    <p className="text-muted text-xs">
+      Search with your DeepSeek key. Leo reads source pages directly and does
+      not call a language model or DeepSeek Fetch.{' '}
+      <a
+        className="underline"
+        href="https://api-docs.deepseek.com/quick_start/pricing/"
+        target="_blank"
+        rel="noopener noreferrer">
+        Search API pricing
+      </a>
+    </p>
+    {!provider.connected && (
+      <p className="text-muted text-xs">
+        Connect your key first. Web search stays off until you enable it.
+      </p>
+    )}
+  </div>
+)
+
+const ProviderModelSummary = ({
+  provider
+}: {
+  provider: TamizhiAPI.ProviderSettings
+}) => (
+  <p className="text-muted text-xs">
+    {provider.authMethod === 'oauth'
+      ? `Google account · ${provider.projectId} · `
+      : ''}
+    {provider.models.length} chat models
+    {provider.transcriptionModel
+      ? ` · Voice input: ${provider.transcriptionModel}`
+      : ''}
+    {provider.speechModel ? ` · Speech: ${provider.speechModel}` : ''}
+  </p>
+)
+
 export const ProviderSettings = ({
   api,
   onChange
@@ -18,149 +107,24 @@ export const ProviderSettings = ({
   api: TamizhiAPIClient
   onChange: () => Promise<void>
 }) => {
-  const [providers, setProviders] = useState<TamizhiAPI.ProviderSettings[]>([])
-  const [selected, setSelected] = useState('openai')
-  const [apiKey, setAPIKey] = useState('')
-  const [projectId, setProjectId] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [notice, setNotice] = useState<string | null>(null)
-  useEffect(() => {
-    const controller = new AbortController()
-    void api
-      .providers(controller.signal)
-      .then(setProviders)
-      .catch(() => {
-        if (!controller.signal.aborted)
-          setError('Sign in to manage your provider keys.')
-      })
-    return () => controller.abort()
-  }, [api])
-  const provider = providers.find(item => item.id === selected)
-  const connect = async () => {
-    if (!apiKey.trim() || busy) return
-    setBusy(true)
-    setError(null)
-    setNotice(null)
-    try {
-      const saved = await api.connectProvider(selected, apiKey)
-      setAPIKey('')
-      setProviders(current =>
-        current.map(item => (item.id === saved.id ? saved : item))
-      )
-      setNotice(
-        `${saved.name} connected. ${saved.models.length} chat models available.`
-      )
-      try {
-        await onChange()
-      } catch {
-        setError(
-          'Connection saved, but the model list could not refresh. Refresh status to try again.'
-        )
-      }
-    } catch (failure) {
-      setError(
-        failure instanceof Error
-          ? `${failure.message} Refresh status before retrying if the connection was interrupted.`
-          : 'Unable to confirm the provider connection. Refresh status before retrying.'
-      )
-    } finally {
-      setBusy(false)
-    }
-  }
-  const connectAccount = async () => {
-    if (!provider || busy) return
-    setBusy(true)
-    setError(null)
-    try {
-      const authorization = await api.authorizeProvider(
-        provider.id,
-        projectId.trim(),
-        window.location.href
-      )
-      setAPIKey('')
-      window.location.assign(authorization.url)
-    } catch {
-      setError(
-        'Unable to start account connection. Check the project ID and try again.'
-      )
-      setBusy(false)
-    }
-  }
-  const remove = async () => {
-    setBusy(true)
-    setError(null)
-    setNotice(null)
-    try {
-      await api.removeProvider(selected)
-      setAPIKey('')
-      setProviders(current =>
-        current.map(item =>
-          item.id === selected
-            ? {
-                ...item,
-                connected: false,
-                searchEnabled: false,
-                models: [],
-                authMethod: undefined,
-                projectId: undefined,
-                transcriptionModel: undefined,
-                speechModel: undefined
-              }
-            : item
-        )
-      )
-      setNotice('Provider connection removed.')
-      try {
-        await Promise.all([api.providers().then(setProviders), onChange()])
-      } catch {
-        setError(
-          'Connection removed, but its status could not refresh. Refresh status to try again.'
-        )
-      }
-    } catch {
-      setError('Unable to confirm removal. Refresh status before retrying.')
-    } finally {
-      setBusy(false)
-    }
-  }
-  const updateSearch = async (enabled: boolean) => {
-    if (busy || !provider?.connected) return
-    setBusy(true)
-    setError(null)
-    setNotice(null)
-    try {
-      const saved = await api.setProviderSearch(provider.id, enabled)
-      setProviders(current =>
-        current.map(item => (item.id === saved.id ? saved : item))
-      )
-      setNotice(
-        enabled
-          ? 'Leo web search enabled. DeepSeek search charges apply.'
-          : 'Leo web search disabled.'
-      )
-    } catch {
-      setError(
-        'Unable to confirm the search setting. Refresh status before retrying.'
-      )
-    } finally {
-      setBusy(false)
-    }
-  }
-  const refresh = async () => {
-    if (busy) return
-    setBusy(true)
-    setError(null)
-    try {
-      await Promise.all([api.providers().then(setProviders), onChange()])
-    } catch {
-      setError(
-        'Unable to refresh connection status. Try again when the connection is available.'
-      )
-    } finally {
-      setBusy(false)
-    }
-  }
+  const {
+    providers,
+    selected,
+    provider,
+    apiKey,
+    setAPIKey,
+    projectId,
+    setProjectId,
+    busy,
+    error,
+    notice,
+    connect,
+    connectAccount,
+    remove,
+    updateSearch,
+    refresh,
+    selectProvider
+  } = useProviderSettings(api, onChange)
   return (
     <section className="flex flex-col gap-3" aria-label="AI provider keys">
       <h3 className="font-medium">AI providers</h3>
@@ -181,15 +145,7 @@ export const ProviderSettings = ({
             aria-label="AI providers"
             selectionMode="single"
             selectedKeys={[selected]}
-            onAction={id => {
-              setSelected(String(id))
-              setAPIKey('')
-              setProjectId(
-                providers.find(item => item.id === String(id))?.projectId ?? ''
-              )
-              setError(null)
-              setNotice(null)
-            }}>
+            onAction={id => selectProvider(String(id))}>
             {providers.map(item => (
               <Dropdown.Item key={item.id} id={item.id} textValue={item.name}>
                 {item.name}
@@ -201,32 +157,12 @@ export const ProviderSettings = ({
         </Dropdown.Popover>
       </Dropdown>
       {provider?.oauthAvailable && (
-        <div className="flex flex-col items-start gap-2">
-          <TextField
-            value={projectId}
-            onChange={setProjectId}
-            isDisabled={busy}>
-            <Label>Google Cloud project ID</Label>
-            <Input
-              placeholder="my-google-project"
-              maxLength={30}
-              autoComplete="off"
-            />
-          </TextField>
-          <p className="text-muted text-xs">
-            This project's Gemini API quota and billing apply. Enable the
-            Generative Language API and use a project you are authorized to
-            access.
-          </p>
-          <Button
-            size="sm"
-            variant="primary"
-            isDisabled={!projectId.trim()}
-            isPending={busy}
-            onPress={() => void connectAccount()}>
-            Connect Google account
-          </Button>
-        </div>
+        <ProviderAccountConnection
+          projectId={projectId}
+          setProjectId={setProjectId}
+          busy={busy}
+          connectAccount={connectAccount}
+        />
       )}
       <TextField value={apiKey} onChange={setAPIKey} isDisabled={busy}>
         <Label>{provider?.connected ? 'Replace API key' : 'API key'}</Label>
@@ -258,49 +194,13 @@ export const ProviderSettings = ({
         )}
       </div>
       {provider?.id === 'deepseek' && (
-        <div className="flex flex-col gap-2">
-          <Switch
-            aria-label="Leo web search"
-            isSelected={provider.searchEnabled ?? false}
-            isDisabled={busy || !provider.connected}
-            onChange={enabled => void updateSearch(enabled)}>
-            <Switch.Content className="flex w-full flex-row-reverse items-center justify-between gap-3">
-              <Switch.Control>
-                <Switch.Thumb />
-              </Switch.Control>
-              Leo web search
-            </Switch.Content>
-          </Switch>
-          <p className="text-muted text-xs">
-            Search with your DeepSeek key. Leo reads source pages directly and
-            does not call a language model or DeepSeek Fetch.{' '}
-            <a
-              className="underline"
-              href="https://api-docs.deepseek.com/quick_start/pricing/"
-              target="_blank"
-              rel="noopener noreferrer">
-              Search API pricing
-            </a>
-          </p>
-          {!provider.connected && (
-            <p className="text-muted text-xs">
-              Connect your key first. Web search stays off until you enable it.
-            </p>
-          )}
-        </div>
+        <ProviderSearchSettings
+          provider={provider}
+          busy={busy}
+          updateSearch={updateSearch}
+        />
       )}
-      {provider?.connected && (
-        <p className="text-muted text-xs">
-          {provider.authMethod === 'oauth'
-            ? `Google account · ${provider.projectId} · `
-            : ''}
-          {provider.models.length} chat models
-          {provider.transcriptionModel
-            ? ` · Voice input: ${provider.transcriptionModel}`
-            : ''}
-          {provider.speechModel ? ` · Speech: ${provider.speechModel}` : ''}
-        </p>
-      )}
+      {provider?.connected && <ProviderModelSummary provider={provider} />}
       {error && (
         <Button
           size="sm"

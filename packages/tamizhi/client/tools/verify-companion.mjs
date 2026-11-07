@@ -167,12 +167,11 @@ try {
     ['web_search', 'web_open', 'web_read']
   )
   assert.equal(events.filter(event => event.type === 'client-action').length, 0)
-  assert.match(
-    events.find(
-      event => event.type === 'tool-result' && event.name === 'web_read'
-    ).output.sources[0].id,
-    /^web-/
+  const readResult = events.find(
+    event => event.type === 'tool-result' && event.name === 'web_read'
   )
+  assert.ok(readResult, 'Expected a web_read tool result')
+  assert.match(readResult.output.sources[0].id, /^web-/)
   await page.evaluate(() => window.researchLeo())
   assert.match(
     await page.locator('#answer').textContent(),

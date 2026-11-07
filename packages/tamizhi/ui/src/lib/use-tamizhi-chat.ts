@@ -1,15 +1,12 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
-import { useIndexedDBStore } from '@vezham/hooks'
 import { type TamizhiClient, runTamizhiChat } from '@vezham/tamizhi-client'
 import type {
   APIAttachment,
   APICapabilities,
-  APIConversation,
   ApprovalRequest,
   ModelInfo,
   RunRequest,
-  StoredConversationData,
   StreamEvent,
   TamizhiAppearance,
   TamizhiProfileOptions,
@@ -20,15 +17,11 @@ import type {
   ChatMessageRecord,
   Persona
 } from '@vezham/tamizhi-contracts'
-import { streamEventSchema, wireMessageSchema } from '@vezham/tamizhi-contracts'
+import { streamEventSchema } from '@vezham/tamizhi-contracts'
 
 import { detectOutfit } from './avatar-data'
 import { useCompanionClient } from './companion-connection'
-import {
-  EMPTY_CONVERSATIONS,
-  parseConversations,
-  updateConversationMessage
-} from './conversation-storage'
+import { updateConversationMessage } from './conversation-storage'
 import { createId } from './create-id'
 import { createDemoReply, detectPersona } from './demo'
 import { MODEL_SETUP_MESSAGE } from './models'
@@ -37,46 +30,9 @@ import {
   getTamizhiProfile,
   getTamizhiProfiles
 } from './profiles'
+import { useChatConversations } from './use-chat-conversations'
 
 const STORAGE_KEY = 'tamizhi.demo.v1'
-const fromWire = (
-  item: StoredConversationData | APIConversation
-): ChatConversationRecord => ({
-  id: item.id,
-  title: item.title ?? 'Chat',
-  version: item.version,
-  messages: item.messages
-    .filter(
-      message =>
-        message.role === 'user' ||
-        (message.role === 'assistant' && message.content.trim())
-    )
-    .map(message => ({
-      id: message.id ?? createId(),
-      role: message.role as 'user' | 'assistant',
-      text: message.content,
-      persona:
-        wireMessageSchema.shape.persona.safeParse(message.persona).data ??
-        'helper',
-      outfit: wireMessageSchema.shape.outfit.safeParse(message.outfit).data,
-      profileId: message.profileId,
-      outfitLocked: message.outfitLocked,
-      attachments: message.attachments,
-      rating:
-        message.rating === 'like'
-          ? 'up'
-          : message.rating === 'dislike'
-            ? 'down'
-            : undefined,
-      tasks: message.tasks
-    }))
-})
-
-const isClientReady = (
-  client: TamizhiClient,
-  loadedClient: TamizhiClient | null
-) => !client.api || loadedClient === client
-
 export const useTamizhiChat = (
   isInstant = false,
   selectedChatId?: string | null,
@@ -85,32 +41,24 @@ export const useTamizhiChat = (
   options: TamizhiProfileOptions = {}
 ) => {
   const client = useCompanionClient(configuredClient)
+  const [error, setError] = useState<string | null>(null)
+  const [capabilities, setCapabilities] = useState<APICapabilities | null>(null)
+  const {
+    conversations,
+    setConversations,
+    isSaved,
+    isReady: conversationsReady,
+    acceptConversation
+  } = useChatConversations(client, storageKey, setError, setCapabilities)
   const profiles = getTamizhiProfiles(options.profiles)
   const [selection, setSelection] = useState({
     appId: options.appId,
     id: options.appId
   })
   const appearance = useRef<Partial<TamizhiAppearance>>({})
-  const local = useIndexedDBStore(storageKey, EMPTY_CONVERSATIONS, {
-    parse: parseConversations,
-    enabled: !client
-  })
-  const [remoteConversations, setRemoteConversations] = useState<
-    ChatConversationRecord[]
-  >([])
-  const [loadedClient, setLoadedClient] = useState<TamizhiClient | null>(null)
-  const conversations = client
-    ? client.api && loadedClient !== client
-      ? []
-      : remoteConversations
-    : local.value
-  const setConversations = client ? setRemoteConversations : local.setValue
-  const isSaved = client ? true : local.isSaved
-  const [capabilities, setCapabilities] = useState<APICapabilities | null>(null)
   const [sessionChatId, setActiveId] = useState<string | null>(null)
   const activeId = selectedChatId === undefined ? sessionChatId : selectedChatId
   const [isStreaming, setIsStreaming] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [approvals, setApprovals] = useState<ApprovalRequest[]>([])
   const [activities, setActivities] = useState<ToolActivity[]>([])
   const [runEvents, setRunEvents] = useState<
@@ -125,9 +73,7 @@ export const useTamizhiChat = (
   const needsProvider = Boolean(
     client?.api && catalogReady && models.length === 0
   )
-  const isReady =
-    (client ? isClientReady(client, loadedClient) : local.isReady) &&
-    catalogReady
+  const isReady = conversationsReady && catalogReady
   const canRespond = () => {
     if (client?.api && models.length === 0) {
       setError(MODEL_SETUP_MESSAGE)
@@ -142,39 +88,6 @@ export const useTamizhiChat = (
   })
   const remote = useRef<AbortController | null>(null)
   const currentRun = useRef<string | null>(null)
-  const acceptConversation = (
-    item: StoredConversationData | APIConversation
-  ) => {
-    const chat = fromWire(item)
-    setConversations(current => [
-      chat,
-      ...current.filter(value => value.id !== chat.id)
-    ])
-    return chat
-  }
-  useEffect(() => {
-    if (!client?.api) return
-    const controller = new AbortController()
-    void Promise.all([
-      client.api.conversations('', '', controller.signal),
-      client.api.capabilities(controller.signal)
-    ])
-      .then(([page, features]) => {
-        if (controller.signal.aborted) return
-        setRemoteConversations(page.items.map(fromWire))
-        setCapabilities(features)
-      })
-      .catch(() => {
-        if (!controller.signal.aborted)
-          setError(
-            'Unable to load conversations. Sign in or check the Tamizhi connection.'
-          )
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoadedClient(client)
-      })
-    return () => controller.abort()
-  }, [client])
   useEffect(() => {
     if (!client) return
     const controller = new AbortController()
