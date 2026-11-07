@@ -1,3 +1,13 @@
+## 26.3.1 (2026-11-07)
+
+### 💅 Refactors
+
+- **tamizhi:** extract chat and provider hooks ([5a5ccf0d](https://github.com/vezham/vx-fe-pkgs/commit/5a5ccf0d))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.3.0 (2026-11-07)
 
 ### 🚀 Features
