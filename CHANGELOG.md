@@ -1,3 +1,13 @@
+## 26.3.2 (2026-11-12)
+
+### 🩹 Fixes
+
+- **hooks:** reset clipboard feedback ([21903108](https://github.com/vezham/vx-fe-pkgs/commit/21903108))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 26.3.1 (2026-11-07)
 
 ### 💅 Refactors
