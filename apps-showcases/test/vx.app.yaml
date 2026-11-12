@@ -4,7 +4,7 @@ core:
   id: vezham-test
   name: Vezham Test
   shortName: Test
-  version: 26.3.2
+  version: 27.0.0-alpha.1
   description: Single app to manage your Vezham Test
   publisher:
     name: Vezham Technologies Private Limited

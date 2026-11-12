@@ -1,6 +1,6 @@
 {
   "name": "@vezham/start",
-  "version": "26.3.2",
+  "version": "27.0.0-alpha.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vezham/vx-fe-pkgs.git",

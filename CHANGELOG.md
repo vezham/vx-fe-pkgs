@@ -1,3 +1,7 @@
+## 27.0.0-alpha.1 (2026-11-12)
+
+This was a version bump only, there were no code changes.
+
 ## 26.3.2 (2026-11-12)
 
 ### 🩹 Fixes
