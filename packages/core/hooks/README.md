@@ -45,4 +45,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 Uses the Clipboard API when available and falls back to a temporary selection for
 restricted origins. The hook exposes the last copy result as `status`, `isCopied`,
-and `isUnavailable`.
+and `isUnavailable`. Successful feedback resets from `copied` to `idle` after
+two seconds; another successful copy restarts that delay. Failure feedback stays
+`unavailable` until a later copy succeeds. Pending results from older attempts
+cannot overwrite a newer result, and feedback timers are cleared on unmount.
