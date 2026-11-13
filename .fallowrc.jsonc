@@ -118,8 +118,6 @@
     "react-stately",
     "tailwind-merge",
     "tailwindcss",
-    // vx-bot/NOTE: Peer of the retained Vezham v2 package alias.
-    "framer-motion",
     // vx-bot/NOTE: @vezham/config/vite-lib loads this root-supplied declaration plugin.
     "vite-plugin-dts",
     // vx-bot/NOTE: Published packages are declared at root and supplied to app workspaces.
