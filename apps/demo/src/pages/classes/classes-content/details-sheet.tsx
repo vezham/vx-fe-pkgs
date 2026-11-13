@@ -3,7 +3,6 @@ import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 
 import { Book, Pen } from '@vezham/icons-react'
-import { Sheet } from '@vezham/react-pro-v3'
 import {
   Button,
   Chip,
@@ -12,6 +11,7 @@ import {
   Tooltip,
   useMediaQuery
 } from '@vezham/react-v3'
+import { Sheet } from '@vezham/react-v3/sheet'
 
 import { classDetailTabs } from './data'
 import type { ClassDetailTab, ClassRecord } from './types'
@@ -254,8 +254,6 @@ const ClassDetailsSheetContent = ({
     <Sheet
       isOpen={Boolean(classRecord)}
       placement={isCompactSheet ? 'bottom' : 'right'}
-      isHandleOnly={isCompactSheet}
-      shouldAutoFocus={isCompactSheet}
       onOpenChange={onOpenChange}>
       <Sheet.Backdrop variant="blur" className="bg-overlay/10">
         <Sheet.Content

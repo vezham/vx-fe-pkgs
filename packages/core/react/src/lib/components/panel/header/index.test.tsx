@@ -304,10 +304,10 @@ describe('application menu sheet', () => {
       name: 'Open application menu'
     })
     fireEvent.click(trigger)
-    const sheet = await screen.findByRole('dialog', {
+    await screen.findByRole('dialog', {
       name: 'Application menu'
     })
-    expect(sheet.closest('[data-slot="sheet-backdrop"]')).toBeTruthy()
+    expect(document.querySelector('[data-slot="sheet-backdrop"]')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Bookmarks' }))
     expect(actions.toggleInfoPanel).toHaveBeenCalledWith('bookmarks')
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())

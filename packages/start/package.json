@@ -95,11 +95,11 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@vezham/devtools": "workspace:*",
-    "@vezham/env": "workspace:*",
+    "@vezham/devtools": "catalog:",
+    "@vezham/env": "catalog:",
     "@vezham/hooks": "workspace:*",
-    "@vezham/template": "workspace:*",
-    "tailwind-variants": "3.3.1",
+    "@vezham/template": "catalog:",
+    "tailwind-variants": "catalog:",
     "yaml": "catalog:"
   }
 }

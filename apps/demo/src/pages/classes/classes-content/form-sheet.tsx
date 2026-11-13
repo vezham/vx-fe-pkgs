@@ -1,7 +1,6 @@
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
 
-import { Sheet } from '@vezham/react-pro-v3'
 import {
   Button,
   InputGroup,
@@ -12,6 +11,7 @@ import {
   TextField,
   useMediaQuery
 } from '@vezham/react-v3'
+import { Sheet } from '@vezham/react-v3/sheet'
 
 import type { ClassRecord } from './types'
 import { createEmptyClassRecord } from './utils'
@@ -191,8 +191,6 @@ export const ClassFormSheet = ({
     <Sheet
       isOpen={isOpen}
       placement={isCompactSheet ? 'bottom' : 'right'}
-      isHandleOnly={isCompactSheet}
-      shouldAutoFocus={isCompactSheet}
       onOpenChange={onOpenChange}>
       <Sheet.Backdrop variant="blur" className="bg-overlay/10">
         <Sheet.Content

@@ -164,6 +164,9 @@ settings:
 
 catalogs:
   default:
+    '@playwright/test':
+      specifier: ^1.60.0
+      version: 1.64.1
     '@internationalized/date':
       specifier: 3.12.4
       version: 3.12.4
@@ -179,9 +182,18 @@ catalogs:
     '@vezham/env':
       specifier: workspace:*
       version: workspace:*
+    '@vezham/icons-react':
+      specifier: 1.0.7
+      version: 1.0.7
     '@vezham/react':
       specifier: workspace:*
       version: workspace:*
+    '@vezham/react-pro-v3':
+      specifier: npm:@heroui-pro/react@1.0.0-beta.11
+      version: '@heroui-pro/react@1.0.0-beta.11'
+    '@vezham/react-v3':
+      specifier: npm:@heroui/react@3.2.7
+      version: '@heroui/react@3.2.7'
     '@vezham/start':
       specifier: workspace:*
       version: workspace:*
@@ -194,6 +206,21 @@ catalogs:
     react-aria-components:
       specifier: 1.22.1
       version: 1.22.1
+    react:
+      specifier: 19.2.7
+      version: 19.2.7
+    react-dom:
+      specifier: 19.2.7
+      version: 19.2.7
+    react-markdown:
+      specifier: ^10.1.0
+      version: 10.1.0
+    tailwind-variants:
+      specifier: 3.3.1
+      version: 3.3.1
+    vite:
+      specifier: 8.1.6
+      version: 8.1.6
     yaml:
       specifier: 2.9.1
       version: 2.9.1
@@ -297,10 +324,10 @@ importers:
         specifier: 'catalog:'
         version: link:packages/core/react
       '@vezham/react-pro-v3':
-        specifier: npm:@heroui-pro/react@1.0.0-beta.11
+        specifier: 'catalog:'
         version: '@heroui-pro/react@1.0.0-beta.11'
       '@vezham/react-v3':
-        specifier: npm:@heroui/react@3.2.7
+        specifier: 'catalog:'
         version: '@heroui/react@3.2.7(@internationalized/date@3.12.4)(@react-aria/ssr@3.10.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-aria/utils@3.34.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-aria-components@1.22.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-aria@3.53.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/start':
         specifier: 'catalog:'
@@ -330,7 +357,7 @@ importers:
         specifier: ^12.40.0
         version: 12.43.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7
       react-aria:
         specifier: 3.53.1
@@ -339,10 +366,10 @@ importers:
         specifier: 'catalog:'
         version: 1.22.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-dom:
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
       react-markdown:
-        specifier: ^10.1.0
+        specifier: 'catalog:'
         version: 10.1.0(@types/react@19.2.17)(react@19.2.7)(supports-color@10.2.2)
       react-resizable-panels:
         specifier: ^4.11.2
@@ -424,7 +451,7 @@ importers:
         specifier: 24.0.4
         version: 24.0.4(@swc-node/register@1.11.1(@swc/core@1.15.41(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@10.2.2)(typescript@6.0.3))(@swc/core@1.15.41(@swc/helpers@0.5.23))
       '@playwright/test':
-        specifier: ^1.60.0
+        specifier: 'catalog:'
         version: 1.64.1
       '@swc-node/register':
         specifier: 1.11.1
@@ -499,7 +526,7 @@ importers:
         specifier: 'catalog:'
         version: link:packages/config
       '@vezham/icons-react':
-        specifier: 1.0.7
+        specifier: 'catalog:'
         version: 1.0.7(react@19.2.7)
       '@vezham/use-logger':
         specifier: 0.3.3
@@ -613,7 +640,7 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(prettier@3.9.10)(stylelint@17.16.0(supports-color@10.2.2)(typescript@6.0.3))
       tailwind-variants:
-        specifier: 3.3.1
+        specifier: 'catalog:'
         version: 3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.0)
       tailwindcss:
         specifier: 4.3.0
@@ -634,7 +661,7 @@ importers:
         specifier: 6.7.2
         version: 6.7.2(supports-color@10.2.2)(typanion@3.14.0)
       vite:
-        specifier: 8.1.6
+        specifier: 'catalog:'
         version: 8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vite-plugin-dts:
         specifier: ~4.5.4
@@ -855,19 +882,19 @@ importers:
   packages/start:
     dependencies:
       '@vezham/devtools':
-        specifier: workspace:*
+        specifier: 'catalog:'
         version: link:../devtools
       '@vezham/env':
-        specifier: workspace:*
+        specifier: 'catalog:'
         version: link:../core/env
       '@vezham/hooks':
         specifier: workspace:*
         version: link:../core/hooks
       '@vezham/template':
-        specifier: workspace:*
+        specifier: 'catalog:'
         version: link:../template
       tailwind-variants:
-        specifier: 3.3.1
+        specifier: 'catalog:'
         version: 3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.0)
       yaml:
         specifier: 'catalog:'
@@ -889,10 +916,10 @@ importers:
         version: 4.6.7
     devDependencies:
       '@playwright/test':
-        specifier: ^1.64.1
+        specifier: 'catalog:'
         version: 1.64.1
       vite:
-        specifier: 8.1.6
+        specifier: 'catalog:'
         version: 8.1.6(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/tamizhi/contracts:
@@ -929,14 +956,14 @@ importers:
         specifier: workspace:*
         version: link:../../core/hooks
       '@vezham/icons-react':
-        specifier: 1.0.7
+        specifier: 'catalog:'
         version: 1.0.7(react@19.2.7)
       '@vezham/react-pro-v3':
-        specifier: npm:@heroui-pro/react@1.0.0-beta.10
-        version: '@heroui-pro/react@1.0.0-beta.10'
+        specifier: 'catalog:'
+        version: '@heroui-pro/react@1.0.0-beta.11'
       '@vezham/react-v3':
-        specifier: npm:@heroui/react@3.2.6
-        version: '@heroui/react@3.2.6(@internationalized/date@3.12.4)(@react-aria/ssr@3.10.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-aria/utils@3.34.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-aria-components@1.22.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-aria@3.53.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
+        specifier: 'catalog:'
+        version: '@heroui/react@3.2.7(@internationalized/date@3.12.4)(@react-aria/ssr@3.10.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-aria/utils@3.34.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-aria-components@1.22.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-aria@3.53.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tailwind-merge@3.7.0)(tailwindcss@4.3.0)'
       '@vezham/tamizhi-client':
         specifier: workspace:*
         version: link:../client
@@ -944,14 +971,14 @@ importers:
         specifier: workspace:*
         version: link:../contracts
       react-markdown:
-        specifier: ^10.1.0
+        specifier: 'catalog:'
         version: 10.1.0(@types/react@19.2.17)(react@19.2.7)(supports-color@10.2.2)
     devDependencies:
       react:
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7
       react-dom:
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
       yaml:
         specifier: 'catalog:'
@@ -2211,9 +2238,6 @@ packages:
     peerDependenciesMeta:
       json-schema-typed:
         optional: true
-
-  '@heroui-pro/react@1.0.0-beta.10':
-    resolution: {integrity: sha512-3Vxf4m72WyjG1RIMtSlAn8ZNs//JtEZBUXUbki5Xo23InOdgukY/nEYGqPWLKoSIUrXx1ZH6ykNJXyhIUut1xg==}
 
   '@heroui-pro/react@1.0.0-beta.11':
     resolution: {integrity: sha512-nD2pRPr+GAw5TtNCxoXjq24APmgVHjqPbY81TQlRpz6nKNBGJpj+eF8K7QevTQYmZa2So3iIA3LbmJsf8Q85vg==}
@@ -13318,11 +13342,6 @@ snapshots:
   '@fumari/json-schema-ts@1.0.2(json-schema-typed@8.0.2)':
     optionalDependencies:
       json-schema-typed: 8.0.2
-
-  '@heroui-pro/react@1.0.0-beta.10':
-    dependencies:
-      chalk: 5.6.2
-      heroui-pro: 1.0.0-beta.14
 
   '@heroui-pro/react@1.0.0-beta.11':
     dependencies:

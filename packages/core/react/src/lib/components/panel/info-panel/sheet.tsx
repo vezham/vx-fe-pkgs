@@ -1,8 +1,8 @@
 import { type ReactNode, useState } from 'react'
 
 import { Maximize, Minimize } from '@vezham/icons-react'
-import { Sheet } from '@vezham/react-pro-v3'
 import { Button, Surface, Tooltip } from '@vezham/react-v3'
+import { Sheet } from '@vezham/react-v3/sheet'
 
 import {
   panelBodyClass,
@@ -29,9 +29,7 @@ export const InfoPanelSheet = ({
     <Sheet
       isOpen={isOpen}
       onOpenChange={open => !open && onClose()}
-      placement="bottom"
-      isHandleOnly
-      shouldAutoFocus>
+      placement="bottom">
       <Sheet.Backdrop
         variant="blur"
         className="bg-overlay/10 z-80 backdrop-blur-xs">

@@ -1,8 +1,8 @@
 import { type ComponentType, useContext, useState } from 'react'
 
 import { AltArrowLeft, Settings } from '@vezham/icons-react'
-import { Sheet } from '@vezham/react-pro-v3'
 import { Button, Popover, ScrollShadow, useMediaQuery } from '@vezham/react-v3'
+import { Sheet } from '@vezham/react-v3/sheet'
 
 import { useSettingsNavigation } from '../../../../pages/settings/navigation'
 import { AppearanceProvider } from './appearance'
@@ -99,12 +99,7 @@ export const ControlCenter = <Context extends object>({
   )
 
   const overlay = isCompact ? (
-    <Sheet
-      isOpen={isOpen}
-      onOpenChange={changeOpen}
-      placement="bottom"
-      isHandleOnly
-      shouldAutoFocus>
+    <Sheet isOpen={isOpen} onOpenChange={changeOpen} placement="bottom">
       {footer?.compact ? null : <Sheet.Trigger>{button}</Sheet.Trigger>}
       <Sheet.Backdrop className={styles.backdrop()} variant="blur">
         <Sheet.Content className={styles.sheetContent()}>

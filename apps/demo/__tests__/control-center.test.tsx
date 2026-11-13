@@ -106,9 +106,9 @@ describe('Demo Control Center', () => {
       const dialog = await screen.findByRole('dialog', {
         name: 'Control Center'
       })
-      expect(Boolean(dialog.closest('[data-slot="sheet-backdrop"]'))).toBe(
-        mobile
-      )
+      expect(
+        Boolean(document.querySelector('[data-slot="sheet-backdrop"]'))
+      ).toBe(mobile)
       // vx-bot/NOTE: Demo includes multiple appearance tiles; exercise the same toggle in both directions.
       const appearanceToggle = within(dialog).getAllByRole('button', {
         name: 'Switch to dark mode'
@@ -183,7 +183,13 @@ describe('Demo Control Center', () => {
           document.documentElement.style.getPropertyValue('--accent')
         ).toBe('')
       )
-      fireEvent.keyDown(dialog, { key: 'Escape' })
+      if (mobile) {
+        fireEvent.click(
+          within(dialog).getByRole('button', { name: 'Close Control Center' })
+        )
+      } else {
+        fireEvent.keyDown(dialog, { key: 'Escape' })
+      }
       await waitFor(() =>
         expect(
           screen.queryByRole('dialog', { name: 'Control Center' })

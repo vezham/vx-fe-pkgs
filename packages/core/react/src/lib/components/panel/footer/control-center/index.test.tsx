@@ -78,9 +78,9 @@ describe('ControlCenter', () => {
       const dialog = await screen.findByRole('dialog', {
         name: 'Control Center'
       })
-      expect(Boolean(dialog.closest('[data-slot="sheet-backdrop"]'))).toBe(
-        compact
-      )
+      expect(
+        Boolean(document.querySelector('[data-slot="sheet-backdrop"]'))
+      ).toBe(compact)
       expect(screen.getByRole('button', { name: 'Appearance' })).toBeTruthy()
       expect(screen.getByRole('button', { name: 'Theme' })).toBeTruthy()
       expect(screen.getByRole('button', { name: 'Direction' })).toBeTruthy()
@@ -230,7 +230,7 @@ describe('ControlCenter', () => {
     act(() => trigger.focus())
     fireEvent.click(trigger)
     const dialog = await screen.findByRole('dialog', { name: 'Control Center' })
-    expect(dialog.closest('[data-slot="sheet-backdrop"]')).toBeTruthy()
+    expect(document.querySelector('[data-slot="sheet-backdrop"]')).toBeTruthy()
     expect(dialog.getAttribute('data-placement')).toBe('bottom')
     expect(document.querySelector('[data-slot="sheet-handle"]')).toBeTruthy()
     fireEvent.click(

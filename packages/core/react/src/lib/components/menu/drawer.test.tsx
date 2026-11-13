@@ -31,7 +31,7 @@ describe('bottom navigation More sheet', () => {
     const dialog = await screen.findByRole('dialog', {
       name: 'More navigation'
     })
-    expect(dialog.closest('[data-slot="sheet-backdrop"]')).toBeTruthy()
+    expect(document.querySelector('[data-slot="sheet-backdrop"]')).toBeTruthy()
     expect(dialog.getAttribute('data-placement')).toBe('bottom')
     fireEvent.click(screen.getByRole('button', { name: 'Reports' }))
     expect(select).toHaveBeenCalledWith(items[0])

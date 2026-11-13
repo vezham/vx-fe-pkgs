@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 
-import { Sheet } from '@vezham/react-pro-v3'
+import { Sheet } from '@vezham/react-v3/sheet'
 
 type Props = {
   title: string
@@ -21,12 +21,7 @@ export const MenuSheet = ({
   trigger,
   children
 }: Props) => (
-  <Sheet
-    isOpen={isOpen}
-    onOpenChange={onOpenChange}
-    placement="bottom"
-    isHandleOnly
-    shouldAutoFocus>
+  <Sheet isOpen={isOpen} onOpenChange={onOpenChange} placement="bottom">
     {trigger && <Sheet.Trigger>{trigger}</Sheet.Trigger>}
     <Sheet.Backdrop
       variant="blur"

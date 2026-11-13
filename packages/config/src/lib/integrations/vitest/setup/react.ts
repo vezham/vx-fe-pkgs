@@ -10,6 +10,18 @@ class ResizeObserverMock {
   disconnect = noop
 }
 
+class IntersectionObserverMock implements IntersectionObserver {
+  readonly root = null
+  readonly rootMargin = ''
+  readonly scrollMargin = ''
+  readonly thresholds: number[] = []
+
+  observe = noop
+  unobserve = noop
+  disconnect = noop
+  takeRecords = () => []
+}
+
 expect.extend(matchers)
 
 beforeEach(() => {
@@ -37,6 +49,13 @@ if (typeof globalThis.ResizeObserver !== 'function') {
   Object.defineProperty(globalThis, 'ResizeObserver', {
     writable: true,
     value: ResizeObserverMock
+  })
+}
+
+if (typeof globalThis.IntersectionObserver !== 'function') {
+  Object.defineProperty(globalThis, 'IntersectionObserver', {
+    writable: true,
+    value: IntersectionObserverMock
   })
 }
 
