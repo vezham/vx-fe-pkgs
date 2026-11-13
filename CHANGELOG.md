@@ -7,6 +7,10 @@ This was a version bump only, there were no code changes.
 ### 🩹 Fixes
 
 - **hooks:** reset clipboard feedback ([21903108](https://github.com/vezham/vx-fe-pkgs/commit/21903108))
+### 🏡 Chore
+
+- **repo:** upgrade Vezham packages to v27 alpha ([63dea111](https://github.com/vezham-labs/vx-fe-kit/commit/63dea111))
+- **workspace:** update tooling and UI deps ([a156f08d](https://github.com/vezham-labs/vx-fe-kit/commit/a156f08d))
 
 ### ❤️ Thank You
 
@@ -159,6 +163,18 @@ This was a version bump only, there were no code changes.
 ### ❤️ Thank You
 
 - v0xvigneshwaran
+## 26.0.1 (2026-10-31)
+
+### 🏡 Chore
+
+- **workspace:** update deps and prune Nx guides ([1171ceb4](https://github.com/vezham-labs/vx-fe-kit/commit/1171ceb4))
+
+### deps
+
+- **workspace:** update @vx-cli/react to 26.0.2 ([a916105b](https://github.com/vezham-labs/vx-fe-kit/commit/a916105b))
+
+### ❤️ Thank You
+
 - vx-vigneshwaran
 
 # 26.0.0 (2026-10-29)

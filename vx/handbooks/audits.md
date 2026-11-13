@@ -38,6 +38,8 @@ Public CSS source files are explicit entry points because package builds copy
 them to the exported `dist` paths. The exact `@vezham/start/styles/docs` import
 is exempt from unresolved-import checks because its export targets generated
 CSS; its source stays covered and the package build produces the exported file.
+Fallow ignores `packages/vx/styles/**` because these shared styles are consumed
+by future generated apps and may not be imported by the current workspace.
 
 Fallow 3.37 cannot resolve the playground docs app's `tsconfig.app.json` aliases
 from MDX content and tests outside `src`. Keep those valid app imports unchanged.
@@ -73,9 +75,10 @@ be removed. Keep framework entry points and content collections registered in
 The Fallow dependency exceptions cover these indirect uses:
 
 - `@fontsource/inter` and `@fontsource/jura`: OG font files loaded with
-  `require.resolve`; `@vezham/styles-v3`: imported from the shared CSS entry.
+  `require.resolve`; `@vezham/devtools`, `@vezham/styles-v3`, and `tailwindcss`:
+  imported by the shared styles folder, which is ignored by Fallow.
 - The required peers of `@vezham/react-pro-v3` and `@vezham/react-v3`: HeroUI,
-  React Aria/Stately, date utilities, motion, panels, and Tailwind merge are
+  React Aria/Stately, date utilities, motion, panels, and Tailwind packages are
   supplied at the root for published UI packages. Keep the React Aria versions
   aligned as described in the CLI template baseline.
 - The listed Pro optional peers: retained for the workspace's component demos
