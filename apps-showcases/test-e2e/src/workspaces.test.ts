@@ -4,6 +4,11 @@ import { expect, test } from '@vezham/config/playwright/test'
 
 const openAccount = async (page: Page) => {
   await page.getByRole('button', { name: 'Open Guest menu' }).click()
+  await expect(
+    page
+      .getByRole('dialog', { name: 'Account', exact: true })
+      .or(page.getByRole('menu', { name: 'Open Guest menu', exact: true }))
+  ).toBeInViewport({ ratio: 1 })
 }
 const openAssistant = async (page: Page) => {
   if (await page.locator('.tamizhi-embed').isVisible()) return
@@ -155,6 +160,7 @@ test('compact workspace switcher opens a bottom sheet and creates local workspac
   await sheet
     .getByRole('button', { name: 'Back to account menu', exact: true })
     .click()
+  await expect(sheet).toBeInViewport({ ratio: 1 })
   await expect(
     sheet.getByRole('button', { name: 'Available', exact: true })
   ).toBeVisible()
