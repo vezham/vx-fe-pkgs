@@ -1,3 +1,35 @@
+## 27.0.0-alpha.2 (2026-11-14)
+
+### 🚀 Features
+
+- **vx:** add page component styles ([87c32d04](https://github.com/vezham/vx-fe-pkgs/commit/87c32d04))
+
+### 🩹 Fixes
+
+- **react:** migrate sheets to React v3 ([ea7ea6a6](https://github.com/vezham/vx-fe-pkgs/commit/ea7ea6a6))
+- **vx:** preserve workspace catalog protocols ([ef8769ab](https://github.com/vezham/vx-fe-pkgs/commit/ef8769ab))
+
+### 🏡 Chore
+
+- **release:** publish 26.0.1 ([3b731061](https://github.com/vezham/vx-fe-pkgs/commit/3b731061))
+- **release:** publish 27.0.0-alpha.1 ([3aae37bf](https://github.com/vezham/vx-fe-pkgs/commit/3aae37bf))
+- **repo:** upgrade Vezham packages to v27 alpha ([63dea111](https://github.com/vezham/vx-fe-pkgs/commit/63dea111))
+- **repo:** sync lock file ([8b532a1f](https://github.com/vezham/vx-fe-pkgs/commit/8b532a1f))
+- **tamizhi:** change preview port ([6740879f](https://github.com/vezham/vx-fe-pkgs/commit/6740879f))
+- **vx:** update Fallow dependency exceptions ([3828a3b5](https://github.com/vezham/vx-fe-pkgs/commit/3828a3b5))
+- **workspace:** update tooling and UI deps ([a156f08d](https://github.com/vezham/vx-fe-pkgs/commit/a156f08d))
+- **workspace:** ignore future shared styles ([ba151202](https://github.com/vezham/vx-fe-pkgs/commit/ba151202))
+- **workspace:** remove framer-motion catalog ([2768e6ae](https://github.com/vezham/vx-fe-pkgs/commit/2768e6ae))
+
+### ✅ Tests
+
+- **test-e2e:** check menu visibility ([fa014257](https://github.com/vezham/vx-fe-pkgs/commit/fa014257))
+
+### ❤️ Thank You
+
+- v0xvigneshwaran
+- vx-vigneshwaran
+
 ## 27.0.0-alpha.1 (2026-11-12)
 
 This was a version bump only, there were no code changes.
