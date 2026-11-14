@@ -121,6 +121,12 @@ Nx's release APIs and a custom version action configured in `nx.json`:
 That action extends Nx's JavaScript release behavior:
 
 - Nx updates `package.json`.
+- Internal pnpm catalog entries keep their `workspace:*`, `workspace:^`, or
+  `workspace:~` references during versioning. The custom action preserves these
+  because Nx's catalog update path bypasses its local-protocol preservation
+  check. Otherwise the pre-publish lockfile update tries to fetch the new,
+  unpublished workspace version from npm. Registry-version catalog entries
+  continue to receive normal version updates.
 - Vx additionally updates `vx.app.yaml` at `core.version` when the project
   has a Vx config file.
 - After versioning, the release runner invokes the metadata CLI to sync `.env`
@@ -279,7 +285,8 @@ for setup requirements and input details.
 
 The Nx `release.version.preVersionCommand` is the only release build stage. Both
 `@vx-ws/release` and the workflow delegate to it. `test:release` verifies orchestration
-using mocked Nx release APIs, without authenticating or publishing.
+using mocked Nx release APIs and exercises the real Nx version action against
+in-memory manifests and catalogs, without authenticating or publishing.
 The build runs before the version changes; post-version metadata synchronization
 does not rebuild compiled artifacts. Deployments must build from the release
 commit to embed the updated app metadata.

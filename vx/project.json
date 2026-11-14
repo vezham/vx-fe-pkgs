@@ -235,7 +235,7 @@
       }
     },
     "test:release": {
-      "command": "tsx --test vx/tools/release/run-release.test.ts",
+      "command": "tsx --test vx/tools/release/*.test.ts vx/tools/release/*.test.mjs",
       "cache": false
     }
   }
