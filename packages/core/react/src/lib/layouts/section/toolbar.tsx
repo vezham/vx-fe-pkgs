@@ -626,7 +626,9 @@ const SectionToolbar = (props: Props) => {
     onViewModeChange,
     onMenuOpenChange
   } = props
-  const isMobile = useMediaQuery('(max-width: 767px)')
+  const isMobile = useMediaQuery('(max-width: 767px)', {
+    initializeWithValue: false
+  })
   const { setAction: setResponsiveToolbarAction } = useResponsiveToolbarAction()
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
   const [previousIsMobile, setPreviousIsMobile] = useState(isMobile)

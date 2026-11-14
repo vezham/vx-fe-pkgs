@@ -387,7 +387,9 @@ const SectionLayoutContent = (props: SectionLayoutProps) => {
     props.onSync
   )
   const { isFooterHidden } = useMobileControls()
-  const isCompactToolbar = useMediaQuery('(max-width: 767px)')
+  const isCompactToolbar = useMediaQuery('(max-width: 767px)', {
+    initializeWithValue: false
+  })
   const shouldHideCompactControls = isCompactToolbar && isFooterHidden
   const stateScope = getStateScope(
     sectionKey,
