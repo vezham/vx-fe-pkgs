@@ -1,3 +1,17 @@
+# 27.0.0 (2026-11-15)
+
+### 🩹 Fixes
+
+- **config:** use themed metadata illustrations ([bebaf4eb](https://github.com/vezham/vx-fe-pkgs/commit/bebaf4eb))
+- **config:** derive local host from project name ([c5de4dc6](https://github.com/vezham/vx-fe-pkgs/commit/c5de4dc6))
+- **playground-docs:** apply page content styles ([9b08ca11](https://github.com/vezham/vx-fe-pkgs/commit/9b08ca11))
+- **react:** avoid section hydration mismatch ([4cea5822](https://github.com/vezham/vx-fe-pkgs/commit/4cea5822))
+- **template:** refresh not-found page ([4016b2c4](https://github.com/vezham/vx-fe-pkgs/commit/4016b2c4))
+
+### ❤️ Thank You
+
+- vx-vigneshwaran
+
 ## 27.0.0-alpha.2 (2026-11-14)
 
 ### 🚀 Features
