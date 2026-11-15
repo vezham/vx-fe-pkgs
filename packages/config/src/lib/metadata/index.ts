@@ -67,7 +67,7 @@ export const getMetadataFiles = (
       path: envFile,
       content: syncEnvContent(
         existsSync(envFile) ? readFileSync(envFile, 'utf8') : '',
-        getVxEnv(config)
+        getVxEnv(config, projectRoot)
       )
     }
   ]

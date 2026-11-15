@@ -147,6 +147,26 @@ describe('generated metadata pages', () => {
 })
 
 describe('metadata output ownership', () => {
+  it.each([
+    [
+      'https://apps.cdn.vezham.com',
+      'apps-cdns/apps-cdn',
+      'apps-cdn.vezham.local'
+    ],
+    ['https://remote.vezham.app', 'apps/school-os', 'school-os.vezham.local'],
+    ['https://example.com', 'apps/custom-app', 'example.com']
+  ])('derives HOST_NAME for %s using project %s', (url, project, hostname) => {
+    const projectRoot = path.resolve(tmpdir(), 'vx-metadata-host-test', project)
+    const env = getMetadataFiles(
+      { ...config, core: { ...config.core, url } },
+      projectRoot
+    ).find(file => file.path === path.join(projectRoot, '.env'))
+
+    expect(env?.content).toContain(`HOST_NAME=${hostname}\n`)
+    expect(env?.content).toContain(`V_APP_ID=${config.core.id}\n`)
+    expect(env?.content).toContain(`V_APP_VER=${config.core.version}\n`)
+  })
+
   it('preserves app-owned edits during generation', () => {
     const projectRoot = mkdtempSync(path.join(tmpdir(), 'vx-metadata-'))
     try {

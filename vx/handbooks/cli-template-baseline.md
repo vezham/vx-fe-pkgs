@@ -86,6 +86,11 @@ runtime dependency.
   their target environment. Metadata generation supplies identity
   and version from `vx.app.yaml` and preserves the deployment setting. Do not
   infer deployment from build mode or substitute placeholder identity/version.
+- Metadata generation maps both `*.vezham.app` and `*.vezham.com` canonical
+  URLs to `HOST_NAME=<project-name>.vezham.local`, using the project root's
+  directory name. For example, `apps-cdns/apps-cdn` uses
+  `apps-cdn.vezham.local` even when its canonical URL is
+  `https://apps.cdn.vezham.com`. Other canonical domains keep their hostname.
 - Next app configs import `configEnv` from `@vezham/env/next/config` so Nx can
   inspect configuration before runtime environment validation. Application code
   uses `@vezham/env/next` for validated settings.

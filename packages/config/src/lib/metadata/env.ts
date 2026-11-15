@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import { type VxConfig } from './types'
 
 const getDomain = (url: string) => {
@@ -8,11 +10,16 @@ const getDomain = (url: string) => {
   }
 }
 
-const getLocalHostName = (url: string) =>
-  getDomain(url).replace(/\.vezham\.app$/, '.vezham.local')
+const getLocalHostName = (url: string, projectRoot: string) => {
+  const domain = getDomain(url)
 
-export const getVxEnv = ({ core }: VxConfig) => ({
-  HOST_NAME: getLocalHostName(core.url),
+  return /\.vezham\.(?:app|com)$/.test(domain)
+    ? `${path.basename(path.resolve(projectRoot))}.vezham.local`
+    : domain
+}
+
+export const getVxEnv = ({ core }: VxConfig, projectRoot: string) => ({
+  HOST_NAME: getLocalHostName(core.url, projectRoot),
   V_APP_ID: core.id,
   V_APP_NAME: core.name,
   V_APP_VER: core.version
