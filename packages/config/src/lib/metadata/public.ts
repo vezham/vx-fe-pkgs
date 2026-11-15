@@ -92,13 +92,27 @@ export const getPublicMetadataFiles = (
     generatedNotice,
     author: core.publisher.name,
     appName: core.name,
-    imageUrl: getStaticAssetUrl('vassets/no-internet.svg', core.version)
+    lightImageUrl: getStaticAssetUrl(
+      'assets/illustrations/no-internet-light.svg',
+      core.version
+    ),
+    darkImageUrl: getStaticAssetUrl(
+      'assets/illustrations/no-internet-dark.svg',
+      core.version
+    )
   })
   const notFoundPage = renderMetadataTemplate('not-found.html', {
     generatedNotice,
     author: core.publisher.name,
     appName: core.name,
-    imageUrl: getStaticAssetUrl('vassets/no-internet.svg', core.version)
+    lightImageUrl: getStaticAssetUrl(
+      'assets/illustrations/404-light.svg',
+      core.version
+    ),
+    darkImageUrl: getStaticAssetUrl(
+      'assets/illustrations/404-dark.svg',
+      core.version
+    )
   })
 
   return [

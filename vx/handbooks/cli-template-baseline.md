@@ -68,6 +68,15 @@ runtime dependency.
   copy option mapping or hardcoded language lists into app wrappers.
 - Generated files are outputs, not templates to edit by hand. Generate them from
   the app config and source content in the created app.
+- Generated 404 and offline pages use separate light and dark SVGs from
+  `https://static.cdn.vezham.com/assets/illustrations/`, versioned with the app's
+  `core.version`. Illustration suffixes describe the page background theme.
+  Follow the resolved page color scheme, including system preference and explicit
+  `.light`, `.dark`, and `data-theme` overrides. Use `404-{theme}.svg` for 404
+  pages and `no-internet-{theme}.svg` for offline pages without color-inversion
+  filters. The 404 illustration supplies the numeric status; "Page not found"
+  is the page's only level-one heading. The shared CDN worker owns offline
+  illustration precaching; generated app workers import it.
 - No compatibility layer for earlier Vx app templates is required.
 - Use `V_APP_ENV` for deployment selection, including `qa` and `preview`,
   without legacy boolean environment flags. Build mode remains independent.
