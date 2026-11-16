@@ -6,7 +6,7 @@ packages:
   - 'apps-*/*'
 
 catalog:
-  '@playwright/test': ^1.60.0
+  '@playwright/test': ^1.65.0
   '@internationalized/date': 3.12.4
   '@vezham/icons-react': 1.0.7
   '@vezham/react-pro-v3': 'npm:@heroui-pro/react@1.0.0-beta.11'

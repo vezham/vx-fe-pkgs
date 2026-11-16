@@ -7,6 +7,10 @@
 - **playground-docs:** apply page content styles ([9b08ca11](https://github.com/vezham/vx-fe-pkgs/commit/9b08ca11))
 - **react:** avoid section hydration mismatch ([4cea5822](https://github.com/vezham/vx-fe-pkgs/commit/4cea5822))
 - **template:** refresh not-found page ([4016b2c4](https://github.com/vezham/vx-fe-pkgs/commit/4016b2c4))
+### 🏡 Chore
+
+- **repo:** update Nx to 24.0.5 ([9cfc761d](https://github.com/vezham-labs/vx-fe-kit/commit/9cfc761d))
+- **workspace:** update v27 dependencies ([b49a0a14](https://github.com/vezham-labs/vx-fe-kit/commit/b49a0a14))
 
 ### ❤️ Thank You
 
@@ -42,6 +46,15 @@
 ### ❤️ Thank You
 
 - v0xvigneshwaran
+- **vx:** add page component styles ([87c32d04](https://github.com/vezham-labs/vx-fe-kit/commit/87c32d04))
+
+### 🏡 Chore
+
+- **vx:** update Fallow dependency exceptions ([3828a3b5](https://github.com/vezham-labs/vx-fe-kit/commit/3828a3b5))
+- **workspace:** ignore future shared styles ([ba151202](https://github.com/vezham-labs/vx-fe-kit/commit/ba151202))
+
+### ❤️ Thank You
+
 - vx-vigneshwaran
 
 ## 27.0.0-alpha.1 (2026-11-12)
