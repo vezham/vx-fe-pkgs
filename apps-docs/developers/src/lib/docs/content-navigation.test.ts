@@ -162,6 +162,21 @@ describe('content navigation', () => {
     expect(catalog.some(page => page.url.includes('/react-v3/'))).toBe(false)
   })
 
+  it.each(['en', 'cn'])(
+    'includes Brand in the in-house component catalog for %s',
+    locale => {
+      const prefix = locale === 'en' ? '' : '/cn'
+      expect(getComponentCatalog('web', 'react', locale)).toEqual([
+        expect.objectContaining({
+          title: 'Brand',
+          slug: 'brand',
+          url: `${prefix}/docs/ui/react/web/components/brand`
+        })
+      ])
+      expect(getComponentCatalog('native', 'react', locale)).toEqual([])
+    }
+  )
+
   it('registers every content source once for search and LLM endpoints', () => {
     const urls = docsRuntimes.flatMap(runtime =>
       runtime.source.getPages().map(page => `${page.locale}:${page.url}`)

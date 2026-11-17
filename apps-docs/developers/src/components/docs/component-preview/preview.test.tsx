@@ -53,6 +53,27 @@ afterEach(() => {
 })
 
 describe('local component previews', () => {
+  it('loads the in-house Brand demo and exposes its import source', async () => {
+    render(
+      <ComponentPreview name="react-brand-channels">
+        {createElement(
+          mdx.pre,
+          null,
+          <code>
+            {"import { Brand } from '@vezham/react/components/brand'"}
+          </code>
+        )}
+      </ComponentPreview>
+    )
+    await act(() => vi.dynamicImportSettled())
+    expect(await screen.findByText('Internal')).toBeVisible()
+    expect(screen.getByText('OSS')).toBeVisible()
+    fireEvent.click(screen.getByRole('tab', { name: 'Code' }))
+    expect(
+      screen.getByRole('region', { name: 'Example source code' })
+    ).toHaveTextContent('@vezham/react/components/brand')
+  })
+
   it('loads a Pro demo, supports interaction, and exposes its source', async () => {
     render(
       <ComponentPreview name="pro-cell-switch-default">

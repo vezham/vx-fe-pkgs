@@ -24,7 +24,8 @@ describe('UI documentation', () => {
       getPlatformDocsRuntime('web', 'react')
     )
     expect(getPlatformSections('web').map(section => section.id)).toEqual([
-      'getting-started'
+      'getting-started',
+      'components'
     ])
     expect(getPlatformPage('native', 'components/button')).toBe(
       'getting-started'
@@ -57,7 +58,40 @@ describe('UI documentation', () => {
       expect(tree).not.toContain('/react-pro-v3/')
       expect(
         getPlatformSections(platform, 'react').map(item => item.id)
-      ).toEqual(['getting-started'])
+      ).toEqual(
+        platform === 'web'
+          ? ['getting-started', 'components']
+          : ['getting-started']
+      )
+    },
+    20_000
+  )
+
+  it.each(['en', 'cn'] as const)(
+    'loads Brand documentation with %s navigation and example source',
+    async lang => {
+      const prefix = lang === 'en' ? '' : '/cn'
+      const data = await createPlatformDocsLoader('react')({
+        params: { lang, platform: 'web', _splat: 'components/brand' }
+      })
+      expect(data.title).toBe('Brand')
+      expect(data.routePath).toBe(
+        `${prefix}/docs/ui/react/web/components/brand`
+      )
+      const tree = JSON.stringify(deserializePageTree(data.pageTree).children)
+      expect(tree).toContain(`${prefix}/docs/ui/react/web/components/brand`)
+      expect(tree).not.toContain('/react-v3/')
+      expect(tree).not.toContain('/react-pro-v3/')
+      const runtime = getPlatformDocsRuntime('web', 'react')
+      const { page } = runtime.getDocsPage({
+        lang,
+        slugs: ['components', 'brand']
+      })
+      const markdown = await runtime.getLLMText(page)
+      expect(markdown).toContain('@vezham/react/components/brand')
+      expect(markdown).toContain('Brand.Link')
+      expect(markdown).toContain('V_APP_BRAND_NAME')
+      expect(markdown).toContain('react-brand-channels')
     },
     20_000
   )

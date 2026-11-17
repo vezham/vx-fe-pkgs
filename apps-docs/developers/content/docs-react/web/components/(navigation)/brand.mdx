@@ -1,0 +1,169 @@
+---
+title: Brand
+description: Display the Vezham logo, application name, and an optional channel badge.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/components/brand
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+Import Brand from its component entry point:
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+```
+
+Brand reads the application name and channel from the shared env adapter. No branding props are required.
+
+<ComponentPreview name="react-brand-default">
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+
+export const Default = () => <Brand />
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Use `Brand` for a non-interactive label and `Brand.Link` for a navigable brand. Both include the logo, name, and optional badge.
+
+```tsx
+<Brand />
+
+<Brand.Link to="/" />
+```
+
+`Brand.Link` uses TanStack Router and must render inside your application's router provider. It renders the brand as its content, so it does not accept custom children.
+
+## Environment Configuration
+
+In a Vx Vite app, configure branding through the existing `V_` environment variables:
+
+```dotenv
+V_APP_BRAND_NAME="Vezham Developers"
+V_APP_BRAND_CHANNEL="intra"
+```
+
+The shared `@vezham/env/vite` adapter trims both values. An unset or blank brand name falls back to `V_APP_NAME`; an unset or blank channel hides the badge. The adapter also requires the application's `V_APP_ID`, `V_APP_NAME`, and `V_APP_VER` settings.
+
+| Variable              | Default      | Description                                       |
+| --------------------- | ------------ | ------------------------------------------------- |
+| `V_APP_BRAND_NAME`    | `V_APP_NAME` | Name displayed beside the Vezham logo.            |
+| `V_APP_BRAND_CHANNEL` | None         | Channel used to choose the badge label and style. |
+
+## Examples
+
+### Channel Badges
+
+Pass props to override the environment for an individual brand. Use `channel=""` to hide the badge even when a channel is configured in env.
+
+<ComponentPreview name="react-brand-channels">
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+
+export const Channels = () => (
+  <div className="flex flex-col items-start gap-4">
+    <Brand name="Vezham" channel="" />
+    <Brand name="Vezham" channel="intra" />
+    <Brand name="Vezham" channel="oss" />
+    <Brand name="Vezham" channel="Preview" />
+  </div>
+)
+```
+
+</ComponentPreview>
+
+| Channel value | Badge label       | Color     | Variant   |
+| ------------- | ----------------- | --------- | --------- |
+| `intra`       | Internal          | `danger`  | `primary` |
+| `oss`         | OSS               | `success` | `soft`    |
+| Other values  | The channel value | `warning` | `soft`    |
+
+### Logo Sizes
+
+`logoSize` changes the logo size in pixels. The name retains the surrounding text size, and the badge keeps its small size.
+
+<ComponentPreview name="react-brand-logo-sizes">
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+
+export const LogoSizes = () => (
+  <div className="flex flex-col items-start gap-4">
+    <Brand name="Vezham" channel="" logoSize={16} />
+    <Brand name="Vezham" channel="" logoSize={20} />
+    <Brand name="Vezham" channel="" logoSize={28} />
+  </div>
+)
+```
+
+</ComponentPreview>
+
+### Brand Link
+
+Use the dot-notation `Brand.Link` component in headers and navigation. Branding props work the same way as on `Brand`; router and anchor props are forwarded to TanStack Router's Link.
+
+<ComponentPreview name="react-brand-link">
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+
+export const Link = () => (
+  <Brand.Link to="/" name="Vezham" channel="" logoSize={22} />
+)
+```
+
+</ComponentPreview>
+
+### Localized Home Links
+
+Keep locale-aware destinations in the app. Pass the active locale to `localizedUrl` so the home link keeps the visitor's language:
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+import { localizedUrl } from '@vezham/start/runtime/docs'
+
+import { type Locale, vxI18n } from '@generated/vx'
+
+export const LocalizedBrand = ({ locale }: { locale: Locale }) => (
+  <Brand.Link to={localizedUrl(vxI18n, locale, '/')} logoSize={22} />
+)
+```
+
+For a default language of `en` and an additional language of `cn`, the destinations are `/` and `/cn/`. `@generated/vx` is imported by the app; the shared Brand component receives the resolved destination.
+
+## Accessibility
+
+The displayed name supplies the accessible text for `Brand.Link`. The logo is decorative and hidden from assistive technology. Keep the name meaningful, and use `Brand.Link` when the brand should support keyboard navigation.
+
+## API Reference
+
+### Brand
+
+Renders a `span` containing the logo, name, and optional badge.
+
+| Prop       | Type     | Default             | Description                                         |
+| ---------- | -------- | ------------------- | --------------------------------------------------- |
+| `name`     | `string` | `APP_BRAND_NAME`    | Display name; defaults to the name resolved by env. |
+| `channel`  | `string` | `APP_BRAND_CHANNEL` | Badge channel; an empty string hides the badge.     |
+| `logoSize` | `number` | `20`                | Logo size in pixels.                                |
+
+### Brand.Link
+
+Accepts all `Brand` props plus TanStack Router Link props, except `children`.
+
+| Prop        | Type     | Default       | Description                              |
+| ----------- | -------- | ------------- | ---------------------------------------- |
+| `to`        | `string` | —             | Destination handled by TanStack Router.  |
+| `className` | `string` | `inline-flex` | Additional classes merged onto the link. |
+
+The package also exports `BrandProps` and `BrandLinkProps` from the same entry point:
+
+```tsx
+import type { BrandLinkProps, BrandProps } from '@vezham/react/components/brand'
+```
