@@ -1,0 +1,177 @@
+{
+  "packages": [
+    {
+      "id": "vanilla",
+      "name": "@vezham/icons",
+      "description": "A Vezham Icons package for web and JavaScript applications.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons",
+      "sourceUrl": "https://github.com/vezham-oss/reicon",
+      "guideUrl": "/docs/assets/guides/vanilla",
+      "logo": "javascript",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "react",
+      "name": "@vezham/icons-react",
+      "description": "A Vezham Icons package for React applications.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons-react",
+      "sourceUrl": "https://github.com/vezham-oss/reicon",
+      "guideUrl": "/docs/assets/guides/react",
+      "logo": "react",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "react-native",
+      "name": "@vezham/icons-react-native",
+      "description": "React Native icon components for Vezham Icons. Tree-shakeable, TypeScript-ready. Works with Expo and bare React Native.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons-react-native",
+      "sourceUrl": "https://github.com/vezham-oss/reicon",
+      "guideUrl": "/docs/assets/guides/react-native",
+      "logo": "reactnative",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "vue",
+      "name": "@vezham/icons-vue",
+      "description": "Vue 3 icon components for Vezham Icons. Tree-shakeable, TypeScript-ready, zero config. Works with Nuxt 3.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons-vue",
+      "sourceUrl": "https://github.com/vezham-oss/reicon",
+      "guideUrl": "/docs/assets/guides/vue",
+      "logo": "vue",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "svelte",
+      "name": "@vezham/icons-svelte",
+      "description": "Svelte icon components for Vezham Icons. Tree-shakeable, TypeScript-ready, zero config. Works with SvelteKit.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons-svelte",
+      "sourceUrl": "https://github.com/vezham-oss/reicon",
+      "guideUrl": "/docs/assets/guides/svelte",
+      "logo": "svelte",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "flutter",
+      "name": "vezham_icons",
+      "description": "Official Flutter/Dart package for Vezham. 2700+ SVG icons as path strings. Works with flutter_svg.",
+      "npmUrl": "https://pub.dev/packages/vezham_icons",
+      "sourceUrl": "https://github.com/vezham-oss/reicon/tree/main/packages/icons-flutter",
+      "guideUrl": "/docs/assets/guides/flutter",
+      "logo": "flutter",
+      "registryLabel": "pub.dev",
+      "registryLogo": "dart",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "figma",
+      "name": "@vezham/icons-figma",
+      "description": "Integrate Vezham Icons directly into your Figma workspace. Search, customize size/stroke weights, and insert vector shapes into your designs.",
+      "npmUrl": "https://www.figma.com/community/plugin/1652983191908763066",
+      "sourceUrl": "https://github.com/vezham-oss/reicon/tree/main/packages/icons-figma",
+      "guideUrl": "/docs/assets/guides/figma",
+      "logo": "figma",
+      "registryLabel": "Figma",
+      "registryLogo": "figma",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "vscode",
+      "name": "@vezham/icons-vscode",
+      "description": "Browse and insert Vezham icons directly into your HTML, React, Vue, Svelte, or vanilla JS code from your editor's sidebar panel.",
+      "npmUrl": "https://marketplace.visualstudio.com/items?itemName=Vezham.icons",
+      "sourceUrl": "https://github.com/vezham-oss/reicon/tree/main/packages/icons-vscode",
+      "guideUrl": "/docs/assets/guides/vscode",
+      "logo": "visual-studio-code",
+      "registryLabel": "Marketplace",
+      "registryLogo": "visual-studio-code",
+      "sourceLogo": "github"
+    },
+    {
+      "id": "mcp",
+      "name": "@vezham/icons-mcp",
+      "description": "Search, preview, and apply Vezham icons from AI agents and automation tools via MCP or CLI.",
+      "npmUrl": "https://www.npmjs.com/package/@vezham/icons-mcp",
+      "sourceUrl": "https://github.com/vezham-oss/reicon/tree/main/packages/icons-mcp",
+      "guideUrl": "/docs/assets/guides/mcp",
+      "logo": "mcp-model-context-protocol",
+      "registryLabel": "npm",
+      "registryLogo": "npm",
+      "sourceLogo": "github"
+    }
+  ],
+  "faq": [
+    {
+      "id": "general",
+      "title": "General",
+      "items": [
+        {
+          "id": "what-is-vezham",
+          "question": "What is Vezham?",
+          "answer": "Vezham brings UI icons, SVG illustrations, and brand logos into one browser. Browse the galleries, customize supported assets, and copy snippets or download files. See [Packages and tools](/docs/assets/packages) for framework integrations."
+        },
+        {
+          "id": "is-it-free",
+          "question": "Where can I find license and usage terms?",
+          "answer": "See the LICENSE file included with each package or asset collection for usage terms and attribution requirements. Check the terms for the specific assets you plan to use."
+        },
+        {
+          "id": "commercial-use",
+          "question": "Can I use it in commercial projects?",
+          "answer": "Check the LICENSE file for the package or asset collection you plan to use. Commercial use and attribution requirements depend on those terms. Brand logos may also be subject to their owners’ trademark and brand guidelines."
+        }
+      ]
+    },
+    {
+      "id": "technical",
+      "title": "Technical",
+      "items": [
+        {
+          "id": "grid-size",
+          "question": "What grid size is used?",
+          "answer": "UI icons use a 24×24 coordinate system and can be resized with the size option. Illustrations and logos retain their original SVG viewBox and aspect ratio. Check the preview at your intended display size."
+        },
+        {
+          "id": "icon-weights",
+          "question": "How are weights handled?",
+          "answer": "Icons can provide outline, filled, duotone-outline, and duotone-filled variants. The weight selector shows the variants available for the selected icon. Use the color controls to customize supported primary and secondary paints. An outline variant may use filled paths, so changing stroke width does not necessarily change its appearance."
+        },
+        {
+          "id": "tree-shaking",
+          "question": "Does it support tree-shaking?",
+          "answer": "The JavaScript, React, React Native, Vue, and Svelte icon packages expose ES modules and declare sideEffects: false. Import only the icons you need; the final bundle depends on your bundler and production configuration. The CDN script uses a separate loading approach. See your [framework guide](/docs/assets/guides) for installation and import examples."
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "title": "Design",
+      "items": [
+        {
+          "id": "figma-library",
+          "question": "Can I use Vezham icons in Figma?",
+          "answer": "Use the Vezham Figma plugin to browse and insert icons into your designs. See the [Figma guide](/docs/assets/guides/figma) for installation and usage."
+        },
+        {
+          "id": "request-icon",
+          "question": "How do I request a new icon?",
+          "answer": "Open an issue in the [Vezham icon repository](https://github.com/vezham-oss/reicon/issues). Include the icon name, intended use, visual references, and any variants you need."
+        },
+        {
+          "id": "contributing",
+          "question": "How do I contribute?",
+          "answer": "You can contribute code, documentation, bug fixes, or SVG icons. Read the repository’s [contributing guide](https://github.com/vezham-oss/reicon/blob/main/CONTRIBUTING.md), check existing issues, and open a pull request with your changes."
+        }
+      ]
+    }
+  ]
+}

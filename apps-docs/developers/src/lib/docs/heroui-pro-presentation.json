@@ -1,0 +1,703 @@
+{
+  "sourceUrl": "https://heroui.pro/docs/react/components",
+  "groups": [
+    {
+      "category": "charts",
+      "title": "Charts",
+      "components": [
+        {
+          "slug": "area-chart",
+          "title": "Area Chart",
+          "variants": 6,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-areaChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-areaChart.png"
+          }
+        },
+        {
+          "slug": "bar-chart",
+          "title": "Bar Chart",
+          "variants": 8,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-barChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-barChart.png"
+          }
+        },
+        {
+          "slug": "chart-tooltip",
+          "title": "Chart Tooltip",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chartTooltip.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chartTooltip.png"
+          }
+        },
+        {
+          "slug": "composed-chart",
+          "title": "Composed Chart",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-composedChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-composedChart.png"
+          }
+        },
+        {
+          "slug": "line-chart",
+          "title": "Line Chart",
+          "variants": 10,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-lineChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-lineChart.png"
+          }
+        },
+        {
+          "slug": "pie-chart",
+          "title": "Pie Chart",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-pieChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-pieChart.png"
+          }
+        },
+        {
+          "slug": "radar-chart",
+          "title": "Radar Chart",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-radarChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-radarChart.png"
+          }
+        },
+        {
+          "slug": "radial-chart",
+          "title": "Radial Chart",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-radialChart.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-radialChart.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "data-display",
+      "title": "Data Display",
+      "components": [
+        {
+          "slug": "agenda",
+          "title": "Agenda",
+          "variants": 1,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-agenda.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-agenda.png"
+          }
+        },
+        {
+          "slug": "action-bar",
+          "title": "Action Bar",
+          "variants": 2,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-actionBar.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-actionBar.png"
+          }
+        },
+        {
+          "slug": "carousel",
+          "title": "Carousel",
+          "variants": 6,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-carousel.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-carousel.png"
+          }
+        },
+        {
+          "slug": "data-grid",
+          "title": "Data Grid",
+          "variants": 14,
+          "status": "updated",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-dataGrid.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-dataGrid.png"
+          }
+        },
+        {
+          "slug": "empty-state",
+          "title": "Empty State",
+          "variants": 8,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-emptyState.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-emptyState.png"
+          }
+        },
+        {
+          "slug": "file-tree",
+          "title": "File Tree",
+          "variants": 11,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-fileTree.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-fileTree.png"
+          }
+        },
+        {
+          "slug": "floating-toc",
+          "title": "Floating TOC",
+          "variants": 10,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-floatingToc.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-floatingToc.png"
+          }
+        },
+        {
+          "slug": "holo-card",
+          "title": "Holo Card",
+          "variants": 8,
+          "status": "new",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-holoCard.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-holoCard.png"
+          }
+        },
+        {
+          "slug": "hover-card",
+          "title": "Hover Card",
+          "variants": 6,
+          "status": "updated",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-hoverCard.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-hoverCard.png"
+          }
+        },
+        {
+          "slug": "kanban",
+          "title": "Kanban",
+          "variants": 4,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-kanban.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-kanban.png"
+          }
+        },
+        {
+          "slug": "item-card",
+          "title": "Item Card",
+          "variants": 12,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-itemCard.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-itemCard.png"
+          }
+        },
+        {
+          "slug": "item-card-group",
+          "title": "Item Card Group",
+          "variants": 12,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-itemCardGroup.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-itemCardGroup.png"
+          }
+        },
+        {
+          "slug": "kpi",
+          "title": "KPI",
+          "variants": 9,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-kpi.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-kpi.png"
+          }
+        },
+        {
+          "slug": "kpi-group",
+          "title": "KPI Group",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-kpiGroup.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-kpiGroup.png"
+          }
+        },
+        {
+          "slug": "list-view",
+          "title": "List View",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-listView.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-listView.png"
+          }
+        },
+        {
+          "slug": "map",
+          "title": "Map",
+          "variants": 10,
+          "status": "new",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-map.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-map.png"
+          }
+        },
+        {
+          "slug": "timeline",
+          "title": "Timeline",
+          "variants": 8,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-timeline.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-timeline.png"
+          }
+        },
+        {
+          "slug": "widget",
+          "title": "Widget",
+          "variants": 8,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-widget.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-widget.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "ai",
+      "title": "AI",
+      "components": [
+        {
+          "slug": "chain-of-thought",
+          "title": "Chain Of Thought",
+          "variants": 4,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chainOfThought.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chainOfThought.png"
+          }
+        },
+        {
+          "slug": "chat-attachment",
+          "title": "Chat Attachment",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatAttachment.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatAttachment.png"
+          }
+        },
+        {
+          "slug": "chat-conversation",
+          "title": "Chat Conversation",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatConversation.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatConversation.png"
+          }
+        },
+        {
+          "slug": "chat-list-view",
+          "title": "Chat List View",
+          "variants": 2,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatListView.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatListView.png"
+          }
+        },
+        {
+          "slug": "chat-loader",
+          "title": "Chat Loader",
+          "variants": 1,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatLoader.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatLoader.png"
+          }
+        },
+        {
+          "slug": "chat-message",
+          "title": "Chat Message",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatMessage.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatMessage.png"
+          }
+        },
+        {
+          "slug": "chat-message-actions",
+          "title": "Chat Message Actions",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatMessageActions.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatMessageActions.png"
+          }
+        },
+        {
+          "slug": "chat-source",
+          "title": "Chat Source",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatSource.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatSource.png"
+          }
+        },
+        {
+          "slug": "chat-tool",
+          "title": "Chat Tool",
+          "variants": 6,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-chatTool.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-chatTool.png"
+          }
+        },
+        {
+          "slug": "code-block",
+          "title": "Code Block",
+          "variants": 1,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-codeBlock.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-codeBlock.png"
+          }
+        },
+        {
+          "slug": "markdown",
+          "title": "Markdown",
+          "variants": 3,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-markdown.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-markdown.png"
+          }
+        },
+        {
+          "slug": "prompt-input",
+          "title": "Prompt Input",
+          "variants": 9,
+          "status": "new",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-promptInput.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-promptInput.png"
+          }
+        },
+        {
+          "slug": "prompt-suggestion",
+          "title": "Prompt Suggestion",
+          "variants": 2,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-promptSuggestion.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-promptSuggestion.png"
+          }
+        },
+        {
+          "slug": "text-shimmer",
+          "title": "Text Shimmer",
+          "variants": 1,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-textShimmer.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-textShimmer.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "feedback",
+      "title": "Feedback",
+      "components": [
+        {
+          "slug": "emoji-reaction-button",
+          "title": "Emoji Reaction Button",
+          "variants": 4,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-emojiReactionButton.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-emojiReactionButton.png"
+          }
+        },
+        {
+          "slug": "number-value",
+          "title": "Number Value",
+          "variants": 8,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-numberValue.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-numberValue.png"
+          }
+        },
+        {
+          "slug": "pressable-feedback",
+          "title": "Pressable Feedback",
+          "variants": 17,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-pressableFeedback.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-pressableFeedback.png"
+          }
+        },
+        {
+          "slug": "rating",
+          "title": "Rating",
+          "variants": 12,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-rating.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-rating.png"
+          }
+        },
+        {
+          "slug": "trend-chip",
+          "title": "Trend Chip",
+          "variants": 6,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-trendChip.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-trendChip.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "layout",
+      "title": "Layout",
+      "components": [
+        {
+          "slug": "resizable",
+          "title": "Resizable",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-resizable.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-resizable.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "forms",
+      "title": "Forms",
+      "components": [
+        {
+          "slug": "cell-color-picker",
+          "title": "Cell Color Picker",
+          "variants": 6,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-cellColorPicker.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-cellColorPicker.png"
+          }
+        },
+        {
+          "slug": "cell-select",
+          "title": "Cell Select",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-cellSelect.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-cellSelect.png"
+          }
+        },
+        {
+          "slug": "cell-slider",
+          "title": "Cell Slider",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-cellSlider.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-cellSlider.png"
+          }
+        },
+        {
+          "slug": "cell-switch",
+          "title": "Cell Switch",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-cellSwitch.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-cellSwitch.png"
+          }
+        },
+        {
+          "slug": "checkbox-button-group",
+          "title": "Checkbox Button Group",
+          "variants": 11,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-checkboxButtonGroup.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-checkboxButtonGroup.png"
+          }
+        },
+        {
+          "slug": "drop-zone",
+          "title": "Drop Zone",
+          "variants": 9,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-dropZone.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-dropZone.png"
+          }
+        },
+        {
+          "slug": "inline-select",
+          "title": "Inline Select",
+          "variants": 5,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-inlineSelect.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-inlineSelect.png"
+          }
+        },
+        {
+          "slug": "native-select",
+          "title": "Native Select",
+          "variants": 12,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-nativeSelect.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-nativeSelect.png"
+          }
+        },
+        {
+          "slug": "number-stepper",
+          "title": "Number Stepper",
+          "variants": 13,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-numberStepper.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-numberStepper.png"
+          }
+        },
+        {
+          "slug": "radio-button-group",
+          "title": "Radio Button Group",
+          "variants": 12,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-radioButtonGroup.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-radioButtonGroup.png"
+          }
+        },
+        {
+          "slug": "rich-text-editor",
+          "title": "Rich Text Editor",
+          "variants": 8,
+          "status": "updated",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-richTextEditor.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-richTextEditor.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "navigation",
+      "title": "Navigation",
+      "components": [
+        {
+          "slug": "app-layout",
+          "title": "AppLayout",
+          "variants": 14,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-appLayout.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-appLayout.png"
+          }
+        },
+        {
+          "slug": "command",
+          "title": "Command",
+          "variants": 9,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-command.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-command.png"
+          }
+        },
+        {
+          "slug": "context-menu",
+          "title": "Context Menu",
+          "variants": 7,
+          "status": "updated",
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-contextMenu.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-contextMenu.png"
+          }
+        },
+        {
+          "slug": "navbar",
+          "title": "Navbar",
+          "variants": 7,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-navbar.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-navbar.png"
+          }
+        },
+        {
+          "slug": "segment",
+          "title": "Segment",
+          "variants": 11,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-segment.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-segment.png"
+          }
+        },
+        {
+          "slug": "sidebar",
+          "title": "Sidebar",
+          "variants": 16,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-sidebar.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-sidebar.png"
+          }
+        },
+        {
+          "slug": "stepper",
+          "title": "Stepper",
+          "variants": 19,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-stepper.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-stepper.png"
+          }
+        }
+      ]
+    },
+    {
+      "category": "overlays",
+      "title": "Overlays",
+      "components": [
+        {
+          "slug": "emoji-picker",
+          "title": "Emoji Picker",
+          "variants": 4,
+          "status": null,
+          "images": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/light-emojiPicker.png",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/pro-related-components/dark-emojiPicker.png"
+          }
+        }
+      ]
+    }
+  ]
+}

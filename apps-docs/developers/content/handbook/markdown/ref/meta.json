@@ -1,0 +1,5 @@
+{
+  "title": "Reference",
+  "icon": "book",
+  "pages": ["md-affine", "md-cliq", "md-mdlivepreview", "md-vhm-v1"]
+}

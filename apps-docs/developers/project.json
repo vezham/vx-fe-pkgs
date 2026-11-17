@@ -1,0 +1,38 @@
+{
+  "name": "developers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps-docs/developers/src",
+  "targets": {
+    "build": {
+      "inputs": [
+        "production",
+        "^production",
+        { "externalDependencies": ["vite"] },
+        { "env": "V_ILLUSTRATIONS_CDN_URL" },
+        { "env": "V_LOGOS_CDN_URL" },
+        { "env": "V_APP_VER" },
+        { "env": "V_APP_BRAND_NAME" },
+        { "env": "V_APP_BRAND_CHANNEL" }
+      ],
+      "dependsOn": [
+        "metadata:generate",
+        "deploy:generate",
+        "og:generate",
+        "^build"
+      ],
+      "outputs": ["{projectRoot}/.output"]
+    },
+    "dev": {
+      "dependsOn": ["metadata:watch", "og:generate"]
+    },
+    "hosts:setup": {},
+    "deploy:generate": {},
+    "openapi:generate": {},
+    "metadata:generate": {},
+    "metadata:watch": {},
+    "og:generate": {},
+    "routes:tanstack": {}
+  },
+  "tags": ["category:doc"]
+}

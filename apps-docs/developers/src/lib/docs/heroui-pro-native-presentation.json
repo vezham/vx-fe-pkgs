@@ -1,0 +1,542 @@
+{
+  "sourceUrl": "https://heroui.pro/docs/native/components",
+  "groups": [
+    {
+      "category": "buttons",
+      "title": "Buttons",
+      "components": [
+        {
+          "slug": "fab",
+          "title": "FAB",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/fab-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/fab-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "morph-button",
+          "title": "MorphButton",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/morph-button-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/morph-button-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "progress-button",
+          "title": "ProgressButton",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-button-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-button-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "slide-button",
+          "title": "SlideButton",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/slide-button-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/slide-button-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "social-auth-button",
+          "title": "SocialAuthButton",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/social-auth-button-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/social-auth-button-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "toggle-button",
+          "title": "ToggleButton",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/toggle-button-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/toggle-button-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "toggle-button-group",
+          "title": "ToggleButtonGroup",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/toggle-button-group-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/toggle-button-group-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "charts",
+      "title": "Charts",
+      "components": [
+        {
+          "slug": "area-chart",
+          "title": "AreaChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/area-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/area-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "bar-chart",
+          "title": "BarChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/bar-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/bar-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "chart-crosshair",
+          "title": "ChartCrosshair",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-crosshair-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-crosshair-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "chart-indicator",
+          "title": "ChartIndicator",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-indicator-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-indicator-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "chart-tooltip",
+          "title": "ChartTooltip",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-tooltip-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/chart-tooltip-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "composed-chart",
+          "title": "ComposedChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/composed-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/composed-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "line-chart",
+          "title": "LineChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/line-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/line-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "pie-chart",
+          "title": "PieChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/pie-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/pie-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "radar-chart",
+          "title": "RadarChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radar-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radar-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "radial-chart",
+          "title": "RadialChart",
+          "status": "updated",
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radial-chart-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radial-chart-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "stacked-meter",
+          "title": "StackedMeter",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/stacked-meter-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/stacked-meter-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "data-display",
+      "title": "Data Display",
+      "components": [
+        {
+          "slug": "badge",
+          "title": "Badge",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/badge-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/badge-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "carousel",
+          "title": "Carousel",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/carousel-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/carousel-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "empty-state",
+          "title": "EmptyState",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/empty-state-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/empty-state-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "flip-card",
+          "title": "FlipCard",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/flip-card-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/flip-card-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "table",
+          "title": "Table",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/table-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/table-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "swipeable-row",
+          "title": "SwipeableRow",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/swipeable-row-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/swipeable-row-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "timeline",
+          "title": "Timeline",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/timeline-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/timeline-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "widget",
+          "title": "Widget",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/widget-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/widget-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "date-and-time",
+      "title": "Date and Time",
+      "components": [
+        {
+          "slug": "agenda",
+          "title": "Agenda",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/agenda-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/agenda-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "calendar",
+          "title": "Calendar",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/calendar-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/calendar-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "date-field",
+          "title": "DateField",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-field-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-field-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "date-picker",
+          "title": "DatePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "date-range-picker",
+          "title": "DateRangePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-range-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-range-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "date-time-picker",
+          "title": "DateTimePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-time-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/date-time-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "range-calendar",
+          "title": "RangeCalendar",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/range-calendar-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/range-calendar-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "time-picker",
+          "title": "TimePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/time-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/time-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "wheel-date-time-picker",
+          "title": "WheelDateTimePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-date-time-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-date-time-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "wheel-time-picker",
+          "title": "WheelTimePicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-time-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-time-picker-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "feedback",
+      "title": "Feedback",
+      "components": [
+        {
+          "slug": "number-value",
+          "title": "NumberValue",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-value-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-value-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "progress-bar",
+          "title": "ProgressBar",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-bar-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-bar-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "progress-circle",
+          "title": "ProgressCircle",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-circle-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/progress-circle-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "rating",
+          "title": "Rating",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/rating-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/rating-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "trend-chip",
+          "title": "TrendChip",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/trend-chip-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/trend-chip-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "forms",
+      "title": "Forms",
+      "components": [
+        {
+          "slug": "autocomplete",
+          "title": "Autocomplete",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/autocomplete-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/autocomplete-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "combo-box",
+          "title": "ComboBox",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/combo-box-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/combo-box-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "number-field",
+          "title": "NumberField",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-field-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-field-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "number-pad",
+          "title": "NumberPad",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-pad-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-pad-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "number-stepper",
+          "title": "Number Stepper",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-stepper-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/number-stepper-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "phone-number-field",
+          "title": "PhoneNumberField",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/phone-number-field-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/phone-number-field-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "radio-button-group",
+          "title": "RadioButtonGroup",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radio-button-group-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/radio-button-group-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "wheel-picker",
+          "title": "WheelPicker",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-picker-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-picker-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "wheel-picker-group",
+          "title": "WheelPickerGroup",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-picker-group-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/wheel-picker-group-docs-dark.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "category": "navigation",
+      "title": "Navigation",
+      "components": [
+        {
+          "slug": "morph-tabs",
+          "title": "MorphTabs",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/morph-tabs-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/morph-tabs-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "segment",
+          "title": "Segment",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/segment-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/segment-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "split-view",
+          "title": "SplitView",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/split-view-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/split-view-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "stepper",
+          "title": "Stepper",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/stepper-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/stepper-docs-dark.mp4"
+          }
+        },
+        {
+          "slug": "swipeable-tabs",
+          "title": "SwipeableTabs",
+          "status": null,
+          "video": {
+            "light": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/swipeable-tabs-docs-light.mp4",
+            "dark": "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native-pro/videos/swipeable-tabs-docs-dark.mp4"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+@import '../../../../packages/vx/styles';
+@import '../../../../packages/vx/styles/page';
+@import '../../../../packages/vx/styles/docs';
+@import '../demos/heroui/utilities.css';
+
+/* vx-bot/NOTE: The page's 16px gap owns the spacing before component resources. */
+#nd-page > p:has(+ .prose > .platform-docs__resources) {
+  margin-bottom: 0;
+}
+
+.asset-preview--grid {
+  background-image:
+    linear-gradient(
+      color-mix(in oklab, var(--muted) 18%, transparent) 0.0625rem,
+      transparent 0.0625rem
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--muted) 18%, transparent) 0.0625rem,
+      transparent 0.0625rem
+    );
+  background-position: center;
+  background-size: 1.25rem 1.25rem;
+}
+
+.asset-preview--logo {
+  background-color: color-mix(
+    in oklab,
+    var(--background) 98%,
+    var(--foreground) 2%
+  );
+}
