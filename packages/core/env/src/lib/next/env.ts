@@ -7,6 +7,8 @@ export const configEnv = {
 
   V_APP_ID: process.env.V_APP_ID,
   V_APP_NAME: process.env.V_APP_NAME,
+  V_APP_BRAND_NAME: process.env.V_APP_BRAND_NAME,
+  V_APP_BRAND_CHANNEL: process.env.V_APP_BRAND_CHANNEL,
   V_APP_VER: process.env.V_APP_VER,
 
   V_IS_DEBUG: process.env.V_IS_DEBUG,

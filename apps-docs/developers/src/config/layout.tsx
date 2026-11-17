@@ -1,8 +1,8 @@
 import type { BaseLayoutProps } from '@vezham/docs-react/layouts/shared'
+import { Brand } from '@vezham/react/components/brand'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
-import { Brand } from '@components/brand'
 import type { Locale } from '@generated/vx'
 
 export const baseOptions = (

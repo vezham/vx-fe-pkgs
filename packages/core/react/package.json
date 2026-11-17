@@ -18,6 +18,12 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./components/brand": {
+      "@vx/fe-kit": "./src/lib-27/components/brand/index.tsx",
+      "types": "./dist/lib-27/components/brand/index.d.ts",
+      "import": "./dist/lib-27/components/brand/index.js",
+      "default": "./dist/lib-27/components/brand/index.js"
+    },
     "./control-center": {
       "@vx/fe-kit": "./src/lib/components/panel/footer/control-center/index.tsx",
       "types": "./dist/lib/components/panel/footer/control-center/index.d.ts",
@@ -109,6 +115,7 @@
   ],
   "dependencies": {
     "@tanstack/react-hotkeys": "catalog:",
+    "@vezham/env": "workspace:*",
     "@vezham/hooks": "workspace:*",
     "@vezham/tamizhi-ui": "workspace:*",
     "react-aria-components": "catalog:"

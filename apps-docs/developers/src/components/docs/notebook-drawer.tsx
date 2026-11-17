@@ -4,9 +4,10 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useNotebookLayout } from '@vezham/docs-react/layouts/notebook'
 import { Close } from '@vezham/icons-react'
 import { ListBox, Select } from '@vezham/react-v3'
+import { Brand } from '@vezham/react/components/brand'
 
-import { Brand } from '@components/brand'
 import { ControlCenter } from '@components/docs/control-center'
+import { getBrandLinkProps } from '@config/brand'
 import type { Locale } from '@generated/vx'
 
 type Section = { id: string; title: string; url: string }
@@ -77,7 +78,7 @@ export const NotebookDrawerHeader = ({
         {...props}
         className={`flex flex-col gap-4 border-b px-4 pt-4 pb-3 md:hidden ${className ?? ''}`}>
         <div className="flex items-center justify-between gap-4 ps-1">
-          <Brand.Link locale={locale} logoSize={22} />
+          <Brand.Link {...getBrandLinkProps(locale)} logoSize={22} />
           <SidebarTrigger
             aria-label="Close sidebar"
             className="text-muted hover:bg-default-hover inline-flex size-8 shrink-0 items-center justify-center rounded-md">

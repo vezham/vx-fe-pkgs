@@ -12,6 +12,8 @@ type Props = {
 
   V_APP_ID?: string
   V_APP_NAME?: string
+  V_APP_BRAND_NAME?: string
+  V_APP_BRAND_CHANNEL?: string
   V_APP_VER?: string
 
   V_IS_DEBUG?: string
@@ -61,6 +63,8 @@ export const createEnv = (__ENV__: Props) => {
   // vx-bot/NOTE: app config
   const APP_ID = requireSetting('V_APP_ID', __ENV__.V_APP_ID)
   const APP_NAME = requireSetting('V_APP_NAME', __ENV__.V_APP_NAME)
+  const APP_BRAND_NAME = __ENV__.V_APP_BRAND_NAME?.trim() || APP_NAME
+  const APP_BRAND_CHANNEL = __ENV__.V_APP_BRAND_CHANNEL?.trim()
   const APP_VER = requireSetting('V_APP_VER', __ENV__.V_APP_VER)
 
   // vx-bot/NOTE: app config By env
@@ -83,6 +87,8 @@ export const createEnv = (__ENV__: Props) => {
     // vx-bot/INFO: @vx/app
     APP_ID,
     APP_NAME,
+    APP_BRAND_NAME,
+    APP_BRAND_CHANNEL,
     APP_VER,
 
     __DEBUG__

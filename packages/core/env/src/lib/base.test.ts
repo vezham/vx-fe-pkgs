@@ -89,6 +89,31 @@ describe('deployment environments and release channels', () => {
     })
   })
 
+  it.each([undefined, '', '   '])(
+    'uses the app name when the brand name is %j',
+    name => {
+      expect(
+        createEnv({ ...requiredSettings, V_APP_BRAND_NAME: name })
+      ).toMatchObject({
+        APP_BRAND_NAME: 'Test App',
+        APP_BRAND_CHANNEL: undefined
+      })
+    }
+  )
+
+  it('trims the configured brand name and channel', () => {
+    expect(
+      createEnv({
+        ...requiredSettings,
+        V_APP_BRAND_NAME: '  Developer Portal  ',
+        V_APP_BRAND_CHANNEL: '  intra  '
+      })
+    ).toMatchObject({
+      APP_BRAND_NAME: 'Developer Portal',
+      APP_BRAND_CHANNEL: 'intra'
+    })
+  })
+
   it.each([
     ['V_APP_ENV', 'development'],
     ['V_APP_ENV', 'beta'],

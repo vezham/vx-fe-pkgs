@@ -51,5 +51,31 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.json"
+  ],
+  "references": [
+    {
+      "path": "../../packages/core/utils/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/template/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/devtools/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/config/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/core/hooks/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/core/react/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/core/env/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/start/tsconfig.lib.json"
+    }
   ]
 }

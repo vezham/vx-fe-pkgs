@@ -4,6 +4,8 @@ beforeEach(() => {
   vi.stubEnv('V_APP_ID', 'test-app')
   vi.stubEnv('V_APP_NAME', 'Test App')
   vi.stubEnv('V_APP_VER', '27.0.0')
+  vi.stubEnv('V_APP_BRAND_NAME', 'Developer Portal')
+  vi.stubEnv('V_APP_BRAND_CHANNEL', 'intra')
 })
 
 afterEach(() => {
@@ -33,6 +35,8 @@ it('exposes deployment and channel settings through the Vite entry point', async
 
   expect(env).toMatchObject({
     APP_ENV: 'dev',
+    APP_BRAND_NAME: 'Developer Portal',
+    APP_BRAND_CHANNEL: 'intra',
     RELEASE_CHANNEL: 'canary',
     __PRODUCTION__: true
   })
@@ -48,6 +52,8 @@ it('exposes deployment and channel settings through the Next entry point', async
 
   expect(env).toMatchObject({
     APP_ENV: 'preview',
+    APP_BRAND_NAME: 'Developer Portal',
+    APP_BRAND_CHANNEL: 'intra',
     RELEASE_CHANNEL: 'beta',
     __PRODUCTION__: true,
     configEnv: {

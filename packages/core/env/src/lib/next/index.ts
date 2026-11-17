@@ -14,6 +14,8 @@ export const {
 
   APP_ID,
   APP_NAME,
+  APP_BRAND_NAME,
+  APP_BRAND_CHANNEL,
   APP_VER,
 
   __DEBUG__

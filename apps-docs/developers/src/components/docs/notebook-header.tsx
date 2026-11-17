@@ -2,10 +2,11 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { useNotebookLayout } from '@vezham/docs-react/layouts/notebook'
 import { Sidebar } from '@vezham/icons-react'
+import { Brand } from '@vezham/react/components/brand'
 
-import { Brand } from '@components/brand'
 import { ControlCenter } from '@components/docs/control-center'
 import { UserControls } from '@components/docs/user-controls'
+import { getBrandLinkProps } from '@config/brand'
 import type { Locale } from '@generated/vx'
 
 type Props = ComponentPropsWithoutRef<'header'> & {
@@ -35,7 +36,7 @@ export const NotebookHeader = ({
       className={`layout:[--fd-header-height:--spacing(14)] lg:layout:[--fd-header-height:--spacing(24)] sticky top-(--fd-docs-row-1) z-10 flex flex-col backdrop-blur-sm transition-colors [grid-area:header] ${props.className ?? ''}`}>
       <div data-header-body="" className="flex h-14 gap-2 px-4 md:px-6">
         <div className="flex flex-1 items-center gap-2">
-          <Brand.Link locale={locale} />
+          <Brand.Link {...getBrandLinkProps(locale)} />
           {leading}
         </div>
         {FullSearchTrigger && (

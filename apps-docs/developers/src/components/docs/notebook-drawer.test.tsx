@@ -27,8 +27,10 @@ vi.mock('@vezham/docs-react/layouts/notebook', () => ({
   })
 }))
 
-vi.mock('../brand', () => ({
-  Brand: { Link: () => <a href="/">Vezham Developers</a> }
+vi.mock('@vezham/react/components/brand', () => ({
+  Brand: {
+    Link: ({ to }: { to: string }) => <a href={to}>Vezham Developers</a>
+  }
 }))
 
 vi.mock('./control-center', () => ({
@@ -85,6 +87,7 @@ describe('notebook drawer', () => {
       const view = render(
         <NotebookDrawerHeader {...props} selectedSection="start" />
       )
+      expect(view.getByRole('link').getAttribute('href')).toBe(`${prefix}/`)
       const triggers = () =>
         view.getAllByRole('button', { name: /Documentation section/ })
       expect(triggers()[0].textContent).toContain('Getting Started')

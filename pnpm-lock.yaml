@@ -897,6 +897,9 @@ importers:
       '@tanstack/react-hotkeys':
         specifier: 'catalog:'
         version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vezham/env':
+        specifier: workspace:*
+        version: link:../env
       '@vezham/hooks':
         specifier: workspace:*
         version: link:../hooks

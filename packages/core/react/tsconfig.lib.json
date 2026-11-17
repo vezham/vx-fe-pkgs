@@ -50,6 +50,9 @@
     },
     {
       "path": "../hooks/tsconfig.lib.json"
+    },
+    {
+      "path": "../env/tsconfig.lib.json"
     }
   ]
 }
