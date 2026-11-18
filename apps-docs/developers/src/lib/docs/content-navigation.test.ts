@@ -167,9 +167,14 @@ describe('content navigation', () => {
     locale => {
       const prefix = locale === 'en' ? '' : '/cn'
       const components = getComponentCatalog('web', 'react', locale)
-      expect(components).toHaveLength(3)
+      expect(components).toHaveLength(4)
       expect(components).toEqual(
         expect.arrayContaining([
+          expect.objectContaining({
+            title: 'InstallTabs',
+            slug: 'install-tabs',
+            url: `${prefix}/docs/ui/react/web/components/install-tabs`
+          }),
           expect.objectContaining({
             title: 'SidebarGroup',
             slug: 'sidebar-group',
@@ -187,13 +192,27 @@ describe('content navigation', () => {
           })
         ])
       )
-      expect(getLayoutCatalog('web', 'react', locale)).toEqual([
-        expect.objectContaining({
-          title: 'Notebook',
-          slug: 'notebook',
-          url: `${prefix}/docs/ui/react/web/layouts/notebook`
-        })
-      ])
+      const layouts = getLayoutCatalog('web', 'react', locale)
+      expect(layouts).toHaveLength(3)
+      expect(layouts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            title: 'Bento',
+            slug: 'bento',
+            url: `${prefix}/docs/ui/react/web/layouts/bento`
+          }),
+          expect.objectContaining({
+            title: 'CardGallery',
+            slug: 'card-gallery',
+            url: `${prefix}/docs/ui/react/web/layouts/card-gallery`
+          }),
+          expect.objectContaining({
+            title: 'Notebook',
+            slug: 'notebook',
+            url: `${prefix}/docs/ui/react/web/layouts/notebook`
+          })
+        ])
+      )
       expect(getComponentCatalog('native', 'react', locale)).toEqual([])
       expect(getLayoutCatalog('native', 'react', locale)).toEqual([])
     }

@@ -131,7 +131,13 @@ describe('in-house React sidebar', () => {
       params: { platform: 'web', _splat: 'layouts/notebook' }
     })
     const group = deserializePageTree(data.pageTree).children.find(
-      (node): node is Folder => node.type === 'folder'
+      (node): node is Folder =>
+        node.type === 'folder' &&
+        node.children.some(
+          child =>
+            child.type === 'page' &&
+            child.url === '/docs/ui/react/web/layouts/notebook'
+        )
     )
     if (!group) throw new Error('Missing Documentation group')
     renderGroup(group)

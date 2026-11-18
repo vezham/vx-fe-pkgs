@@ -100,6 +100,48 @@ describe('UI documentation', () => {
   it.each([
     [
       'en',
+      'components/install-tabs',
+      'InstallTabs',
+      '@vezham/react/components/install-tabs',
+      'react-install-tabs-development'
+    ],
+    [
+      'cn',
+      'components/install-tabs',
+      'InstallTabs',
+      '@vezham/react/components/install-tabs',
+      'InstallTabs.Command'
+    ],
+    [
+      'en',
+      'layouts/bento',
+      'Bento',
+      '@vezham/react/layouts/bento',
+      'react-bento-default'
+    ],
+    [
+      'cn',
+      'layouts/bento',
+      'Bento',
+      '@vezham/react/layouts/bento',
+      'Bento.Action'
+    ],
+    [
+      'en',
+      'layouts/card-gallery',
+      'CardGallery',
+      '@vezham/react/layouts/card-gallery',
+      'react-card-gallery-default'
+    ],
+    [
+      'cn',
+      'layouts/card-gallery',
+      'CardGallery',
+      '@vezham/react/layouts/card-gallery',
+      'CardGallery.Group'
+    ],
+    [
+      'en',
       'components/sidebar-group',
       'SidebarGroup',
       '@vezham/react/components/sidebar-group',

@@ -2,10 +2,10 @@ import { useRouterState } from '@tanstack/react-router'
 import { Suspense, use } from 'react'
 
 import { useDocsLoader } from '@vezham/docs-core/source/client'
+import { InstallTabs } from '@vezham/react/components/install-tabs'
 import { DocsLayout, DocsPage } from '@vezham/start/layouts/docs'
 import { getMDXComponents } from '@vezham/start/mdx'
 
-import { InstallTabs } from '@components/docs/install-tabs'
 import type { Locale } from '@generated/vx'
 import { assetUrl } from '@src/lib/icon-library/catalog'
 import { type IconDocsLoaderData, iconDocs } from '@src/lib/icon-library/docs'

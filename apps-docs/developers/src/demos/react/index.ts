@@ -6,6 +6,25 @@ export const reactDemos: Record<
   string,
   { loader: () => Promise<ComponentType>; file: string }
 > = {
+  'react-install-tabs-default': {
+    file: 'install-tabs/default.tsx',
+    loader: () =>
+      import('./install-tabs/default').then(module => module.Default)
+  },
+  'react-install-tabs-development': {
+    file: 'install-tabs/development.tsx',
+    loader: () =>
+      import('./install-tabs/development').then(module => module.Development)
+  },
+  'react-bento-default': {
+    file: 'bento/default.tsx',
+    loader: () => import('./bento/default').then(module => module.Default)
+  },
+  'react-card-gallery-default': {
+    file: 'card-gallery/default.tsx',
+    loader: () =>
+      import('./card-gallery/default').then(module => module.Default)
+  },
   ...layoutDemos,
   'react-sidebar-group-default': {
     file: 'sidebar-group/default.tsx',

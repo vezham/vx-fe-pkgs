@@ -1,8 +1,16 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within
+} from '@testing-library/react'
 import { Fragment, createElement } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import mdx from '@vezham/docs-react/mdx'
+import { InstallTabs } from '@vezham/react/components/install-tabs'
 
 import { ComponentPreview } from './index'
 
@@ -53,6 +61,52 @@ afterEach(() => {
 })
 
 describe('local component previews', () => {
+  it('loads the InstallTabs demo and switches the real highlighted commands', async () => {
+    render(<ComponentPreview name="react-install-tabs-development" />)
+    await act(() => vi.dynamicImportSettled())
+    expect(await screen.findByRole('tab', { name: 'pnpm' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+    await waitFor(() =>
+      expect(screen.getByRole('tabpanel', { name: 'pnpm' })).toHaveTextContent(
+        'pnpm add -D typescript vitest'
+      )
+    )
+    fireEvent.click(screen.getByRole('tab', { name: 'npm' }))
+    await waitFor(() =>
+      expect(screen.getByRole('tabpanel', { name: 'npm' })).toHaveTextContent(
+        'npm install -D typescript vitest'
+      )
+    )
+  })
+
+  it('renders the packaged manager logos in shared install tabs', async () => {
+    render(<InstallTabs packages="@vezham/react" />)
+    await act(() => vi.dynamicImportSettled())
+    for (const manager of ['npm', 'pnpm', 'yarn', 'bun']) {
+      const tab = screen.getByRole('tab', { name: manager })
+      expect(tab.querySelector('img')).toHaveAttribute(
+        'src',
+        expect.stringMatching(/^data:image\/svg\+xml,/)
+      )
+    }
+    await waitFor(() =>
+      expect(screen.getByRole('tabpanel', { name: 'npm' })).toHaveTextContent(
+        'npm install @vezham/react'
+      )
+    )
+  })
+
+  it.each([
+    ['react-bento-default', 'Explore components'],
+    ['react-card-gallery-default', 'Browse components']
+  ])('loads the %s layout example', async (name, action) => {
+    render(<ComponentPreview name={name} />)
+    await act(() => vi.dynamicImportSettled())
+    expect(await screen.findByRole('link', { name: action })).toBeVisible()
+  })
+
   it('loads the shared sidebar group example and expands a collapsed group', async () => {
     render(<ComponentPreview name="react-sidebar-group-default" />)
     await act(() => vi.dynamicImportSettled())

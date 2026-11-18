@@ -1,0 +1,92 @@
+---
+title: InstallTabs
+description: Package-manager tabs with copyable installation commands.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/components/install-tabs
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+```tsx
+import { InstallTabs } from '@vezham/react/components/install-tabs'
+```
+
+Pass one package name or an array of names. Choose npm, pnpm, yarn, or bun to generate the matching install command. The copy button reports success or an unavailable clipboard.
+
+<ComponentPreview name="react-install-tabs-default">
+
+```tsx
+import { InstallTabs } from '@vezham/react/components/install-tabs'
+
+export const Default = () => (
+  <div className="w-full min-w-0">
+    <InstallTabs packages="@vezham/react" />
+  </div>
+)
+```
+
+</ComponentPreview>
+
+## Development Dependencies
+
+Set `dev` to add `-D`, and use `defaultManager` to choose the initial tab.
+
+<ComponentPreview name="react-install-tabs-development">
+
+```tsx
+import { InstallTabs } from '@vezham/react/components/install-tabs'
+
+export const Development = () => (
+  <div className="w-full min-w-0">
+    <InstallTabs
+      packages={['typescript', 'vitest']}
+      dev
+      defaultManager="pnpm"
+      showIcons={false}
+    />
+  </div>
+)
+```
+
+</ComponentPreview>
+
+## Standalone Command
+
+`InstallTabs.Command` displays any command with the same syntax highlighting and copy behavior:
+
+```tsx
+<InstallTabs.Command command="pnpm add @vezham/react" />
+```
+
+## Package-Manager Icons
+
+The package includes npm, pnpm, yarn, and bun logos and shows them by default. Set `showIcons={false}` for text-only tabs.
+
+```tsx
+<InstallTabs packages="@vezham/react" showIcons={false} />
+```
+
+The logos are bundled SVG images, so no logo CDN configuration is required.
+
+## API Reference
+
+### InstallTabs
+
+| Prop             | Type                          | Default             | Description                                  |
+| ---------------- | ----------------------------- | ------------------- | -------------------------------------------- |
+| `packages`       | `string \| readonly string[]` | Required            | Package names included in every command.     |
+| `dev`            | `boolean`                     | `false`             | Installs development dependencies with `-D`. |
+| `defaultManager` | `PackageManager`              | `'npm'`             | Initial manager: npm, pnpm, yarn, or bun.    |
+| `label`          | `string`                      | `'Package manager'` | Accessible tab-list label.                   |
+| `className`      | `string`                      | —                   | Classes applied to the tabs root.            |
+| `showIcons`      | `boolean`                     | `true`              | Shows the bundled package-manager logos.     |
+
+### InstallTabs.Command
+
+| Prop      | Type     | Description                  |
+| --------- | -------- | ---------------------------- |
+| `command` | `string` | Command to display and copy. |
+
+The entry point exports `InstallTabsProps`, `InstallTabsCommandProps`, and `PackageManager`.

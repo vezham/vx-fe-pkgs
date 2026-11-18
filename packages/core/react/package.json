@@ -36,6 +36,12 @@
       "import": "./dist/lib-27/components/sidebar-group/index.js",
       "default": "./dist/lib-27/components/sidebar-group/index.js"
     },
+    "./components/install-tabs": {
+      "@vx/fe-kit": "./src/lib-27/components/install-tabs/index.tsx",
+      "types": "./dist/lib-27/components/install-tabs/index.d.ts",
+      "import": "./dist/lib-27/components/install-tabs/index.js",
+      "default": "./dist/lib-27/components/install-tabs/index.js"
+    },
     "./control-center": {
       "@vx/fe-kit": "./src/lib/components/panel/footer/control-center/index.tsx",
       "types": "./dist/lib/components/panel/footer/control-center/index.d.ts",
@@ -77,6 +83,18 @@
       "types": "./dist/lib-27/layouts/notebook/index.d.ts",
       "import": "./dist/lib-27/layouts/notebook/index.js",
       "default": "./dist/lib-27/layouts/notebook/index.js"
+    },
+    "./layouts/bento": {
+      "@vx/fe-kit": "./src/lib-27/layouts/bento/index.tsx",
+      "types": "./dist/lib-27/layouts/bento/index.d.ts",
+      "import": "./dist/lib-27/layouts/bento/index.js",
+      "default": "./dist/lib-27/layouts/bento/index.js"
+    },
+    "./layouts/card-gallery": {
+      "@vx/fe-kit": "./src/lib-27/layouts/card-gallery/index.tsx",
+      "types": "./dist/lib-27/layouts/card-gallery/index.d.ts",
+      "import": "./dist/lib-27/layouts/card-gallery/index.js",
+      "default": "./dist/lib-27/layouts/card-gallery/index.js"
     },
     "./layouts/*": {
       "@vx/fe-kit": "./src/lib/layouts/*/index.tsx",

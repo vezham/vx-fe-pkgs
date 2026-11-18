@@ -9,7 +9,7 @@ import { useCopyToClipboard } from '@vezham/hooks'
 import { CheckCircle, Copy } from '@vezham/icons-react'
 import { Button } from '@vezham/react-v3'
 
-import { assetUrl } from '@src/lib/icon-library/catalog'
+import { packageManagerIcons } from './package-manager-icons'
 
 const packageManagers = [
   { id: 'npm', command: 'npm install' },
@@ -18,7 +18,11 @@ const packageManagers = [
   { id: 'bun', command: 'bun add' }
 ] as const
 
-const InstallCommand = ({ command }: { command: string }) => {
+export type PackageManager = (typeof packageManagers)[number]['id']
+
+export type InstallTabsCommandProps = { command: string }
+
+const InstallCommand = ({ command }: InstallTabsCommandProps) => {
   const { copy, isCopied, isUnavailable } = useCopyToClipboard()
   return (
     <DynamicCodeBlock
@@ -52,30 +56,41 @@ const InstallCommand = ({ command }: { command: string }) => {
   )
 }
 
-export const InstallTabs = ({
-  packages,
-  dev = false
-}: {
-  packages: string | string[]
+export type InstallTabsProps = {
+  packages: string | readonly string[]
   dev?: boolean
-}) => {
-  const names = Array.isArray(packages) ? packages.join(' ') : packages
+  defaultManager?: PackageManager
+  label?: string
+  className?: string
+  showIcons?: boolean
+}
+
+const InstallTabsRoot = ({
+  packages,
+  dev = false,
+  defaultManager = 'npm',
+  label = 'Package manager',
+  className,
+  showIcons = true
+}: InstallTabsProps) => {
+  const names = typeof packages === 'string' ? packages : packages.join(' ')
   return (
-    <Tabs defaultValue="npm">
-      <TabsList aria-label="Package manager">
+    <Tabs defaultValue={defaultManager} className={className}>
+      <TabsList aria-label={label}>
         {packageManagers.map(manager => (
           <TabsTrigger
             key={manager.id}
             value={manager.id}
             className="cursor-pointer">
-            <img
-              src={assetUrl('logos', { slug: manager.id, variants: {} })}
-              alt=""
-              width={12}
-              height={12}
-              loading="lazy"
-              className="block shrink-0 translate-y-0.5 rounded-none object-contain"
-            />
+            {showIcons && (
+              <img
+                src={packageManagerIcons[manager.id]}
+                alt=""
+                width={12}
+                height={12}
+                className="block shrink-0 translate-y-0.5 rounded-none object-contain"
+              />
+            )}
             {manager.id}
           </TabsTrigger>
         ))}
@@ -90,3 +105,7 @@ export const InstallTabs = ({
     </Tabs>
   )
 }
+
+export const InstallTabs = Object.assign(InstallTabsRoot, {
+  Command: InstallCommand
+})

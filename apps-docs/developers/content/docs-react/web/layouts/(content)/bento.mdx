@@ -1,0 +1,100 @@
+---
+title: Bento
+description: A responsive grid of feature cards with configurable visuals and actions.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/layouts/bento
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+```tsx
+import { Bento } from '@vezham/react/layouts/bento'
+```
+
+Compose `Bento.Card` and `Bento.Action` inside the grid. The grid uses one column on small screens and three from the medium breakpoint. Use `className` for column spans and application-specific colors.
+
+<ComponentPreview name="react-bento-default">
+
+```tsx
+import { Layers, Palette } from '@vezham/icons-react'
+import { Bento } from '@vezham/react/layouts/bento'
+
+export const Default = () => (
+  <Bento className="w-full">
+    <Bento.Card
+      className="md:col-span-2"
+      eyebrow="Components"
+      title="Build faster."
+      headingAs="h3"
+      description="Reusable components for your next interface."
+      icon={<Layers size={28} aria-hidden="true" />}
+      action={<Bento.Action href="#" aria-label="Explore components" />}>
+      <div
+        aria-hidden="true"
+        className="mt-4 rounded-xl border p-4 font-mono text-sm">
+        {'<Button>Continue</Button>'}
+      </div>
+    </Bento.Card>
+    <Bento.Card
+      eyebrow="Design"
+      title="Tokens"
+      headingAs="h3"
+      description="A shared language for color, type, and spacing."
+      icon={<Palette size={28} aria-hidden="true" />}
+      action={<Bento.Action href="#" aria-label="Explore design tokens" />}
+    />
+  </Bento>
+)
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+<Bento>
+  <Bento.Card
+    title="Components"
+    description="Build your next interface."
+    action={
+      <Bento.Action href="/components" aria-label="Explore components" />
+    }>
+    {visual}
+  </Bento.Card>
+</Bento>
+```
+
+The layout accepts React nodes for its content and actions. This site's homepage supplies its section data, visuals, and localized destinations from the app.
+
+## API Reference
+
+### Bento
+
+Accepts native div props, including `children`, `className`, and `style`. Use an enclosing `nav` or `section` when the grid represents navigation or a page section.
+
+### Bento.Card
+
+The card accepts these content slots:
+
+| Prop          | Type                                   | Default  | Description                                        |
+| ------------- | -------------------------------------- | -------- | -------------------------------------------------- |
+| `title`       | `ReactNode`                            | Required | Main card heading.                                 |
+| `eyebrow`     | `ReactNode`                            | —        | Small label above the heading.                     |
+| `description` | `ReactNode`                            | —        | Supporting text.                                   |
+| `icon`        | `ReactNode`                            | —        | Decorative icon beside the label.                  |
+| `children`    | `ReactNode`                            | —        | Visual content below the header.                   |
+| `action`      | `ReactNode`                            | —        | Action node, typically the matching `Action` part. |
+| `headingAs`   | `'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h2'`   | Heading level for the page hierarchy.              |
+| `className`   | `string`                               | —        | Appearance, spacing, and grid-span overrides.      |
+
+Card parts also accept native div props. The shared React stylesheet includes hover and focus feedback; scale feedback respects reduced-motion preferences.
+
+### Bento.Action
+
+The `Action` part creates a link covering the card with an arrow in its lower corner. Its `href` and `aria-label` are required. Native link props such as `target`, `rel`, and `download` pass through. Supply `children` to replace the decorative arrow.
+
+Use decorative visual content inside a card with an overlay action. Keep locale resolution in the consuming app and pass the resolved URL to `href`.
+
+The entry point exports `BentoProps`, `BentoCardProps`, and `BentoActionProps`.

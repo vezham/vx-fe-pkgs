@@ -1,3 +1,4 @@
 @import '@vezham/tamizhi-ui';
+@import './lib-27/layouts/shared/feature-card.css';
 
 @source './**/*.js';

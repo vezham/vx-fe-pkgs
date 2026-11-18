@@ -112,3 +112,9 @@ up to 1285px wide with responsive padding.
 Keep full-width sections outside this container. Page utilities may override the
 default width, margins, or padding when needed. Docs pages use the shared styles
 in `packages/vx/styles/docs/index.css`.
+
+Home composes `Bento` and `CardGallery` from `@vezham/react/layouts/bento` and
+`@vezham/react/layouts/card-gallery`. Content, visuals, and locale resolution stay
+in the app. Shared feature-card hover and motion styles belong to the React
+package. Docs use `InstallTabs` from `@vezham/react/components/install-tabs`;
+the package owns the manager logos, and `showIcons` toggles their visibility.

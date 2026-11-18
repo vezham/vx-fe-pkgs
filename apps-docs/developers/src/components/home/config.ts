@@ -87,7 +87,7 @@ type HomeGalleryGroup =
       sections: readonly HomeSection[]
     }
 
-export const homeGallery = [
+export const homeGallery: readonly HomeGalleryGroup[] = [
   {
     id: 'ui',
     title: 'UI',
@@ -106,4 +106,4 @@ export const homeGallery = [
     kind: 'feature',
     section: handbookSection
   }
-] satisfies readonly HomeGalleryGroup[]
+]

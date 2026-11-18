@@ -2,5 +2,5 @@
   "title": "Components",
   "root": true,
   "icon": "circles-4-diamond",
-  "pages": ["index", "(navigation)", "(media)"]
+  "pages": ["index", "(navigation)", "(media)", "(utilities)"]
 }

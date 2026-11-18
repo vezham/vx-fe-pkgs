@@ -1,5 +1,5 @@
 {
   "title": "Layouts",
   "root": true,
-  "pages": ["index", "(documentation)"]
+  "pages": ["index", "(content)", "(documentation)"]
 }
