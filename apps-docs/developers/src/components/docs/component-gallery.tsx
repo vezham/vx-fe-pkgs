@@ -11,7 +11,7 @@ import {
 import nativeProGallery from '@src/lib/docs/heroui-pro-native-presentation.json'
 import proGallery from '@src/lib/docs/heroui-pro-presentation.json'
 
-import { VideoPlayer } from './video-player'
+import { DocsVideoPlayer } from './docs-video-player'
 
 type GalleryPage = Pick<
   ReturnType<typeof getComponentCatalog>[number],
@@ -26,7 +26,7 @@ const NativeGalleryVideo = ({ page }: { page: GalleryPage }) => {
   const { resolvedTheme } = useTheme()
   if (page.video)
     return (
-      <VideoPlayer
+      <DocsVideoPlayer
         aria-label={`${page.title} preview`}
         srcLight={page.video.light}
         srcDark={page.video.dark}
@@ -40,7 +40,9 @@ const NativeGalleryVideo = ({ page }: { page: GalleryPage }) => {
     resolvedTheme === 'dark' && name !== 'scroll-shadow' ? 'dark' : 'light'
   const src = `${componentGalleryMedia.nativeVideoBaseUrl}/${videoName}-docs-${theme}.mp4`
 
-  return <VideoPlayer aria-label={`${page.title} preview`} src={src} muted />
+  return (
+    <DocsVideoPlayer aria-label={`${page.title} preview`} src={src} muted />
+  )
 }
 
 export const ComponentTile = ({

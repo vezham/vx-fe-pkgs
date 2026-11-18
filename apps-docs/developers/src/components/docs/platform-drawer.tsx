@@ -1,14 +1,12 @@
 import type { ComponentProps } from 'react'
 
+import { Notebook } from '@vezham/react/layouts/notebook'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
-import {
-  NotebookDrawerFooter,
-  NotebookDrawerHeader
-} from '@components/docs/notebook-drawer'
 import { getPlatformSections } from '@components/docs/platform-sections'
 import { PlatformTabs } from '@components/docs/platform-tabs'
+import { getNotebookConfig, notebookDrawerFooterProps } from '@config/notebook'
 import { type UiLibrary, uiLibraries } from '@config/ui-libraries'
 import type { Locale } from '@generated/vx'
 
@@ -43,10 +41,10 @@ export const PlatformDrawerHeader = ({
   ...props
 }: HeaderProps) => {
   return (
-    <NotebookDrawerHeader
+    <Notebook.Drawer.Header
       {...props}
       className={className}
-      locale={locale}
+      {...getNotebookConfig(locale).drawerHeaderProps}
       selectedSection={selectedSection}
       sections={getPlatformSections(platform, library, locale).map(section => ({
         id: section.id,
@@ -66,7 +64,7 @@ export const PlatformDrawerHeader = ({
         />
       }>
       {children}
-    </NotebookDrawerHeader>
+    </Notebook.Drawer.Header>
   )
 }
 
@@ -79,7 +77,8 @@ export const PlatformDrawerFooter = ({
   ...props
 }: ComponentProps<'div'> & PlatformNavigationProps) => {
   return (
-    <NotebookDrawerFooter
+    <Notebook.Drawer.Footer
+      {...notebookDrawerFooterProps}
       {...props}
       className={className}
       secondary={

@@ -16,7 +16,9 @@ import { Button, Tabs } from '@vezham/react-v3'
 import { demos as ossDemos } from '@src/demos/heroui'
 import { proDemos } from '@src/demos/heroui-pro'
 import { reactDemos } from '@src/demos/react'
+import { layoutDemos } from '@src/demos/react/layouts'
 
+import { LayoutFrame } from './layout-frame'
 import { PreviewSource } from './source'
 
 const demos = { ...ossDemos, ...proDemos, ...reactDemos }
@@ -84,6 +86,7 @@ export const ComponentPreview = ({
   const [visible, setVisible] = useState(false)
   const [attempt, setAttempt] = useState(0)
   const Demo = previews[name]
+  const layout = layoutDemos[name]
   const retry = () => {
     const entry = demos[name]
     if (!entry) return
@@ -144,12 +147,14 @@ export const ComponentPreview = ({
         <Tabs.Panel id="preview" className="m-0 p-0">
           <div
             style={{ minHeight }}
-            className={`relative isolate flex min-h-40 w-full overflow-x-auto rounded-xl border p-6 sm:p-8 ${isBgSolid ? 'bg-background' : ''} ${align === 'start' ? 'items-start justify-start' : align === 'end' ? 'items-end justify-end' : 'items-center justify-center'}`}
+            className={`relative isolate flex min-h-40 w-full overflow-x-auto rounded-xl border ${layout ? '' : 'p-6 sm:p-8'} ${isBgSolid ? 'bg-background' : ''} ${align === 'start' ? 'items-start justify-start' : align === 'end' ? 'items-end justify-end' : 'items-center justify-center'}`}
             onClickCapture={preventPlaceholderNavigation}
             onKeyDownCapture={event => {
               if (event.key === 'Enter') preventPlaceholderNavigation(event)
             }}>
-            {visible && Demo ? (
+            {visible && layout ? (
+              <LayoutFrame name={name} title={layout.title} />
+            ) : visible && Demo ? (
               <PreviewBoundary key={`${name}:${attempt}`} onRetry={retry}>
                 <Suspense
                   fallback={

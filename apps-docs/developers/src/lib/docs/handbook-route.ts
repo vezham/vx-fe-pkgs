@@ -1,12 +1,13 @@
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 import { decodeMarkdownUrl, localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
 import { handbookDocsRuntime } from '@components/docs/handbook-docs'
-import { createSidebarGroups } from '@components/docs/sidebar-group/tree'
 import { docsPageHead } from '@src/lib/page-head'
 
 import handbookMeta from '../../../content/handbook/meta.json'
 import { getContentSections } from './content-navigation'
+import { resolveDocsIcon } from './icons'
 
 export const loadHandbookDocs = async ({
   params
@@ -30,7 +31,8 @@ export const loadHandbookDocs = async ({
       ...tree,
       $id: `${data.locale}:handbook:${section?.id || 'index'}`,
       name: section?.title ?? tree.name,
-      children: createSidebarGroups({
+      children: SidebarGroup.createGroups({
+        resolveIcon: resolveDocsIcon,
         docsBase: localizedUrl(i18n, data.locale, '/handbook'),
         nodes: tree.children,
         prefix: section?.id ?? ''

@@ -1,3 +1,4 @@
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 import type { DocsLayoutProps } from '@vezham/start/layouts/docs'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
@@ -54,6 +55,7 @@ export const getPlatformLayoutOptions = ({
       )
     },
     sidebar: {
+      components: library === 'react' ? { Folder: SidebarGroup } : undefined,
       banner: props => (
         <PlatformDrawerHeader
           {...props}

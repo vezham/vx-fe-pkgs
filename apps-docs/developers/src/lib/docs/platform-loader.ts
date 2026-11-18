@@ -1,5 +1,6 @@
 import { notFound } from '@tanstack/react-router'
 
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
@@ -8,8 +9,9 @@ import {
   getPlatformDocsRuntime
 } from '@components/docs/platform-docs'
 import { getPlatformSections } from '@components/docs/platform-sections'
-import { filterSidebarTree } from '@components/docs/sidebar-group/tree'
 import { type UiLibrary, uiLibraries } from '@config/ui-libraries'
+
+import { resolveDocsIcon } from './icons'
 
 type Params = {
   _splat?: string
@@ -42,6 +44,8 @@ export const createPlatformDocsLoader =
     })
     const routeBase = `${uiLibraries[library].routeBase}/${params.platform}`
     const tree = runtime.source.getPageTree(data.locale)
+    const createSidebarTree =
+      library === 'react' ? SidebarGroup.createGroups : SidebarGroup.filterTree
 
     return {
       ...data,
@@ -51,7 +55,8 @@ export const createPlatformDocsLoader =
         ...tree,
         $id: `${data.locale}:${routeBase}:${section.id}`,
         name: section.title,
-        children: filterSidebarTree({
+        children: createSidebarTree({
+          resolveIcon: resolveDocsIcon,
           docsBase: localizedUrl(i18n, data.locale, routeBase),
           nodes: tree.children,
           prefix: section.prefix

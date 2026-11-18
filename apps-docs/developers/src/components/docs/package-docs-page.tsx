@@ -1,11 +1,12 @@
+import { Notebook } from '@vezham/react/layouts/notebook'
 import { DocsRoutePage } from '@vezham/start/pages/docs/route'
 
-import { getNotebookLayoutOptions } from '@components/docs/notebook-layout'
 import {
   PackageSelector,
   PackageVersionSelector
 } from '@components/docs/package-selectors'
 import { packagesDocs } from '@components/docs/packages-docs'
+import { getNotebookConfig } from '@config/notebook'
 import { docsPackages, getPackageDocsPath } from '@config/packages'
 import type { Locale } from '@generated/vx'
 import type { loadPackageDocs } from '@src/lib/docs/package-route'
@@ -26,8 +27,8 @@ export const PackageDocsPage = ({ data }: Props) => (
           page={data.page}
         />
       )
-      return getNotebookLayoutOptions({
-        locale: language,
+      return Notebook.getLayoutOptions({
+        ...getNotebookConfig(language),
         path: getPackageDocsPath(data.packageId, data.page),
         title: docsPackages[data.packageId].name,
         leading: <PackageVersionSelector packageId={data.packageId} />,

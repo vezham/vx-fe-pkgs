@@ -3,18 +3,15 @@ import type { ReactNode } from 'react'
 
 import type { Root } from '@vezham/docs-core/page-tree'
 import { DocsPage as NotebookPage } from '@vezham/docs-react/layouts/notebook/page'
+import {
+  Notebook,
+  notebookSectionTabVariants
+} from '@vezham/react/layouts/notebook'
 import { DocsLayout, type DocsLayoutProps } from '@vezham/start/layouts/docs'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
-import { sectionTabVariants } from '@components/docs/navigation.variants'
-import {
-  NotebookDrawerFooter,
-  NotebookDrawerHeader
-} from '@components/docs/notebook-drawer'
-import { NotebookHeader } from '@components/docs/notebook-header'
-import { NotebookSectionTabs } from '@components/docs/section-tabs'
-import { baseOptions } from '@config/layout'
+import { getNotebookConfig } from '@config/notebook'
 import type { Locale } from '@generated/vx'
 import { catalogRoutes, kindLabels } from '@src/lib/icon-library/catalog'
 
@@ -49,7 +46,7 @@ const AssetNavigation = ({
   active: AssetSection
   locale: Locale
 }) => (
-  <NotebookSectionTabs
+  <Notebook.SectionTabs
     label="Icon library sections"
     desktopSidebar={active === 'docs'}>
     {navigation.map(item => (
@@ -60,11 +57,13 @@ const AssetNavigation = ({
           lang: locale === i18n.defaultLanguage ? undefined : locale
         }}
         aria-current={item.id === active ? 'page' : undefined}
-        className={sectionTabVariants({ selected: item.id === active })}>
+        className={notebookSectionTabVariants({
+          selected: item.id === active
+        })}>
         {item.title}
       </RouterLink>
     ))}
-  </NotebookSectionTabs>
+  </Notebook.SectionTabs>
 )
 
 export const getAssetLayoutOptions = ({
@@ -76,15 +75,16 @@ export const getAssetLayoutOptions = ({
   locale: Locale
   pathname: string
 }): Omit<DocsLayoutProps, 'children' | 'shell' | 'tree'> => {
-  const options = baseOptions(locale)
+  const config = getNotebookConfig(locale)
+  const options = config.baseOptions
   return {
     ...options,
     nav: { ...options.nav, mode: 'top' },
     sidebar: {
       banner: props => (
-        <NotebookDrawerHeader
+        <Notebook.Drawer.Header
           {...props}
-          locale={locale}
+          {...config.drawerHeaderProps}
           selectedSection={active}
           sections={navigation.map(item => ({
             id: item.id,
@@ -93,7 +93,9 @@ export const getAssetLayoutOptions = ({
           }))}
         />
       ),
-      footer: props => <NotebookDrawerFooter {...props} />
+      footer: props => (
+        <Notebook.Drawer.Footer {...props} {...config.drawerFooterProps} />
+      )
     },
     containerProps:
       active === 'docs'
@@ -105,9 +107,9 @@ export const getAssetLayoutOptions = ({
     tabMode: 'navbar',
     slots: {
       header: props => (
-        <NotebookHeader {...props} locale={locale}>
+        <Notebook.Header {...props} {...config.headerProps}>
           <AssetNavigation active={active} locale={locale} />
-        </NotebookHeader>
+        </Notebook.Header>
       )
     },
     tabs: navigation.map(item => ({

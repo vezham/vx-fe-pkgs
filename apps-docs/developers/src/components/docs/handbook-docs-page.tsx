@@ -1,8 +1,9 @@
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
+import { Notebook } from '@vezham/react/layouts/notebook'
 import { DocsRoutePage } from '@vezham/start/pages/docs/route'
 
 import { handbookDocs } from '@components/docs/handbook-docs'
-import { getNotebookLayoutOptions } from '@components/docs/notebook-layout'
-import { SidebarGroup } from '@components/docs/sidebar-group'
+import { getNotebookConfig } from '@config/notebook'
 import type { Locale } from '@generated/vx'
 import type { loadHandbookDocs } from '@src/lib/docs/handbook-route'
 
@@ -16,8 +17,8 @@ export const HandbookDocsPage = ({
     docs={handbookDocs}
     shell="notebook"
     getLayoutOptions={locale => {
-      const options = getNotebookLayoutOptions({
-        locale: locale as Locale,
+      const options = Notebook.getLayoutOptions({
+        ...getNotebookConfig(locale as Locale),
         path: `/handbook${data.page ? `/${data.page}` : ''}`,
         title: data.collectionTitle ?? data.title ?? '',
         sectionLabel: 'Handbook sections',

@@ -1,16 +1,52 @@
 import type { Item, Node } from '@vezham/docs-core/page-tree'
 
-import { createSidebarGroups, filterSidebarTree } from './tree'
+import { SidebarGroup } from './index'
 
 const page = (url: string): Item => ({ type: 'page', name: url, url })
 const filter = (nodes: Node[]) =>
-  filterSidebarTree({ docsBase: '/docs', prefix: 'web', nodes })
+  SidebarGroup.filterTree({ docsBase: '/docs', prefix: 'web', nodes })
 
 describe('sidebar page tree', () => {
+  it('resolves retained icons through the supplied app callback without mutating the tree', () => {
+    const index = { ...page('/docs/web'), icon: 'overview' }
+    const group = {
+      type: 'folder' as const,
+      name: 'Guide',
+      icon: 'folder',
+      index: { ...page('/docs/web/guide'), icon: 'index' },
+      children: [
+        { type: 'separator' as const, name: 'Examples', icon: 'separator' },
+        { ...page('/docs/web/guide/example'), icon: 'page' }
+      ]
+    }
+    const nodes = [index, group]
+    const original = structuredClone(nodes)
+    const output = SidebarGroup.createGroups({
+      docsBase: '/docs',
+      prefix: 'web',
+      nodes,
+      preserveSeparators: true,
+      resolveIcon: icon =>
+        typeof icon === 'string' ? `resolved-${icon}` : icon
+    })
+    expect(output).toMatchObject([
+      { icon: 'resolved-overview' },
+      {
+        icon: 'resolved-folder',
+        children: [
+          { icon: 'resolved-index' },
+          { icon: 'resolved-separator' },
+          { icon: 'resolved-page' }
+        ]
+      }
+    ])
+    expect(nodes).toEqual(original)
+  })
+
   it('scopes an empty section prefix to the collection landing page', () => {
     const index = page('/handbook')
     expect(
-      filterSidebarTree({
+      SidebarGroup.filterTree({
         docsBase: '/handbook',
         prefix: '',
         nodes: [
@@ -151,7 +187,7 @@ describe('sidebar page tree', () => {
     const original = structuredClone(nodes)
 
     expect(
-      createSidebarGroups({ docsBase: '/docs', prefix: 'web', nodes })
+      SidebarGroup.createGroups({ docsBase: '/docs', prefix: 'web', nodes })
     ).toEqual([
       page('/docs/web'),
       {

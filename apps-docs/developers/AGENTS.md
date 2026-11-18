@@ -1,18 +1,20 @@
 # Documentation layout
 
-All docs routes use the notebook shell with the shared `NotebookHeader`, section
-row, and sidebar controls. For a single-page collection, use
-`getNotebookLayoutOptions`; UI libraries, assets, and the handbook keep their
+All docs routes use the notebook shell with the shared `Notebook.Header`, section
+row, and sidebar controls from `@vezham/react/layouts/notebook`. For a
+single-page collection, use `Notebook.getLayoutOptions` with the app's
+`getNotebookConfig(locale)`; UI libraries, assets, and the handbook keep their
 section-specific notebook options. Keep each collection's own navigation.
-Use the shared `NotebookDrawerHeader` and `NotebookDrawerFooter` for mobile and
+Use the shared `Notebook.Drawer.Header` and `Notebook.Drawer.Footer` for mobile and
 tablet navigation across UI, Assets, Packages, and Handbook. The UI docs drawer
 is the layout baseline: brand and section picker on mobile, collection selector
 and section picker on tablet, and collection controls with ControlCenter in the
 mobile footer. Derive section options and selection from the same navigation as
 the desktop header.
-`NotebookHeader` and `NotebookDrawerFooter` render `ControlCenter` by default.
-It reads the current locale and path from the router. Use `controls` only for a
-page-specific replacement, or `controls={false}` to hide it.
+The app's `src/config/notebook.tsx` supplies the localized brand, `ControlCenter`,
+and user controls through the shared notebook slots. `ControlCenter` reads the
+current locale and path from the router. Use `controls` for a page-specific
+replacement, or `controls={false}` to hide it.
 
 ## UI documentation layout
 
@@ -71,12 +73,13 @@ by UI and Packages; section roots should not add an extra sidebar folder.
 Markdown groups use `SidebarGroup` with HeroUI Disclosure so child links
 retain the flat Assets Guides sidebar styling, with icons and collapsible group
 headers. Keep group labels, icons, and ordering in content metadata.
-Keep the reusable renderer, tree helpers, and tests together in
-`src/components/docs/sidebar-group`. Loaders import `filterSidebarTree` or
-`createSidebarGroups` from its `tree` module; pages import `SidebarGroup` from
-the folder entry point. Keep collection-specific loading and metadata outside
-this component folder. Share metadata icon resolution independently through
-`resolveDocsIcon` in `src/lib/docs/icons.ts`.
+The shared renderer and tree helpers live in
+`@vezham/react/components/sidebar-group`. Loaders use `SidebarGroup.filterTree`
+or `SidebarGroup.createGroups`, passing `resolveDocsIcon` from
+`src/lib/docs/icons.ts` as `resolveIcon`. Pages use `SidebarGroup` as the folder
+renderer. Keep collection-specific loading, metadata, and icon mappings in the
+app. In-house `docs-react` sidebars also use this renderer; their collapsible
+groups come from the content folders and their `meta.json` files.
 
 ## Asset library routes
 

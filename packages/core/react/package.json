@@ -24,6 +24,18 @@
       "import": "./dist/lib-27/components/brand/index.js",
       "default": "./dist/lib-27/components/brand/index.js"
     },
+    "./components/video-player": {
+      "@vx/fe-kit": "./src/lib-27/components/video-player/index.tsx",
+      "types": "./dist/lib-27/components/video-player/index.d.ts",
+      "import": "./dist/lib-27/components/video-player/index.js",
+      "default": "./dist/lib-27/components/video-player/index.js"
+    },
+    "./components/sidebar-group": {
+      "@vx/fe-kit": "./src/lib-27/components/sidebar-group/index.tsx",
+      "types": "./dist/lib-27/components/sidebar-group/index.d.ts",
+      "import": "./dist/lib-27/components/sidebar-group/index.js",
+      "default": "./dist/lib-27/components/sidebar-group/index.js"
+    },
     "./control-center": {
       "@vx/fe-kit": "./src/lib/components/panel/footer/control-center/index.tsx",
       "types": "./dist/lib/components/panel/footer/control-center/index.d.ts",
@@ -59,6 +71,12 @@
       "types": "./dist/lib/components/panel/header/bookmarks/favorites/index.d.ts",
       "import": "./dist/lib/components/panel/header/bookmarks/favorites/index.js",
       "default": "./dist/lib/components/panel/header/bookmarks/favorites/index.js"
+    },
+    "./layouts/notebook": {
+      "@vx/fe-kit": "./src/lib-27/layouts/notebook/index.tsx",
+      "types": "./dist/lib-27/layouts/notebook/index.d.ts",
+      "import": "./dist/lib-27/layouts/notebook/index.js",
+      "default": "./dist/lib-27/layouts/notebook/index.js"
     },
     "./layouts/*": {
       "@vx/fe-kit": "./src/lib/layouts/*/index.tsx",
@@ -115,6 +133,8 @@
   ],
   "dependencies": {
     "@tanstack/react-hotkeys": "catalog:",
+    "@vezham/docs-core": "npm:@vx-oss/docs-core@1.0.17",
+    "@vezham/docs-react": "npm:@vx-oss/docs-base-ui@1.0.17",
     "@vezham/env": "workspace:*",
     "@vezham/hooks": "workspace:*",
     "@vezham/tamizhi-ui": "workspace:*",

@@ -1,0 +1,144 @@
+---
+title: SidebarGroup
+description: Collapsible documentation groups with flat page links and reusable page-tree helpers.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/components/sidebar-group
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+```tsx
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
+```
+
+Use `SidebarGroup` as the notebook's folder renderer. The heading toggles its child links; page links keep their own destinations. These in-house React docs use the same renderer.
+
+```tsx
+<Notebook tree={tree} sidebar={{ components: { Folder: SidebarGroup } }}>
+  {children}
+</Notebook>
+```
+
+## Example
+
+Navigation starts expanded. Media demonstrates `defaultOpen: false`.
+
+<ComponentPreview name="react-sidebar-group-default">
+
+```tsx
+import type { Folder } from '@vezham/docs-core/page-tree'
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
+
+const groups: Folder[] = [
+  {
+    type: 'folder',
+    name: 'Navigation',
+    children: [
+      {
+        type: 'page',
+        name: 'Brand',
+        url: '/docs/ui/react/web/components/brand'
+      },
+      {
+        type: 'page',
+        name: 'SidebarGroup',
+        url: '/docs/ui/react/web/components/sidebar-group'
+      }
+    ]
+  },
+  {
+    type: 'folder',
+    name: 'Media',
+    defaultOpen: false,
+    children: [
+      {
+        type: 'page',
+        name: 'VideoPlayer',
+        url: '/docs/ui/react/web/components/video-player'
+      }
+    ]
+  }
+]
+
+export const Default = () => (
+  <nav aria-label="Example documentation" className="w-full max-w-64">
+    {groups.map(item => (
+      <SidebarGroup key={String(item.name)} item={item}>
+        {item.children.map(page =>
+          page.type === 'page' ? (
+            <a
+              key={page.url}
+              href={page.url}
+              className="text-muted hover:bg-default-hover hover:text-foreground rounded-md px-2 py-1.5 text-sm">
+              {page.name}
+            </a>
+          ) : null
+        )}
+      </SidebarGroup>
+    ))}
+  </nav>
+)
+```
+
+</ComponentPreview>
+
+## Prepare a Sidebar Tree
+
+Use `SidebarGroup.createGroups` in the route loader to scope the collection to a section and turn folder index pages into regular child links. The group heading remains available to expand or collapse the list.
+
+```tsx
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
+
+const children = SidebarGroup.createGroups({
+  docsBase: '/docs/ui/react/web',
+  prefix: 'components',
+  nodes: sourceTree.children,
+  resolveIcon: resolveDocsIcon
+})
+
+const tree = { ...sourceTree, children }
+```
+
+Pass the localized collection URL as `docsBase`, for example `/cn/docs/ui/react/web`. The helpers keep link URLs intact and do not mutate the source tree. An empty `prefix` selects only the collection landing page.
+
+`SidebarGroup.filterTree` performs section filtering while retaining each folder's index. Both helpers unwrap a single collection folder and normalize retained folders to open, non-root groups.
+
+The optional `resolveIcon` callback belongs to the consuming app. Without it, icons pass through unchanged. This app supplies `resolveDocsIcon` from `src/lib/docs/icons.ts`.
+
+## Content Groups
+
+Keep group labels and ordering in folder metadata. A group folder such as `(navigation)` can contain a `meta.json` file:
+
+```json
+{
+  "title": "Navigation",
+  "pages": ["brand", "sidebar-group"]
+}
+```
+
+List that folder in the parent metadata. Parenthesized groups preserve page URLs, so Brand remains at `/docs/ui/react/web/components/brand`.
+
+## API Reference
+
+### SidebarGroup
+
+| Prop       | Type        | Description                                                                             |
+| ---------- | ----------- | --------------------------------------------------------------------------------------- |
+| `item`     | `Folder`    | Folder metadata. Displays `name` and optional `icon`; `defaultOpen` defaults to `true`. |
+| `children` | `ReactNode` | Page links and nested groups supplied by the page-tree renderer.                        |
+
+### SidebarGroup.filterTree / SidebarGroup.createGroups
+
+Both accept `SidebarGroupTreeOptions` and return a new `Node[]`.
+
+| Option               | Type                             | Default  | Description                                                                             |
+| -------------------- | -------------------------------- | -------- | --------------------------------------------------------------------------------------- |
+| `docsBase`           | `string`                         | Required | Localized collection base URL.                                                          |
+| `prefix`             | `string`                         | Required | Exact section path and its descendants.                                                 |
+| `nodes`              | `readonly Node[]`                | Required | Source page-tree children.                                                              |
+| `preserveSeparators` | `boolean`                        | `false`  | Retains separators while filtering; section folders also preserve their own separators. |
+| `resolveIcon`        | `(icon: ReactNode) => ReactNode` | Identity | Resolves retained page, folder, index, and separator icons.                             |
+
+The entry point exports `SidebarGroupProps` and `SidebarGroupTreeOptions`.

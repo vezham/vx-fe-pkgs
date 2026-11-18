@@ -1,0 +1,174 @@
+---
+title: VideoPlayer
+description: A responsive video player with themed sources, accessible controls, and viewport-aware playback.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/components/video-player
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+```tsx
+import { VideoPlayer } from '@vezham/react/components/video-player'
+```
+
+Set `autoPlay={false}` for manual playback. The built-in controls provide play/pause, mute/unmute, and restart actions.
+
+<ComponentPreview name="react-video-player-default">
+
+```tsx
+import { VideoPlayer } from '@vezham/react/components/video-player'
+
+export const Default = () => (
+  <VideoPlayer
+    aria-label="Button demonstration"
+    src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native/components/videos/button-docs-light.mp4"
+    autoPlay={false}
+    muted
+    className="max-w-lg"
+  />
+)
+```
+
+</ComponentPreview>
+
+## Examples
+
+### Themed Recordings
+
+Pass a resolved `theme` and optional `srcLight` / `srcDark` recordings. The shared player receives the theme as a prop; it does not require a docs theme provider.
+
+<ComponentPreview name="react-video-player-themed">
+
+```tsx
+import { useState } from 'react'
+
+import { Button } from '@vezham/react-v3'
+import { VideoPlayer } from '@vezham/react/components/video-player'
+
+export const Themed = () => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  return (
+    <div className="flex w-full max-w-lg flex-col items-start gap-4">
+      <Button
+        size="sm"
+        variant="secondary"
+        onPress={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        Use {theme === 'light' ? 'dark' : 'light'} recording
+      </Button>
+      <VideoPlayer
+        aria-label="Themed button demonstration"
+        srcLight="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native/components/videos/button-docs-light.mp4"
+        srcDark="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/native/components/videos/button-docs-dark.mp4"
+        theme={theme}
+        autoPlay={false}
+        muted
+      />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+The player selects the first available source in this order:
+
+| Theme   | Source priority                        |
+| ------- | -------------------------------------- |
+| `light` | `src`, then `srcLight`, then `srcDark` |
+| `dark`  | `srcDark`, then `src`, then `srcLight` |
+
+### Native Controls and Captions
+
+Set `controls` to use the browser's video controls. Pass caption tracks as children when the recording includes speech or other meaningful audio.
+
+```tsx
+<VideoPlayer
+  aria-label="Installation walkthrough"
+  src="/videos/installation.mp4"
+  autoPlay={false}
+  loop={false}
+  controls>
+  <track
+    default
+    kind="captions"
+    src="/captions/installation.en.vtt"
+    srcLang="en"
+    label="English"
+  />
+</VideoPlayer>
+```
+
+### Playback Events
+
+Use `onPlayingChange` to synchronize surrounding UI with the video's native play and pause events. Native callbacks such as `onPlay`, `onPause`, and `onError` are also forwarded.
+
+```tsx
+import { useState } from 'react'
+
+import { VideoPlayer } from '@vezham/react/components/video-player'
+
+export const PlaybackEvents = () => {
+  const [playing, setPlaying] = useState(false)
+
+  return (
+    <div>
+      <VideoPlayer
+        aria-label="Product introduction"
+        src="/videos/introduction.mp4"
+        autoPlay={false}
+        onPlayingChange={setPlaying}
+      />
+      <p>{playing ? 'Playing' : 'Paused'}</p>
+    </div>
+  )
+}
+```
+
+## Automatic Playback
+
+By default, `autoPlay` is enabled and `playMode` is `auto`. The player starts preloading within 200 pixels of the viewport, plays while its frame is visible, and pauses when it leaves the viewport.
+
+Automatic playback is disabled for mobile user agents and when reduced motion is preferred. Manual controls remain available. Set `playMode="manual"` or `autoPlay={false}` to opt out of viewport-driven play and pause behavior.
+
+If the browser blocks audible playback, the player retries once with the video muted. A loading indicator appears while a nearby video is loading; playback or loading failures show a retry action.
+
+## App Theme Integration
+
+Apps resolve their own theme and pass `theme="light"` or `theme="dark"`. In this documentation app, `DocsVideoPlayer` supplies the docs provider theme and handles unavailable upstream recordings. The MDX renderer exports that app adapter as `VideoPlayer`; application code can import the shared player directly from the package entry point.
+
+## Accessibility
+
+Give each video a descriptive `aria-label`. The built-in buttons have accessible names and tooltips, and the player supports inline playback. For caption selection and other browser media features, use native controls with caption tracks. Keep essential information available as text as well as video.
+
+## API Reference
+
+### VideoPlayer
+
+| Prop              | Type                         | Default   | Description                                                         |
+| ----------------- | ---------------------------- | --------- | ------------------------------------------------------------------- |
+| `src`             | `string`                     | —         | General video source.                                               |
+| `srcLight`        | `string`                     | —         | Light-theme recording.                                              |
+| `srcDark`         | `string`                     | —         | Dark-theme recording.                                               |
+| `theme`           | `'light' \| 'dark'`          | `'light'` | Selects the themed source.                                          |
+| `autoPlay`        | `boolean`                    | `true`    | Enables viewport-driven playback when browser preferences allow it. |
+| `playMode`        | `'manual' \| 'auto'`         | `'auto'`  | Controls automatic viewport play and pause behavior.                |
+| `controls`        | `boolean`                    | `false`   | Uses native browser controls instead of the custom controls.        |
+| `muted`           | `boolean`                    | `false`   | Initial mute state.                                                 |
+| `loop`            | `boolean`                    | `true`    | Repeats the recording.                                              |
+| `onPlayingChange` | `(playing: boolean) => void` | —         | Called on native play and pause events.                             |
+| `width`           | `number`                     | —         | Native video width attribute.                                       |
+| `height`          | `number`                     | —         | Native video height attribute.                                      |
+| `className`       | `string`                     | —         | Classes merged onto the outer frame.                                |
+| `style`           | `CSSProperties`              | —         | Inline styles applied to the outer frame.                           |
+| `aria-label`      | `string`                     | `'Video'` | Accessible name for the video.                                      |
+
+The frame defaults to a full-width 16:9 aspect ratio, with the video filling the frame using `object-cover`. Use `className` or `style` to change the frame's layout. Common native video props such as `poster`, media event callbacks, and caption-track children are forwarded; preload is managed by viewport proximity.
+
+The entry point also exports `VideoPlayerProps`:
+
+```tsx
+import type { VideoPlayerProps } from '@vezham/react/components/video-player'
+```

@@ -1,8 +1,9 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import type { ComponentProps } from 'react'
 
-import { NotebookDrawerFooter, NotebookDrawerHeader } from './notebook-drawer'
-import { NotebookHeader } from './notebook-header'
+import { Notebook } from '@vezham/react/layouts/notebook'
+
+import { getNotebookConfig } from '../../config/notebook'
 
 const { navigate, close } = vi.hoisted(() => ({
   navigate: vi.fn(),
@@ -28,9 +29,9 @@ vi.mock('@vezham/docs-react/layouts/notebook', () => ({
 }))
 
 vi.mock('@vezham/react/components/brand', () => ({
-  Brand: {
+  Brand: Object.assign(() => <span>Vezham Developers</span>, {
     Link: ({ to }: { to: string }) => <a href={to}>Vezham Developers</a>
-  }
+  })
 }))
 
 vi.mock('./control-center', () => ({
@@ -41,26 +42,46 @@ describe('notebook drawer', () => {
   beforeEach(() => vi.clearAllMocks())
 
   it('uses default controls and allows replacing or hiding them in the footer', () => {
-    const view = render(<NotebookDrawerFooter />)
+    const view = render(
+      <Notebook.Drawer.Footer {...getNotebookConfig('en').drawerFooterProps} />
+    )
     expect(view.getByRole('button', { name: 'ControlCenter' })).toBeTruthy()
     view.rerender(
-      <NotebookDrawerFooter controls={<button>Custom controls</button>} />
+      <Notebook.Drawer.Footer
+        {...getNotebookConfig('en').drawerFooterProps}
+        controls={<button>Custom controls</button>}
+      />
     )
     expect(view.queryByRole('button', { name: 'ControlCenter' })).toBeNull()
     expect(view.getByRole('button', { name: 'Custom controls' })).toBeTruthy()
-    view.rerender(<NotebookDrawerFooter controls={false} />)
+    view.rerender(
+      <Notebook.Drawer.Footer
+        {...getNotebookConfig('en').drawerFooterProps}
+        controls={false}
+      />
+    )
     expect(view.queryByRole('button')).toBeNull()
   })
 
   it('uses the same default and overrides in the header', () => {
-    const view = render(<NotebookHeader locale="en" />)
+    const view = render(
+      <Notebook.Header {...getNotebookConfig('en').headerProps} />
+    )
     expect(view.getByRole('button', { name: 'ControlCenter' })).toBeTruthy()
     view.rerender(
-      <NotebookHeader locale="en" controls={<button>Custom controls</button>} />
+      <Notebook.Header
+        {...getNotebookConfig('en').headerProps}
+        controls={<button>Custom controls</button>}
+      />
     )
     expect(view.queryByRole('button', { name: 'ControlCenter' })).toBeNull()
     expect(view.getByRole('button', { name: 'Custom controls' })).toBeTruthy()
-    view.rerender(<NotebookHeader locale="en" controls={false} />)
+    view.rerender(
+      <Notebook.Header
+        {...getNotebookConfig('en').headerProps}
+        controls={false}
+      />
+    )
     expect(view.queryByRole('button', { name: 'ControlCenter' })).toBeNull()
     expect(view.queryByRole('button', { name: 'Custom controls' })).toBeNull()
   })
@@ -70,7 +91,7 @@ describe('notebook drawer', () => {
     async locale => {
       const prefix = locale === 'cn' ? '/cn' : ''
       const props = {
-        locale,
+        ...getNotebookConfig(locale).drawerHeaderProps,
         sections: [
           {
             id: 'start',
@@ -85,7 +106,7 @@ describe('notebook drawer', () => {
         ]
       }
       const view = render(
-        <NotebookDrawerHeader {...props} selectedSection="start" />
+        <Notebook.Drawer.Header {...props} selectedSection="start" />
       )
       expect(view.getByRole('link').getAttribute('href')).toBe(`${prefix}/`)
       const triggers = () =>
@@ -99,7 +120,7 @@ describe('notebook drawer', () => {
         })
       )
       view.rerender(
-        <NotebookDrawerHeader {...props} selectedSection="guides" />
+        <Notebook.Drawer.Header {...props} selectedSection="guides" />
       )
       for (const trigger of triggers())
         expect(trigger.textContent).toContain('Guides')

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { Fragment, createElement } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -53,6 +53,40 @@ afterEach(() => {
 })
 
 describe('local component previews', () => {
+  it('loads the shared sidebar group example and expands a collapsed group', async () => {
+    render(<ComponentPreview name="react-sidebar-group-default" />)
+    await act(() => vi.dynamicImportSettled())
+    const example = await screen.findByRole('navigation', {
+      name: 'Example documentation'
+    })
+    expect(within(example).getByRole('link', { name: 'Brand' })).toBeVisible()
+    const media = within(example).getByRole('button', { name: 'Media' })
+    expect(media).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(media)
+    expect(
+      await within(example).findByRole('link', { name: 'VideoPlayer' })
+    ).toBeVisible()
+  })
+
+  it('isolates a Notebook example and changes its viewport without reloading it', async () => {
+    render(<ComponentPreview name="react-notebook-default" />)
+    const frame = await screen.findByTitle('Basic notebook layout')
+    expect(frame).toHaveAttribute('src', '/examples/react-notebook-default')
+    expect(document.querySelector('#nd-subnav')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Desktop' }))
+    expect(frame).toHaveStyle({ width: '1280px' })
+    fireEvent.click(screen.getByRole('button', { name: 'Mobile' }))
+    expect(frame).toHaveStyle({ width: '375px' })
+    expect(screen.getByRole('button', { name: 'Mobile' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByRole('link', { name: 'Open example' })).toHaveAttribute(
+      'href',
+      '/examples/react-notebook-default'
+    )
+  })
+
   it('loads the in-house Brand demo and exposes its import source', async () => {
     render(
       <ComponentPreview name="react-brand-channels">
@@ -72,6 +106,24 @@ describe('local component previews', () => {
     expect(
       screen.getByRole('region', { name: 'Example source code' })
     ).toHaveTextContent('@vezham/react/components/brand')
+  })
+
+  it('switches the VideoPlayer example between themed recordings', async () => {
+    render(<ComponentPreview name="react-video-player-themed" />)
+    await act(() => vi.dynamicImportSettled())
+    const video = await screen.findByLabelText('Themed button demonstration')
+    expect(video).toHaveAttribute(
+      'src',
+      expect.stringContaining('button-docs-light.mp4')
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Use dark recording' }))
+    expect(video).toHaveAttribute(
+      'src',
+      expect.stringContaining('button-docs-dark.mp4')
+    )
+    expect(
+      screen.getByRole('button', { name: 'Use light recording' })
+    ).toBeVisible()
   })
 
   it('loads a Pro demo, supports interaction, and exposes its source', async () => {

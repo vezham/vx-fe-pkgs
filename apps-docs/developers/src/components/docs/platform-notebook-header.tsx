@@ -1,8 +1,10 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import { Notebook } from '@vezham/react/layouts/notebook'
+
 import { LibrarySelector } from '@components/docs/library-selector'
-import { NotebookHeader } from '@components/docs/notebook-header'
 import { SectionTabs } from '@components/docs/section-tabs'
+import { getNotebookConfig } from '@config/notebook'
 import type { UiLibrary } from '@config/ui-libraries'
 import type { Locale } from '@generated/vx'
 
@@ -21,9 +23,9 @@ export const PlatformNotebookHeader = ({
   ...props
 }: Props) => {
   return (
-    <NotebookHeader
+    <Notebook.Header
       {...props}
-      locale={locale}
+      {...getNotebookConfig(locale).headerProps}
       leading={<LibrarySelector library={library} locale={locale} />}>
       <SectionTabs
         library={library}
@@ -31,6 +33,6 @@ export const PlatformNotebookHeader = ({
         platform={platform}
         selectedSection={selectedSection}
       />
-    </NotebookHeader>
+    </Notebook.Header>
   )
 }

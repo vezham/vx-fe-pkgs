@@ -2,26 +2,24 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { useNotebookLayout } from '@vezham/docs-react/layouts/notebook'
 import { Sidebar } from '@vezham/icons-react'
-import { Brand } from '@vezham/react/components/brand'
 
-import { ControlCenter } from '@components/docs/control-center'
-import { UserControls } from '@components/docs/user-controls'
-import { getBrandLinkProps } from '@config/brand'
-import type { Locale } from '@generated/vx'
+import { Brand } from '../../components/brand'
 
-type Props = ComponentPropsWithoutRef<'header'> & {
-  locale: Locale
+export type NotebookHeaderProps = ComponentPropsWithoutRef<'header'> & {
+  brand?: ReactNode
+  userControls?: ReactNode
   leading?: ReactNode
   controls?: ReactNode
 }
 
 export const NotebookHeader = ({
-  locale,
+  brand = <Brand.Link to="/" />,
+  userControls,
   leading,
   controls,
   children,
   ...props
-}: Props) => {
+}: NotebookHeaderProps) => {
   const { navItems, slots } = useNotebookLayout()
   const searchTrigger =
     slots.searchTrigger === false ? undefined : slots.searchTrigger
@@ -36,7 +34,7 @@ export const NotebookHeader = ({
       className={`layout:[--fd-header-height:--spacing(14)] lg:layout:[--fd-header-height:--spacing(24)] sticky top-(--fd-docs-row-1) z-10 flex flex-col backdrop-blur-sm transition-colors [grid-area:header] ${props.className ?? ''}`}>
       <div data-header-body="" className="flex h-14 gap-2 px-4 md:px-6">
         <div className="flex flex-1 items-center gap-2">
-          <Brand.Link {...getBrandLinkProps(locale)} />
+          {brand}
           {leading}
         </div>
         {FullSearchTrigger && (
@@ -71,8 +69,8 @@ export const NotebookHeader = ({
             </SidebarTrigger>
           </div>
           <div className="flex items-center gap-2 max-md:hidden">
-            {controls ?? <ControlCenter />}
-            <UserControls />
+            {controls}
+            {userControls}
           </div>
         </div>
       </div>

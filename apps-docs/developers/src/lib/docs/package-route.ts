@@ -1,5 +1,6 @@
 import { notFound, redirect } from '@tanstack/react-router'
 
+import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 import { localizedUrl } from '@vezham/start/runtime/docs'
 
 import { i18n } from '@app/docs'
@@ -7,7 +8,6 @@ import {
   getAvailableDocsPackages,
   packagesDocsRuntime
 } from '@components/docs/packages-docs'
-import { filterSidebarTree } from '@components/docs/sidebar-group/tree'
 import {
   docsPackages,
   getDocsPackage,
@@ -16,6 +16,7 @@ import {
 import { docsPageHead } from '@src/lib/page-head'
 
 import { getContentPage, getContentSections } from './content-navigation'
+import { resolveDocsIcon } from './icons'
 
 type Params = { package?: string; _splat?: string; lang?: string }
 
@@ -58,7 +59,8 @@ export const loadPackageDocs = async ({ params }: { params: Params }) => {
   const section = sections.find(item => item.id === page.split('/')[0])
   if (!section) throw notFound()
   const docsBase = localizedUrl(i18n, data.locale, '/docs/packages')
-  const nodes = filterSidebarTree({
+  const nodes = SidebarGroup.filterTree({
+    resolveIcon: resolveDocsIcon,
     docsBase,
     nodes: tree.children,
     prefix: packageId
@@ -73,7 +75,8 @@ export const loadPackageDocs = async ({ params }: { params: Params }) => {
       ...tree,
       $id: `${data.locale}:packages:${packageId}:${section.id}`,
       name: docsPackages[packageId].name,
-      children: filterSidebarTree({
+      children: SidebarGroup.filterTree({
+        resolveIcon: resolveDocsIcon,
         docsBase,
         nodes,
         prefix: `${packageId}/${section.id}`

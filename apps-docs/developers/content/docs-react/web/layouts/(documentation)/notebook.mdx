@@ -1,0 +1,390 @@
+---
+title: Notebook
+description: A documentation layout with a shared header, section tabs, and responsive sidebar drawers.
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/layouts/notebook
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+Import Notebook from its layout entry point:
+
+```tsx
+import { Notebook } from '@vezham/react/layouts/notebook'
+```
+
+Use `Notebook.getLayoutOptions` to connect the shared header, section tabs, and drawer parts. Pass the navigation tree and page content to `Notebook` inside your app's existing TanStack Router and docs provider.
+
+## Examples
+
+### Basic Notebook
+
+This example includes a navigation tree, section tabs, and a responsive drawer. Follow the sidebar links to see the page and active section update.
+
+<ComponentPreview name="react-notebook-default">
+
+```tsx title="default.tsx"
+import { Brand } from '@vezham/react/components/brand'
+import { Notebook } from '@vezham/react/layouts/notebook'
+
+import { NotebookExamplePage, useNotebookExample } from './shared'
+
+const basePath = '/examples/react-notebook-default'
+
+export const Default = () => {
+  const { path, page, tree, sections } = useNotebookExample(basePath)
+  const brand = <Brand.Link to={basePath} name="Acme" channel="Docs" />
+
+  return (
+    <Notebook
+      tree={tree}
+      {...Notebook.getLayoutOptions({
+        path,
+        title: 'Acme Docs',
+        sections,
+        baseOptions: { slots: { searchTrigger: false } },
+        headerProps: { brand },
+        drawerHeaderProps: { brand }
+      })}>
+      <NotebookExamplePage page={page} />
+    </Notebook>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Custom Branding and Controls
+
+Supply branding, a version label, and app controls through the layout options. The Release notes button opens a popover; the same control is available in the mobile drawer footer.
+
+<ComponentPreview name="react-notebook-custom-controls">
+
+```tsx title="custom-controls.tsx"
+import { Button, Popover } from '@vezham/react-v3'
+import { Brand } from '@vezham/react/components/brand'
+import { Notebook } from '@vezham/react/layouts/notebook'
+
+import { NotebookExamplePage, useNotebookExample } from './shared'
+
+const basePath = '/examples/react-notebook-custom-controls'
+
+const ReleaseNotes = () => (
+  <Popover>
+    <Button size="sm" variant="secondary">
+      Release notes
+    </Button>
+    <Popover.Content className="max-w-64">
+      <Popover.Dialog>
+        <Popover.Heading>Version 2.0</Popover.Heading>
+        <p className="text-muted mt-2 text-sm">
+          Section tabs and responsive drawers are now available.
+        </p>
+      </Popover.Dialog>
+    </Popover.Content>
+  </Popover>
+)
+
+export const CustomControls = () => {
+  const { path, page, tree, sections } = useNotebookExample(basePath)
+  const brand = <Brand.Link to={basePath} name="Acme" channel="API" />
+  const controls = <ReleaseNotes />
+
+  return (
+    <Notebook
+      tree={tree}
+      {...Notebook.getLayoutOptions({
+        path,
+        title: 'Acme API',
+        sections,
+        sectionLabel: 'API documentation sections',
+        baseOptions: { slots: { searchTrigger: false } },
+        leading: <span className="text-muted text-xs">v2.0</span>,
+        secondary: <span className="text-muted text-sm">Public API</span>,
+        headerProps: { brand, controls },
+        drawerHeaderProps: { brand },
+        drawerFooterProps: { controls }
+      })}>
+      <NotebookExamplePage page={page} />
+    </Notebook>
+  )
+}
+```
+
+</ComponentPreview>
+
+Use **Mobile**, **Tablet**, and **Desktop** to change the preview viewport. Wider previews scroll horizontally. **Open example** opens the layout in a separate tab. Each preview has its own page, so its drawer, scrolling, and navigation stay inside the example.
+
+### Shared Example Navigation
+
+Place this `shared.tsx` beside either example. It provides three pages and derives the active page from the router. The app's root supplies the TanStack Router and docs provider.
+
+```tsx title="shared.tsx"
+import { useLocation } from '@tanstack/react-router'
+import type { ReactNode } from 'react'
+
+import type { Root } from '@vezham/docs-core/page-tree'
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle
+} from '@vezham/docs-react/layouts/notebook/page'
+
+const pages = [
+  {
+    path: '',
+    title: 'Getting Started',
+    description: 'Build a documentation site with the Notebook layout.'
+  },
+  {
+    path: '/guides',
+    title: 'Guides',
+    description: 'Practical guides for configuring your application.'
+  },
+  {
+    path: '/guides/installation',
+    title: 'Installation',
+    description: 'Install the package and connect your navigation tree.'
+  }
+]
+
+export const useNotebookExample = (basePath: string) => {
+  const path = useLocation({ select: location => location.pathname })
+  const page =
+    pages.find(page => `${basePath}${page.path}` === path) ?? pages[0]
+  const tree: Root = {
+    name: 'Acme Docs',
+    children: pages.map(page => ({
+      type: 'page',
+      name: page.title,
+      url: `${basePath}${page.path}`
+    }))
+  }
+
+  return {
+    path,
+    page,
+    tree,
+    sections: [
+      { title: 'Getting Started', path: basePath },
+      { title: 'Guides', path: `${basePath}/guides` }
+    ]
+  }
+}
+
+export const NotebookExamplePage = ({
+  page,
+  children
+}: {
+  page: (typeof pages)[number]
+  children?: ReactNode
+}) => (
+  <DocsPage
+    toc={[]}
+    footer={{ enabled: false }}
+    breadcrumb={{ enabled: false }}
+    tableOfContent={{ enabled: false }}
+    tableOfContentPopover={{ enabled: false }}>
+    <DocsTitle>{page.title}</DocsTitle>
+    <DocsDescription>{page.description}</DocsDescription>
+    <DocsBody>
+      <p>
+        Choose a page from the sidebar or switch between Getting Started and
+        Guides. The active section follows the current page.
+      </p>
+      <h2>Responsive navigation</h2>
+      <p>
+        At a mobile width, open the sidebar to try the section picker. At a
+        desktop width, use the tabs and collapse the sidebar.
+      </p>
+      {children}
+    </DocsBody>
+  </DocsPage>
+)
+```
+
+A notebook owns the page shell; render it at the page-layout boundary.
+
+## Anatomy
+
+Access the related parts through dot notation. `Notebook.Drawer` groups the header and footer components; it is not a separate drawer wrapper.
+
+```tsx
+<Notebook
+  tree={tree}
+  slots={{
+    header: props => (
+      <Notebook.Header {...props}>
+        <Notebook.SectionTabs>{sectionLinks}</Notebook.SectionTabs>
+      </Notebook.Header>
+    )
+  }}
+  sidebar={{
+    banner: props => (
+      <Notebook.Drawer.Header
+        {...props}
+        sections={sections}
+        selectedSection={selectedSection}
+      />
+    ),
+    footer: props => <Notebook.Drawer.Footer {...props} />
+  }}>
+  {children}
+</Notebook>
+```
+
+The header and section tabs read the notebook layout context. Place them in notebook slots so search, sidebar toggles, and collapse controls use the correct layout instance.
+
+## Layout Options
+
+### Sections and Active Pages
+
+`sections` contains logical section roots. `path` is the current, unlocalized route path. The helper selects the longest section path that matches the current page and keeps its tab selected for nested pages.
+
+```tsx
+const options = Notebook.getLayoutOptions({
+  title: 'Packages',
+  path: '/docs/packages/env/guides/configuration',
+  sections: [
+    { title: 'Getting Started', path: '/docs/packages/env/getting-started' },
+    { title: 'Guides', path: '/docs/packages/env/guides' }
+  ],
+  sectionLabel: 'Package documentation sections'
+})
+```
+
+The sidebar picker and desktop tabs derive their destinations from the same section list. If `sections` is omitted, the helper creates a single section from `title` and `path`.
+
+### Localized Links and Branding
+
+Keep active-route and locale resolution in the app. Use `resolveUrl` for section links, and pass localized brand links through the header and drawer props.
+
+```tsx
+import { Brand } from '@vezham/react/components/brand'
+import { Notebook } from '@vezham/react/layouts/notebook'
+import { localizedUrl } from '@vezham/start/runtime/docs'
+
+import { type Locale, vxI18n } from '@generated/vx'
+
+export const getGuideOptions = (locale: Locale, path: string) => {
+  const home = localizedUrl(vxI18n, locale, '/')
+
+  return Notebook.getLayoutOptions({
+    path,
+    title: 'Guide',
+    sections: [{ title: 'Guide', path: '/guide' }],
+    resolveUrl: value => localizedUrl(vxI18n, locale, value),
+    headerProps: { brand: <Brand.Link to={home} /> },
+    drawerHeaderProps: { brand: <Brand.Link to={home} logoSize={22} /> }
+  })
+}
+```
+
+The shared layout receives resolved URLs and React nodes. It does not import the app's generated locale configuration.
+
+### Controls and Selectors
+
+Supply app controls through `headerProps.controls`, `headerProps.userControls`, and `drawerFooterProps.controls`. The shared layout does not create app-specific controls automatically.
+
+```tsx
+const options = Notebook.getLayoutOptions({
+  path,
+  title: 'Guide',
+  leading: versionSelector,
+  secondary: collectionSelector,
+  headerProps: {
+    controls: appearanceAndLanguageControls,
+    userControls: accountControls
+  },
+  drawerFooterProps: {
+    controls: appearanceAndLanguageControls
+  }
+})
+```
+
+`leading` follows the brand in the header. `secondary` supplies collection or platform controls in the section row, tablet drawer header, and mobile drawer footer. Set a `controls` prop to `false` to hide those controls in that slot.
+
+In the developers app, `src/config/notebook.tsx` centralizes the localized brand, ControlCenter, and user controls. Existing pages combine `getNotebookConfig(locale)` with `Notebook.getLayoutOptions` and their own content-derived sections.
+
+## Responsive Behavior
+
+| Area          | Mobile                                | Tablet                                | Desktop                                            |
+| ------------- | ------------------------------------- | ------------------------------------- | -------------------------------------------------- |
+| Header        | Brand, compact search, sidebar toggle | Brand, leading content, controls      | Brand, leading content, navigation links, controls |
+| Drawer header | Brand, close button, section picker   | Secondary selector and section picker | Supplied `children`                                |
+| Drawer footer | Secondary selector and controls       | Hidden                                | Hidden                                             |
+| Section tabs  | Hidden                                | Visible when `desktopSidebar={false}` | Visible                                            |
+
+## API Reference
+
+### Notebook
+
+Wraps the docs notebook layout and accepts its props, including the required `tree` and `children`. Use `NotebookProps` when typing a wrapper.
+
+### Notebook.getLayoutOptions
+
+Returns notebook layout props without `tree` or `children`.
+
+| Option              | Type                                         | Default                  | Description                                                     |
+| ------------------- | -------------------------------------------- | ------------------------ | --------------------------------------------------------------- |
+| `path`              | `string`                                     | Required                 | Current unlocalized route path.                                 |
+| `title`             | `string`                                     | Required                 | Label for the default single section.                           |
+| `sections`          | `readonly { title: string; path: string }[]` | `[{ title, path }]`      | Section roots used by tabs and the drawer picker.               |
+| `resolveUrl`        | `(path: string) => string`                   | Identity function        | Resolves section links and active-page URLs.                    |
+| `baseOptions`       | `NotebookLayoutProps`                        | `{}`                     | Base layout settings merged with the notebook navigation.       |
+| `leading`           | `ReactNode`                                  | —                        | Header content after the brand.                                 |
+| `secondary`         | `ReactNode`                                  | —                        | Collection or platform selector shared across responsive slots. |
+| `sectionLabel`      | `string`                                     | `Documentation sections` | Accessible label for the section navigation.                    |
+| `headerProps`       | `NotebookLayoutConfig['headerProps']`        | —                        | Header branding, controls, and native header props.             |
+| `drawerHeaderProps` | `NotebookLayoutConfig['drawerHeaderProps']`  | —                        | Drawer header props excluding generated section fields.         |
+| `drawerFooterProps` | `NotebookLayoutConfig['drawerFooterProps']`  | —                        | Drawer footer props excluding the generated secondary slot.     |
+
+### Notebook.Header
+
+Accepts native header props in addition to these slots:
+
+| Prop           | Type        | Default                 | Description                                              |
+| -------------- | ----------- | ----------------------- | -------------------------------------------------------- |
+| `brand`        | `ReactNode` | `<Brand.Link to="/" />` | Brand content; the default uses env branding.            |
+| `leading`      | `ReactNode` | —                       | Content immediately after the brand.                     |
+| `controls`     | `ReactNode` | —                       | Tablet and desktop app controls.                         |
+| `userControls` | `ReactNode` | —                       | Account or sign-in controls.                             |
+| `children`     | `ReactNode` | —                       | Content below the main header row, such as section tabs. |
+
+### Notebook.Drawer.Header
+
+Accepts native div props in addition to:
+
+| Prop              | Type                         | Default                               | Description                                    |
+| ----------------- | ---------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `sections`        | `readonly NotebookSection[]` | Required                              | Picker options shaped as `{ id, title, url }`. |
+| `selectedSection` | `string \| undefined`        | Required                              | Active option ID.                              |
+| `brand`           | `ReactNode`                  | `<Brand.Link to="/" logoSize={22} />` | Mobile brand content.                          |
+| `secondary`       | `ReactNode`                  | —                                     | Tablet selector content.                       |
+| `children`        | `ReactNode`                  | —                                     | Desktop drawer banner content.                 |
+
+### Notebook.Drawer.Footer
+
+Accepts native div props and renders on mobile.
+
+| Prop        | Type        | Default | Description                                 |
+| ----------- | ----------- | ------- | ------------------------------------------- |
+| `secondary` | `ReactNode` | —       | Collection or platform selector.            |
+| `controls`  | `ReactNode` | —       | App controls displayed beside the selector. |
+
+### Notebook.SectionTabs
+
+| Prop             | Type        | Default                  | Description                                                          |
+| ---------------- | ----------- | ------------------------ | -------------------------------------------------------------------- |
+| `children`       | `ReactNode` | Required                 | Section links.                                                       |
+| `label`          | `string`    | `Documentation sections` | Accessible navigation label.                                         |
+| `desktopSidebar` | `boolean`   | `true`                   | Shows the sidebar collapse control and restricts the row to desktop. |
+
+Use `notebookSectionTabVariants({ selected })` from the same entry point to style custom section links consistently.
+
+### Types
+
+The layout entry point exports `NotebookProps`, `NotebookLayoutProps`, `NotebookLayoutConfig`, `NotebookLayoutOptions`, `NotebookHeaderProps`, `NotebookDrawerHeaderProps`, `NotebookDrawerFooterProps`, `NotebookSectionTabsProps`, and `NotebookSection`.

@@ -4,19 +4,16 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useNotebookLayout } from '@vezham/docs-react/layouts/notebook'
 import { Close } from '@vezham/icons-react'
 import { ListBox, Select } from '@vezham/react-v3'
-import { Brand } from '@vezham/react/components/brand'
 
-import { ControlCenter } from '@components/docs/control-center'
-import { getBrandLinkProps } from '@config/brand'
-import type { Locale } from '@generated/vx'
+import { Brand } from '../../components/brand'
 
-type Section = { id: string; title: string; url: string }
+export type NotebookSection = { id: string; title: string; url: string }
 
 const NotebookSectionSelect = ({
   sections,
   selectedSection
 }: {
-  sections: readonly Section[]
+  sections: readonly NotebookSection[]
   selectedSection: string | undefined
 }) => {
   const navigate = useNavigate()
@@ -50,20 +47,22 @@ const NotebookSectionSelect = ({
   )
 }
 
+export type NotebookDrawerHeaderProps = ComponentProps<'div'> & {
+  brand?: ReactNode
+  sections: readonly NotebookSection[]
+  selectedSection: string | undefined
+  secondary?: ReactNode
+}
+
 export const NotebookDrawerHeader = ({
-  locale,
+  brand = <Brand.Link to="/" logoSize={22} />,
   sections,
   selectedSection,
   secondary,
   children,
   className,
   ...props
-}: ComponentProps<'div'> & {
-  locale: Locale
-  sections: readonly Section[]
-  selectedSection: string | undefined
-  secondary?: ReactNode
-}) => {
+}: NotebookDrawerHeaderProps) => {
   const { slots } = useNotebookLayout()
   const SidebarTrigger = slots.sidebar.trigger
   const sectionSelect = (
@@ -78,7 +77,7 @@ export const NotebookDrawerHeader = ({
         {...props}
         className={`flex flex-col gap-4 border-b px-4 pt-4 pb-3 md:hidden ${className ?? ''}`}>
         <div className="flex items-center justify-between gap-4 ps-1">
-          <Brand.Link {...getBrandLinkProps(locale)} logoSize={22} />
+          {brand}
           <SidebarTrigger
             aria-label="Close sidebar"
             className="text-muted hover:bg-default-hover inline-flex size-8 shrink-0 items-center justify-center rounded-md">
@@ -97,19 +96,21 @@ export const NotebookDrawerHeader = ({
   )
 }
 
+export type NotebookDrawerFooterProps = ComponentProps<'div'> & {
+  secondary?: ReactNode
+  controls?: ReactNode
+}
+
 export const NotebookDrawerFooter = ({
   secondary,
   controls,
   className,
   ...props
-}: ComponentProps<'div'> & {
-  secondary?: ReactNode
-  controls?: ReactNode
-}) => (
+}: NotebookDrawerFooterProps) => (
   <div
     {...props}
     className={`!hidden !w-full items-center !justify-between gap-2 !border-0 px-4 pt-2 pb-4 max-md:!flex ${className ?? ''}`}>
     {secondary}
-    <div className="ms-auto">{controls ?? <ControlCenter />}</div>
+    <div className="ms-auto">{controls}</div>
   </div>
 )

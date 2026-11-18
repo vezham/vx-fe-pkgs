@@ -25,7 +25,8 @@ describe('UI documentation', () => {
     )
     expect(getPlatformSections('web').map(section => section.id)).toEqual([
       'getting-started',
-      'components'
+      'components',
+      'layouts'
     ])
     expect(getPlatformPage('native', 'components/button')).toBe(
       'getting-started'
@@ -60,7 +61,7 @@ describe('UI documentation', () => {
         getPlatformSections(platform, 'react').map(item => item.id)
       ).toEqual(
         platform === 'web'
-          ? ['getting-started', 'components']
+          ? ['getting-started', 'components', 'layouts']
           : ['getting-started']
       )
     },
@@ -92,6 +93,70 @@ describe('UI documentation', () => {
       expect(markdown).toContain('Brand.Link')
       expect(markdown).toContain('V_APP_BRAND_NAME')
       expect(markdown).toContain('react-brand-channels')
+    },
+    20_000
+  )
+
+  it.each([
+    [
+      'en',
+      'components/sidebar-group',
+      'SidebarGroup',
+      '@vezham/react/components/sidebar-group',
+      'react-sidebar-group-default'
+    ],
+    [
+      'cn',
+      'components/sidebar-group',
+      'SidebarGroup',
+      '@vezham/react/components/sidebar-group',
+      'SidebarGroup.createGroups'
+    ],
+    [
+      'en',
+      'layouts/notebook',
+      'Notebook',
+      '@vezham/react/layouts/notebook',
+      'react-notebook-default'
+    ],
+    [
+      'cn',
+      'layouts/notebook',
+      'Notebook',
+      '@vezham/react/layouts/notebook',
+      'react-notebook-custom-controls'
+    ],
+    [
+      'en',
+      'components/video-player',
+      'VideoPlayer',
+      '@vezham/react/components/video-player',
+      'react-video-player-themed'
+    ],
+    [
+      'cn',
+      'components/video-player',
+      'VideoPlayer',
+      '@vezham/react/components/video-player',
+      'onPlayingChange'
+    ]
+  ])(
+    'loads %s %s documentation and exported example source',
+    async (lang, path, title, entry, example) => {
+      const prefix = lang === 'en' ? '' : '/cn'
+      const data = await createPlatformDocsLoader('react')({
+        params: { lang, platform: 'web', _splat: path }
+      })
+      expect(data.title).toBe(title)
+      expect(data.routePath).toBe(`${prefix}/docs/ui/react/web/${path}`)
+      expect(
+        JSON.stringify(deserializePageTree(data.pageTree).children)
+      ).toContain(`${prefix}/docs/ui/react/web/${path}`)
+      const runtime = getPlatformDocsRuntime('web', 'react')
+      const { page } = runtime.getDocsPage({ lang, slugs: path.split('/') })
+      const markdown = await runtime.getLLMText(page)
+      expect(markdown).toContain(entry)
+      expect(markdown).toContain(example)
     },
     20_000
   )

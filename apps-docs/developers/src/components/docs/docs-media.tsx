@@ -4,9 +4,9 @@ import { twMerge } from 'tailwind-merge'
 
 import { Link } from '@vezham/react-v3'
 
-import { VideoPlayer, type VideoProps } from './video-player'
+import { DocsVideoPlayer, type DocsVideoPlayerProps } from './docs-video-player'
 
-export { VideoPlayer } from './video-player'
+export { DocsVideoPlayer as VideoPlayer } from './docs-video-player'
 
 type Props = ComponentProps<'img'> & {
   darkSrc?: string
@@ -74,7 +74,7 @@ export const NativeVideoPlayerView = ({
   href,
   linkLabel = 'Open in HeroUI Native',
   ...props
-}: VideoProps & {
+}: DocsVideoPlayerProps & {
   target?: 'home' | 'component' | 'auto'
   slug?: string
   href?: string
@@ -97,7 +97,7 @@ export const NativeVideoPlayerView = ({
         className="text-foreground bg-default rounded-full px-3 py-1 text-sm no-underline">
         {linkLabel}
       </Link>
-      <VideoPlayer {...props} />
+      <DocsVideoPlayer {...props} />
     </div>
   )
 }

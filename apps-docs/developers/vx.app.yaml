@@ -19,6 +19,18 @@ og:
   site: Vezham Developers
   theme: light
 routes:
+  - path: /examples/react-notebook-default
+    og: false
+  - path: /examples/react-notebook-default/guides
+    og: false
+  - path: /examples/react-notebook-default/guides/installation
+    og: false
+  - path: /examples/react-notebook-custom-controls
+    og: false
+  - path: /examples/react-notebook-custom-controls/guides
+    og: false
+  - path: /examples/react-notebook-custom-controls/guides/installation
+    og: false
   - path: /docs/packages
   - path: /docs/packages/**
     source: routes

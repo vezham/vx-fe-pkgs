@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react'
+
 import type { Item, Node } from '@vezham/docs-core/page-tree'
 
-import { resolveDocsIcon } from '@src/lib/docs/icons'
-
-type Props = {
+export type SidebarGroupTreeOptions = {
   docsBase: string
-  nodes: Node[]
+  nodes: readonly Node[]
   prefix: string
   preserveSeparators?: boolean
+  resolveIcon?: (icon: ReactNode) => ReactNode
 }
 
 const matchesSection = (node: Item, docsBase: string, prefix: string) => {
@@ -22,17 +23,18 @@ const filterNodes = ({
   docsBase,
   nodes,
   prefix,
-  preserveSeparators = false
-}: Props): Node[] =>
+  preserveSeparators = false,
+  resolveIcon = icon => icon
+}: SidebarGroupTreeOptions): Node[] =>
   nodes.flatMap((node): Node[] => {
     if (node.type === 'page') {
       return matchesSection(node, docsBase, prefix)
-        ? [{ ...node, icon: resolveDocsIcon(node.icon) }]
+        ? [{ ...node, icon: resolveIcon(node.icon) }]
         : []
     }
     if (node.type === 'separator')
       return preserveSeparators
-        ? [{ ...node, icon: resolveDocsIcon(node.icon) }]
+        ? [{ ...node, icon: resolveIcon(node.icon) }]
         : []
     if (node.type !== 'folder') return []
 
@@ -40,6 +42,7 @@ const filterNodes = ({
       docsBase,
       nodes: node.children,
       prefix,
+      resolveIcon,
       preserveSeparators:
         preserveSeparators ||
         Boolean(node.index && matchesSection(node.index, docsBase, prefix)) ||
@@ -50,14 +53,14 @@ const filterNodes = ({
     })
     const index =
       node.index && matchesSection(node.index, docsBase, prefix)
-        ? { ...node.index, icon: resolveDocsIcon(node.index.icon) }
+        ? { ...node.index, icon: resolveIcon(node.index.icon) }
         : undefined
 
     return children.length || index
       ? [
           {
             ...node,
-            icon: resolveDocsIcon(node.icon),
+            icon: resolveIcon(node.icon),
             defaultOpen: true,
             root: false,
             children,
@@ -67,7 +70,7 @@ const filterNodes = ({
       : []
   })
 
-export const filterSidebarTree = (props: Props): Node[] => {
+export const filterSidebarTree = (props: SidebarGroupTreeOptions): Node[] => {
   const nodes = filterNodes(props)
   if (nodes.length !== 1 || nodes[0].type !== 'folder') return nodes
 
@@ -90,5 +93,5 @@ const groupNodes = (nodes: Node[]): Node[] =>
       : node
   )
 
-export const createSidebarGroups = (props: Props): Node[] =>
+export const createSidebarGroups = (props: SidebarGroupTreeOptions): Node[] =>
   groupNodes(filterSidebarTree(props))

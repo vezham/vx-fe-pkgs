@@ -6,9 +6,7 @@ import {
   useState,
   useSyncExternalStore
 } from 'react'
-import { twMerge } from 'tailwind-merge'
 
-import { useTheme } from '@vezham/docs-react/provider/base'
 import {
   Pause,
   Play,
@@ -16,9 +14,13 @@ import {
   VolumeCross,
   VolumeLoud
 } from '@vezham/icons-react'
-import { Button, Spinner, Tooltip } from '@vezham/react-v3'
+import { Button, Spinner, Tooltip, cn } from '@vezham/react-v3'
 
-export type VideoProps = Omit<ComponentProps<'video'>, 'height' | 'width'> & {
+export type VideoPlayerProps = Omit<
+  ComponentProps<'video'>,
+  'height' | 'width'
+> & {
+  theme?: 'light' | 'dark'
   srcLight?: string
   srcDark?: string
   height?: number
@@ -37,18 +39,16 @@ const allowsAutoplay = () =>
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const getVideoSource = (
-  { src, srcLight, srcDark }: Pick<VideoProps, 'src' | 'srcLight' | 'srcDark'>,
+  {
+    src,
+    srcLight,
+    srcDark
+  }: Pick<VideoPlayerProps, 'src' | 'srcLight' | 'srcDark'>,
   theme: string | undefined
 ) => {
-  // vx-bot/NOTE: Both dark ScrollShadow recordings in upstream docs return 403.
-  const darkSource = /\/(?:scroll|scoll)-shadow-docs-dark\.mp4(?:\.mp4)?$/.test(
-    srcDark ?? ''
-  )
-    ? (srcLight ?? src)
-    : srcDark
   return theme === 'dark'
-    ? (darkSource ?? src ?? srcLight)
-    : (src ?? srcLight ?? darkSource)
+    ? (srcDark ?? src ?? srcLight)
+    : (src ?? srcLight ?? srcDark)
 }
 
 type VideoControlsProps = {
@@ -124,6 +124,7 @@ const VideoControls = ({
 
 export const VideoPlayer = ({
   src,
+  theme = 'light',
   srcLight,
   srcDark,
   height,
@@ -145,9 +146,8 @@ export const VideoPlayer = ({
   onError,
   onLoadStart,
   ...props
-}: VideoProps) => {
-  const { resolvedTheme } = useTheme()
-  const source = getVideoSource({ src, srcLight, srcDark }, resolvedTheme)
+}: VideoPlayerProps) => {
+  const source = getVideoSource({ src, srcLight, srcDark }, theme)
   const video = useRef<HTMLVideoElement>(null)
   const frame = useRef<HTMLDivElement>(null)
   const [near, setNear] = useState(false)
@@ -235,19 +235,19 @@ export const VideoPlayer = ({
     if (video.current) video.current.currentTime = 0
     void play()
   }
-  const label = props['aria-label'] ?? 'HeroUI component demonstration'
+  const label = props['aria-label'] ?? 'Video'
 
   return (
     <div
       ref={frame}
-      data-docs-video=""
+      data-vx-video-player=""
       data-playing={playing}
-      className={twMerge(
+      className={cn(
         'not-prose relative isolate aspect-video w-full overflow-hidden rounded-xl border',
         className
       )}
       style={style}>
-      {/* vx-bot/NOTE: Upstream UI recordings do not include caption tracks. */}
+      {/* vx-bot/NOTE: Callers can supply caption tracks through the video children. */}
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         {...props}

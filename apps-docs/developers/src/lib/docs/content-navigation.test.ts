@@ -8,7 +8,7 @@ import {
   getPlatformPage,
   getPlatformSections
 } from '../../components/docs/platform-sections'
-import { getComponentCatalog } from './component-catalog'
+import { getComponentCatalog, getLayoutCatalog } from './component-catalog'
 import { getContentPage, getContentSections } from './content-navigation'
 import { docsRuntimes } from './runtimes'
 
@@ -163,17 +163,39 @@ describe('content navigation', () => {
   })
 
   it.each(['en', 'cn'])(
-    'includes Brand in the in-house component catalog for %s',
+    'keeps in-house components and layouts in separate catalogs for %s',
     locale => {
       const prefix = locale === 'en' ? '' : '/cn'
-      expect(getComponentCatalog('web', 'react', locale)).toEqual([
+      const components = getComponentCatalog('web', 'react', locale)
+      expect(components).toHaveLength(3)
+      expect(components).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            title: 'SidebarGroup',
+            slug: 'sidebar-group',
+            url: `${prefix}/docs/ui/react/web/components/sidebar-group`
+          }),
+          expect.objectContaining({
+            title: 'Brand',
+            slug: 'brand',
+            url: `${prefix}/docs/ui/react/web/components/brand`
+          }),
+          expect.objectContaining({
+            title: 'VideoPlayer',
+            slug: 'video-player',
+            url: `${prefix}/docs/ui/react/web/components/video-player`
+          })
+        ])
+      )
+      expect(getLayoutCatalog('web', 'react', locale)).toEqual([
         expect.objectContaining({
-          title: 'Brand',
-          slug: 'brand',
-          url: `${prefix}/docs/ui/react/web/components/brand`
+          title: 'Notebook',
+          slug: 'notebook',
+          url: `${prefix}/docs/ui/react/web/layouts/notebook`
         })
       ])
       expect(getComponentCatalog('native', 'react', locale)).toEqual([])
+      expect(getLayoutCatalog('native', 'react', locale)).toEqual([])
     }
   )
 
