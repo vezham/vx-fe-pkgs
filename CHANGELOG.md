@@ -1,3 +1,22 @@
+## 27.0.1 (2026-11-18)
+
+### 🏡 Chore
+
+- **release:** publish 27.0.0-alpha.2 ([c7000cb3](https://github.com/vezham/vx-fe-pkgs/commit/c7000cb3))
+- **release:** publish 27.0.0 ([4765e39a](https://github.com/vezham/vx-fe-pkgs/commit/4765e39a))
+- **repo:** update Nx to 24.0.5 ([9cfc761d](https://github.com/vezham/vx-fe-pkgs/commit/9cfc761d))
+- **repo:** sync lock file ([22de2975](https://github.com/vezham/vx-fe-pkgs/commit/22de2975))
+- **workspace:** update v27 dependencies ([b49a0a14](https://github.com/vezham/vx-fe-pkgs/commit/b49a0a14))
+
+### ✅ Tests
+
+- **test-e2e:** remove workspace tests ([31aeae25](https://github.com/vezham/vx-fe-pkgs/commit/31aeae25))
+
+### ❤️ Thank You
+
+- v0xvigneshwaran
+- vx-vigneshwaran @vx-vigneshwaran
+
 # 27.0.0 (2026-11-15)
 
 ### 🩹 Fixes
