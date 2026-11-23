@@ -1,0 +1,169 @@
+import type { MutationOptions, QueryKey } from '@tanstack/query-core'
+
+import type { BetterFetchError } from '@vezham/auth/client'
+
+import type { OrganizationRolesAuthClient } from './organization-auth-client'
+import { organizationMutationKeys } from './organization-mutation-keys'
+import { organizationQueryKeys } from './organization-query-keys'
+import { hasMemberRole } from './organization-roles'
+
+type RoleMethod = 'createRole' | 'updateRole' | 'deleteRole'
+type RoleParams<
+  TAuthClient extends OrganizationRolesAuthClient,
+  TMethod extends RoleMethod
+> = NonNullable<Parameters<TAuthClient['organization'][TMethod]>[0]>
+
+const roleMutationOptions = <
+  TAuthClient extends OrganizationRolesAuthClient,
+  TMethod extends RoleMethod
+>(
+  authClient: TAuthClient,
+  method: TMethod,
+  mutationKey: readonly string[],
+  userId?: string,
+  organizationId?: string
+) => {
+  const mutationFn = async (params: RoleParams<TAuthClient, TMethod>) => {
+    const resolvedOrganizationId = params.organizationId ?? organizationId
+
+    if (!resolvedOrganizationId) {
+      throw new Error(`[Vezham Auth] organizationId is required for ${method}.`)
+    }
+
+    const input = {
+      ...params,
+      organizationId: resolvedOrganizationId,
+      fetchOptions: { ...params.fetchOptions, throw: true }
+    }
+
+    if (method === 'deleteRole') {
+      const roleSelector = params as DeleteRoleParams<TAuthClient>
+      const role = await authClient.organization.getRole({
+        query: {
+          organizationId: resolvedOrganizationId,
+          roleId: roleSelector.roleId,
+          roleName: roleSelector.roleName
+        },
+        fetchOptions: { throw: true }
+      })
+
+      if (role) {
+        let offset = 0
+        while (true) {
+          const assignments = await authClient.organization.listMembers({
+            query: {
+              organizationId: resolvedOrganizationId,
+              filterField: 'role',
+              filterOperator: 'contains',
+              filterValue: role.role,
+              limit: 100,
+              offset
+            },
+            fetchOptions: { throw: true }
+          })
+          if (
+            assignments?.members.some(member =>
+              hasMemberRole(member.role, role.role)
+            )
+          ) {
+            throw Object.assign(
+              new Error(
+                'Move members to another role before deleting this role.'
+              ),
+              { code: 'ROLE_HAS_MEMBERS' }
+            )
+          }
+          if (!assignments?.members.length) break
+          offset += assignments.members.length
+          if (offset >= assignments.total) break
+        }
+      }
+    }
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- TypeScript cannot resolve a method picked by a generic key
+    const roleMethod = authClient.organization[method] as (
+      body: typeof input
+    ) => ReturnType<TAuthClient['organization'][TMethod]>
+
+    return roleMethod(input)
+  }
+
+  const relatedQueries: QueryKey[] = [
+    organizationQueryKeys.roles.all(userId),
+    organizationQueryKeys.members.all(userId),
+    organizationQueryKeys.invitations.all(userId),
+    organizationQueryKeys.fullDetails(userId)
+  ]
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- types the generic role method result and Better Auth error
+  return {
+    mutationKey,
+    mutationFn,
+    meta: {
+      awaits: relatedQueries,
+      invalidates: [organizationQueryKeys.permissions.all(userId)]
+    }
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
+    BetterFetchError,
+    Parameters<typeof mutationFn>[0]
+  >
+}
+
+export type CreateRoleParams<
+  TAuthClient extends OrganizationRolesAuthClient = OrganizationRolesAuthClient
+> = RoleParams<TAuthClient, 'createRole'>
+export type UpdateRoleParams<
+  TAuthClient extends OrganizationRolesAuthClient = OrganizationRolesAuthClient
+> = RoleParams<TAuthClient, 'updateRole'>
+export type DeleteRoleParams<
+  TAuthClient extends OrganizationRolesAuthClient = OrganizationRolesAuthClient
+> = RoleParams<TAuthClient, 'deleteRole'>
+
+type PublicMutationOptions<T> = Omit<T, 'mutationKey' | 'mutationFn' | 'meta'>
+
+export const createRoleOptions = <T extends OrganizationRolesAuthClient>(
+  authClient: T,
+  userId?: string,
+  organizationId?: string
+) =>
+  roleMutationOptions(
+    authClient,
+    'createRole',
+    organizationMutationKeys.roles.create,
+    userId,
+    organizationId
+  )
+
+export const updateRoleOptions = <T extends OrganizationRolesAuthClient>(
+  authClient: T,
+  userId?: string,
+  organizationId?: string
+) =>
+  roleMutationOptions(
+    authClient,
+    'updateRole',
+    organizationMutationKeys.roles.update,
+    userId,
+    organizationId
+  )
+
+export const deleteRoleOptions = <T extends OrganizationRolesAuthClient>(
+  authClient: T,
+  userId?: string,
+  organizationId?: string
+) =>
+  roleMutationOptions(
+    authClient,
+    'deleteRole',
+    organizationMutationKeys.roles.delete,
+    userId,
+    organizationId
+  )
+
+export type CreateRoleOptions<T extends OrganizationRolesAuthClient> =
+  PublicMutationOptions<ReturnType<typeof createRoleOptions<T>>>
+export type UpdateRoleOptions<T extends OrganizationRolesAuthClient> =
+  PublicMutationOptions<ReturnType<typeof updateRoleOptions<T>>>
+export type DeleteRoleOptions<T extends OrganizationRolesAuthClient> =
+  PublicMutationOptions<ReturnType<typeof deleteRoleOptions<T>>>

@@ -1,11 +1,13 @@
 import type { ComponentType } from 'react'
 
+import { authDemos } from './auth'
 import { layoutDemos } from './layouts'
 
 export const reactDemos: Record<
   string,
   { loader: () => Promise<ComponentType>; file: string }
 > = {
+  ...authDemos,
   'react-install-tabs-default': {
     file: 'install-tabs/default.tsx',
     loader: () =>

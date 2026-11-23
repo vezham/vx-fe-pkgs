@@ -1,0 +1,175 @@
+import { describe, expect, it } from 'vitest'
+
+import {
+  getFormFieldErrorMessage,
+  getFormFieldErrors,
+  normalizeAuthFormServerError,
+  validateAbsoluteUrl,
+  validateAbsoluteUrlList,
+  validateEmailAddress,
+  validateMatchingValue,
+  validateMinimumItems,
+  validateStringLength
+} from '../src/lib/form-validation'
+
+describe('form validation', () => {
+  it('validates required and bounded strings after trimming', () => {
+    expect(
+      validateStringLength('   ', {
+        requiredMessage: 'Required',
+        trim: true
+      })
+    ).toEqual({ message: 'Required' })
+    expect(
+      validateStringLength('short', {
+        minLength: 8,
+        minLengthMessage: 'Too short'
+      })
+    ).toEqual({ message: 'Too short' })
+    expect(
+      validateStringLength('valid value', {
+        maxLength: 20,
+        minLength: 8
+      })
+    ).toBeUndefined()
+  })
+
+  it('rejects malformed email addresses', () => {
+    const messages = { invalidMessage: 'Invalid', requiredMessage: 'Required' }
+
+    expect(validateEmailAddress('', messages)).toEqual({ message: 'Required' })
+    expect(validateEmailAddress('name@example', messages)).toEqual({
+      message: 'Invalid'
+    })
+    expect(validateEmailAddress('name@other@example.com', messages)).toEqual({
+      message: 'Invalid'
+    })
+    expect(validateEmailAddress('name@example.com', messages)).toBeUndefined()
+  })
+
+  it.each([
+    'test@test.com2',
+    'a@b',
+    '.a@b.co',
+    'a..b@c.co',
+    'a@b..co',
+    'a\tb@example.com'
+  ])('rejects email syntax rejected by Better Auth: %s', email => {
+    expect(
+      validateEmailAddress(email, { invalidMessage: 'Invalid email' })
+    ).toEqual({
+      message: 'Invalid email'
+    })
+  })
+
+  it('accepts email aliases, subdomains, and surrounding whitespace', () => {
+    expect(
+      validateEmailAddress(' a+b@sub.example.io ', {
+        invalidMessage: 'Invalid'
+      })
+    ).toBeUndefined()
+  })
+
+  it('validates matching values and minimum collection sizes', () => {
+    expect(validateMatchingValue('one', 'two', 'Mismatch')).toEqual({
+      message: 'Mismatch'
+    })
+    expect(validateMatchingValue('same', 'same', 'Mismatch')).toBeUndefined()
+    expect(validateMinimumItems([], 1, 'Choose one')).toEqual({
+      message: 'Choose one'
+    })
+    expect(validateMinimumItems(['member'], 1, 'Choose one')).toBeUndefined()
+  })
+
+  it('validates single URLs and newline-delimited URL lists', () => {
+    const options = {
+      allowedProtocols: ['https:', 'http:'] as const,
+      invalidMessage: 'Invalid URL',
+      requiredMessage: 'Required'
+    }
+
+    expect(validateAbsoluteUrl('javascript:alert(1)', options)).toEqual({
+      message: 'Invalid URL'
+    })
+    expect(validateAbsoluteUrl('https://example.com', options)).toBeUndefined()
+    expect(
+      validateAbsoluteUrlList(
+        'https://example.com/callback\nhttp://localhost:3000/callback',
+        options
+      )
+    ).toBeUndefined()
+    expect(
+      validateAbsoluteUrlList('https://good.test\nnot a url', options)
+    ).toEqual({ message: 'Invalid URL' })
+  })
+
+  it('normalizes string and object validator errors', () => {
+    expect(getFormFieldErrorMessage([undefined, { message: 'Required' }])).toBe(
+      'Required'
+    )
+    expect(getFormFieldErrorMessage(['Invalid'])).toBe('Invalid')
+    expect(getFormFieldErrorMessage([])).toBeUndefined()
+    expect(
+      getFormFieldErrors([
+        'Invalid',
+        undefined,
+        { message: 'Required' },
+        { message: '' },
+        { other: true }
+      ])
+    ).toEqual([{ message: 'Invalid' }, { message: 'Required' }])
+  })
+
+  it('normalizes form and field errors from mutation responses', () => {
+    expect(
+      normalizeAuthFormServerError(
+        {
+          body: {
+            fieldErrors: {
+              email: ['Email is already in use']
+            }
+          },
+          message: 'Could not create the account'
+        },
+        'Request failed'
+      )
+    ).toEqual({
+      fields: { email: { message: 'Email is already in use' } },
+      form: { message: 'Could not create the account' }
+    })
+
+    expect(normalizeAuthFormServerError(null, 'Request failed')).toEqual({
+      fields: undefined,
+      form: { message: 'Request failed' }
+    })
+  })
+
+  it('prefers Better Fetch response errors over HTTP status text', () => {
+    expect(
+      normalizeAuthFormServerError(
+        {
+          status: 401,
+          statusText: 'Unauthorized',
+          message: 'Unauthorized',
+          error: {
+            message: 'Invalid email or password',
+            fieldErrors: { email: ['Email cannot be used'] }
+          }
+        },
+        'Request failed'
+      )
+    ).toEqual({
+      fields: { email: { message: 'Email cannot be used' } },
+      form: { message: 'Invalid email or password' }
+    })
+  })
+
+  it('uses the fallback when an HTTP error only contains status text', () => {
+    expect(
+      normalizeAuthFormServerError(
+        { status: 500, statusText: 'Server Error', message: 'Server Error' },
+        'Request failed'
+      ).form
+    ).toEqual({ message: 'Request failed' })
+  })
+})

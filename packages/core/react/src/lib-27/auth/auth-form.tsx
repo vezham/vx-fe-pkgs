@@ -1,0 +1,346 @@
+import {
+  type AnyFormApi,
+  createFormHook,
+  createFormHookContexts
+} from '@tanstack/react-form'
+import {
+  type ComponentProps,
+  type ReactNode,
+  type SyntheticEvent,
+  useEffect,
+  useRef
+} from 'react'
+
+import {
+  type AdditionalField as AdditionalFieldConfig,
+  type AdditionalFieldFormValue,
+  DEFAULT_ADDITIONAL_FIELD_VALIDATION_DEBOUNCE_MS,
+  getFormFieldErrorMessage,
+  getFormFieldErrors,
+  normalizeAuthFormServerError,
+  validateAdditionalFieldRequired,
+  validateAdditionalFieldValue
+} from '@vezham/auth-ui-core'
+import {
+  Alert,
+  Button,
+  Description,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  Spinner,
+  TextField
+} from '@vezham/react-v3'
+
+import { AdditionalField, type AdditionalFieldProps } from './additional-field'
+
+const { fieldContext, formContext, useFieldContext, useFormContext } =
+  createFormHookContexts()
+
+const DEFAULT_AUTH_FORM_SERVER_ERROR = 'Unable to submit this form. Try again.'
+
+export const focusFirstInvalidAuthFormControl = (form: HTMLFormElement) => {
+  requestAnimationFrame(() => {
+    form
+      .querySelector<HTMLElement>(
+        '[aria-invalid="true"]:not([disabled]), :invalid:not([disabled])'
+      )
+      ?.focus()
+  })
+}
+
+const AuthFormFieldError = () => {
+  const field = useFieldContext<unknown>()
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+  const message = isInvalid
+    ? getFormFieldErrorMessage(field.state.meta.errors)
+    : undefined
+
+  return message ? <FieldError>{message}</FieldError> : null
+}
+
+const AuthFormServerError = () => {
+  const form = useFormContext()
+
+  return (
+    <form.Subscribe selector={state => state.errorMap.onServer}>
+      {error => {
+        const formError =
+          error && typeof error === 'object' && 'form' in error
+            ? error.form
+            : error
+        const message = getFormFieldErrorMessage(formError ? [formError] : [])
+        return message ? (
+          <Alert status="danger">
+            <Alert.Content>
+              <Alert.Description>{message}</Alert.Description>
+            </Alert.Content>
+          </Alert>
+        ) : null
+      }}
+    </form.Subscribe>
+  )
+}
+
+export const setAuthFormServerError = (
+  form: AnyFormApi,
+  error: unknown,
+  fallbackMessage: string
+) => {
+  const normalized = normalizeAuthFormServerError(error, fallbackMessage)
+  form.setErrorMap({
+    onServer: {
+      fields: normalized.fields ?? {},
+      form: normalized.form
+    }
+  })
+}
+
+export const clearAuthFormServerError = (form: AnyFormApi) => {
+  form.setErrorMap({ onServer: { fields: {} } })
+}
+
+export const clearAuthFormFieldServerError = (
+  form: AnyFormApi,
+  fieldName: string
+) => {
+  form.setErrorMap({ onServer: undefined })
+  if (!fieldName) return
+
+  // vx-bot/NOTE: AnyFormApi has untyped field names
+  const fieldMeta = form.getFieldMeta(fieldName as never)
+  if (!fieldMeta?.errorMap.onServer) return
+
+  // vx-bot/NOTE: AnyFormApi has untyped field names
+  form.setFieldMeta(fieldName as never, (current = fieldMeta) => ({
+    ...current,
+    errorMap: { ...current.errorMap, onServer: undefined },
+    errorSourceMap: { ...current.errorSourceMap, onServer: undefined }
+  }))
+}
+
+export const submitAuthForm = async (
+  form: AnyFormApi,
+  serverErrorMessage = DEFAULT_AUTH_FORM_SERVER_ERROR
+) => {
+  clearAuthFormServerError(form)
+  try {
+    await form.handleSubmit()
+    return form.state.isValid
+  } catch (error) {
+    if (!form.state.errorMap.onServer) {
+      setAuthFormServerError(form, error, serverErrorMessage)
+    }
+    return false
+  }
+}
+
+type AuthFormRootProps = Omit<ComponentProps<typeof Form>, 'onSubmit'> & {
+  onBeforeSubmit?: () => void
+  serverErrorMessage?: string
+}
+
+const AuthFormRoot = ({
+  children,
+  onBeforeSubmit,
+  serverErrorMessage = DEFAULT_AUTH_FORM_SERVER_ERROR,
+  ...props
+}: AuthFormRootProps) => {
+  const form = useFormContext()
+  const formElementRef = useRef<HTMLFormElement>(null)
+  const submittingRef = useRef(false)
+
+  useEffect(() => {
+    const formElement = formElementRef.current
+    if (!formElement) return undefined
+
+    const clearServerError = (event: Event) => {
+      const target = event.target
+      const fieldName =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement
+          ? target.name
+          : ''
+      clearAuthFormFieldServerError(form, fieldName)
+    }
+    formElement.addEventListener('input', clearServerError)
+    return () => formElement.removeEventListener('input', clearServerError)
+  }, [form])
+
+  const submit = async (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (submittingRef.current || form.state.isSubmitting) return
+
+    const formElement = event.currentTarget
+    onBeforeSubmit?.()
+    submittingRef.current = true
+    try {
+      const isValid = await submitAuthForm(form, serverErrorMessage)
+      if (!isValid) focusFirstInvalidAuthFormControl(formElement)
+    } finally {
+      submittingRef.current = false
+    }
+  }
+
+  return (
+    <Form
+      {...props}
+      ref={formElementRef}
+      validationBehavior="aria"
+      onInvalid={event => focusFirstInvalidAuthFormControl(event.currentTarget)}
+      onSubmit={event => void submit(event)}>
+      {children}
+    </Form>
+  )
+}
+
+type AuthFormTextFieldProps = Omit<
+  ComponentProps<typeof TextField>,
+  'children' | 'name' | 'onBlur' | 'onChange' | 'value'
+> & {
+  description?: ReactNode
+  inputProps?: Omit<ComponentProps<typeof Input>, 'name'>
+  label: ReactNode
+}
+
+const AuthFormTextField = ({
+  description,
+  inputProps,
+  label,
+  ...props
+}: AuthFormTextFieldProps) => {
+  const field = useFieldContext<string>()
+  const form = useFormContext()
+  const isInvalid = isAuthFormFieldInvalid(field.state.meta)
+
+  return (
+    <TextField
+      {...props}
+      isInvalid={isInvalid || undefined}
+      name={field.name}
+      onBlur={field.handleBlur}
+      onChange={value => {
+        clearAuthFormFieldServerError(form, field.name)
+        field.handleChange(value)
+      }}
+      validationBehavior="aria"
+      value={field.state.value}>
+      <Label>{label}</Label>
+      <Input
+        {...inputProps}
+        aria-busy={field.state.meta.isValidating || undefined}
+      />
+      {description ? <Description>{description}</Description> : null}
+      <AuthFormFieldError />
+    </TextField>
+  )
+}
+
+const AuthFormSubmitButton = ({
+  children,
+  isDisabled,
+  isPending,
+  ...props
+}: Omit<ComponentProps<typeof Button>, 'children'> & {
+  children?: ReactNode
+}) => {
+  const form = useFormContext()
+
+  return (
+    <form.Subscribe
+      selector={state => [state.isSubmitting, state.isValidating] as const}>
+      {([isSubmitting, isValidating]) => (
+        <Button
+          {...props}
+          isPending={isPending || isSubmitting}
+          aria-disabled={
+            isDisabled || isPending || isSubmitting || isValidating || undefined
+          }
+          isDisabled={isDisabled || isPending || isSubmitting || isValidating}
+          type="submit">
+          {isPending || isSubmitting ? (
+            <Spinner color="current" size="sm" />
+          ) : null}
+          {children}
+        </Button>
+      )}
+    </form.Subscribe>
+  )
+}
+
+type AuthFormAdditionalFieldProps = Omit<
+  AdditionalFieldProps,
+  'errors' | 'isInvalid' | 'name' | 'onBlur' | 'onChange' | 'value'
+>
+
+const AuthFormAdditionalField = (props: AuthFormAdditionalFieldProps) => {
+  const field = useFieldContext<AdditionalFieldFormValue>()
+  const form = useFormContext()
+  const isInvalid = isAuthFormFieldInvalid(field.state.meta)
+
+  return (
+    <AdditionalField
+      {...props}
+      errors={
+        isInvalid ? getFormFieldErrors(field.state.meta.errors) : undefined
+      }
+      isInvalid={isInvalid}
+      name={field.name}
+      onBlur={field.handleBlur}
+      onChange={value => {
+        clearAuthFormFieldServerError(form, field.name)
+        field.handleChange(value)
+      }}
+      value={field.state.value}
+    />
+  )
+}
+
+export const {
+  useAppForm: useAuthForm,
+  withFieldGroup: withAuthFieldGroup,
+  withForm: withAuthForm
+} = createFormHook({
+  fieldComponents: {
+    AuthFormAdditionalField,
+    AuthFormFieldError,
+    AuthFormTextField
+  },
+  fieldContext,
+  formComponents: {
+    AuthFormRoot,
+    AuthFormServerError,
+    AuthFormSubmitButton
+  },
+  formContext
+})
+
+export function isAuthFormFieldInvalid({
+  isTouched,
+  isValid
+}: {
+  isTouched: boolean
+  isValid: boolean
+}) {
+  return isTouched && !isValid
+}
+
+export const getAuthAdditionalFieldValidators = (
+  field: AdditionalFieldConfig,
+  requiredMessage: string
+) => {
+  return {
+    onChange: ({ value }: { value: AdditionalFieldFormValue }) =>
+      validateAdditionalFieldRequired(field, value, requiredMessage),
+    onChangeAsync: field.validate
+      ? ({ value }: { value: AdditionalFieldFormValue }) =>
+          validateAdditionalFieldValue(field, value)
+      : undefined,
+    onChangeAsyncDebounceMs: field.validate
+      ? (field.validateDebounceMs ??
+        DEFAULT_ADDITIONAL_FIELD_VALIDATION_DEBOUNCE_MS)
+      : undefined
+  }
+}

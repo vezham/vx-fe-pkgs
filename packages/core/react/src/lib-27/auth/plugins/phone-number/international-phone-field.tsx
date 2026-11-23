@@ -1,0 +1,124 @@
+import { useMemo } from 'react'
+
+import {
+  type PhoneNumberAdapter,
+  type PhoneNumberCountryCode,
+  type PhoneNumberValue,
+  createPhoneNumberValue,
+  getPhoneNumberCountries
+} from '@vezham/auth-ui-core/plugins/phone-number'
+import {
+  FieldError,
+  Input,
+  Label,
+  ListBox,
+  Select,
+  TextField
+} from '@vezham/react-v3'
+
+export type InternationalPhoneFieldProps = {
+  adapter: PhoneNumberAdapter
+  countryLabel: string
+  countryCodes?: readonly PhoneNumberCountryCode[]
+  error?: string
+  isDisabled?: boolean
+  locale?: string
+  name?: string
+  phoneLabel: string
+  placeholder: string
+  value: PhoneNumberValue
+  variant?: 'primary' | 'secondary'
+  onChange: (value: PhoneNumberValue) => void
+}
+
+export const InternationalPhoneField = ({
+  adapter,
+  countryLabel,
+  countryCodes,
+  error,
+  isDisabled,
+  locale,
+  name = 'phoneNumber',
+  phoneLabel,
+  placeholder,
+  value,
+  variant,
+  onChange
+}: InternationalPhoneFieldProps) => {
+  const countries = useMemo(
+    () => getPhoneNumberCountries(locale, countryCodes),
+    [countryCodes, locale]
+  )
+  const selectedCountry = countries.find(
+    country => country.code === value.country
+  )
+
+  return (
+    <div className="grid grid-cols-[8.5rem_minmax(0,1fr)] gap-2">
+      <Select
+        aria-label={countryLabel}
+        isDisabled={isDisabled}
+        value={value.country}
+        onChange={country => {
+          if (!country) return
+          const nextCountry = countries.find(
+            candidate => candidate.code === country
+          )?.code
+          if (!nextCountry) return
+          const input = value.display.startsWith('+') ? '' : value.display
+          onChange(createPhoneNumberValue(input, nextCountry, adapter))
+        }}>
+        <Label>{countryLabel}</Label>
+        <Select.Trigger>
+          <Select.Value>
+            {selectedCountry ? (
+              <span className="flex items-center gap-2">
+                <span aria-hidden="true">{selectedCountry.flag}</span>
+                <span>{selectedCountry.callingCode}</span>
+              </span>
+            ) : null}
+          </Select.Value>
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {countries.map(country => (
+              <ListBox.Item
+                key={country.code}
+                id={country.code}
+                textValue={`${country.label} ${country.callingCode}`}>
+                <span className="flex w-full items-center justify-between gap-4">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span aria-hidden="true">{country.flag}</span>
+                    <span>{country.label}</span>
+                  </span>
+                  <span className="text-muted">{country.callingCode}</span>
+                </span>
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+      <TextField
+        name={name}
+        type="tel"
+        autoComplete="tel-national"
+        isDisabled={isDisabled}
+        isInvalid={Boolean(error)}
+        value={value.display}
+        onChange={input =>
+          onChange(createPhoneNumberValue(input, value.country, adapter))
+        }>
+        <Label>{phoneLabel}</Label>
+        <Input
+          inputMode="tel"
+          placeholder={placeholder}
+          required
+          variant={variant}
+        />
+        <FieldError>{error}</FieldError>
+      </TextField>
+    </div>
+  )
+}

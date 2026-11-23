@@ -1,7 +1,9 @@
 import { useParams } from '@tanstack/react-router'
 
+import { LinkSquare } from '@vezham/icons-react'
 import { Link, buttonVariants } from '@vezham/react-v3'
 
+import type { UiLibrary } from '@config/ui-libraries'
 import {
   type ComponentLinks as Links,
   getComponentResources
@@ -24,36 +26,42 @@ const icons = {
   rac: ReactAriaIcon,
   storybook: StorybookIcon,
   tailwind: TailwindIcon,
-  heroui: HeroUIIcon
+  heroui: HeroUIIcon,
+  external: LinkSquare
 }
 
 export const ComponentLinks = ({
   links,
-  sourceUrl
+  sourceUrl,
+  library
 }: {
   links?: Links
   sourceUrl?: string
+  library: UiLibrary
 }) => {
   const { platform, _splat } = useParams({ strict: false })
-  const resources = getComponentResources(links)
+  const resources: { label: string; icon: keyof typeof icons; href: string }[] =
+    getComponentResources(links)
   if (!resources.length && !sourceUrl) return null
-  const allResources = [
-    ...resources,
-    {
-      label: sourceUrl?.startsWith('https://heroui.pro/')
-        ? 'HeroUI Pro'
-        : 'HeroUI',
-      icon: 'heroui' as const,
+  if (library === 'react') {
+    if (sourceUrl)
+      resources.push({ label: 'Reference', icon: 'external', href: sourceUrl })
+  } else {
+    const pro = library === 'react-pro-v3'
+    const site = pro ? 'https://heroui.pro' : 'https://heroui.com'
+    resources.push({
+      label: pro ? 'HeroUI Pro' : 'HeroUI',
+      icon: 'heroui',
       href:
         sourceUrl ??
-        `https://heroui.com/docs/${platform === 'native' ? 'native' : 'react'}/${_splat ?? ''}`
-    }
-  ]
+        `${site}/docs/${platform === 'native' ? 'native' : 'react'}/${_splat ?? ''}`
+    })
+  }
   return (
     <nav
       aria-label="Component resources"
       className="platform-docs__resources not-prose mb-4 flex flex-wrap gap-2">
-      {allResources.map(resource => {
+      {resources.map(resource => {
         const Icon = icons[resource.icon]
         return (
           <Link

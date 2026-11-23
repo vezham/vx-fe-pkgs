@@ -1,0 +1,471 @@
+import { QueryClient, skipToken } from '@tanstack/query-core'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+
+import {
+  type AuthClient,
+  accountInfoOptions,
+  authMutationKeys,
+  authQueryKeys,
+  changeEmailOptions,
+  changePasswordOptions,
+  deleteUserOptions,
+  linkSocialOptions,
+  listAccountsOptions,
+  listSessionsOptions,
+  requestPasswordResetOptions,
+  resetPasswordOptions,
+  revokeOtherSessionsOptions,
+  revokeSessionOptions,
+  revokeSessionsOptions,
+  sendVerificationEmailOptions,
+  signInEmailOptions,
+  signInOAuthPopupOptions,
+  signInSocialOptions,
+  signOutOptions,
+  signUpEmailOptions,
+  unlinkAccountOptions,
+  updateSessionOptions
+} from '../src'
+import {
+  type ApiKeyAuthClient,
+  apiKeyMutationKeys,
+  apiKeyQueryKeys,
+  createApiKeyOptions,
+  deleteApiKeyOptions,
+  updateApiKeyOptions
+} from '../src/plugins/api-key'
+import { deleteUserMutationKeys } from '../src/plugins/delete-user'
+import {
+  type MagicLinkAuthClient,
+  magicLinkMutationKeys,
+  signInMagicLinkOptions
+} from '../src/plugins/magic-link'
+import {
+  type MultiSessionAuthClient,
+  multiSessionMutationKeys,
+  multiSessionQueryKeys,
+  revokeMultiSessionOptions,
+  setActiveSessionOptions
+} from '../src/plugins/multi-session'
+import type { OrganizationAuthClient } from '../src/plugins/organization/organization-auth-client'
+import {
+  addPasskeyOptions,
+  deletePasskeyOptions,
+  passkeyAutoFillOptions,
+  passkeyMutationKeys,
+  passkeyQueryKeys,
+  signInPasskeyOptions
+} from '../src/plugins/passkey'
+import type { PasskeyAuthClient } from '../src/plugins/passkey/passkey-auth-client'
+import type { UsernameAuthClient } from '../src/plugins/username/username-auth-client'
+
+const signal = new AbortController().signal
+
+type HasStore<T> = '$store' extends keyof T ? true : false
+
+/** Mocks a Better Auth method that echoes one request param as its data. */
+type EchoParamFn = (
+  params: Record<string, unknown>
+) => Promise<{ data: unknown }>
+
+describe('core base endpoint option factories', () => {
+  it('omits Solid-only store members from core auth client types', () => {
+    expectTypeOf<HasStore<AuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<MagicLinkAuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<MultiSessionAuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<PasskeyAuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<ApiKeyAuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<UsernameAuthClient>>().toEqualTypeOf<false>()
+    expectTypeOf<HasStore<OrganizationAuthClient>>().toEqualTypeOf<false>()
+  })
+
+  it('builds base user-scoped query options', async () => {
+    const authClient = {
+      accountInfo: vi.fn<
+        (params: { query: { accountId: string } }) => Promise<{ data: unknown }>
+      >(async params => ({ data: params.query.accountId })),
+      listAccounts: vi.fn<() => Promise<{ data: string[] }>>(async () => ({
+        data: ['github']
+      })),
+      listSessions: vi.fn<() => Promise<{ data: string[] }>>(async () => ({
+        data: ['session-1']
+      }))
+    }
+
+    const accountInfo = accountInfoOptions(authClient as never, 'user-1', {
+      query: { accountId: 'acct-1' },
+      fetchOptions: { credentials: 'include' }
+    } as never)
+    const listAccounts = listAccountsOptions(authClient as never, 'user-1')
+    const listSessions = listSessionsOptions(authClient as never, 'user-1')
+
+    expect(accountInfo.queryKey).toEqual(
+      authQueryKeys.accountInfo('user-1', { accountId: 'acct-1' })
+    )
+    expect(listAccounts.queryKey).toEqual(authQueryKeys.listAccounts('user-1'))
+    expect(listSessions.queryKey).toEqual(authQueryKeys.listSessions('user-1'))
+
+    const accountInfoQueryFn = accountInfo.queryFn
+    if (!accountInfoQueryFn || accountInfoQueryFn === skipToken) {
+      throw new Error('Expected a query function')
+    }
+    await expect(accountInfoQueryFn({ signal } as never)).resolves.toEqual({
+      data: 'acct-1'
+    })
+    expect(authClient.accountInfo).toHaveBeenCalledWith({
+      query: { accountId: 'acct-1' },
+      fetchOptions: expect.objectContaining({
+        credentials: 'include',
+        signal,
+        throw: true
+      })
+    })
+
+    expect(accountInfoOptions(authClient as never).queryFn).toBe(skipToken)
+    expect(
+      accountInfoOptions(authClient as never, 'user-1', {} as never).queryFn
+    ).toBe(skipToken)
+    expect(listAccountsOptions(authClient as never).queryFn).toBe(skipToken)
+    expect(listSessionsOptions(authClient as never).queryFn).toBe(skipToken)
+  })
+
+  it('builds base mutation options and keeps deleteUser out of auth keys', async () => {
+    const authClient = {
+      getSession: vi.fn<() => Promise<{ user: { id: string } }>>(async () => ({
+        user: { id: 'user-1' }
+      })),
+      requestPasswordReset: vi.fn<EchoParamFn>(async params => ({
+        data: params.email
+      })),
+      resetPassword: vi.fn<EchoParamFn>(async params => ({
+        data: params.token
+      })),
+      sendVerificationEmail: vi.fn<EchoParamFn>(async params => ({
+        data: params.email
+      })),
+      signIn: {
+        email: vi.fn<EchoParamFn>(async params => ({ data: params.email })),
+        popup: vi.fn<
+          () => Promise<{ data: { success: boolean }; error: null }>
+        >(async () => ({
+          data: { success: true },
+          error: null
+        })),
+        social: vi.fn<EchoParamFn>(async params => ({
+          data: params.provider
+        }))
+      },
+      signOut: vi.fn<
+        (params: {
+          fetchOptions: { throw?: boolean }
+        }) => Promise<{ data: unknown }>
+      >(async params => ({ data: params.fetchOptions.throw })),
+      signUp: {
+        email: vi.fn<EchoParamFn>(async params => ({ data: params.email }))
+      },
+      changeEmail: vi.fn<EchoParamFn>(async params => ({
+        data: params.newEmail
+      })),
+      changePassword: vi.fn<() => Promise<{ data: boolean }>>(async () => ({
+        data: true
+      })),
+      deleteUser: vi.fn<EchoParamFn>(async params => ({
+        data: params.callbackURL
+      })),
+      linkSocial: vi.fn<EchoParamFn>(async params => ({
+        data: params.provider
+      })),
+      revokeSession: vi.fn<EchoParamFn>(async params => ({
+        data: params.token
+      })),
+      revokeOtherSessions: vi.fn<() => Promise<{ data: boolean }>>(
+        async () => ({ data: true })
+      ),
+      revokeSessions: vi.fn<() => Promise<{ data: boolean }>>(async () => ({
+        data: true
+      })),
+      updateSession: vi.fn<EchoParamFn>(async params => ({
+        data: params.theme
+      })),
+      unlinkAccount: vi.fn<EchoParamFn>(async params => ({
+        data: params.providerId
+      }))
+    }
+
+    const requestReset = requestPasswordResetOptions(authClient as never)
+    const resetPassword = resetPasswordOptions(authClient as never)
+    const verification = sendVerificationEmailOptions(authClient as never)
+    const signInEmail = signInEmailOptions(authClient as never)
+    const signInPopup = signInOAuthPopupOptions(authClient as never)
+    const signInSocial = signInSocialOptions(authClient as never)
+    const signOut = signOutOptions(authClient as never)
+    const signUpEmail = signUpEmailOptions(authClient as never)
+    const changeEmail = changeEmailOptions(authClient as never)
+    const changePassword = changePasswordOptions(authClient as never)
+    const deleteUser = deleteUserOptions(authClient as never)
+    const linkSocial = linkSocialOptions(authClient as never)
+    const revokeSession = revokeSessionOptions(authClient as never)
+    const revokeOtherSessions = revokeOtherSessionsOptions(
+      authClient as never,
+      'user-1'
+    )
+    const revokeSessions = revokeSessionsOptions(authClient as never)
+    const updateSession = updateSessionOptions(authClient as never)
+    const unlinkAccount = unlinkAccountOptions(authClient as never)
+
+    expect(requestReset.mutationKey).toEqual(
+      authMutationKeys.requestPasswordReset
+    )
+    expect(resetPassword.mutationKey).toEqual(authMutationKeys.resetPassword)
+    expect(verification.mutationKey).toEqual(
+      authMutationKeys.sendVerificationEmail
+    )
+    expect(signInEmail.mutationKey).toEqual(authMutationKeys.signIn.email)
+    expect(signInPopup.mutationKey).toEqual(authMutationKeys.signIn.popup)
+    expect(signInSocial.mutationKey).toEqual(authMutationKeys.signIn.social)
+    expect(signOut.mutationKey).toEqual(authMutationKeys.signOut)
+    expect(signUpEmail.mutationKey).toEqual(authMutationKeys.signUp.email)
+    expect(changeEmail.mutationKey).toEqual(authMutationKeys.changeEmail)
+    expect(changePassword.mutationKey).toEqual(authMutationKeys.changePassword)
+    expect(deleteUser.mutationKey).toEqual(deleteUserMutationKeys.deleteUser)
+    expect(linkSocial.mutationKey).toEqual(authMutationKeys.linkSocial)
+    expect(revokeSession.mutationKey).toEqual(authMutationKeys.revokeSession)
+    expect(revokeOtherSessions.mutationKey).toEqual(
+      authMutationKeys.revokeOtherSessions
+    )
+    expect(revokeSessions.mutationKey).toEqual(authMutationKeys.revokeSessions)
+    expect(updateSession.mutationKey).toEqual(authMutationKeys.updateSession)
+    expect(unlinkAccount.mutationKey).toEqual(authMutationKeys.unlinkAccount)
+    expect('deleteUser' in authMutationKeys).toBe(false)
+    expect(signInEmail.meta).toEqual({ awaits: [authQueryKeys.session] })
+    expect(signOut.meta).toEqual({ removes: [authQueryKeys.all] })
+    expect(signUpEmail.meta).toEqual({ awaits: [authQueryKeys.session] })
+    expect(changeEmail.meta).toEqual({ awaits: [authQueryKeys.session] })
+    expect(revokeOtherSessions.meta).toEqual({
+      awaits: [authQueryKeys.listSessions('user-1')]
+    })
+    expect(revokeSessions.meta).toEqual({ removes: [authQueryKeys.all] })
+    expect(updateSession.meta).toEqual({ awaits: [authQueryKeys.session] })
+
+    await expect(
+      (
+        signInEmail as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        email: 'ada@example.com',
+        fetchOptions: { credentials: 'include' }
+      })
+    ).resolves.toEqual({ data: 'ada@example.com' })
+    expect(authClient.signIn.email).toHaveBeenCalledWith({
+      email: 'ada@example.com',
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+
+    const queryClient = new QueryClient()
+    await expect(
+      queryClient.getMutationCache().build(queryClient, signInPopup).execute({
+        provider: 'github',
+        callbackURL: '/dashboard'
+      })
+    ).resolves.toEqual({ data: { success: true }, error: null })
+    queryClient.clear()
+    expect(authClient.signIn.popup).toHaveBeenCalledWith({
+      provider: 'github',
+      callbackURL: '/dashboard'
+    })
+
+    await (
+      revokeOtherSessions as { mutationFn?: (variables?: unknown) => unknown }
+    ).mutationFn?.()
+    expect(authClient.revokeOtherSessions).toHaveBeenCalledWith({
+      fetchOptions: { throw: true }
+    })
+
+    await (
+      revokeSessions as {
+        mutationFn?: (variables?: unknown) => unknown
+      }
+    ).mutationFn?.()
+    expect(authClient.revokeSessions).toHaveBeenCalledWith({
+      fetchOptions: { throw: true }
+    })
+
+    await (
+      updateSession as { mutationFn?: (variables: unknown) => unknown }
+    ).mutationFn?.({
+      theme: 'dark',
+      fetchOptions: { credentials: 'include' }
+    })
+    expect(authClient.updateSession).toHaveBeenCalledWith({
+      theme: 'dark',
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+
+    await expect(
+      (
+        deleteUser as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        callbackURL: '/goodbye',
+        fetchOptions: { credentials: 'include' }
+      })
+    ).resolves.toEqual({ data: '/goodbye' })
+    expect(authClient.deleteUser).toHaveBeenCalledWith({
+      callbackURL: '/goodbye',
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+  })
+
+  it('builds plugin mutation options', async () => {
+    const authClient = {
+      apiKey: {
+        create: vi.fn<EchoParamFn>(async params => ({ data: params.name })),
+        delete: vi.fn<EchoParamFn>(async params => ({ data: params.keyId })),
+        update: vi.fn<EchoParamFn>(async params => ({ data: params.name }))
+      },
+      signIn: {
+        magicLink: vi.fn<EchoParamFn>(async params => ({
+          data: params.email
+        })),
+        passkey: vi.fn<
+          (params?: { email?: string }) => Promise<{ data: unknown }>
+        >(async params => ({ data: params?.email ?? null }))
+      },
+      multiSession: {
+        revoke: vi.fn<EchoParamFn>(async params => ({
+          data: params.sessionToken
+        })),
+        setActive: vi.fn<EchoParamFn>(async params => ({
+          data: params.sessionToken
+        }))
+      },
+      passkey: {
+        addPasskey: vi.fn<
+          (params: { name?: string }) => Promise<{ data: unknown }>
+        >(async params => ({ data: params.name ?? null })),
+        deletePasskey: vi.fn<EchoParamFn>(async params => ({
+          data: params.id
+        }))
+      }
+    }
+
+    const userId = 'user-1'
+    const createApiKey = createApiKeyOptions(authClient as never, userId)
+    const deleteApiKey = deleteApiKeyOptions(authClient as never, userId)
+    const updateApiKey = updateApiKeyOptions(authClient as never, userId)
+    const magicLink = signInMagicLinkOptions(authClient as never)
+    const revokeMultiSession = revokeMultiSessionOptions(
+      authClient as never,
+      userId
+    )
+    const setActiveSession = setActiveSessionOptions(
+      authClient as never,
+      userId
+    )
+    const addPasskey = addPasskeyOptions(authClient as never, userId)
+    const deletePasskey = deletePasskeyOptions(authClient as never, userId)
+    const signInPasskey = signInPasskeyOptions(authClient as never)
+    const passkeyAutoFill = passkeyAutoFillOptions(authClient as never)
+
+    expect(createApiKey.mutationKey).toEqual(apiKeyMutationKeys.create)
+    expect(deleteApiKey.mutationKey).toEqual(apiKeyMutationKeys.delete)
+    expect(updateApiKey.mutationKey).toEqual(apiKeyMutationKeys.update)
+    expect(magicLink.mutationKey).toEqual(magicLinkMutationKeys.signIn)
+    expect(revokeMultiSession.mutationKey).toEqual(
+      multiSessionMutationKeys.revoke
+    )
+    expect(setActiveSession.mutationKey).toEqual(
+      multiSessionMutationKeys.setActive
+    )
+    expect(addPasskey.mutationKey).toEqual(passkeyMutationKeys.addPasskey)
+    expect(deletePasskey.mutationKey).toEqual(passkeyMutationKeys.deletePasskey)
+    expect(signInPasskey.mutationKey).toEqual(passkeyMutationKeys.signIn)
+    expect(createApiKey.meta).toEqual({
+      awaits: [apiKeyQueryKeys.lists(userId)]
+    })
+    expect(deleteApiKey.meta).toEqual({
+      awaits: [apiKeyQueryKeys.all(userId)]
+    })
+    expect(updateApiKey.meta).toEqual({
+      awaits: [apiKeyQueryKeys.all(userId)],
+      errorPresentation: 'inline'
+    })
+    expect(revokeMultiSession.meta).toEqual({
+      awaits: [multiSessionQueryKeys.lists(userId)]
+    })
+    expect(setActiveSession.meta).toEqual({
+      awaits: [authQueryKeys.session, multiSessionQueryKeys.lists(userId)]
+    })
+    expect(addPasskey.meta).toEqual({
+      awaits: [passkeyQueryKeys.lists(userId)],
+      errorPresentation: 'inline'
+    })
+    expect(deletePasskey.meta).toEqual({
+      awaits: [passkeyQueryKeys.lists(userId)]
+    })
+    expect(signInPasskey.meta).toEqual({
+      awaits: [authQueryKeys.session]
+    })
+    expect(passkeyAutoFill.meta).toEqual({
+      awaits: [authQueryKeys.session],
+      errorPresentation: 'silent'
+    })
+
+    await expect(
+      (
+        createApiKey as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        name: 'CI key',
+        metadata: { environment: 'ci' },
+        remaining: 100,
+        rateLimitEnabled: true,
+        permissions: { project: ['write'] },
+        fetchOptions: { credentials: 'include' }
+      })
+    ).resolves.toEqual({ data: 'CI key' })
+    expect(authClient.apiKey.create).toHaveBeenCalledWith({
+      name: 'CI key',
+      metadata: { environment: 'ci' },
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+
+    await expect(
+      (
+        updateApiKey as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        configId: 'default',
+        keyId: 'key-1',
+        name: 'Renamed key',
+        enabled: false,
+        metadata: { owner: 'server' },
+        fetchOptions: { credentials: 'include' }
+      })
+    ).resolves.toEqual({ data: 'Renamed key' })
+    expect(authClient.apiKey.update).toHaveBeenCalledWith({
+      configId: 'default',
+      keyId: 'key-1',
+      name: 'Renamed key',
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+
+    await expect(
+      (
+        addPasskey as { mutationFn?: (variables?: unknown) => unknown }
+      ).mutationFn?.()
+    ).resolves.toEqual({ data: null })
+    expect(authClient.passkey.addPasskey).toHaveBeenCalledWith({
+      fetchOptions: { throw: true }
+    })
+
+    await expect(
+      (
+        addPasskey as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        name: 'Security key',
+        fetchOptions: { credentials: 'include' }
+      })
+    ).resolves.toEqual({ data: 'Security key' })
+    expect(authClient.passkey.addPasskey).toHaveBeenCalledWith({
+      name: 'Security key',
+      fetchOptions: { credentials: 'include', throw: true }
+    })
+  })
+})

@@ -1,7 +1,7 @@
 const structured =
   /^@?[\w-]+\/(INFO|NOTE|TODO|FIXME|HACK|REF)(?:\([^\n)]+\))?:\s+\S/
 const directive =
-  /^(?:eslint(?:-disable|-enable|\s)|global[s]?\s|exported\s|prettier-ignore\b|@ts-(?:check|nocheck|ignore|expect-error)\b|(?:istanbul|c8|v8)\s+ignore\b|[#@]__PURE__|[#@]\s*source(?:Mapping)?URL=|\/\s*<reference\b)/
+  /^(?:(?:eslint|oxlint)(?:-disable|-enable|\s)|global[s]?\s|exported\s|prettier-ignore\b|@ts-(?:check|nocheck|ignore|expect-error)\b|(?:istanbul|c8|v8)\s+ignore\b|[#@]__PURE__|[#@]\s*source(?:Mapping)?URL=|\/\s*<reference\b)/
 
 export default {
   meta: {

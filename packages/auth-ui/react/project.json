@@ -1,0 +1,9 @@
+{
+  "name": "auth-ui-react",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/auth-ui/react/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project react --web",
+  "targets": {}
+}

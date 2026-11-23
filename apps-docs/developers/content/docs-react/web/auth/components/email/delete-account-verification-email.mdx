@@ -1,0 +1,97 @@
+---
+title: '<AuthEmail.DeleteAccountVerification />'
+description: 'Email template for verifying a permanent account deletion request.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/auth-ui/react/src/components/auth/email/delete-account-verification.tsx
+---
+
+import { ComponentPreview } from '../../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+Render this template in your server email callback. Pass your application branding and the server-generated action URL or verification code.
+
+<ComponentPreview name="react-auth-email-delete-account-verification-email">
+
+```tsx title="delete-account-verification-email.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { AuthEmail } from '@vezham/react/auth/email'
+
+import { EmailPreview } from '../email-preview'
+
+export const DeleteAccountVerificationEmailDemo = () => (
+  <EmailPreview title="Delete Account Verification Preview">
+    <AuthEmail.DeleteAccountVerification
+      url="https://example.com/api/auth/delete-user/callback?token=example-token"
+      appName="Vezham"
+      email="user@example.com"
+      expirationHours={24}
+      darkMode={true}
+      poweredBy={true}
+    />
+  </EmailPreview>
+)
+```
+
+```tsx title="email-preview.tsx"
+import { type ReactNode, useEffect, useState } from 'react'
+
+type Props = { children: ReactNode; title: string }
+
+export const EmailPreview = ({ children, title }: Props) => {
+  const [html, setHtml] = useState<string>()
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    void (async () => {
+      try {
+        const { renderToReadableStream } = await import('react-dom/server')
+        const stream = await renderToReadableStream(children)
+        const value = await new Response(stream).text()
+        if (active) setHtml(value)
+      } catch {
+        if (active) setFailed(true)
+      }
+    })()
+    return () => {
+      active = false
+    }
+  }, [children])
+
+  if (failed) return <p role="alert">The email preview could not render.</p>
+  if (!html) return <p role="status">Rendering email…</p>
+  return (
+    <iframe
+      title={title}
+      srcDoc={html}
+      sandbox=""
+      className="h-[680px] w-full rounded-lg border bg-white"
+    />
+  )
+}
+```
+
+</ComponentPreview>
+
+## Props
+
+```tsx
+import type { DeleteAccountVerificationEmailProps } from '@vezham/react/auth/email'
+```
+
+| Prop              | Type                                                  | Required | Description                                                                         |
+| ----------------- | ----------------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| `url`             | `string`                                              | Yes      | Account deletion verification URL sent by Better Auth                               |
+| `email`           | `string`                                              | No       | Email address of the account scheduled for deletion                                 |
+| `appName`         | `string`                                              | No       | Name of the application sending the email                                           |
+| `expirationHours` | `number`                                              | No       | Number of hours until the verification link expires                                 |
+| `logoURL`         | `string \| { light: string; dark: string }`           | No       | Logo URL(s) - a single string or light/dark variants. If omitted, no logo is shown. |
+| `classNames`      | `EmailClassNames`                                     | No       | Custom CSS class names for styling specific parts of the email                      |
+| `colors`          | `EmailColors`                                         | No       | Custom color scheme for light and dark modes                                        |
+| `poweredBy`       | `boolean`                                             | No       | Whether to show the "Powered by better-auth" footer                                 |
+| `darkMode`        | `boolean`                                             | No       | Whether to enable dark mode support                                                 |
+| `head`            | `ReactNode`                                           | No       | Additional React nodes to inject into the email head                                |
+| `localization`    | `Partial<DeleteAccountVerificationEmailLocalization>` | No       | Localization overrides for customizing email text                                   |
+
+Use the exported props type for inherited configuration and component props.

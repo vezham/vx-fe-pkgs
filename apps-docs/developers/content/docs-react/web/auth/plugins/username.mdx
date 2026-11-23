@@ -1,0 +1,1048 @@
+---
+title: 'Username'
+description: 'Add username-based sign-in and real-time availability checking to your authentication flow.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/username
+---
+
+import { ComponentPreview } from '../../../../../src/components/docs/component-preview/index.tsx'
+
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The username plugin adds username-based authentication to your auth UI. Users can sign in with a username instead of an email address, and optionally check username availability during sign-up and profile updates.
+
+It contributes:
+
+- A `<Username />` view that accepts both username and email, routing to the appropriate sign-in method
+- A `<Username.Field />` renderer for the username additional field with real-time availability checking
+- `useSignInUsername` and `useIsUsernameAvailable` hooks
+- Automatic username field injection into sign-up and user profile forms
+
+## Setup
+
+The username plugin requires no additional UI installation: the components are built-in. You only need to configure the Better Auth server plugin and register the client plugin.
+
+<Steps>
+
+<Step>
+### Install the Better Auth plugin
+
+Install the [`@vezham/auth`](https://www.better-auth.com/docs/plugins/username) package and add it to your Better Auth server config:
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { username } from '@vezham/auth/plugins'
+
+// [!code highlight]
+
+export const auth = betterAuth({
+  // ...
+  plugins: [
+    username() // [!code highlight]
+  ]
+})
+```
+
+</Step>
+
+<Step>
+
+### Install the matching client plugin
+
+Add `usernameClient()` to your auth client so `authClient.signIn.username` and `authClient.username.*` are available:
+
+```ts title="lib/auth-client.ts"
+import { usernameClient } from '@vezham/auth/client/plugins'
+import { createAuthClient } from '@vezham/auth/react'
+
+// [!code highlight]
+
+export const authClient = createAuthClient({
+  plugins: [usernameClient()] // [!code highlight]
+})
+```
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+Pass `Username.plugin()` to `<Auth.Provider>`:
+
+```tsx title="components/providers.tsx"
+// [!code highlight]
+import { Auth } from '@vezham/react/auth'
+import { Username } from '@vezham/react/auth/plugins/username'
+
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[Username.plugin()]} // [!code highlight]
+>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+</Steps>
+
+## Components
+
+### `<Auth.SignIn />`
+
+<ComponentPreview name="react-auth-username-sign-in">
+
+```tsx title="sign-in.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { Auth } from '@vezham/react/auth'
+import { Username } from '@vezham/react/auth/plugins/username'
+
+import { useDemo } from '../demo-provider'
+
+export const SignInUsernameDemo = () => {
+  const { authClient, navigate } = useDemo()
+  return (
+    <Auth.Provider
+      authClient={authClient}
+      navigate={navigate}
+      plugins={[Username.plugin({ isUsernameAvailable: true })]}>
+      <Username />
+    </Auth.Provider>
+  )
+}
+```
+
+```tsx title="demo-provider.tsx"
+import { QueryClient } from '@tanstack/react-query'
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+
+import { Description } from '@vezham/react-v3'
+import { Auth, type AuthProviderProps } from '@vezham/react/auth'
+
+import { type PreviewClient, createPreviewClient } from './demo-client'
+
+type DemoContextValue = {
+  authClient: PreviewClient
+  navigate: AuthProviderProps['navigate']
+  theme: string
+  setTheme: (theme: string) => void
+}
+
+const DemoContext = createContext<DemoContextValue | null>(null)
+
+export const DemoProvider = ({
+  children,
+  authenticated = false
+}: {
+  children: ReactNode
+  authenticated?: boolean
+}) => {
+  const [authClient] = useState(() => createPreviewClient(authenticated))
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+          mutations: { retry: false }
+        }
+      })
+  )
+  const [destination, setDestination] = useState<string | null>(null)
+  const [theme, setTheme] = useState('system')
+  const navigate = useCallback<AuthProviderProps['navigate']>(({ to }) => {
+    if (to.includes('/auth/') || to.includes('/settings')) setDestination(to)
+  }, [])
+  const segment = destination
+    ?.split(/[?#]/, 1)[0]
+    .split('/')
+    .filter(Boolean)
+    .pop()
+  useEffect(() => () => queryClient.clear(), [queryClient])
+
+  return (
+    <DemoContext.Provider value={{ authClient, navigate, theme, setTheme }}>
+      <div
+        className="flex w-full max-w-xl flex-col items-center gap-5"
+        onClickCapture={event => {
+          const target = event.target
+          if (!(target instanceof Element)) return
+          const href = target.closest('a')?.getAttribute('href')
+          if (href === '#') event.preventDefault()
+          else if (
+            href?.startsWith('/auth/') ||
+            href?.startsWith('/settings')
+          ) {
+            event.preventDefault()
+            navigate({ to: href })
+          }
+        }}>
+        <Description className="text-center">
+          Local preview. Use ada@example.com to sign in. Account changes are
+          simulated.
+        </Description>
+        <Auth.Provider
+          authClient={authClient}
+          queryClient={queryClient}
+          navigate={navigate}
+          socialProviders={['github', 'google']}
+          redirectTo="/settings/security">
+          {destination?.includes('/settings') ? (
+            <Auth.Settings path={segment ?? 'account'} />
+          ) : destination ? (
+            <Auth path={segment ?? 'sign-in'} />
+          ) : (
+            children
+          )}
+        </Auth.Provider>
+      </div>
+    </DemoContext.Provider>
+  )
+}
+
+export const useDemo = () => {
+  const value = useContext(DemoContext)
+  if (!value) throw new Error('Auth examples require DemoProvider')
+  return value
+}
+
+export const useDemoTheme = () => {
+  const { theme, setTheme } = useDemo()
+  return { theme, setTheme, themes: ['system', 'light', 'dark'] }
+}
+```
+
+```tsx title="demo-client.ts"
+import { apiKeyClient } from '@vezham/auth-api-key/client'
+import { passkeyClient } from '@vezham/auth-passkey/client'
+import {
+  deviceAuthorizationClient,
+  magicLinkClient,
+  multiSessionClient,
+  organizationClient,
+  usernameClient
+} from '@vezham/auth/client/plugins'
+import { type ReactAuthClient, createAuthClient } from '@vezham/auth/react'
+
+export const demoUser = {
+  id: 'auth-preview-user',
+  name: 'Ada Lovelace',
+  username: 'ada',
+  displayUsername: 'ada',
+  email: 'ada@example.com',
+  emailVerified: true,
+  image: null,
+  createdAt: new Date('2026-01-01'),
+  updatedAt: new Date('2026-01-01')
+}
+
+type PreviewPlugins = [
+  ReturnType<typeof apiKeyClient>,
+  ReturnType<typeof passkeyClient>,
+  ReturnType<typeof organizationClient>,
+  ReturnType<typeof usernameClient>,
+  ReturnType<typeof magicLinkClient>,
+  ReturnType<typeof multiSessionClient>,
+  ReturnType<typeof deviceAuthorizationClient>
+]
+
+export type PreviewClient = ReactAuthClient<{ plugins: PreviewPlugins }>
+
+export const createPreviewClient = (authenticated: boolean): PreviewClient => {
+  let signedIn = authenticated
+  const organization = {
+    id: 'preview-organization',
+    name: 'Analytical Engines',
+    slug: 'analytical-engines',
+    logo: null,
+    createdAt: new Date('2026-01-01')
+  }
+  const member = {
+    id: 'preview-member',
+    organizationId: organization.id,
+    userId: demoUser.id,
+    role: 'owner',
+    createdAt: new Date('2026-01-01'),
+    user: demoUser
+  }
+  const session = {
+    user: demoUser,
+    session: {
+      id: 'auth-preview-session',
+      token: 'local-preview-token',
+      userId: demoUser.id,
+      activeOrganizationId: organization.id,
+      expiresAt: new Date('2099-01-01'),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
+      ipAddress: '127.0.0.1',
+      userAgent: 'Vezham authentication preview'
+    }
+  }
+
+  return createAuthClient<{
+    plugins: PreviewPlugins
+    baseURL: string
+    fetchOptions: { customFetchImpl: typeof fetch }
+  }>({
+    baseURL: 'https://auth-preview.invalid',
+    plugins: [
+      apiKeyClient(),
+      passkeyClient(),
+      organizationClient({ teams: { enabled: true } }),
+      usernameClient(),
+      magicLinkClient(),
+      multiSessionClient(),
+      deviceAuthorizationClient()
+    ],
+    fetchOptions: {
+      customFetchImpl: async (input, init) => {
+        const url = new URL(
+          input instanceof Request ? input.url : String(input)
+        )
+        const path = url.pathname
+        if (path.endsWith('/get-session'))
+          return Response.json(signedIn ? session : null)
+        if (path.endsWith('/list-sessions'))
+          return Response.json(signedIn ? [session.session] : [])
+        if (path.endsWith('/list-accounts'))
+          return Response.json([
+            {
+              id: 'credential',
+              providerId: 'credential',
+              accountId: demoUser.id
+            }
+          ])
+        if (path.endsWith('/sign-out')) {
+          signedIn = false
+          return Response.json({ success: true })
+        }
+        if (
+          path.endsWith('/sign-in/email') ||
+          path.endsWith('/sign-in/username')
+        ) {
+          const values = JSON.parse(String(init?.body)) as {
+            email?: string
+            username?: string
+          }
+          if (
+            values.email?.toLowerCase() === demoUser.email ||
+            values.username === demoUser.username
+          ) {
+            signedIn = true
+            return Response.json({
+              token: session.session.token,
+              user: demoUser
+            })
+          }
+        }
+        if (path.endsWith('/is-username-available'))
+          return Response.json({ available: true })
+        if (path.endsWith('/multi-session/list-device-sessions'))
+          return Response.json([session])
+        if (path.endsWith('/api-key/list'))
+          return Response.json({ apiKeys: [], total: 0, limit: 10, offset: 0 })
+        if (path.endsWith('/passkey/list-user-passkeys'))
+          return Response.json([])
+        if (path.endsWith('/organization/list'))
+          return Response.json([organization])
+        if (path.endsWith('/organization/get-full-organization'))
+          return Response.json({
+            ...organization,
+            members: [member],
+            invitations: [],
+            teams: []
+          })
+        if (path.endsWith('/organization/get-active-member'))
+          return Response.json(member)
+        if (path.endsWith('/organization/get-active-member-role'))
+          return Response.json({ role: member.role })
+        if (path.endsWith('/organization/list-members'))
+          return Response.json({ members: [member], total: 1 })
+        if (path.endsWith('/organization/has-permission'))
+          return Response.json({ success: true, error: null })
+        if (
+          /\/organization\/(list-invitations|list-user-invitations|list-teams|list-user-teams|list-organization-teams|list-roles)$/.test(
+            path
+          )
+        )
+          return Response.json([])
+        return Response.json(
+          {
+            code: 'PREVIEW_VALIDATION',
+            message:
+              'Preview response: use ada@example.com to sign in. Account changes are disabled in this demo.'
+          },
+          { status: 400 }
+        )
+      }
+    }
+  })
+}
+```
+
+</ComponentPreview>
+
+### `<Auth.SignUp />`
+
+<ComponentPreview name="react-auth-username-sign-up">
+
+```tsx title="sign-up.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { Auth } from '@vezham/react/auth'
+import { Username } from '@vezham/react/auth/plugins/username'
+
+import { useDemo } from '../demo-provider'
+
+export const SignUpUsernameDemo = () => {
+  const { authClient, navigate } = useDemo()
+  return (
+    <Auth.Provider
+      authClient={authClient}
+      navigate={navigate}
+      plugins={[Username.plugin({ isUsernameAvailable: true })]}>
+      <Auth.SignUp />
+    </Auth.Provider>
+  )
+}
+```
+
+```tsx title="demo-provider.tsx"
+import { QueryClient } from '@tanstack/react-query'
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+
+import { Description } from '@vezham/react-v3'
+import { Auth, type AuthProviderProps } from '@vezham/react/auth'
+
+import { type PreviewClient, createPreviewClient } from './demo-client'
+
+type DemoContextValue = {
+  authClient: PreviewClient
+  navigate: AuthProviderProps['navigate']
+  theme: string
+  setTheme: (theme: string) => void
+}
+
+const DemoContext = createContext<DemoContextValue | null>(null)
+
+export const DemoProvider = ({
+  children,
+  authenticated = false
+}: {
+  children: ReactNode
+  authenticated?: boolean
+}) => {
+  const [authClient] = useState(() => createPreviewClient(authenticated))
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+          mutations: { retry: false }
+        }
+      })
+  )
+  const [destination, setDestination] = useState<string | null>(null)
+  const [theme, setTheme] = useState('system')
+  const navigate = useCallback<AuthProviderProps['navigate']>(({ to }) => {
+    if (to.includes('/auth/') || to.includes('/settings')) setDestination(to)
+  }, [])
+  const segment = destination
+    ?.split(/[?#]/, 1)[0]
+    .split('/')
+    .filter(Boolean)
+    .pop()
+  useEffect(() => () => queryClient.clear(), [queryClient])
+
+  return (
+    <DemoContext.Provider value={{ authClient, navigate, theme, setTheme }}>
+      <div
+        className="flex w-full max-w-xl flex-col items-center gap-5"
+        onClickCapture={event => {
+          const target = event.target
+          if (!(target instanceof Element)) return
+          const href = target.closest('a')?.getAttribute('href')
+          if (href === '#') event.preventDefault()
+          else if (
+            href?.startsWith('/auth/') ||
+            href?.startsWith('/settings')
+          ) {
+            event.preventDefault()
+            navigate({ to: href })
+          }
+        }}>
+        <Description className="text-center">
+          Local preview. Use ada@example.com to sign in. Account changes are
+          simulated.
+        </Description>
+        <Auth.Provider
+          authClient={authClient}
+          queryClient={queryClient}
+          navigate={navigate}
+          socialProviders={['github', 'google']}
+          redirectTo="/settings/security">
+          {destination?.includes('/settings') ? (
+            <Auth.Settings path={segment ?? 'account'} />
+          ) : destination ? (
+            <Auth path={segment ?? 'sign-in'} />
+          ) : (
+            children
+          )}
+        </Auth.Provider>
+      </div>
+    </DemoContext.Provider>
+  )
+}
+
+export const useDemo = () => {
+  const value = useContext(DemoContext)
+  if (!value) throw new Error('Auth examples require DemoProvider')
+  return value
+}
+
+export const useDemoTheme = () => {
+  const { theme, setTheme } = useDemo()
+  return { theme, setTheme, themes: ['system', 'light', 'dark'] }
+}
+```
+
+```tsx title="demo-client.ts"
+import { apiKeyClient } from '@vezham/auth-api-key/client'
+import { passkeyClient } from '@vezham/auth-passkey/client'
+import {
+  deviceAuthorizationClient,
+  magicLinkClient,
+  multiSessionClient,
+  organizationClient,
+  usernameClient
+} from '@vezham/auth/client/plugins'
+import { type ReactAuthClient, createAuthClient } from '@vezham/auth/react'
+
+export const demoUser = {
+  id: 'auth-preview-user',
+  name: 'Ada Lovelace',
+  username: 'ada',
+  displayUsername: 'ada',
+  email: 'ada@example.com',
+  emailVerified: true,
+  image: null,
+  createdAt: new Date('2026-01-01'),
+  updatedAt: new Date('2026-01-01')
+}
+
+type PreviewPlugins = [
+  ReturnType<typeof apiKeyClient>,
+  ReturnType<typeof passkeyClient>,
+  ReturnType<typeof organizationClient>,
+  ReturnType<typeof usernameClient>,
+  ReturnType<typeof magicLinkClient>,
+  ReturnType<typeof multiSessionClient>,
+  ReturnType<typeof deviceAuthorizationClient>
+]
+
+export type PreviewClient = ReactAuthClient<{ plugins: PreviewPlugins }>
+
+export const createPreviewClient = (authenticated: boolean): PreviewClient => {
+  let signedIn = authenticated
+  const organization = {
+    id: 'preview-organization',
+    name: 'Analytical Engines',
+    slug: 'analytical-engines',
+    logo: null,
+    createdAt: new Date('2026-01-01')
+  }
+  const member = {
+    id: 'preview-member',
+    organizationId: organization.id,
+    userId: demoUser.id,
+    role: 'owner',
+    createdAt: new Date('2026-01-01'),
+    user: demoUser
+  }
+  const session = {
+    user: demoUser,
+    session: {
+      id: 'auth-preview-session',
+      token: 'local-preview-token',
+      userId: demoUser.id,
+      activeOrganizationId: organization.id,
+      expiresAt: new Date('2099-01-01'),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
+      ipAddress: '127.0.0.1',
+      userAgent: 'Vezham authentication preview'
+    }
+  }
+
+  return createAuthClient<{
+    plugins: PreviewPlugins
+    baseURL: string
+    fetchOptions: { customFetchImpl: typeof fetch }
+  }>({
+    baseURL: 'https://auth-preview.invalid',
+    plugins: [
+      apiKeyClient(),
+      passkeyClient(),
+      organizationClient({ teams: { enabled: true } }),
+      usernameClient(),
+      magicLinkClient(),
+      multiSessionClient(),
+      deviceAuthorizationClient()
+    ],
+    fetchOptions: {
+      customFetchImpl: async (input, init) => {
+        const url = new URL(
+          input instanceof Request ? input.url : String(input)
+        )
+        const path = url.pathname
+        if (path.endsWith('/get-session'))
+          return Response.json(signedIn ? session : null)
+        if (path.endsWith('/list-sessions'))
+          return Response.json(signedIn ? [session.session] : [])
+        if (path.endsWith('/list-accounts'))
+          return Response.json([
+            {
+              id: 'credential',
+              providerId: 'credential',
+              accountId: demoUser.id
+            }
+          ])
+        if (path.endsWith('/sign-out')) {
+          signedIn = false
+          return Response.json({ success: true })
+        }
+        if (
+          path.endsWith('/sign-in/email') ||
+          path.endsWith('/sign-in/username')
+        ) {
+          const values = JSON.parse(String(init?.body)) as {
+            email?: string
+            username?: string
+          }
+          if (
+            values.email?.toLowerCase() === demoUser.email ||
+            values.username === demoUser.username
+          ) {
+            signedIn = true
+            return Response.json({
+              token: session.session.token,
+              user: demoUser
+            })
+          }
+        }
+        if (path.endsWith('/is-username-available'))
+          return Response.json({ available: true })
+        if (path.endsWith('/multi-session/list-device-sessions'))
+          return Response.json([session])
+        if (path.endsWith('/api-key/list'))
+          return Response.json({ apiKeys: [], total: 0, limit: 10, offset: 0 })
+        if (path.endsWith('/passkey/list-user-passkeys'))
+          return Response.json([])
+        if (path.endsWith('/organization/list'))
+          return Response.json([organization])
+        if (path.endsWith('/organization/get-full-organization'))
+          return Response.json({
+            ...organization,
+            members: [member],
+            invitations: [],
+            teams: []
+          })
+        if (path.endsWith('/organization/get-active-member'))
+          return Response.json(member)
+        if (path.endsWith('/organization/get-active-member-role'))
+          return Response.json({ role: member.role })
+        if (path.endsWith('/organization/list-members'))
+          return Response.json({ members: [member], total: 1 })
+        if (path.endsWith('/organization/has-permission'))
+          return Response.json({ success: true, error: null })
+        if (
+          /\/organization\/(list-invitations|list-user-invitations|list-teams|list-user-teams|list-organization-teams|list-roles)$/.test(
+            path
+          )
+        )
+          return Response.json([])
+        return Response.json(
+          {
+            code: 'PREVIEW_VALIDATION',
+            message:
+              'Preview response: use ada@example.com to sign in. Account changes are disabled in this demo.'
+          },
+          { status: 400 }
+        )
+      }
+    }
+  })
+}
+```
+
+</ComponentPreview>
+
+### `<Auth.Settings.Account.Profile />`
+
+<ComponentPreview name="react-auth-username-user-profile">
+
+```tsx title="user-profile.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { Auth } from '@vezham/react/auth'
+import { Username } from '@vezham/react/auth/plugins/username'
+
+import { useDemo } from '../demo-provider'
+
+export const UserProfileUsernameDemo = () => {
+  const { authClient, navigate } = useDemo()
+  return (
+    <Auth.Provider
+      authClient={authClient}
+      navigate={navigate}
+      plugins={[Username.plugin({ isUsernameAvailable: true })]}>
+      <div className="w-full">
+        <Auth.Settings.Account.Profile />
+      </div>
+    </Auth.Provider>
+  )
+}
+```
+
+```tsx title="demo-provider.tsx"
+import { QueryClient } from '@tanstack/react-query'
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+
+import { Description } from '@vezham/react-v3'
+import { Auth, type AuthProviderProps } from '@vezham/react/auth'
+
+import { type PreviewClient, createPreviewClient } from './demo-client'
+
+type DemoContextValue = {
+  authClient: PreviewClient
+  navigate: AuthProviderProps['navigate']
+  theme: string
+  setTheme: (theme: string) => void
+}
+
+const DemoContext = createContext<DemoContextValue | null>(null)
+
+export const DemoProvider = ({
+  children,
+  authenticated = false
+}: {
+  children: ReactNode
+  authenticated?: boolean
+}) => {
+  const [authClient] = useState(() => createPreviewClient(authenticated))
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+          mutations: { retry: false }
+        }
+      })
+  )
+  const [destination, setDestination] = useState<string | null>(null)
+  const [theme, setTheme] = useState('system')
+  const navigate = useCallback<AuthProviderProps['navigate']>(({ to }) => {
+    if (to.includes('/auth/') || to.includes('/settings')) setDestination(to)
+  }, [])
+  const segment = destination
+    ?.split(/[?#]/, 1)[0]
+    .split('/')
+    .filter(Boolean)
+    .pop()
+  useEffect(() => () => queryClient.clear(), [queryClient])
+
+  return (
+    <DemoContext.Provider value={{ authClient, navigate, theme, setTheme }}>
+      <div
+        className="flex w-full max-w-xl flex-col items-center gap-5"
+        onClickCapture={event => {
+          const target = event.target
+          if (!(target instanceof Element)) return
+          const href = target.closest('a')?.getAttribute('href')
+          if (href === '#') event.preventDefault()
+          else if (
+            href?.startsWith('/auth/') ||
+            href?.startsWith('/settings')
+          ) {
+            event.preventDefault()
+            navigate({ to: href })
+          }
+        }}>
+        <Description className="text-center">
+          Local preview. Use ada@example.com to sign in. Account changes are
+          simulated.
+        </Description>
+        <Auth.Provider
+          authClient={authClient}
+          queryClient={queryClient}
+          navigate={navigate}
+          socialProviders={['github', 'google']}
+          redirectTo="/settings/security">
+          {destination?.includes('/settings') ? (
+            <Auth.Settings path={segment ?? 'account'} />
+          ) : destination ? (
+            <Auth path={segment ?? 'sign-in'} />
+          ) : (
+            children
+          )}
+        </Auth.Provider>
+      </div>
+    </DemoContext.Provider>
+  )
+}
+
+export const useDemo = () => {
+  const value = useContext(DemoContext)
+  if (!value) throw new Error('Auth examples require DemoProvider')
+  return value
+}
+
+export const useDemoTheme = () => {
+  const { theme, setTheme } = useDemo()
+  return { theme, setTheme, themes: ['system', 'light', 'dark'] }
+}
+```
+
+```tsx title="demo-client.ts"
+import { apiKeyClient } from '@vezham/auth-api-key/client'
+import { passkeyClient } from '@vezham/auth-passkey/client'
+import {
+  deviceAuthorizationClient,
+  magicLinkClient,
+  multiSessionClient,
+  organizationClient,
+  usernameClient
+} from '@vezham/auth/client/plugins'
+import { type ReactAuthClient, createAuthClient } from '@vezham/auth/react'
+
+export const demoUser = {
+  id: 'auth-preview-user',
+  name: 'Ada Lovelace',
+  username: 'ada',
+  displayUsername: 'ada',
+  email: 'ada@example.com',
+  emailVerified: true,
+  image: null,
+  createdAt: new Date('2026-01-01'),
+  updatedAt: new Date('2026-01-01')
+}
+
+type PreviewPlugins = [
+  ReturnType<typeof apiKeyClient>,
+  ReturnType<typeof passkeyClient>,
+  ReturnType<typeof organizationClient>,
+  ReturnType<typeof usernameClient>,
+  ReturnType<typeof magicLinkClient>,
+  ReturnType<typeof multiSessionClient>,
+  ReturnType<typeof deviceAuthorizationClient>
+]
+
+export type PreviewClient = ReactAuthClient<{ plugins: PreviewPlugins }>
+
+export const createPreviewClient = (authenticated: boolean): PreviewClient => {
+  let signedIn = authenticated
+  const organization = {
+    id: 'preview-organization',
+    name: 'Analytical Engines',
+    slug: 'analytical-engines',
+    logo: null,
+    createdAt: new Date('2026-01-01')
+  }
+  const member = {
+    id: 'preview-member',
+    organizationId: organization.id,
+    userId: demoUser.id,
+    role: 'owner',
+    createdAt: new Date('2026-01-01'),
+    user: demoUser
+  }
+  const session = {
+    user: demoUser,
+    session: {
+      id: 'auth-preview-session',
+      token: 'local-preview-token',
+      userId: demoUser.id,
+      activeOrganizationId: organization.id,
+      expiresAt: new Date('2099-01-01'),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
+      ipAddress: '127.0.0.1',
+      userAgent: 'Vezham authentication preview'
+    }
+  }
+
+  return createAuthClient<{
+    plugins: PreviewPlugins
+    baseURL: string
+    fetchOptions: { customFetchImpl: typeof fetch }
+  }>({
+    baseURL: 'https://auth-preview.invalid',
+    plugins: [
+      apiKeyClient(),
+      passkeyClient(),
+      organizationClient({ teams: { enabled: true } }),
+      usernameClient(),
+      magicLinkClient(),
+      multiSessionClient(),
+      deviceAuthorizationClient()
+    ],
+    fetchOptions: {
+      customFetchImpl: async (input, init) => {
+        const url = new URL(
+          input instanceof Request ? input.url : String(input)
+        )
+        const path = url.pathname
+        if (path.endsWith('/get-session'))
+          return Response.json(signedIn ? session : null)
+        if (path.endsWith('/list-sessions'))
+          return Response.json(signedIn ? [session.session] : [])
+        if (path.endsWith('/list-accounts'))
+          return Response.json([
+            {
+              id: 'credential',
+              providerId: 'credential',
+              accountId: demoUser.id
+            }
+          ])
+        if (path.endsWith('/sign-out')) {
+          signedIn = false
+          return Response.json({ success: true })
+        }
+        if (
+          path.endsWith('/sign-in/email') ||
+          path.endsWith('/sign-in/username')
+        ) {
+          const values = JSON.parse(String(init?.body)) as {
+            email?: string
+            username?: string
+          }
+          if (
+            values.email?.toLowerCase() === demoUser.email ||
+            values.username === demoUser.username
+          ) {
+            signedIn = true
+            return Response.json({
+              token: session.session.token,
+              user: demoUser
+            })
+          }
+        }
+        if (path.endsWith('/is-username-available'))
+          return Response.json({ available: true })
+        if (path.endsWith('/multi-session/list-device-sessions'))
+          return Response.json([session])
+        if (path.endsWith('/api-key/list'))
+          return Response.json({ apiKeys: [], total: 0, limit: 10, offset: 0 })
+        if (path.endsWith('/passkey/list-user-passkeys'))
+          return Response.json([])
+        if (path.endsWith('/organization/list'))
+          return Response.json([organization])
+        if (path.endsWith('/organization/get-full-organization'))
+          return Response.json({
+            ...organization,
+            members: [member],
+            invitations: [],
+            teams: []
+          })
+        if (path.endsWith('/organization/get-active-member'))
+          return Response.json(member)
+        if (path.endsWith('/organization/get-active-member-role'))
+          return Response.json({ role: member.role })
+        if (path.endsWith('/organization/list-members'))
+          return Response.json({ members: [member], total: 1 })
+        if (path.endsWith('/organization/has-permission'))
+          return Response.json({ success: true, error: null })
+        if (
+          /\/organization\/(list-invitations|list-user-invitations|list-teams|list-user-teams|list-organization-teams|list-roles)$/.test(
+            path
+          )
+        )
+          return Response.json([])
+        return Response.json(
+          {
+            code: 'PREVIEW_VALIDATION',
+            message:
+              'Preview response: use ada@example.com to sign in. Account changes are disabled in this demo.'
+          },
+          { status: 400 }
+        )
+      }
+    }
+  })
+}
+```
+
+</ComponentPreview>
+
+## Options
+
+Use `usernamePrefix` when usernames are displayed with a marker such as `@`. The prefix appears inside username fields but is not included in the value sent to Better Auth.
+
+```tsx
+Username.plugin({
+  usernamePrefix: '@',
+  localization: {
+    usernamePlaceholder: 'username'
+  }
+})
+```
+
+```tsx title="UsernamePluginOptions"
+type UsernamePluginOptions = {
+  /**
+   * Whether to use displayUsername for the visible username field in the profile.
+   */
+  displayUsername?: boolean
+  /**
+   * Whether to check username availability on sign-up and user profile.
+   */
+  isUsernameAvailable?: boolean
+  /**
+   * Minimum allowed username length.
+   * @default 3
+   */
+  minUsernameLength?: number
+  /**
+   * Maximum allowed username length.
+   * @default 30
+   */
+  maxUsernameLength?: number
+  /**
+   * Override the plugin's default localization strings.
+   * @remarks `UsernameLocalization`
+   */
+  localization?: Partial<UsernameLocalization>
+  /**
+   * Prefix prepended to usernames.
+   * @default ""
+   */
+  usernamePrefix?: string
+}
+```
+
+## Localization
+
+```tsx title="UsernameLocalization"
+type UsernameLocalization = typeof usernameLocalization
+```

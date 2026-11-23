@@ -1,0 +1,6 @@
+{
+  "icon": "sparkles",
+  "defaultOpen": true,
+  "pages": ["additional-fields", "passwords"],
+  "title": "Concepts"
+}

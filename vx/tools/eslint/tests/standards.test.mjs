@@ -182,6 +182,11 @@ const cases = [
   [comments, '// codex/NOTE: Keep compatibility.\nconst x = 1', 1],
   [comments, '// vx-bot/NOTE: \nconst x = 1', 1],
   [comments, '// prettier-ignore\nconst x = 1', 0],
+  [
+    comments,
+    '// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The SDK erases the response type.\nconst x = 1',
+    0
+  ],
   [comments, '/** Public API documentation. */\nconst x = 1', 0],
   [
     comments,

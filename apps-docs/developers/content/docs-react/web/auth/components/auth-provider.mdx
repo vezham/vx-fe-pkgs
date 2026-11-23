@@ -1,0 +1,59 @@
+---
+title: '<Auth.Provider>'
+description: 'Provides AuthConfig to descendant components.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/auth-provider.tsx
+---
+
+## Usage
+
+Create one auth client and wrap your application in `Auth.Provider`. Supply your application router through `navigate`.
+
+```tsx title="auth-client.ts"
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient()
+```
+
+```tsx title="auth-provider.tsx"
+import type { ReactNode } from 'react'
+
+import { Auth } from '@vezham/react/auth'
+
+import { authClient } from './auth-client'
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => (
+  <Auth.Provider
+    authClient={authClient}
+    navigate={({ to }) => window.location.assign(to)}>
+    {children}
+  </Auth.Provider>
+)
+```
+
+For client navigation, use the [TanStack Start](/docs/ui/react/web/auth/integrations/tanstack-start) or [Next.js](/docs/ui/react/web/auth/integrations/nextjs) adapter. Pass `queryClient` to reuse an existing TanStack Query cache.
+
+## Localization
+
+Override product-specific messages with `localization`, or pass an application-owned locale through `locale`.
+
+```tsx
+<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  localization={{ auth: { signIn: 'Welcome back' } }}>
+  {children}
+</Auth.Provider>
+```
+
+## Plugins
+
+Register each UI plugin in `plugins` after enabling its matching server and client plugin. See the [plugin guides](/docs/ui/react/web/auth/plugins/two-factor).
+
+## Props
+
+```tsx
+import type { AuthProviderProps } from '@vezham/react/auth'
+```
+
+Use the exported props type for inherited configuration and component props.

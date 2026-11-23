@@ -1,0 +1,38 @@
+import { type QueryClient, useMutation } from '@tanstack/react-query'
+
+import {
+  type ApiKeyAuthClient,
+  type CreateApiKeyOptions,
+  createApiKeyOptions
+} from '@vezham/auth-ui-core/plugins/api-key'
+
+import { useSession } from '../../../../hooks/queries/use-session'
+
+/**
+ * Create a mutation for creating an API key.
+ *
+ * On success, `MutationInvalidator` awaits invalidation of the user's API key
+ * list queries (see `meta.awaits`).
+ *
+ * @param authClient - The Better Auth client with the API key plugin.
+ * @param options - React Query options forwarded to `useMutation`.
+ */
+export const useCreateApiKey = <TAuthClient extends ApiKeyAuthClient>(
+  authClient: TAuthClient,
+  options?: CreateApiKeyOptions<TAuthClient>,
+  queryClient?: QueryClient
+) => {
+  const { data: session } = useSession(authClient, undefined, queryClient)
+  const userId = session?.user.id
+
+  const mutationOptions = createApiKeyOptions(authClient, userId)
+
+  return useMutation(
+    {
+      ...mutationOptions,
+      ...options,
+      meta: { ...mutationOptions.meta, ...options?.meta }
+    },
+    queryClient
+  )
+}

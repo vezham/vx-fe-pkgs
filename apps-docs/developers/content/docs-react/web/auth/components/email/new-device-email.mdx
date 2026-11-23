@@ -1,0 +1,105 @@
+---
+title: '<AuthEmail.NewDevice />'
+description: 'Email template component that notifies users when a new device signs in to their account.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/auth-ui/react/src/components/auth/email/new-device.tsx
+---
+
+import { ComponentPreview } from '../../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+Render this template in your server email callback. Pass your application branding and the server-generated action URL or verification code.
+
+<ComponentPreview name="react-auth-email-new-device-email">
+
+```tsx title="new-device-email.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { AuthEmail } from '@vezham/react/auth/email'
+
+import { EmailPreview } from '../email-preview'
+
+export const NewDeviceEmailDemo = () => (
+  <EmailPreview title="New Device Email Preview">
+    <AuthEmail.NewDevice
+      userEmail="user@example.com"
+      deviceInfo={{
+        browser: 'Chrome 120.0',
+        os: 'macOS 14.2',
+        location: 'San Francisco, CA',
+        ipAddress: '192.168.1.1',
+        timestamp: 'January 15, 2024 at 3:30 PM'
+      }}
+      appName="Vezham"
+      supportEmail="support@example.com"
+      secureAccountLink="https://example.com/secure-account"
+      darkMode={true}
+      poweredBy={true}
+    />
+  </EmailPreview>
+)
+```
+
+```tsx title="email-preview.tsx"
+import { type ReactNode, useEffect, useState } from 'react'
+
+type Props = { children: ReactNode; title: string }
+
+export const EmailPreview = ({ children, title }: Props) => {
+  const [html, setHtml] = useState<string>()
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    void (async () => {
+      try {
+        const { renderToReadableStream } = await import('react-dom/server')
+        const stream = await renderToReadableStream(children)
+        const value = await new Response(stream).text()
+        if (active) setHtml(value)
+      } catch {
+        if (active) setFailed(true)
+      }
+    })()
+    return () => {
+      active = false
+    }
+  }, [children])
+
+  if (failed) return <p role="alert">The email preview could not render.</p>
+  if (!html) return <p role="status">Rendering email…</p>
+  return (
+    <iframe
+      title={title}
+      srcDoc={html}
+      sandbox=""
+      className="h-[680px] w-full rounded-lg border bg-white"
+    />
+  )
+}
+```
+
+</ComponentPreview>
+
+## Props
+
+```tsx
+import type { NewDeviceEmailProps } from '@vezham/react/auth/email'
+```
+
+| Prop                | Type                                        | Required | Description                                                                         |
+| ------------------- | ------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| `userEmail`         | `string`                                    | No       | Email address of the user account                                                   |
+| `deviceInfo`        | `DeviceInfo`                                | No       | Information about the device that signed in                                         |
+| `secureAccountLink` | `string`                                    | No       | URL to secure the account if unauthorized access is suspected                       |
+| `appName`           | `string`                                    | No       | Name of the application sending the email                                           |
+| `supportEmail`      | `string`                                    | No       | Support email address for security concerns                                         |
+| `logoURL`           | `string \| { light: string; dark: string }` | No       | Logo URL(s) - a single string or light/dark variants. If omitted, no logo is shown. |
+| `classNames`        | `EmailClassNames`                           | No       | Custom CSS class names for styling specific parts of the email                      |
+| `colors`            | `EmailColors`                               | No       | Custom color scheme for light and dark modes                                        |
+| `poweredBy`         | `boolean`                                   | No       | Whether to show the "Powered by better-auth" footer                                 |
+| `darkMode`          | `boolean`                                   | No       | Whether to enable dark mode support                                                 |
+| `head`              | `ReactNode`                                 | No       | Additional React nodes to inject into the email head                                |
+| `localization`      | `Partial<NewDeviceEmailLocalization>`       | No       | Localization overrides for customizing email text                                   |
+
+Use the exported props type for inherited configuration and component props.

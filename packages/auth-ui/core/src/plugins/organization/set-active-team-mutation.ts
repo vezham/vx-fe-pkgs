@@ -1,0 +1,53 @@
+import type { MutationOptions } from '@tanstack/query-core'
+
+import type { BetterFetchError } from '@vezham/auth/client'
+
+import { authQueryKeys } from '../../lib/auth-query-keys'
+import type { OrganizationTeamsAuthClient } from './organization-auth-client'
+import { organizationMutationKeys } from './organization-mutation-keys'
+import { organizationQueryKeys } from './organization-query-keys'
+
+type BetterAuthSetActiveTeamParams<
+  TAuthClient extends OrganizationTeamsAuthClient
+> = Parameters<TAuthClient['organization']['setActiveTeam']>[0]
+
+export type SetActiveTeamParams<
+  TAuthClient extends OrganizationTeamsAuthClient = OrganizationTeamsAuthClient
+> = BetterAuthSetActiveTeamParams<TAuthClient> & { organizationId: string }
+
+export type SetActiveTeamOptions<
+  TAuthClient extends OrganizationTeamsAuthClient = OrganizationTeamsAuthClient
+> = Omit<
+  ReturnType<typeof setActiveTeamOptions<TAuthClient>>,
+  'mutationKey' | 'mutationFn' | 'meta'
+>
+
+export function setActiveTeamOptions<
+  TAuthClient extends OrganizationTeamsAuthClient
+>(authClient: TAuthClient, userId?: string) {
+  const mutationFn = (params: SetActiveTeamParams<TAuthClient>) => {
+    const { organizationId: _organizationId, ...betterAuthParams } = params
+    void _organizationId
+    const fetchOptions = (
+      betterAuthParams as { fetchOptions?: Record<string, unknown> }
+    ).fetchOptions
+
+    return authClient.organization.setActiveTeam({
+      ...betterAuthParams,
+      fetchOptions: { ...fetchOptions, throw: true }
+    })
+  }
+
+  return {
+    mutationKey: organizationMutationKeys.teams.setActive,
+    mutationFn,
+    meta: {
+      awaits: [authQueryKeys.session],
+      invalidates: [organizationQueryKeys.teams.all(userId)]
+    }
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
+    BetterFetchError,
+    Parameters<typeof mutationFn>[0]
+  >
+}

@@ -7,6 +7,8 @@ import { DocsLayout, DocsPage } from '@vezham/start/layouts/docs'
 import { getMDXComponents } from '@vezham/start/mdx'
 import type { DocsRoutePageProps } from '@vezham/start/pages/docs/route'
 
+import type { UiLibrary } from '@config/ui-libraries'
+
 import { ComponentLinks } from './component-links'
 import { PageMetadata } from './page-metadata'
 import type { getPlatformDocs } from './platform-docs'
@@ -14,6 +16,7 @@ import type { getPlatformDocs } from './platform-docs'
 type Props = Omit<DocsRoutePageProps, 'docs'> & {
   docs: ReturnType<typeof getPlatformDocs>
   platform: 'web' | 'native'
+  library: UiLibrary
 }
 
 const components = getMDXComponents()
@@ -23,11 +26,13 @@ const Content = ({
   path,
   markdownUrl,
   platform,
+  library,
   shell
 }: Pick<Props, 'docs' | 'shell'> & {
   path: string
   markdownUrl: string
   platform: 'web' | 'native'
+  library: UiLibrary
 }) => {
   const page = docs.getPage(path)
   if (!page) throw new Error(`Unknown platform docs page: ${path}`)
@@ -56,7 +61,11 @@ const Content = ({
       markdownUrl={markdownUrl}
       shell={shell}
       toc={toc}>
-      <ComponentLinks links={page.links} sourceUrl={page.sourceUrl} />
+      <ComponentLinks
+        library={library}
+        links={page.links}
+        sourceUrl={page.sourceUrl}
+      />
       <PageMetadata
         value={{
           platform,
@@ -72,6 +81,7 @@ export const PlatformDocsRoutePage = ({
   data,
   docs,
   platform,
+  library,
   getLayoutOptions,
   shell = 'notebook'
 }: Props) => {
@@ -86,6 +96,7 @@ export const PlatformDocsRoutePage = ({
         <Content
           docs={docs}
           platform={platform}
+          library={library}
           path={page.path}
           markdownUrl={page.markdownUrl}
           shell={shell}

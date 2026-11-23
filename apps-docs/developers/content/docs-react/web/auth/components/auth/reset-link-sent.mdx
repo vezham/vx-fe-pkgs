@@ -1,0 +1,31 @@
+---
+title: '<Auth.ResetLinkSent />'
+description: 'Confirms that a password reset link was sent and helps the user open their email provider.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/reset-link-sent.tsx
+---
+
+## Usage
+
+Render inside [Auth.Provider](/docs/ui/react/web/auth/components/auth-provider). The preview uses an isolated local account and transport.
+
+```tsx
+import { Auth } from '@vezham/react/auth'
+
+export const Example = () => <Auth.ResetLinkSent />
+```
+
+The forgot-password flow stores the submitted email and opens this confirmation view. Its email-provider button appears when a known provider is available.
+
+## Props
+
+```tsx
+import type { ResetLinkSentProps } from '@vezham/react/auth'
+```
+
+| Prop        | Type                   | Required | Description |
+| ----------- | ---------------------- | -------- | ----------- |
+| `className` | `string`               | No       |             |
+| `variant`   | `CardProps['variant']` | No       |             |
+
+Use the exported props type for inherited configuration and component props.

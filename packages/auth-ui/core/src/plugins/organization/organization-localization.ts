@@ -1,0 +1,242 @@
+export const organizationLocalization = {
+  /** @remarks `"Accept"` */
+  accept: 'Accept',
+  /** @remarks `"Organization invitation"` */
+  acceptInvitationTitle: 'Organization invitation',
+  /** @remarks `"You've been invited to join {{organization}} as {{role}}."` */
+  acceptInvitationDescription:
+    "You've been invited to join {{organization}} as {{role}}.",
+  /** @remarks `"Accepted"` */
+  accepted: 'Accepted',
+  /** @remarks `"Actions"` */
+  actions: 'Actions',
+  /** @remarks `"Admin"` */
+  admin: 'Admin',
+  /** @remarks `"All"` */
+  all: 'All',
+  /** @remarks `"Canceled"` */
+  canceled: 'Canceled',
+  /** @remarks `"Cancel invitation"` */
+  cancelInvitation: 'Cancel invitation',
+  /** @remarks `"Change logo"` */
+  changeLogo: 'Change logo',
+  /** @remarks `"Change role"` */
+  changeMemberRole: 'Change role',
+  /** @remarks `"Choose the roles this member should have in the organization."` */
+  changeMemberRoleDescription:
+    'Choose the roles this member should have in the organization.',
+  /** @remarks `"Clear"` */
+  clear: 'Clear',
+  /** @remarks `"Create organization"` */
+  createOrganization: 'Create organization',
+  /** @remarks `"Delete logo"` */
+  deleteLogo: 'Delete logo',
+  /** @remarks `"Delete organization"` */
+  deleteOrganization: 'Delete organization',
+  /** @remarks `"Permanently delete this organization and all of its data. All members will lose access and this cannot be undone."` */
+  deleteOrganizationDescription:
+    'Permanently delete this organization and all of its data. All members will lose access and this cannot be undone.',
+  /** @remarks `"Invitations"` */
+  invitations: 'Invitations',
+  /** @remarks `"Invitation resent"` */
+  invitationResent: 'Invitation resent',
+  /** @remarks `"Invitation unavailable"` */
+  invitationUnavailable: 'Invitation unavailable',
+  /** @remarks `"This invitation is invalid, expired, or has already been handled."` */
+  invitationUnavailableDescription:
+    'This invitation is invalid, expired, or has already been handled.',
+  /** @remarks `"Invited at"` */
+  invitedAt: 'Invited at',
+  /** @remarks `"Invite member"` */
+  inviteMember: 'Invite member',
+  /** @remarks `"Member invited successfully"` */
+  inviteMemberSuccess: 'Member invited successfully',
+  /** @remarks `"We'll email them a link to join this organization. Choose the role they'll have once they accept."` */
+  inviteMemberDescription:
+    "We'll email them a link to join this organization. Choose the role they'll have once they accept.",
+  /** @remarks `"You left the organization"` */
+  leftOrganization: 'You left the organization',
+  /** @remarks `"Leave organization"` */
+  leaveOrganization: 'Leave organization',
+  /** @remarks `"Leave this organization and lose access to its data and resources. You'll need a new invitation to rejoin."` */
+  leaveOrganizationDescription:
+    "Leave this organization and lose access to its data and resources. You'll need a new invitation to rejoin.",
+  /** @remarks `"Logo"` */
+  logo: 'Logo',
+  /** @remarks `"Logo updated successfully"` */
+  logoChangedSuccess: 'Logo updated successfully',
+  /** @remarks `"Logo removed successfully"` */
+  logoDeletedSuccess: 'Logo removed successfully',
+  /** @remarks `"Manage"` */
+  manage: 'Manage',
+  /** @remarks `"Member"` */
+  member: 'Member',
+  /** @remarks `"Member removed"` */
+  memberRemoved: 'Member removed',
+  /** @remarks `"Member role updated"` */
+  memberRoleUpdated: 'Member role updated',
+  /** @remarks `"Members"` */
+  members: 'Members',
+  /** @remarks `"People"` */
+  people: 'People',
+  /** @remarks `"Name"` */
+  name: 'Name',
+  /** @remarks `"Enter the organization name"` */
+  namePlaceholder: 'Enter the organization name',
+  /** @remarks `"No invitations"` */
+  noInvitations: 'No invitations',
+  /** @remarks `"No organizations"` */
+  noOrganizations: 'No organizations',
+  /** @remarks `"Organization"` */
+  organization: 'Organization',
+  /** @remarks `"Organization deleted"` */
+  organizationDeleted: 'Organization deleted',
+  /** @remarks `"Invite a teammate to collaborate in this organization."` */
+  organizationInvitationsEmptyDescription:
+    'Invite a teammate to collaborate in this organization.',
+  /** @remarks `"Organizations"` */
+  organizations: 'Organizations',
+  /** @remarks `"Create an organization to collaborate with others and manage shared access."` */
+  organizationsDescription:
+    'Create an organization to collaborate with others and manage shared access.',
+  /** @remarks `"Organization profile"` */
+  organizationProfile: 'Organization profile',
+  /** @remarks `"Organization updated successfully"` */
+  organizationUpdatedSuccess: 'Organization updated successfully',
+  /** @remarks `"Owner"` */
+  owner: 'Owner',
+  /** @remarks `"Pending"` */
+  pending: 'Pending',
+  /** @remarks `"Next page"` */
+  nextPage: 'Next page',
+  /** @remarks `"First page"` */
+  firstPage: 'First page',
+  /** @remarks `"Last page"` */
+  lastPage: 'Last page',
+  /** @remarks `"Page {{page}} of {{pages}}"` */
+  pageOf: 'Page {{page}} of {{pages}}',
+  /** @remarks `"Rows per page"` */
+  rowsPerPage: 'Rows per page',
+  /** @remarks `"Columns"` */
+  columns: 'Columns',
+  /** @remarks `"{{count}} selected"` */
+  selectedCount: '{{count}} selected',
+  /** @remarks `"Select row"` */
+  selectRow: 'Select row',
+  /** @remarks `"Select all rows on this page"` */
+  selectAllRows: 'Select all rows on this page',
+  /** @remarks `"Cancel selected invitations"` */
+  cancelSelectedInvitations: 'Cancel selected invitations',
+  /** @remarks `"Cancel the selected pending invitations?"` */
+  cancelSelectedInvitationsDescription:
+    'Cancel the selected pending invitations?',
+  /** @remarks `"{{count}} invitations canceled"` */
+  invitationsCanceled: '{{count}} invitations canceled',
+  /** @remarks `"Remove selected members"` */
+  removeSelectedMembers: 'Remove selected members',
+  /** @remarks `"Remove the selected members from this organization? They will lose access immediately."` */
+  removeSelectedMembersDescription:
+    'Remove the selected members from this organization? They will lose access immediately.',
+  /** @remarks `"{{count}} members removed"` */
+  membersRemoved: '{{count}} members removed',
+  /** @remarks `"Delete selected roles"` */
+  deleteSelectedRoles: 'Delete selected roles',
+  /** @remarks `"Delete the selected roles? Roles assigned to members cannot be deleted."` */
+  deleteSelectedRolesDescription:
+    'Delete the selected roles? Roles assigned to members cannot be deleted.',
+  /** @remarks `"{{count}} roles deleted"` */
+  rolesDeleted: '{{count}} roles deleted',
+  /** @remarks `"Personal account"` */
+  personalAccount: 'Personal account',
+  /** @remarks `"Previous page"` */
+  previousPage: 'Previous page',
+  /** @remarks `"Rejected"` */
+  rejected: 'Rejected',
+  /** @remarks `"{{from}}–{{to}} of {{total}}"` */
+  paginationRange: '{{from}}–{{to}} of {{total}}',
+  /** @remarks `"Return"` */
+  return: 'Return',
+  /** @remarks `"Reject invitation"` */
+  rejectInvitation: 'Reject invitation',
+  /** @remarks `"Remove member"` */
+  removeMember: 'Remove member',
+  /** @remarks `"Are you sure you want to remove this member from the organization? They will lose access immediately."` */
+  removeMemberWarning:
+    'Are you sure you want to remove this member from the organization? They will lose access immediately.',
+  /** @remarks `"Resend invitation"` */
+  resendInvitation: 'Resend invitation',
+  /** @remarks `"Role"` */
+  role: 'Role',
+  /** @remarks `"Search..."` */
+  search: 'Search...',
+  /** @remarks `"Select at least one role"` */
+  selectAtLeastOneRole: 'Select at least one role',
+  /** @remarks `"Select roles"` */
+  selectRoles: 'Select roles',
+  /** @remarks `"Slug"` */
+  slug: 'Slug',
+  /** @remarks `"organization-slug"` */
+  slugPlaceholder: 'organization-slug',
+  /** @remarks `"Status"` */
+  status: 'Status',
+  /** @remarks `"Upload logo"` */
+  uploadLogo: 'Upload logo',
+  /** @remarks `"Invitations to join an organization will show up here."` */
+  userInvitationsEmptyDescription:
+    'Invitations to join an organization will show up here.',
+  /** @remarks `"Verify your email to view invitations"` */
+  verifyEmailToViewInvitations: 'Verify your email to view invitations',
+  /** @remarks `"For your security, invitations are available after you verify your email address."` */
+  verifyEmailToViewInvitationsDescription:
+    'For your security, invitations are available after you verify your email address.',
+  teams: 'Teams',
+  team: 'Team',
+  teamsDescription: 'Create teams and manage their members.',
+  selectTeam: 'Select a team',
+  allTeams: 'All teams',
+  selectMember: 'Select a member',
+  createTeam: 'Create team',
+  renameTeam: 'Rename team',
+  deleteTeam: 'Delete team',
+  deleteTeamDescription:
+    'Delete this team and remove its member assignments. This cannot be undone.',
+  noTeams: 'No teams',
+  noTeamsDescription:
+    'Create a team to organize access within this organization.',
+  teamMembers: 'Team members',
+  addTeamMember: 'Add team member',
+  removeTeamMember: 'Remove from team',
+  teamCreated: 'Team created',
+  teamUpdated: 'Team updated',
+  teamDeleted: 'Team deleted',
+  teamLimitReached: 'This organization has reached its team limit.',
+  teamMemberLimitReached: 'This team has reached its member limit.',
+  lastTeamRemovalDisabled: 'This organization must keep at least one team.',
+  activeTeamRemovalDisabled:
+    'Switch to another team before deleting this team.',
+  onlyOwnerActionDisabled: 'Transfer ownership before removing the only owner.',
+  limitReached: 'Limit reached',
+  organizationLimitReached: 'You have reached the organization limit.',
+  membershipLimitReached: 'This organization has reached its member limit.',
+  invitationLimitReached: 'This organization has reached its invitation limit.',
+  roles: 'Roles',
+  rolesDescription: 'Create roles and choose what each role can do.',
+  createRole: 'Create role',
+  editRole: 'Edit role',
+  deleteRole: 'Delete role',
+  deleteRoleDescription:
+    'Delete this role permanently. Members must move to another role first.',
+  roleName: 'Role name',
+  permissions: 'Permissions',
+  permissionsLimitedDescription:
+    'You can assign only permissions included in your own role.',
+  noRoles: 'No custom roles',
+  noRolesDescription: 'Create a role to define custom organization access.',
+  roleCreated: 'Role created',
+  roleUpdated: 'Role updated',
+  roleDeleted: 'Role deleted',
+  roleInUse: 'This role is assigned to {{count}} member(s).',
+  roleNamePlaceholder: 'support-agent'
+}
+
+export type OrganizationLocalization = typeof organizationLocalization

@@ -1,0 +1,6 @@
+export * from './additional-fields-config'
+export * from './auth-config'
+export type * from './avatar-config'
+export type * from './email-and-password-config'
+export type * from './profile-config'
+export * from './social-provider-config'

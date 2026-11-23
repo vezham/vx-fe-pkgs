@@ -1,0 +1,67 @@
+import type { MutationOptions } from '@tanstack/query-core'
+
+import type { BetterFetchError } from '@vezham/auth/client'
+
+import { authQueryKeys } from '../../lib/auth-query-keys'
+import type { PasskeyAuthClient } from './passkey-auth-client'
+import { passkeyMutationKeys } from './passkey-mutation-keys'
+
+export type SignInPasskeyParams<TAuthClient extends PasskeyAuthClient> =
+  Parameters<TAuthClient['signIn']['passkey']>[0]
+
+export type SignInPasskeyOptions<TAuthClient extends PasskeyAuthClient> = Omit<
+  ReturnType<typeof signInPasskeyOptions<TAuthClient>>,
+  'mutationKey' | 'mutationFn' | 'meta'
+>
+
+/**
+ * Mutation options factory for passkey sign-in.
+ *
+ * @param authClient - The Better Auth passkey client.
+ */
+export function signInPasskeyOptions<TAuthClient extends PasskeyAuthClient>(
+  authClient: TAuthClient
+) {
+  const mutationKey = passkeyMutationKeys.signIn
+
+  const mutationFn = async (
+    // vx-bot/NOTE: Void allows no-arg mutate.
+    params?: SignInPasskeyParams<TAuthClient> | void
+  ) => {
+    const result = await authClient.signIn.passkey({
+      ...(params ?? {}),
+      fetchOptions: { ...params?.fetchOptions, throw: true }
+    })
+    // oxlint-disable-next-line typescript/only-throw-error -- Better Auth error payloads are plain objects that the error toaster reads by code and status.
+    if (result.error) throw result.error
+    return result
+  }
+
+  return {
+    mutationKey,
+    mutationFn,
+    meta: {
+      awaits: [authQueryKeys.session]
+    }
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
+    BetterFetchError,
+    Parameters<typeof mutationFn>[0]
+  >
+}
+
+/** Mutation options for the non-blocking conditional passkey request. */
+export const passkeyAutoFillOptions = <TAuthClient extends PasskeyAuthClient>(
+  authClient: TAuthClient
+): ReturnType<typeof signInPasskeyOptions<TAuthClient>> => {
+  const options = signInPasskeyOptions(authClient)
+
+  return {
+    ...options,
+    mutationKey: passkeyMutationKeys.autoFill,
+    meta: {
+      ...options.meta,
+      errorPresentation: 'silent' as const
+    }
+  }
+}

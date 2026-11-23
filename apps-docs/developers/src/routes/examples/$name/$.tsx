@@ -1,17 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import {
-  LayoutExample,
-  assertLayoutExample
-} from '@components/docs/layout-example'
+  IsolatedExample,
+  assertIsolatedExample
+} from '@components/docs/isolated-example'
+import { isolatedDemos } from '@src/demos/react/isolated'
 
-const RouteComponent = () => <LayoutExample name={Route.useParams().name} />
+const RouteComponent = () => <IsolatedExample name={Route.useParams().name} />
 
 export const Route = createFileRoute('/examples/$name/$')({
-  beforeLoad: ({ params }) => assertLayoutExample(params.name),
-  head: () => ({
+  beforeLoad: ({ params }) => assertIsolatedExample(params.name),
+  head: ({ params }) => ({
     meta: [
-      { title: 'Notebook layout example' },
+      { title: isolatedDemos[params.name]?.title ?? 'Component example' },
       { name: 'robots', content: 'noindex' }
     ]
   }),

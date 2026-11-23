@@ -1,0 +1,244 @@
+import { useEffect } from 'react'
+
+import { validateMinimumItems } from '@vezham/auth-ui-core'
+import {
+  type OrganizationAuthClient,
+  organizationPlugin,
+  parseMemberRoles
+} from '@vezham/auth-ui-core/plugins/organization'
+import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
+import { useUpdateMemberRole } from '@vezham/auth-ui-react/plugins/organization'
+import { ShieldCheck } from '@vezham/icons-react'
+import {
+  AlertDialog,
+  Button,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  toast
+} from '@vezham/react-v3'
+
+import { useAuthForm } from '../../auth-form'
+
+export type EditMemberRolesDialogProps = {
+  isOpen: boolean
+  member: {
+    id: string
+    role?: string | null
+  }
+  onOpenChange: (open: boolean) => void
+  organizationId: string
+  roles: Array<[string, string]>
+  protectedRole?: string
+  protectedRoleRemovalDisabled?: boolean
+}
+
+const selectedMemberRoles = (
+  memberRole: string | null | undefined,
+  allowMultipleRoles: boolean,
+  protectedRole?: string
+) => {
+  const parsedRoles = parseMemberRoles(memberRole)
+
+  if (allowMultipleRoles) return parsedRoles
+
+  const selectedRole =
+    protectedRole && parsedRoles.includes(protectedRole)
+      ? protectedRole
+      : parsedRoles[0]
+
+  return selectedRole ? [selectedRole] : []
+}
+
+export const EditMemberRolesDialog = ({
+  isOpen,
+  member,
+  onOpenChange,
+  organizationId,
+  roles,
+  protectedRole,
+  protectedRoleRemovalDisabled
+}: EditMemberRolesDialogProps) => {
+  const { authClient, localization } = useAuth<OrganizationAuthClient>()
+  const { allowMultipleRoles, localization: organizationLocalization } =
+    useAuthPlugin(organizationPlugin)
+  const updateMemberRole = useUpdateMemberRole(authClient, {
+    onSuccess: () => {
+      toast.success(organizationLocalization.memberRoleUpdated)
+      onOpenChange(false)
+    }
+  })
+  const form = useAuthForm({
+    defaultValues: {
+      roles: selectedMemberRoles(member.role, allowMultipleRoles, protectedRole)
+    },
+    onSubmit: async ({ value }) => {
+      if (value.roles.length === 0) return
+
+      try {
+        await updateMemberRole.mutateAsync({
+          memberId: member.id,
+          organizationId,
+          role: value.roles
+        })
+      } catch {
+        // vx-bot/NOTE: The mutation reports the error through its configured handler.
+      }
+    }
+  })
+
+  useEffect(() => {
+    if (isOpen)
+      form.reset({
+        roles: selectedMemberRoles(
+          member.role,
+          allowMultipleRoles,
+          protectedRole
+        )
+      })
+  }, [allowMultipleRoles, form, isOpen, member.role, protectedRole])
+
+  return (
+    <AlertDialog.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <form.AppForm>
+            <form.AuthFormRoot>
+              <AlertDialog.CloseTrigger />
+              <AlertDialog.Header>
+                <AlertDialog.Heading className="flex items-center gap-2">
+                  <ShieldCheck size={16} />
+                  {organizationLocalization.changeMemberRole}
+                </AlertDialog.Heading>
+              </AlertDialog.Header>
+              <AlertDialog.Body className="flex flex-col gap-4">
+                <p className="text-muted text-sm">
+                  {organizationLocalization.changeMemberRoleDescription}
+                </p>
+                <form.AppField
+                  name="roles"
+                  mode="array"
+                  validators={{
+                    onChange: ({ value }) =>
+                      validateMinimumItems(
+                        value,
+                        1,
+                        organizationLocalization.selectAtLeastOneRole
+                      )
+                  }}>
+                  {field => {
+                    const selectedRoles = field.state.value
+                    const protectedRoleSelected =
+                      !allowMultipleRoles &&
+                      protectedRoleRemovalDisabled &&
+                      protectedRole !== undefined &&
+                      selectedRoles.includes(protectedRole)
+
+                    return (
+                      <>
+                        {allowMultipleRoles ? (
+                          <fieldset className="flex flex-col gap-2">
+                            <legend className="sr-only">
+                              {organizationLocalization.changeMemberRole}
+                            </legend>
+                            {roles.map(([role, label]) => {
+                              const selected = selectedRoles.includes(role)
+                              const disabled =
+                                updateMemberRole.isPending ||
+                                (selected && selectedRoles.length === 1) ||
+                                (role === protectedRole &&
+                                  selected &&
+                                  protectedRoleRemovalDisabled)
+
+                              return (
+                                <Checkbox
+                                  className="w-full rounded-lg border p-3"
+                                  isDisabled={disabled}
+                                  isSelected={selected}
+                                  key={role}
+                                  onChange={checked => {
+                                    if (checked && !selected) {
+                                      field.pushValue(role)
+                                      return
+                                    }
+
+                                    const index = selectedRoles.indexOf(role)
+                                    if (index >= 0) field.removeValue(index)
+                                  }}
+                                  variant="secondary">
+                                  <Checkbox.Content className="w-full">
+                                    <Checkbox.Control>
+                                      <Checkbox.Indicator />
+                                    </Checkbox.Control>
+                                    <span className="text-sm font-medium">
+                                      {label}
+                                    </span>
+                                  </Checkbox.Content>
+                                </Checkbox>
+                              )
+                            })}
+                          </fieldset>
+                        ) : (
+                          <RadioGroup
+                            aria-label={
+                              organizationLocalization.changeMemberRole
+                            }
+                            isDisabled={updateMemberRole.isPending}
+                            onChange={role => field.handleChange([role])}
+                            value={selectedRoles[0] ?? ''}
+                            variant="secondary">
+                            <div className="flex flex-col gap-2">
+                              {roles.map(([role, label]) => {
+                                const selected = selectedRoles.includes(role)
+                                const disabled =
+                                  (protectedRoleSelected &&
+                                    role !== protectedRole) ||
+                                  (role === protectedRole &&
+                                    selected &&
+                                    protectedRoleRemovalDisabled)
+
+                                return (
+                                  <Radio
+                                    className="w-full rounded-lg border p-3"
+                                    isDisabled={disabled}
+                                    key={role}
+                                    value={role}>
+                                    <Radio.Content className="w-full">
+                                      <Radio.Control>
+                                        <Radio.Indicator />
+                                      </Radio.Control>
+                                      <span className="text-sm font-medium">
+                                        {label}
+                                      </span>
+                                    </Radio.Content>
+                                  </Radio>
+                                )
+                              })}
+                            </div>
+                          </RadioGroup>
+                        )}
+                        <field.AuthFormFieldError />
+                      </>
+                    )
+                  }}
+                </form.AppField>
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button
+                  isDisabled={updateMemberRole.isPending}
+                  slot="close"
+                  variant="tertiary">
+                  {localization.settings.cancel}
+                </Button>
+                <form.AuthFormSubmitButton
+                  isDisabled={updateMemberRole.isPending}>
+                  {localization.settings.saveChanges}
+                </form.AuthFormSubmitButton>
+              </AlertDialog.Footer>
+            </form.AuthFormRoot>
+          </form.AppForm>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
+  )
+}

@@ -8,7 +8,11 @@ import {
   getPlatformPage,
   getPlatformSections
 } from '../../components/docs/platform-sections'
-import { getComponentCatalog, getLayoutCatalog } from './component-catalog'
+import {
+  getAuthCatalog,
+  getComponentCatalog,
+  getLayoutCatalog
+} from './component-catalog'
 import { getContentPage, getContentSections } from './content-navigation'
 import { docsRuntimes } from './runtimes'
 
@@ -163,7 +167,7 @@ describe('content navigation', () => {
   })
 
   it.each(['en', 'cn'])(
-    'keeps in-house components and layouts in separate catalogs for %s',
+    'keeps in-house components, layouts, and auth in separate catalogs for %s',
     locale => {
       const prefix = locale === 'en' ? '' : '/cn'
       const components = getComponentCatalog('web', 'react', locale)
@@ -213,8 +217,35 @@ describe('content navigation', () => {
           })
         ])
       )
+      const auth = getAuthCatalog('web', 'react', locale)
+      expect(auth).toHaveLength(58)
+      expect(auth).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            title: '<Auth.Provider>',
+            slug: 'auth-provider',
+            url: `${prefix}/docs/ui/react/web/auth/components/auth-provider`
+          }),
+          expect.objectContaining({
+            title: '<Auth.SignIn />',
+            slug: 'sign-in',
+            url: `${prefix}/docs/ui/react/web/auth/components/auth/sign-in`
+          }),
+          expect.objectContaining({
+            title: 'Organization',
+            slug: 'organization',
+            url: `${prefix}/docs/ui/react/web/auth/plugins/organization`
+          }),
+          expect.objectContaining({
+            title: '<AuthEmail.EmailVerification />',
+            slug: 'email-verification-email',
+            url: `${prefix}/docs/ui/react/web/auth/components/email/email-verification-email`
+          })
+        ])
+      )
       expect(getComponentCatalog('native', 'react', locale)).toEqual([])
       expect(getLayoutCatalog('native', 'react', locale)).toEqual([])
+      expect(getAuthCatalog('native', 'react', locale)).toEqual([])
     }
   )
 

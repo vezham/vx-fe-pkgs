@@ -6,12 +6,15 @@ import {
   waitFor,
   within
 } from '@testing-library/react'
-import { Fragment, createElement } from 'react'
+import { Fragment, Suspense, createElement } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import mdx from '@vezham/docs-react/mdx'
 import { InstallTabs } from '@vezham/react/components/install-tabs'
+import { getMDXComponents } from '@vezham/start/mdx'
 
+import { createPlatformDocsLoader } from '../../../lib/docs/platform-loader'
+import { getPlatformDocs } from '../platform-docs'
 import { ComponentPreview } from './index'
 
 const animations = Object.getOwnPropertyDescriptor(
@@ -61,6 +64,55 @@ afterEach(() => {
 })
 
 describe('local component previews', () => {
+  it('loads Sign In and switches compact filename tabs with complete setup source', async () => {
+    const data = await createPlatformDocsLoader('react')({
+      params: { platform: 'web', _splat: 'auth/components/auth/sign-in' }
+    })
+    const page = getPlatformDocs('web', 'react').getPage(data.path)
+    if (!page) throw new Error('Missing Sign In documentation')
+    await page.load()
+    const MDX = page.body
+    const { container } = render(
+      <Suspense fallback={<p>Loading documentation…</p>}>
+        <MDX components={getMDXComponents()} />
+      </Suspense>
+    )
+    await act(() => vi.dynamicImportSettled())
+    const element = container.querySelector(
+      '[data-component-preview="react-auth-sign-in"]'
+    )
+    if (!(element instanceof HTMLElement))
+      throw new Error('Missing sign-in preview')
+    const example = within(element)
+    expect(
+      await example.findByRole('button', { name: 'Sign In' })
+    ).toBeVisible()
+    fireEvent.click(example.getByRole('tab', { name: 'Code' }))
+    const files = example.getByRole('tablist', { name: 'Source files' })
+    const entry = within(files).getByRole('tab', { name: 'sign-in.tsx' })
+    expect(entry).toHaveAttribute('aria-selected', 'true')
+    expect(
+      example.getByRole('region', { name: 'Example source code' })
+    ).toHaveTextContent('Auth.SignIn')
+    fireEvent.click(within(files).getByRole('tab', { name: 'demo-client.ts' }))
+    const source = example.getByRole('region', { name: 'Example source code' })
+    expect(source).toHaveTextContent('@vezham/auth/react')
+    expect(source.querySelector('code span')).not.toBeNull()
+    expect(example.getAllByRole('button', { name: 'Copy Text' })).toHaveLength(
+      1
+    )
+    fireEvent.click(example.getByRole('tab', { name: 'Preview' }))
+    expect(example.queryByText('This preview could not load.')).toBeNull()
+  }, 20_000)
+
+  it('keeps the reset token inside the isolated password-reset example URL', async () => {
+    render(<ComponentPreview name="react-auth-reset-password" />)
+    expect(await screen.findByTitle('ResetPassword example')).toHaveAttribute(
+      'src',
+      '/examples/react-auth-reset-password?token=preview-reset-token'
+    )
+  })
+
   it('loads the InstallTabs demo and switches the real highlighted commands', async () => {
     render(<ComponentPreview name="react-install-tabs-development" />)
     await act(() => vi.dynamicImportSettled())
@@ -235,6 +287,7 @@ describe('local component previews', () => {
     expect(source.closest('figure')).toHaveAttribute('data-line-numbers')
     expect(screen.getAllByRole('region')).toHaveLength(1)
     expect(screen.getAllByRole('button', { name: 'Copy Text' })).toHaveLength(1)
+    expect(screen.queryByRole('tablist', { name: 'Source files' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull()
   })
 })

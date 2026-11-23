@@ -1,3 +1,5 @@
+import { renderToStaticMarkup } from 'react-dom/server'
+
 import { deserializePageTree } from '@vezham/docs-core/source/client'
 
 import { getUiLibraryRoute } from '../../components/docs/library-routes'
@@ -26,7 +28,8 @@ describe('UI documentation', () => {
     expect(getPlatformSections('web').map(section => section.id)).toEqual([
       'getting-started',
       'components',
-      'layouts'
+      'layouts',
+      'auth'
     ])
     expect(getPlatformPage('native', 'components/button')).toBe(
       'getting-started'
@@ -61,7 +64,7 @@ describe('UI documentation', () => {
         getPlatformSections(platform, 'react').map(item => item.id)
       ).toEqual(
         platform === 'web'
-          ? ['getting-started', 'components', 'layouts']
+          ? ['getting-started', 'components', 'layouts', 'auth']
           : ['getting-started']
       )
     },
@@ -98,6 +101,35 @@ describe('UI documentation', () => {
   )
 
   it.each([
+    ['en', 'auth', 'Quick Start', '@vezham/react/auth', 'ReactAuth'],
+    [
+      'cn',
+      'auth/components/auth-provider',
+      '<Auth.Provider>',
+      '@vezham/react/auth',
+      'Auth.Provider'
+    ],
+    [
+      'en',
+      'auth/components/auth/sign-in',
+      '<Auth.SignIn />',
+      '@vezham/react/auth',
+      'react-auth-sign-in'
+    ],
+    [
+      'cn',
+      'auth/plugins/organization',
+      'Organization',
+      '@vezham/react/auth/plugins/organization',
+      'Organization.Members'
+    ],
+    [
+      'en',
+      'auth/components/email/email-verification-email',
+      '<AuthEmail.EmailVerification />',
+      '@vezham/react/auth/email',
+      'AuthEmail.EmailVerification'
+    ],
     [
       'en',
       'components/install-tabs',
@@ -199,9 +231,47 @@ describe('UI documentation', () => {
       const markdown = await runtime.getLLMText(page)
       expect(markdown).toContain(entry)
       expect(markdown).toContain(example)
+      if (path === 'auth' || path.startsWith('auth/')) {
+        const tree = deserializePageTree(data.pageTree)
+        expect(
+          tree.children
+            .filter(node => node.type === 'folder')
+            .map(node => renderToStaticMarkup(node.name))
+        ).toEqual([
+          expect.stringContaining('Integrations'),
+          expect.stringContaining('Concepts'),
+          expect.stringContaining('Plugins'),
+          expect.stringContaining('Components')
+        ])
+        expect(JSON.stringify(tree)).not.toContain('/web/components/')
+        expect(JSON.stringify(tree)).not.toContain('/layouts/')
+      }
     },
     20_000
   )
+
+  it('compiles every phase-one Auth page with registered interactive examples', async () => {
+    const runtime = getPlatformDocsRuntime('web', 'react')
+    const pages = runtime.source
+      .getPages('en')
+      .filter(page => page.slugs[0] === 'auth')
+    expect(pages).toHaveLength(59)
+    const examples = new Set<string>()
+    for (const page of pages) {
+      const markdown = await runtime.getLLMText(page)
+      expect(markdown).not.toMatch(
+        /@better-auth-ui\/|<type-table|<DocVariant|file=<rootDir>/
+      )
+      for (const match of markdown.matchAll(
+        /<ComponentPreview name="([^"]+)"/g
+      ))
+        examples.add(match[1])
+    }
+    expect(examples.size).toBe(54)
+    expect(examples).toContain('react-auth-api-key-api-keys')
+    expect(examples).toContain('react-auth-email-email-verification-email')
+    expect(examples).toContain('react-auth-organization-organization-members')
+  }, 60_000)
 
   it('requires an in-house platform and rejects unavailable sections', async () => {
     const loadReact = createPlatformDocsLoader('react')

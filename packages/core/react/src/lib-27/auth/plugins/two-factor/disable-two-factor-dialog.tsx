@@ -1,0 +1,125 @@
+import type { TwoFactorAuthClient } from '@vezham/auth-ui-core/plugins/two-factor'
+import { twoFactorPlugin } from '@vezham/auth-ui-core/plugins/two-factor'
+import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
+import { useDisableTwoFactor } from '@vezham/auth-ui-react/plugins/two-factor'
+import { ShieldWarning as ShieldExclamation } from '@vezham/icons-react'
+import {
+  AlertDialog,
+  Button,
+  FieldError,
+  Input,
+  Label,
+  TextField,
+  toast
+} from '@vezham/react-v3'
+
+import { useAuthForm } from '../../auth-form'
+import { useTwoFactorPasswordRequirement } from '../../lib/use-two-factor-password'
+
+export type DisableTwoFactorDialogProps = {
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+/**
+ * Confirm turning two-factor off.
+ *
+ * @param isOpen - Whether the dialog is open.
+ * @param onOpenChange - Called when the dialog requests an open state change.
+ */
+export const DisableTwoFactorDialog = ({
+  isOpen,
+  onOpenChange
+}: DisableTwoFactorDialogProps) => {
+  const { authClient, localization } = useAuth<TwoFactorAuthClient>()
+  const { localization: twoFactorLocalization } = useAuthPlugin(twoFactorPlugin)
+  const { isPending: isResolvingPasswordRequirement, requiresPassword } =
+    useTwoFactorPasswordRequirement()
+
+  const { mutateAsync: disableTwoFactor, isPending: isDisabling } =
+    useDisableTwoFactor(authClient, {
+      onSuccess: () => {
+        toast.success(twoFactorLocalization.twoFactorDisabled)
+        onOpenChange(false)
+      }
+    })
+
+  const isPending = isDisabling || isResolvingPasswordRequirement
+
+  const form = useAuthForm({
+    defaultValues: { password: '' },
+    onSubmit: async ({ value }) =>
+      disableTwoFactor(requiresPassword ? { password: value.password } : {})
+  })
+
+  return (
+    <AlertDialog.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <form.AppForm>
+            <form.AuthFormRoot>
+              <AlertDialog.CloseTrigger />
+
+              <AlertDialog.Header>
+                <AlertDialog.Icon status="danger">
+                  <ShieldExclamation size={16} />
+                </AlertDialog.Icon>
+
+                <AlertDialog.Heading>
+                  {twoFactorLocalization.disableTwoFactor}
+                </AlertDialog.Heading>
+              </AlertDialog.Header>
+
+              <AlertDialog.Body className="overflow-visible">
+                <p className="text-muted text-sm">
+                  {requiresPassword
+                    ? twoFactorLocalization.passwordConfirmation
+                    : twoFactorLocalization.twoFactorDescription}
+                </p>
+
+                {requiresPassword && (
+                  <form.AppField name="password">
+                    {field => (
+                      <TextField
+                        className="mt-4"
+                        name={field.name}
+                        autoComplete="current-password"
+                        isDisabled={isPending}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={field.handleChange}>
+                        <Label>{localization.auth.password}</Label>
+
+                        <Input
+                          required
+                          type="password"
+                          placeholder={localization.auth.passwordPlaceholder}
+                          variant="secondary"
+                        />
+
+                        <FieldError />
+                      </TextField>
+                    )}
+                  </form.AppField>
+                )}
+              </AlertDialog.Body>
+
+              <AlertDialog.Footer>
+                <Button slot="close" variant="tertiary" isDisabled={isPending}>
+                  {localization.settings.cancel}
+                </Button>
+
+                <form.AuthFormSubmitButton
+                  isPending={isPending}
+                  variant="danger"
+                  isDisabled={isPending}>
+                  {twoFactorLocalization.disableTwoFactor}
+                </form.AuthFormSubmitButton>
+              </AlertDialog.Footer>
+            </form.AuthFormRoot>
+          </form.AppForm>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
+  )
+}

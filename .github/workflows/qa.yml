@@ -176,6 +176,9 @@ jobs:
         with:
           HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
 
+      - name: 🔵 · 🌐 Install Chromium for browser tests
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: 🔵 · 🧪 Test • Vitest
         shell: bash
         run: |

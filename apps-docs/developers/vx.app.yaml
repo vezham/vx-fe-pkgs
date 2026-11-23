@@ -19,6 +19,8 @@ og:
   site: Vezham Developers
   theme: light
 routes:
+  - path: /examples/react-auth-reset-password
+    og: false
   - path: /examples/react-notebook-default
     og: false
   - path: /examples/react-notebook-default/guides

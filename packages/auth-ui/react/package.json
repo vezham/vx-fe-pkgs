@@ -1,0 +1,183 @@
+{
+  "name": "@vezham/auth-ui-react",
+  "version": "27.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vezham/vx-fe-kit.git",
+    "directory": "packages/auth-ui/react"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "@vx/fe-kit": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./email": {
+      "@vx/fe-kit": "./src/email.ts",
+      "types": "./dist/email.d.ts",
+      "import": "./dist/email.js",
+      "default": "./dist/email.js"
+    },
+    "./plugins/admin": {
+      "@vx/fe-kit": "./src/plugins/admin/index.ts",
+      "types": "./dist/plugins/admin/index.d.ts",
+      "import": "./dist/plugins/admin/index.js",
+      "default": "./dist/plugins/admin/index.js"
+    },
+    "./plugins/agent-auth": {
+      "@vx/fe-kit": "./src/plugins/agent-auth/index.ts",
+      "types": "./dist/plugins/agent-auth/index.d.ts",
+      "import": "./dist/plugins/agent-auth/index.js",
+      "default": "./dist/plugins/agent-auth/index.js"
+    },
+    "./plugins/anonymous": {
+      "@vx/fe-kit": "./src/plugins/anonymous/index.ts",
+      "types": "./dist/plugins/anonymous/index.d.ts",
+      "import": "./dist/plugins/anonymous/index.js",
+      "default": "./dist/plugins/anonymous/index.js"
+    },
+    "./plugins/api-key": {
+      "@vx/fe-kit": "./src/plugins/api-key/index.ts",
+      "types": "./dist/plugins/api-key/index.d.ts",
+      "import": "./dist/plugins/api-key/index.js",
+      "default": "./dist/plugins/api-key/index.js"
+    },
+    "./plugins/captcha": {
+      "@vx/fe-kit": "./src/plugins/captcha/index.ts",
+      "types": "./dist/plugins/captcha/index.d.ts",
+      "import": "./dist/plugins/captcha/index.js",
+      "default": "./dist/plugins/captcha/index.js"
+    },
+    "./plugins/billing": {
+      "@vx/fe-kit": "./src/plugins/billing/index.ts",
+      "types": "./dist/plugins/billing/index.d.ts",
+      "import": "./dist/plugins/billing/index.js",
+      "default": "./dist/plugins/billing/index.js"
+    },
+    "./plugins/dash": {
+      "@vx/fe-kit": "./src/plugins/dash/index.ts",
+      "types": "./dist/plugins/dash/index.d.ts",
+      "import": "./dist/plugins/dash/index.js",
+      "default": "./dist/plugins/dash/index.js"
+    },
+    "./plugins/device-authorization": {
+      "@vx/fe-kit": "./src/plugins/device-authorization/index.ts",
+      "types": "./dist/plugins/device-authorization/index.d.ts",
+      "import": "./dist/plugins/device-authorization/index.js",
+      "default": "./dist/plugins/device-authorization/index.js"
+    },
+    "./plugins/email-otp": {
+      "@vx/fe-kit": "./src/plugins/email-otp/index.ts",
+      "types": "./dist/plugins/email-otp/index.d.ts",
+      "import": "./dist/plugins/email-otp/index.js",
+      "default": "./dist/plugins/email-otp/index.js"
+    },
+    "./plugins/magic-link": {
+      "@vx/fe-kit": "./src/plugins/magic-link/index.ts",
+      "types": "./dist/plugins/magic-link/index.d.ts",
+      "import": "./dist/plugins/magic-link/index.js",
+      "default": "./dist/plugins/magic-link/index.js"
+    },
+    "./plugins/multi-session": {
+      "@vx/fe-kit": "./src/plugins/multi-session/index.ts",
+      "types": "./dist/plugins/multi-session/index.d.ts",
+      "import": "./dist/plugins/multi-session/index.js",
+      "default": "./dist/plugins/multi-session/index.js"
+    },
+    "./plugins/oauth-provider": {
+      "@vx/fe-kit": "./src/plugins/oauth-provider/index.ts",
+      "types": "./dist/plugins/oauth-provider/index.d.ts",
+      "import": "./dist/plugins/oauth-provider/index.js",
+      "default": "./dist/plugins/oauth-provider/index.js"
+    },
+    "./plugins/one-tap": {
+      "@vx/fe-kit": "./src/plugins/one-tap/index.ts",
+      "types": "./dist/plugins/one-tap/index.d.ts",
+      "import": "./dist/plugins/one-tap/index.js",
+      "default": "./dist/plugins/one-tap/index.js"
+    },
+    "./plugins/organization": {
+      "@vx/fe-kit": "./src/plugins/organization/index.ts",
+      "types": "./dist/plugins/organization/index.d.ts",
+      "import": "./dist/plugins/organization/index.js",
+      "default": "./dist/plugins/organization/index.js"
+    },
+    "./plugins/passkey": {
+      "@vx/fe-kit": "./src/plugins/passkey/index.ts",
+      "types": "./dist/plugins/passkey/index.d.ts",
+      "import": "./dist/plugins/passkey/index.js",
+      "default": "./dist/plugins/passkey/index.js"
+    },
+    "./plugins/phone-number": {
+      "@vx/fe-kit": "./src/plugins/phone-number/index.ts",
+      "types": "./dist/plugins/phone-number/index.d.ts",
+      "import": "./dist/plugins/phone-number/index.js",
+      "default": "./dist/plugins/phone-number/index.js"
+    },
+    "./plugins/sso": {
+      "@vx/fe-kit": "./src/plugins/sso/index.ts",
+      "types": "./dist/plugins/sso/index.d.ts",
+      "import": "./dist/plugins/sso/index.js",
+      "default": "./dist/plugins/sso/index.js"
+    },
+    "./plugins/siwe": {
+      "@vx/fe-kit": "./src/plugins/siwe/index.ts",
+      "types": "./dist/plugins/siwe/index.d.ts",
+      "import": "./dist/plugins/siwe/index.js",
+      "default": "./dist/plugins/siwe/index.js"
+    },
+    "./plugins/two-factor": {
+      "@vx/fe-kit": "./src/plugins/two-factor/index.ts",
+      "types": "./dist/plugins/two-factor/index.d.ts",
+      "import": "./dist/plugins/two-factor/index.js",
+      "default": "./dist/plugins/two-factor/index.js"
+    },
+    "./plugins/username": {
+      "@vx/fe-kit": "./src/plugins/username/index.ts",
+      "types": "./dist/plugins/username/index.d.ts",
+      "import": "./dist/plugins/username/index.js",
+      "default": "./dist/plugins/username/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "dependencies": {
+    "@tanstack/react-query": "^5.104.5",
+    "@vezham/auth-ui-core": "workspace:*",
+    "@vezham/styles-v3": "npm:@heroui/styles@3.2.7"
+  },
+  "devDependencies": {
+    "@vezham/auth": "catalog:",
+    "@vezham/auth-api-key": "catalog:",
+    "@vitest/browser-playwright": "5.0.5",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-email": "6.11.11"
+  },
+  "peerDependencies": {
+    "@vezham/auth": "catalog:",
+    "@vezham/auth-api-key": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-email": "6.11.11"
+  },
+  "peerDependenciesMeta": {
+    "@vezham/auth-api-key": {
+      "optional": true
+    },
+    "react-email": {
+      "optional": true
+    }
+  }
+}

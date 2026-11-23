@@ -1,0 +1,314 @@
+import { useEffect, useState } from 'react'
+
+import {
+  getAuthLinkURL,
+  isPasswordCompromisedError,
+  validateMatchingValue,
+  validateStringLength
+} from '@vezham/auth-ui-core'
+import { useAuth, useResetPassword } from '@vezham/auth-ui-react'
+import { Eye, EyeClosed as EyeSlash } from '@vezham/icons-react'
+import {
+  Button,
+  Card,
+  type CardProps,
+  Description,
+  FieldError,
+  InputGroup,
+  Label,
+  Link,
+  TextField,
+  cn,
+  toast
+} from '@vezham/react-v3'
+
+import { isAuthFormFieldInvalid, useAuthForm } from './auth-form'
+import { PasswordStrengthMeter } from './password-strength-meter'
+
+export type ResetPasswordProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+
+/**
+ * Renders a reset password form that verifies a "token" URL parameter on mount and redirects to sign-in if absent.
+ *
+ * Renders password (and optional confirm-password) inputs with visibility toggles, applies min/max length constraints from the auth configuration, shows field errors, and submits the new password to the auth client.
+ */
+export const ResetPassword = ({ className, variant }: ResetPasswordProps) => {
+  const {
+    authClient,
+    basePaths,
+    emailAndPassword,
+    localization,
+    navigate,
+    redirectTo,
+    viewPaths
+  } = useAuth()
+  const signInURL = getAuthLinkURL(
+    `${basePaths.auth}/${viewPaths.auth.signIn}`,
+    redirectTo
+  )
+
+  const { mutateAsync: resetPassword, isPending } = useResetPassword(
+    authClient,
+    {
+      onError: error => {
+        // vx-bot/NOTE: The haveIBeenPwned plugin rejects on the password itself, so it
+        // vx-bot/NOTE: belongs against the field rather than in a toast.
+        setIsCompromised(isPasswordCompromisedError(error))
+      },
+      onSuccess: () => {
+        toast.success(localization.auth.passwordResetSuccess)
+        navigate({ to: signInURL })
+      }
+    }
+  )
+
+  const [isCompromised, setIsCompromised] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false)
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const token = searchParams.get('token')
+
+    if (!token) {
+      toast.danger(localization.auth.invalidResetPasswordToken)
+      navigate({ to: signInURL })
+    }
+  }, [localization.auth.invalidResetPasswordToken, navigate, signInURL])
+
+  const form = useAuthForm({
+    defaultValues: { confirmPassword: '', password: '' },
+    onSubmit: async ({ value }) => {
+      const searchParams = new URLSearchParams(window.location.search)
+      const token = searchParams.get('token')
+
+      if (!token) {
+        toast.danger(localization.auth.invalidResetPasswordToken)
+        navigate({ to: signInURL })
+        return
+      }
+
+      try {
+        await resetPassword({ token, newPassword: value.password })
+      } catch {
+        // vx-bot/NOTE: The mutation reports the error through its configured handler.
+      }
+    }
+  })
+
+  return (
+    <Card
+      className={cn('w-full max-w-sm gap-4 md:p-6', className)}
+      variant={variant}>
+      <Card.Header>
+        <Card.Title className="mb-1 text-xl font-semibold">
+          {localization.auth.resetPassword}
+        </Card.Title>
+      </Card.Header>
+
+      <Card.Content className="gap-4">
+        <form.AppForm>
+          <form.AuthFormRoot className="flex flex-col gap-4">
+            <form.AppField
+              name="password"
+              validators={{
+                onChange: ({ value }) =>
+                  validateStringLength(value, {
+                    maxLength: emailAndPassword?.maxPasswordLength,
+                    maxLengthMessage: localization.auth.tooLong.replace(
+                      '{{max}}',
+                      String(emailAndPassword?.maxPasswordLength)
+                    ),
+                    minLength: emailAndPassword?.minPasswordLength,
+                    minLengthMessage: localization.auth.tooShort.replace(
+                      '{{min}}',
+                      String(emailAndPassword?.minPasswordLength)
+                    ),
+                    requiredMessage: localization.auth.fieldRequired
+                  })
+              }}>
+              {field => {
+                const isInvalid =
+                  isAuthFormFieldInvalid(field.state.meta) || isCompromised
+
+                return (
+                  <TextField
+                    minLength={emailAndPassword?.minPasswordLength}
+                    maxLength={emailAndPassword?.maxPasswordLength}
+                    name={field.name}
+                    autoComplete="new-password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={value => {
+                      field.handleChange(value)
+                      setIsCompromised(false)
+                    }}
+                    isInvalid={isInvalid || undefined}
+                    isDisabled={isPending}
+                    validationBehavior="aria">
+                    <Label>{localization.auth.password}</Label>
+
+                    <InputGroup
+                      variant={
+                        variant === 'transparent' ? 'primary' : 'secondary'
+                      }>
+                      <InputGroup.Input
+                        name="password"
+                        placeholder={localization.auth.newPasswordPlaceholder}
+                        type={isPasswordVisible ? 'text' : 'password'}
+                        required
+                      />
+
+                      <InputGroup.Suffix className="px-0">
+                        <Button
+                          isIconOnly
+                          aria-label={
+                            isPasswordVisible
+                              ? localization.auth.hidePassword
+                              : localization.auth.showPassword
+                          }
+                          size="sm"
+                          variant="ghost"
+                          onPress={() =>
+                            setIsPasswordVisible(!isPasswordVisible)
+                          }
+                          isDisabled={isPending}>
+                          {isPasswordVisible ? (
+                            <EyeSlash size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </Button>
+                      </InputGroup.Suffix>
+                    </InputGroup>
+
+                    {isCompromised ? (
+                      <FieldError>
+                        {localization.auth.passwordCompromised}
+                      </FieldError>
+                    ) : (
+                      <field.AuthFormFieldError />
+                    )}
+
+                    <PasswordStrengthMeter password={field.state.value} />
+                  </TextField>
+                )
+              }}
+            </form.AppField>
+
+            {emailAndPassword?.confirmPassword && (
+              <form.AppField
+                name="confirmPassword"
+                validators={{
+                  onChangeListenTo: ['password'],
+                  onChange: ({ fieldApi, value }) =>
+                    validateStringLength(value, {
+                      maxLength: emailAndPassword?.maxPasswordLength,
+                      maxLengthMessage: localization.auth.tooLong.replace(
+                        '{{max}}',
+                        String(emailAndPassword?.maxPasswordLength)
+                      ),
+                      minLength: emailAndPassword?.minPasswordLength,
+                      minLengthMessage: localization.auth.tooShort.replace(
+                        '{{min}}',
+                        String(emailAndPassword?.minPasswordLength)
+                      ),
+                      requiredMessage: localization.auth.fieldRequired
+                    }) ??
+                    validateMatchingValue(
+                      value,
+                      fieldApi.form.getFieldValue('password'),
+                      localization.auth.passwordsDoNotMatch
+                    )
+                }}>
+                {field => (
+                  <TextField
+                    minLength={emailAndPassword?.minPasswordLength}
+                    maxLength={emailAndPassword?.maxPasswordLength}
+                    name={field.name}
+                    autoComplete="new-password"
+                    isDisabled={isPending}
+                    onBlur={field.handleBlur}
+                    onChange={field.handleChange}
+                    value={field.state.value}
+                    isInvalid={
+                      isAuthFormFieldInvalid(field.state.meta) || undefined
+                    }
+                    validationBehavior="aria">
+                    <Label>{localization.auth.confirmPassword}</Label>
+
+                    <InputGroup
+                      variant={
+                        variant === 'transparent' ? 'primary' : 'secondary'
+                      }>
+                      <InputGroup.Input
+                        placeholder={
+                          localization.auth.confirmPasswordPlaceholder
+                        }
+                        type={isConfirmPasswordVisible ? 'text' : 'password'}
+                        required
+                        name="confirmPassword"
+                      />
+
+                      <InputGroup.Suffix className="px-0">
+                        <Button
+                          isIconOnly
+                          aria-label={
+                            isConfirmPasswordVisible
+                              ? localization.auth.hidePassword
+                              : localization.auth.showPassword
+                          }
+                          size="sm"
+                          variant="ghost"
+                          onPress={() =>
+                            setIsConfirmPasswordVisible(
+                              !isConfirmPasswordVisible
+                            )
+                          }
+                          isDisabled={isPending}>
+                          {isConfirmPasswordVisible ? (
+                            <EyeSlash size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </Button>
+                      </InputGroup.Suffix>
+                    </InputGroup>
+
+                    <field.AuthFormFieldError />
+                  </TextField>
+                )}
+              </form.AppField>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <form.AuthFormSubmitButton
+                className="w-full"
+                isDisabled={isPending}>
+                {localization.auth.resetPassword}
+              </form.AuthFormSubmitButton>
+            </div>
+          </form.AuthFormRoot>
+        </form.AppForm>
+      </Card.Content>
+
+      <Card.Footer className="flex-col gap-3">
+        <Description className="text-sm">
+          {localization.auth.rememberYourPassword}{' '}
+          <Link
+            href={getAuthLinkURL(
+              `${basePaths.auth}/${viewPaths.auth.signIn}`,
+              redirectTo
+            )}
+            className="text-accent decoration-accent-hover no-underline hover:underline">
+            {localization.auth.signIn}
+          </Link>
+        </Description>
+      </Card.Footer>
+    </Card>
+  )
+}

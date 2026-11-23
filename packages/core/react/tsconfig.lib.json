@@ -53,6 +53,12 @@
     },
     {
       "path": "../env/tsconfig.lib.json"
+    },
+    {
+      "path": "../../auth-ui/react/tsconfig.lib.json"
+    },
+    {
+      "path": "../../auth-ui/core/tsconfig.lib.json"
     }
   ]
 }

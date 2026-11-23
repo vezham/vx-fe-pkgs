@@ -1,0 +1,746 @@
+import { QueryClient } from '@tanstack/react-query'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import type { AuthClient } from '@vezham/auth-ui-core'
+import type { OAuthClientManager } from '@vezham/auth-ui-core/plugins/oauth-provider'
+
+import { Auth } from '../auth'
+import { AuthProvider } from '../auth-provider'
+import { AuthorizedApplications } from '../plugins/oauth-provider/authorized-applications'
+import {
+  OAuthClients,
+  OrganizationOAuthClients,
+  UserOAuthClients
+} from '../plugins/oauth-provider/oauth-clients'
+import { OAuthConsent } from '../plugins/oauth-provider/oauth-consent'
+import { OAuthSelectAccount } from '../plugins/oauth-provider/oauth-select-account'
+import { OAuthSignUp } from '../plugins/oauth-provider/oauth-sign-up'
+import { oauthProviderPlugin } from '../plugins/oauth-provider/plugin'
+import { SignUp } from '../sign-up'
+import './setup'
+
+const now = new Date()
+
+const makeSession = (id: string, userId: string, name: string) => ({
+  session: {
+    id,
+    token: `${id}-token`,
+    userId,
+    expiresAt: new Date(Date.now() + 60_000),
+    createdAt: now,
+    updatedAt: now
+  },
+  user: {
+    id: userId,
+    name,
+    email: `${userId}@example.com`,
+    emailVerified: true,
+    createdAt: now,
+    updatedAt: now
+  }
+})
+
+const session = makeSession('session-1', 'user-1', 'Ada Lovelace')
+const otherSession = makeSession('session-2', 'user-2', 'Grace Hopper')
+
+const createTestQueryClient = () => {
+  return new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } }
+  })
+}
+
+type ClientOverrides = {
+  multiSession?: Record<string, unknown>
+  oauth2?: Record<string, unknown>
+}
+
+const createMockAuthClient = (overrides: ClientOverrides = {}) => {
+  const getSession = vi.fn<
+    () => Promise<{
+      session: {
+        id: string
+        token: string
+        userId: string
+        expiresAt: Date
+        createdAt: Date
+        updatedAt: Date
+      }
+      user: {
+        id: string
+        name: string
+        email: string
+        emailVerified: boolean
+        createdAt: Date
+        updatedAt: Date
+      }
+    }>
+  >(async () => session)
+  const publicClient = vi.fn<
+    () => Promise<{
+      client_id: string
+      client_name: string
+      client_uri: string
+      logo_uri: undefined
+      policy_uri: string
+      tos_uri: undefined
+    }>
+  >(async () => ({
+    client_id: 'desktop-client',
+    client_name: 'Acme CLI',
+    client_uri: 'https://acme.example',
+    logo_uri: undefined,
+    policy_uri: 'https://acme.example/privacy',
+    tos_uri: undefined
+  }))
+  const consent = vi.fn<
+    ({ accept }: { accept: boolean }) => Promise<{ redirect_uri: string }>
+  >(async ({ accept }: { accept: boolean }) => ({
+    redirect_uri: `https:// vx-bot/NOTE: acme.example/callback?accepted=${String(accept)}`
+  }))
+  const oauthContinue = vi.fn<
+    () => Promise<{ redirect: boolean; url: string }>
+  >(async () => ({
+    redirect: true,
+    url: 'https://acme.example/callback'
+  }))
+  const getConsents = vi.fn<() => Promise<never[]>>(async () => [])
+  const deleteConsent = vi.fn<(params: { id: string }) => Promise<undefined>>(
+    async () => undefined
+  )
+  const listDeviceSessions = vi.fn<
+    () => Promise<
+      {
+        session: {
+          id: string
+          token: string
+          userId: string
+          expiresAt: Date
+          createdAt: Date
+          updatedAt: Date
+        }
+        user: {
+          id: string
+          name: string
+          email: string
+          emailVerified: boolean
+          createdAt: Date
+          updatedAt: Date
+        }
+      }[]
+    >
+  >(async () => [session, otherSession])
+  const setActive = vi.fn<
+    () => Promise<{
+      session: {
+        id: string
+        token: string
+        userId: string
+        expiresAt: Date
+        createdAt: Date
+        updatedAt: Date
+      }
+      user: {
+        id: string
+        name: string
+        email: string
+        emailVerified: boolean
+        createdAt: Date
+        updatedAt: Date
+      }
+    }>
+  >(async () => session)
+  const signUpEmail = vi.fn<() => Promise<Record<string, unknown>>>(
+    async () => ({})
+  )
+
+  return {
+    getSession,
+    signUp: { email: signUpEmail },
+    multiSession: {
+      listDeviceSessions,
+      setActive,
+      ...overrides.multiSession
+    },
+    oauth2: {
+      consent,
+      continue: oauthContinue,
+      deleteConsent,
+      getConsents,
+      publicClient,
+      publicClientPrelogin: publicClient,
+      ...overrides.oauth2
+    }
+  } as unknown as MockAuthClient
+}
+
+type MockAuthClient = AuthClient & {
+  signUp: { email: ReturnType<typeof vi.fn> }
+  multiSession: {
+    listDeviceSessions: ReturnType<typeof vi.fn>
+    setActive: ReturnType<typeof vi.fn>
+  }
+  oauth2: {
+    consent: ReturnType<typeof vi.fn>
+    continue: ReturnType<typeof vi.fn>
+    deleteConsent: ReturnType<typeof vi.fn>
+    getConsents: ReturnType<typeof vi.fn>
+    publicClient: ReturnType<typeof vi.fn>
+    publicClientPrelogin: ReturnType<typeof vi.fn>
+  }
+}
+
+const renderWithAuth = (
+  children: React.ReactNode,
+  {
+    authClient = createMockAuthClient(),
+    navigate = vi.fn<(options: { to: string }) => void>(),
+    plugin = oauthProviderPlugin()
+  }: {
+    authClient?: MockAuthClient
+    navigate?: (options: { to: string }) => void
+    plugin?: ReturnType<typeof oauthProviderPlugin>
+  } = {}
+) => {
+  return {
+    authClient,
+    navigate,
+    ...render(
+      <AuthProvider
+        authClient={authClient}
+        navigate={navigate}
+        plugins={[plugin]}
+        queryClient={createTestQueryClient()}>
+        {children}
+      </AuthProvider>
+    )
+  }
+}
+
+const submitSignUp = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.type(screen.getByLabelText('Name'), 'Ada Lovelace')
+  await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+  await user.type(screen.getByLabelText('Password'), 'correct horse battery')
+  await user.click(screen.getByRole('button', { name: 'Sign Up' }))
+}
+
+afterEach(() => {
+  window.history.pushState({}, '', '/')
+})
+
+describe('oauthProviderPlugin (heroui)', () => {
+  it('registers sign-up, consent, account selection, and the security card', () => {
+    const plugin = oauthProviderPlugin()
+
+    expect(plugin.views?.auth?.oauthConsent).toBe(OAuthConsent)
+    expect(plugin.views?.auth?.oauthSignUp).toBe(OAuthSignUp)
+    expect(plugin.views?.auth?.oauthSelectAccount).toBe(OAuthSelectAccount)
+    expect(plugin.securityCards).toEqual([AuthorizedApplications])
+    expect(plugin.viewPaths.auth.oauthConsent).toBe('oauth-consent')
+    expect(plugin.viewPaths.auth.oauthSignUp).toBe('oauth-sign-up')
+    expect(plugin.viewPaths.auth.oauthSelectAccount).toBe('select-account')
+  })
+
+  it('leaves the built-in sign-up view alone', async () => {
+    const plugin = oauthProviderPlugin()
+
+    expect(plugin.views?.auth).not.toHaveProperty('signUp')
+
+    // vx-bot/NOTE: The `Auth` dispatcher resolves plugin overrides before built-ins, so a
+    // vx-bot/NOTE: claimed `signUp` key would silently replace ordinary sign-up.
+    renderWithAuth(<Auth path="sign-up" />, { plugin })
+
+    expect(
+      await screen.findByRole('button', { name: 'Sign Up' })
+    ).toBeInTheDocument()
+  })
+
+  it('omits the security card when connected applications are disabled', () => {
+    expect(
+      oauthProviderPlugin({ showConnectedApplications: false }).securityCards
+    ).toBeUndefined()
+  })
+
+  it('registers personal and explicitly scoped organization client settings', () => {
+    const manager = {
+      list: vi.fn<() => Promise<never[]>>(async () => []),
+      create: vi.fn<OAuthClientManager['create']>(),
+      update: vi.fn<OAuthClientManager['update']>(),
+      delete: vi.fn<OAuthClientManager['delete']>(),
+      rotateSecret: vi.fn<OAuthClientManager['rotateSecret']>()
+    }
+    const plugin = oauthProviderPlugin({
+      clientManagement: true,
+      organizationClientManager: manager
+    })
+
+    expect(plugin.settingsTabs?.[0]).toMatchObject({
+      view: 'oauthClients',
+      component: UserOAuthClients
+    })
+    expect(plugin.organizationTabs?.[0]).toMatchObject({
+      id: 'oauthClients',
+      path: 'oauth-clients',
+      component: OrganizationOAuthClients
+    })
+  })
+
+  it('renders through the Auth plugin path dispatcher', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=openid%20email&sig=signed'
+    )
+    renderWithAuth(<Auth path="oauth-consent" />)
+
+    expect(
+      await screen.findByRole('heading', { name: 'Acme CLI' })
+    ).toBeInTheDocument()
+  })
+})
+
+describe('<OAuthConsent />', () => {
+  it('shows client, scope, and account details before granting consent', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=openid%20email&sig=signed'
+    )
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<OAuthConsent />)
+
+    expect(
+      await screen.findByRole('heading', { name: 'Acme CLI' })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Verify your identity')).toBeInTheDocument()
+    expect(screen.getByText('View your email address')).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Privacy policy' })
+    ).toHaveAttribute('href', 'https://acme.example/privacy')
+
+    expect(authClient.oauth2.publicClientPrelogin).toHaveBeenCalledWith({
+      client_id: 'desktop-client',
+      oauth_query: window.location.search,
+      fetchOptions: expect.objectContaining({ throw: true })
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Authorize' }))
+
+    await waitFor(() => {
+      expect(authClient.oauth2.consent).toHaveBeenCalledWith({
+        accept: true,
+        oauth_query: window.location.search,
+        fetchOptions: { throw: true }
+      })
+    })
+  })
+
+  it('resolves scope labels through the shared resolver', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=calendar%20unknown_scope&sig=signed'
+    )
+    renderWithAuth(<OAuthConsent />, {
+      plugin: oauthProviderPlugin({
+        scopeMetadata: (scope, { clientId }) =>
+          scope === 'calendar'
+            ? { label: `Calendar for ${clientId}` }
+            : undefined
+      })
+    })
+
+    expect(
+      await screen.findByText('Calendar for desktop-client')
+    ).toBeInTheDocument()
+    // vx-bot/NOTE: An unresolved scope stays visible under its raw value.
+    expect(screen.getByText('unknown_scope')).toBeInTheDocument()
+  })
+
+  it('denies the complete request without submitting a scope subset', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=openid%20email&sig=signed'
+    )
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<OAuthConsent />)
+
+    await screen.findByRole('heading', { name: 'Acme CLI' })
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    await waitFor(() => {
+      expect(authClient.oauth2.consent).toHaveBeenCalledWith({
+        accept: false,
+        oauth_query: window.location.search,
+        fetchOptions: { throw: true }
+      })
+    })
+  })
+
+  it('does not expose request metadata or enable consent before verification', async () => {
+    let resolveClient!: (value: {
+      client_id: string
+      client_name: string
+    }) => void
+    const verification = new Promise<{
+      client_id: string
+      client_name: string
+    }>(resolve => {
+      resolveClient = resolve
+    })
+    const publicClientPrelogin = vi.fn<
+      () => Promise<{ client_id: string; client_name: string }>
+    >(() => verification)
+    const authClient = createMockAuthClient({
+      oauth2: { publicClientPrelogin }
+    })
+    renderWithAuth(
+      <OAuthConsent oauthQuery="?client_id=desktop-client&scope=private_scope&redirect_uri=https://callback.example/cb&sig=signed" />,
+      { authClient }
+    )
+    await waitFor(() => expect(publicClientPrelogin).toHaveBeenCalled())
+    expect(screen.queryByText('private_scope')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('https://callback.example')
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Authorize' })).toBeDisabled()
+    resolveClient({ client_id: 'desktop-client', client_name: 'Acme CLI' })
+    expect(await screen.findByText('private_scope')).toBeInTheDocument()
+    expect(screen.getByText('https://callback.example')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Authorize' })).toBeEnabled()
+  })
+
+  it('rejects a changed query without reusing verified metadata for the same client', async () => {
+    const publicClientPrelogin = vi
+      .fn<() => Promise<Record<string, unknown>>>()
+      .mockResolvedValueOnce({
+        client_id: 'desktop-client',
+        client_name: 'Acme CLI'
+      })
+      .mockRejectedValue(new Error('Invalid signature'))
+    const authClient = createMockAuthClient({
+      oauth2: { publicClientPrelogin }
+    })
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=openid&sig=signed'
+    )
+    renderWithAuth(<OAuthConsent />, { authClient })
+    await screen.findByRole('heading', { name: 'Acme CLI' })
+    // vx-bot/NOTE: Keep the provider and its metadata cache mounted.
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-consent?client_id=desktop-client&scope=email&sig=tampered'
+    )
+    window.dispatchEvent(new PopStateEvent('popstate'))
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Invalid authorization request'
+      })
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Authorize' })
+    ).not.toBeInTheDocument()
+    expect(publicClientPrelogin).toHaveBeenCalledTimes(2)
+  })
+
+  it('rejects direct visits without an OAuth client ID', async () => {
+    window.history.pushState({}, '', '/auth/oauth-consent')
+    const { authClient } = renderWithAuth(<OAuthConsent />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Invalid authorization request'
+      })
+    ).toBeInTheDocument()
+    expect(authClient.oauth2.publicClient).not.toHaveBeenCalled()
+  })
+})
+
+describe('<OAuthSignUp />', () => {
+  it('falls back to plain sign-up on a direct visit without prompt=create', async () => {
+    window.history.pushState({}, '', '/auth/oauth-sign-up')
+    const user = userEvent.setup()
+    const { authClient, navigate } = renderWithAuth(<OAuthSignUp />)
+
+    await submitSignUp(user)
+
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(authClient.oauth2.continue).not.toHaveBeenCalled()
+  })
+
+  it('resumes the authorization with created after a prompt=create sign-up', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-sign-up?client_id=desktop-client&prompt=create&sig=signed'
+    )
+    const user = userEvent.setup()
+    const { authClient, navigate } = renderWithAuth(<OAuthSignUp />)
+
+    await submitSignUp(user)
+
+    await waitFor(() => {
+      expect(authClient.oauth2.continue).toHaveBeenCalledWith({
+        created: true,
+        fetchOptions: { throw: true }
+      })
+    })
+    expect(navigate).not.toHaveBeenCalled()
+  })
+
+  it('offers a retry instead of the form when continuation fails', async () => {
+    window.history.pushState(
+      {},
+      '',
+      '/auth/oauth-sign-up?client_id=desktop-client&prompt=create&sig=signed'
+    )
+    const oauthContinue = vi
+      .fn<() => Promise<{ redirect: boolean; url: string }>>()
+      .mockRejectedValueOnce(new Error('network'))
+      .mockResolvedValue({ redirect: true, url: 'https://acme.example' })
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<OAuthSignUp />, {
+      authClient: createMockAuthClient({
+        oauth2: { continue: oauthContinue }
+      })
+    })
+
+    await submitSignUp(user)
+
+    expect(
+      await screen.findByRole('button', { name: 'Try again' })
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Sign Up' })
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+
+    await waitFor(() => expect(oauthContinue).toHaveBeenCalledTimes(2))
+    // vx-bot/NOTE: The account was created once — retrying never resubmits the form.
+    expect(authClient.signUp.email).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('<OAuthSelectAccount />', () => {
+  const selectAccountUrl =
+    '/auth/select-account?client_id=desktop-client&prompt=select_account&sig=signed'
+
+  it('continues without switching when the current account is chosen', async () => {
+    window.history.pushState({}, '', selectAccountUrl)
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<OAuthSelectAccount />)
+
+    await user.click(await screen.findByText('Ada Lovelace'))
+
+    await waitFor(() => {
+      expect(authClient.oauth2.continue).toHaveBeenCalledWith({
+        selected: true,
+        fetchOptions: { throw: true }
+      })
+    })
+    expect(authClient.multiSession.setActive).not.toHaveBeenCalled()
+  })
+
+  it('switches the active session before resuming for another account', async () => {
+    window.history.pushState({}, '', selectAccountUrl)
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<OAuthSelectAccount />)
+
+    await user.click(await screen.findByText('Grace Hopper'))
+
+    await waitFor(() => {
+      expect(authClient.oauth2.continue).toHaveBeenCalled()
+    })
+    expect(authClient.multiSession.setActive).toHaveBeenCalledWith({
+      sessionToken: 'session-2-token',
+      fetchOptions: { throw: true }
+    })
+    expect(
+      authClient.multiSession.setActive.mock.invocationCallOrder[0]
+    ).toBeLessThan(authClient.oauth2.continue.mock.invocationCallOrder[0])
+  })
+
+  it('shows an empty state when no device sessions exist', async () => {
+    window.history.pushState({}, '', selectAccountUrl)
+    renderWithAuth(<OAuthSelectAccount />, {
+      authClient: createMockAuthClient({
+        multiSession: {
+          listDeviceSessions: vi.fn<() => Promise<never[]>>(async () => [])
+        }
+      })
+    })
+
+    expect(await screen.findByText('No accounts available')).toBeInTheDocument()
+  })
+
+  it('rejects direct visits without an OAuth client ID', async () => {
+    window.history.pushState({}, '', '/auth/select-account')
+    renderWithAuth(<OAuthSelectAccount />)
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Invalid authorization request'
+      })
+    ).toBeInTheDocument()
+  })
+})
+
+describe('<AuthorizedApplications />', () => {
+  const duplicateConsents = [
+    {
+      id: 'consent-1',
+      clientId: 'desktop-client',
+      userId: 'user-1',
+      scopes: ['openid'],
+      createdAt: now,
+      updatedAt: now
+    },
+    {
+      id: 'consent-2',
+      clientId: 'desktop-client',
+      userId: 'user-1',
+      scopes: ['email'],
+      createdAt: now,
+      updatedAt: now
+    }
+  ]
+
+  it('renders duplicate consent records for one client as a single application', async () => {
+    renderWithAuth(<AuthorizedApplications />, {
+      authClient: createMockAuthClient({
+        oauth2: {
+          getConsents: vi.fn<
+            () => Promise<
+              {
+                id: string
+                clientId: string
+                userId: string
+                scopes: string[]
+                createdAt: Date
+                updatedAt: Date
+              }[]
+            >
+          >(async () => duplicateConsents)
+        }
+      })
+    })
+
+    expect(await screen.findByText('Acme CLI')).toBeInTheDocument()
+    expect(screen.getAllByText('Acme CLI')).toHaveLength(1)
+    expect(screen.getByText('Verify your identity')).toBeInTheDocument()
+    expect(screen.getByText('View your email address')).toBeInTheDocument()
+  })
+
+  it('removes every consent record grouped under the application', async () => {
+    const deleteConsent = vi.fn<(params: { id: string }) => Promise<undefined>>(
+      async () => undefined
+    )
+    const user = userEvent.setup()
+    const { authClient } = renderWithAuth(<AuthorizedApplications />, {
+      authClient: createMockAuthClient({
+        oauth2: {
+          getConsents: vi.fn<
+            () => Promise<
+              {
+                id: string
+                clientId: string
+                userId: string
+                scopes: string[]
+                createdAt: Date
+                updatedAt: Date
+              }[]
+            >
+          >(async () => duplicateConsents),
+          deleteConsent
+        }
+      })
+    })
+
+    await screen.findByText('Acme CLI')
+    await user.click(
+      screen.getByRole('button', { name: 'Remove authorization' })
+    )
+
+    expect(
+      await screen.findByText(
+        'This application will need your approval before receiving new access. Existing tokens may remain valid until they expire.'
+      )
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove' }))
+
+    await waitFor(() => expect(deleteConsent).toHaveBeenCalledTimes(2))
+    expect(deleteConsent.mock.calls.map(([params]) => params.id)).toEqual([
+      'consent-1',
+      'consent-2'
+    ])
+    expect(authClient.oauth2.getConsents).toHaveBeenCalled()
+  })
+
+  it('shows an empty state when nothing is authorized', async () => {
+    renderWithAuth(<AuthorizedApplications />)
+
+    expect(
+      await screen.findByText('No connected applications')
+    ).toBeInTheDocument()
+  })
+})
+
+describe('<OAuthClients />', () => {
+  it('labels each status switch with its client identity', async () => {
+    const manager = {
+      list: vi.fn<
+        () => Promise<
+          {
+            client_id: string
+            client_name: string
+            redirect_uris: string[]
+            disabled: boolean
+          }[]
+        >
+      >(async () => [
+        {
+          client_id: 'desktop-client',
+          client_name: 'Acme CLI',
+          redirect_uris: ['https://acme.example/callback'],
+          disabled: false
+        }
+      ]),
+      create: vi.fn<OAuthClientManager['create']>(),
+      update: vi.fn<OAuthClientManager['update']>(),
+      delete: vi.fn<OAuthClientManager['delete']>(),
+      rotateSecret: vi.fn<OAuthClientManager['rotateSecret']>(),
+      setDisabled: vi.fn<NonNullable<OAuthClientManager['setDisabled']>>()
+    }
+
+    renderWithAuth(
+      <OAuthClients
+        manager={manager}
+        owner={{ type: 'user' }}
+        ownerKey="user"
+      />
+    )
+
+    expect(
+      await screen.findByRole('switch', { name: 'Acme CLI: Enabled' })
+    ).toBeInTheDocument()
+  })
+})
+
+describe('<SignUp />', () => {
+  it('redirects normally when no success callback is supplied', async () => {
+    const user = userEvent.setup()
+    const { navigate } = renderWithAuth(<SignUp />)
+
+    await submitSignUp(user)
+
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+  })
+})

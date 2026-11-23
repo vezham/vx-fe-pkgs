@@ -1,0 +1,167 @@
+import { type ComponentType, useEffect } from 'react'
+
+import type { AuthView } from '@vezham/auth-ui-core'
+import { useAuth } from '@vezham/auth-ui-react'
+import type { CardProps } from '@vezham/react-v3'
+
+import { AuthRedirect } from './auth-redirect'
+import { AuthCallback, AuthError } from './auth-result'
+import { ForgotPassword } from './forgot-password'
+import type { SocialLayout } from './provider-buttons'
+import { ResetLinkSent } from './reset-link-sent'
+import { ResetPassword } from './reset-password'
+import { SignIn } from './sign-in'
+import { SignOut } from './sign-out'
+import { SignUp } from './sign-up'
+import { VerifyEmail } from './verify-email'
+
+export type AuthProps = {
+  className?: string
+  path?: string
+  socialLayout?: SocialLayout
+  socialPosition?: 'top' | 'bottom'
+  variant?: CardProps['variant']
+  /** @remarks `AuthView` */
+  view?: AuthView
+}
+
+/**
+ * Built-in views that only make sense when email + password auth is enabled.
+ * When it's disabled, the `<Auth>` router redirects these to `signIn` so a
+ * plugin's `fallbackViews.auth.signIn` (e.g. magic link) takes over.
+ */
+const PASSWORD_ONLY_VIEWS = new Set([
+  'signUp',
+  'forgotPassword',
+  'resetPassword',
+  'resetLinkSent'
+])
+
+const AUTH_VIEWS: Partial<Record<AuthView, ComponentType<AuthProps>>> = {
+  callback: AuthCallback,
+  error: AuthError,
+  redirect: AuthRedirect,
+  signIn: SignIn,
+  signOut: SignOut,
+  signUp: SignUp,
+  forgotPassword: ForgotPassword,
+  resetPassword: ResetPassword,
+  resetLinkSent: ResetLinkSent,
+  verifyEmail: VerifyEmail
+}
+
+/**
+ * Render the appropriate authentication view based on the provided `view` or `path`.
+ *
+ * @param className - Class name applied to the rendered view's card
+ * @param path - Route path used to resolve an auth view when `view` is not provided
+ * @param socialLayout - Social layout to apply to sign-in/sign-up/magic-link views
+ * @param socialPosition - Position for social buttons ("top" or "bottom")
+ * @param variant - Variant to apply to the card
+ * @param view - Explicit auth view to render (e.g., "signIn", "signUp")
+ * @returns The React element for the resolved authentication view
+ */
+export const Auth = ({
+  className,
+  path,
+  socialLayout,
+  socialPosition,
+  variant,
+  view
+}: AuthProps) => {
+  const { basePaths, emailAndPassword, plugins, viewPaths, navigate } =
+    useAuth()
+
+  if (!view && !path) {
+    throw new Error('[Vezham Auth] Either `view` or `path` must be provided')
+  }
+
+  const authView =
+    view ||
+    Object.keys(viewPaths.auth)
+      .filter((key): key is AuthView => key in viewPaths.auth)
+      .find(key => viewPaths.auth[key] === path)
+
+  // vx-bot/NOTE: When email + password auth is disabled, password-only views (signUp,
+  // vx-bot/NOTE: forgotPassword, resetPassword) have no meaning. Redirect them to signIn,
+  // vx-bot/NOTE: where a plugin's `fallbackViews.auth.signIn` (e.g. magic link) takes
+  // vx-bot/NOTE: over as the primary entry point.
+  const shouldRedirectToSignIn =
+    !emailAndPassword?.enabled && authView && PASSWORD_ONLY_VIEWS.has(authView)
+
+  useEffect(() => {
+    if (shouldRedirectToSignIn) {
+      navigate({
+        to: `${basePaths.auth}/${viewPaths.auth.signIn}`,
+        replace: true
+      })
+    }
+  }, [shouldRedirectToSignIn, navigate, basePaths.auth, viewPaths.auth.signIn])
+
+  if (shouldRedirectToSignIn) {
+    return null
+  }
+
+  // vx-bot/NOTE: 1. Plugin overrides (`views.auth[currentView]`) — first plugin wins,
+  // vx-bot/NOTE:    including over built-in views. Resolves the view key from `view`,
+  // vx-bot/NOTE:    then `authView` (built-in path match), then plugin-introduced paths
+  // vx-bot/NOTE:    (e.g. `magicLink` → `/auth/magic-link`).
+  for (const plugin of plugins) {
+    const pluginAuthPaths = plugin.viewPaths?.auth
+
+    const pluginView =
+      view ??
+      authView ??
+      (pluginAuthPaths &&
+        Object.keys(pluginAuthPaths).find(key => pluginAuthPaths[key] === path))
+    if (!pluginView) continue
+
+    const PluginView = plugin.views?.auth?.[pluginView]
+    if (!PluginView) continue
+
+    return (
+      <PluginView
+        className={className}
+        socialLayout={socialLayout}
+        socialPosition={socialPosition}
+        variant={variant}
+      />
+    )
+  }
+
+  // vx-bot/NOTE: 2. Plugin fallbacks — only when the built-in `signIn` isn't viable
+  // vx-bot/NOTE:    (password auth is off). Used by `magicLinkPlugin` to render the
+  // vx-bot/NOTE:    magic-link form as the primary passwordless sign-in surface.
+  if (authView === 'signIn' && !emailAndPassword?.enabled) {
+    const Fallback = plugins.find(plugin => plugin.fallbackViews?.auth?.signIn)
+      ?.fallbackViews?.auth?.signIn
+
+    if (Fallback) {
+      return (
+        <Fallback
+          className={className}
+          socialLayout={socialLayout}
+          socialPosition={socialPosition}
+          variant={variant}
+        />
+      )
+    }
+  }
+
+  const AuthView = authView ? AUTH_VIEWS[authView] : undefined
+
+  if (!AuthView) {
+    throw new Error(
+      `[Vezham Auth] Unknown view "${authView}". Valid views are: ${Object.keys(AUTH_VIEWS).join(', ')}`
+    )
+  }
+
+  return (
+    <AuthView
+      className={className}
+      socialLayout={socialLayout}
+      socialPosition={socialPosition}
+      variant={variant}
+    />
+  )
+}

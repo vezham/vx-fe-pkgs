@@ -1,0 +1,56 @@
+---
+title: Next.js
+description: Use the compound auth components with the Next.js App Router.
+---
+
+Keep the provider in a client component and mount it in the root layout. Configure your auth server and its route handler separately.
+
+```tsx title="auth-client.ts"
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient()
+```
+
+```tsx title="auth-provider.tsx"
+'use client'
+
+import { useRouter } from 'next/navigation'
+import type { ReactNode } from 'react'
+
+import { Auth } from '@vezham/react/auth'
+
+import { authClient } from './auth-client'
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter()
+  return (
+    <Auth.Provider
+      authClient={authClient}
+      navigate={({ to, replace }) =>
+        replace ? router.replace(to) : router.push(to)
+      }>
+      {children}
+    </Auth.Provider>
+  )
+}
+```
+
+## Auth routes
+
+Pass the dynamic route segment to `Auth.path`. For example, `/auth/sign-up` supplies `sign-up`.
+
+```tsx title="app/auth/[path]/page.tsx"
+'use client'
+
+import { useParams } from 'next/navigation'
+
+import { Auth } from '@vezham/react/auth'
+
+const AuthPage = () => <Auth path={useParams<{ path: string }>().path} />
+
+export default AuthPage
+```
+
+Render `<Auth.Settings view="account" />` or `<Auth.Settings view="security" />` in client pages under your settings routes. Keep the provider mounted across navigation. Match `redirectTo` and optional `basePaths` to your application routes.
+
+Render transactional templates from [`@vezham/react/auth/email`](/docs/ui/react/web/auth/components/email/email-verification-email) in the server email callback.

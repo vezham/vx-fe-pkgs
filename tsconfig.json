@@ -103,6 +103,12 @@
     },
     {
       "path": "./apps-docs/developers"
+    },
+    {
+      "path": "./packages/auth-ui/react"
+    },
+    {
+      "path": "./packages/auth-ui/core"
     }
   ],
   "compilerOptions": {

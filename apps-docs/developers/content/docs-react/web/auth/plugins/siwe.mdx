@@ -1,0 +1,165 @@
+---
+title: 'Sign In With Ethereum'
+description: 'Add ERC-4361 wallet sign-in, optional email collection, and wallet account settings.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/siwe
+---
+
+import { Callout } from '@vezham/docs-react/components/callout'
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The SIWE plugin adds an Ethereum wallet button to the sign-in form. It requests a nonce, builds an ERC-4361 message, signs it, and verifies it with Better Auth.
+
+You can also add a wallet settings card. The card lists connected wallets, changes the primary wallet, and removes wallets.
+
+## Setup
+
+<Steps>
+
+<Step>
+
+### Configure Better Auth
+
+Add `siwe()` to the server. Supply a secure nonce generator and an ERC-4361 message verifier.
+
+```ts title="lib/auth.ts"
+import { verifyMessage } from 'viem'
+import { generateSiweNonce } from 'viem/siwe'
+
+import { betterAuth } from '@vezham/auth'
+import { siwe } from '@vezham/auth/plugins'
+
+export const auth = betterAuth({
+  plugins: [
+    siwe({
+      domain: 'app.example.com',
+      getNonce: async () => generateSiweNonce(),
+      verifyMessage: async ({ message, signature, address }) =>
+        verifyMessage({
+          address: address as `0x${string}`,
+          message,
+          signature: signature as `0x${string}`
+        })
+    })
+  ]
+})
+```
+
+Apply the SIWE schema before using the plugin. See the [Better Auth SIWE guide](https://www.better-auth.com/docs/plugins/siwe).
+
+</Step>
+
+<Step>
+### Add the client plugin
+
+```ts title="lib/auth-client.ts"
+import { siweClient } from '@vezham/auth/client/plugins'
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient({ plugins: [siweClient()] })
+```
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+The included connector uses an injected EIP-1193 wallet. You can provide another connector for Wagmi or another wallet library.
+
+```tsx title="components/providers.tsx"
+import { createEip1193WalletConnector } from '@vezham/auth-ui-core/plugins/siwe'
+import { Auth } from '@vezham/react/auth'
+import { Wallet } from '@vezham/react/auth/plugins/siwe'
+
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[
+    Wallet.plugin({
+      connector: createEip1193WalletConnector(),
+      domain: 'app.example.com',
+      uri: 'https://app.example.com',
+      email: 'optional',
+      statement: 'Sign in to Example'
+    })
+  ]}>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+</Steps>
+
+## Wallet settings
+
+Better Auth does not expose browser endpoints for listing or changing SIWE wallets. Add authenticated server routes, then connect them with `SiweWalletManager`.
+
+<Callout type="warn" title="Authorize on the server">
+
+Never trust a user ID from the browser. Resolve the user from the server session for every wallet operation.
+
+</Callout>
+
+```ts title="lib/wallet-manager.ts"
+import type {
+  SiweWalletAccount,
+  SiweWalletLinkChallenge,
+  SiweWalletManager
+} from '@vezham/auth-ui-core/plugins/siwe'
+
+const assertOk = async (response: Response) => {
+  if (!response.ok) {
+    throw new Error(`Wallet request failed with status ${response.status}.`)
+  }
+}
+
+const get = async <TResponse>(
+  url: string,
+  signal?: AbortSignal
+): Promise<TResponse> => {
+  const response = await fetch(url, { signal })
+  await assertOk(response)
+  return response.json() as Promise<TResponse>
+}
+
+const post = async <TResponse = void>(
+  url: string,
+  body: unknown
+): Promise<TResponse> => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  await assertOk(response)
+  if (response.status === 204) return undefined as TResponse
+  return response.json() as Promise<TResponse>
+}
+
+export const walletManager: SiweWalletManager = {
+  list: signal => get<SiweWalletAccount[]>('/api/wallets', signal),
+  createLinkChallenge: wallet =>
+    post<SiweWalletLinkChallenge>('/api/wallets/link-challenge', wallet),
+  link: proof => post('/api/wallets/link', proof),
+  unlink: walletId =>
+    fetch(`/api/wallets/${walletId}`, { method: 'DELETE' }).then(assertOk),
+  setPrimary: walletId =>
+    fetch(`/api/wallets/${walletId}/primary`, { method: 'POST' }).then(assertOk)
+}
+```
+
+Pass `walletManager` to `Wallet.plugin()`. BAUI then adds connect, list, primary, and remove controls to security settings.
+
+The link challenge must contain a single-use nonce. Verify its domain, chain, address, nonce, and signature before attaching the wallet.
+
+The server must delete a wallet's `walletAddress` row and matching SIWE account in one transaction.
+
+## Email modes
+
+- `"optional"` asks for an email but allows an empty value. This is the default.
+- `"required"` requires an email before the wallet opens.
+- `"none"` opens the wallet immediately.
+
+The signature proves control of the wallet. It does not verify the supplied email address.

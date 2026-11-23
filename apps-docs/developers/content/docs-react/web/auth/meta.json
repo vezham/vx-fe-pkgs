@@ -1,0 +1,5 @@
+{
+  "title": "Auth",
+  "root": true,
+  "pages": ["index", "integrations", "concepts", "plugins", "components"]
+}

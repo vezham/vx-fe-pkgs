@@ -1,0 +1,102 @@
+---
+title: 'SSO'
+description: 'Discover organization SSO from an email address before showing other sign-in methods.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/sso
+---
+
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The SSO plugin replaces the standard sign-in view with an email-first flow. It sends the email to Better Auth for provider discovery. If a provider exists, Better Auth redirects the user to it. If no provider exists, the view shows the configured password and plugin sign-in methods.
+
+Magic-link and email-OTP views reuse the submitted email. Users do not need to enter it again.
+
+## Setup
+
+<Steps>
+
+<Step>
+
+### Add SSO to the server
+
+Install `@vezham/auth-sso`, add `sso()` to Better Auth, and apply the plugin schema to your database. Configure providers with Better Auth or Better Auth Dash.
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { sso } from '@vezham/auth-sso'
+
+export const auth = betterAuth({
+  plugins: [sso()]
+})
+```
+
+See the [Better Auth SSO guide](https://www.better-auth.com/docs/plugins/sso) for provider setup and schema commands.
+
+</Step>
+
+<Step>
+
+### Add the client plugin
+
+```ts title="lib/auth-client.ts"
+import { ssoClient } from '@vezham/auth-sso/client'
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient({
+  plugins: [ssoClient()]
+})
+```
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+Place `Sso.plugin()` before another plugin that replaces the sign-in view.
+
+```tsx title="components/providers.tsx"
+import { Auth } from '@vezham/react/auth'
+import { Sso } from '@vezham/react/auth/plugins/sso'
+
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[Sso.plugin(), MagicLink.plugin(), EmailOtp.plugin()]}>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+</Steps>
+
+## Options
+
+Set `emailFirst: false` when you want the data hooks without replacing the sign-in view.
+
+```tsx
+Sso.plugin({
+  emailFirst: false,
+  localization: {
+    continueWithEmail: 'Find my workspace'
+  }
+})
+```
+
+## Component
+
+```tsx
+import { Sso } from '@vezham/react/auth/plugins/sso'
+
+;<Sso />
+```
+
+```tsx title="EmailFirstSignInProps"
+type EmailFirstSignInProps = {
+  className?: string
+  socialLayout?: SocialLayout
+  socialPosition?: 'top' | 'bottom'
+  variant?: CardProps['variant']
+}
+```

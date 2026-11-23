@@ -1,0 +1,170 @@
+---
+title: 'Dash'
+description: 'Add personal activity and organization audit logs from Better Auth Infrastructure Dash.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/dash
+---
+
+import { Callout } from '@vezham/docs-react/components/callout'
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The Dash integration adds Activity tabs to personal settings, organization settings, and the Admin user inspector. It reads audit logs through the public `dashClient()` API from `@vezham/auth-infra`.
+
+Organization owners and admins see organization-wide activity. Other members see only their own activity in that organization. Every organization query uses the organization ID from the current route.
+
+## Setup
+
+<Steps>
+
+<Step>
+### Configure Dash on the server
+
+Install `@vezham/auth-infra`, then add `dash()` to Better Auth. Dash records supported authentication and organization events automatically.
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { dash } from '@vezham/auth-infra'
+
+export const auth = betterAuth({
+  plugins: [
+    dash({
+      apiUrl: process.env.BETTER_AUTH_API_URL,
+      kvUrl: process.env.BETTER_AUTH_KV_URL,
+      apiKey: process.env.BETTER_AUTH_API_KEY
+    })
+  ]
+})
+```
+
+See the [Dash plugin guide](https://better-auth.com/docs/infrastructure/plugins/dash) for infrastructure setup and available events.
+
+</Step>
+
+<Step>
+
+### Add the client plugin
+
+```ts title="lib/auth-client.ts"
+import { dashClient } from '@vezham/auth-infra/client'
+import { createAuthClient } from '@vezham/auth/client'
+import { organizationClient } from '@vezham/auth/client/plugins'
+
+export const authClient = createAuthClient({
+  plugins: [organizationClient(), dashClient()]
+})
+```
+
+The organization client is required only when you enable organization activity.
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+```tsx title="components/providers.tsx"
+import { Auth } from '@vezham/react/auth'
+import { Activity } from '@vezham/react/auth/plugins/dash'
+import { Organization } from '@vezham/react/auth/plugins/organization'
+
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[Organization.plugin(), Activity.plugin()]}>
+  {children}
+</Auth.Provider>
+```
+
+Both personal and organization activity are enabled by default.
+
+</Step>
+
+</Steps>
+
+## Static routes
+
+The plugin adds one static path named `activity`. Its default segment is `activity`, which produces routes such as `/settings/activity` and the matching organization activity path.
+
+It does not use query parameters, nested plugin routes, or a catch-all route. Add the segment to both static path lists when the application validates or generates settings and organization routes.
+
+```ts title="route-paths.ts"
+import { viewPaths } from '@vezham/auth-ui-core'
+import { Activity } from '@vezham/react/auth/plugins/dash'
+import { Organization } from '@vezham/react/auth/plugins/organization'
+
+const activityPath = Activity.plugin({ path: 'activity' }).viewPaths.settings
+  .activity
+
+export const validSettingsPaths = [
+  ...Object.values(viewPaths.settings),
+  ...Object.values(Organization.plugin().viewPaths.settings ?? {}),
+  activityPath
+]
+
+export const validOrganizationPaths = [
+  ...Object.values(Organization.plugin().viewPaths.organization ?? {}),
+  activityPath
+]
+```
+
+Use the same Dash options in the provider and route configuration when you customize the segment.
+
+## Admin user activity
+
+If the Admin integration is present, Dash adds an Activity tab to its user inspector. The tab calls `getAllAuditLogs({ userId })` for the selected user.
+
+Dash authorizes this endpoint for organization owners and admins. A Better Auth application-admin role does not grant Dash access by itself.
+
+Set `admin: false` on `Activity.plugin()` to remove this inspector tab.
+
+## Access and privacy
+
+- Personal settings call `getAuditLogs` for the signed-in user.
+- Organization settings check the member role for the explicit organization ID.
+- Owners and admins call `getAllAuditLogs` for that organization.
+- Other members call `getAuditLogs` with the organization filter.
+- IP addresses are hidden by default. Set `showIpAddress: true` only when your privacy policy permits it.
+
+<Callout type="info" title="Retention comes from Dash">
+  The empty state says that no retained activity matches the view. It does not
+  claim that an event never occurred.
+</Callout>
+
+## Components and hooks
+
+```tsx
+import {
+  useDashAllAuditLogs,
+  useDashAuditLogs,
+  useDashUserAuditLogs
+} from '@vezham/auth-ui-react/plugins/dash'
+import { Activity } from '@vezham/react/auth/plugins/dash'
+```
+
+The core package also exports query option factories and `ensure`, `prefetch`, and `fetch` helpers from `@vezham/auth-ui-core/plugins/dash`.
+
+## Options
+
+```tsx title="DashPluginOptions"
+type DashPluginOptions = {
+  /** Add activity to the admin user inspector. @default true */
+  admin?: boolean
+  /** Add activity to personal settings. @default true */
+  user?: boolean
+  /** Add activity to organization settings. @default true */
+  organization?: boolean
+  /** Number of events loaded per page. Clamped to 1–100. @default 20 */
+  pageSize?: number
+  /** Show recorded IP addresses next to event locations. @default false */
+  showIpAddress?: boolean
+  /** @default "activity" */
+  path?: string
+  localization?: DashLocalizationOverrides
+}
+```
+
+## Localization
+
+```tsx title="DashLocalization"
+type DashLocalization = typeof dashLocalization
+```

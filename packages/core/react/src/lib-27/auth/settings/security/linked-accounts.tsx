@@ -1,0 +1,116 @@
+import { getProviderId } from '@vezham/auth-ui-core'
+import { useAuth, useListAccounts } from '@vezham/auth-ui-react'
+import { Card, type CardProps, Skeleton, cn } from '@vezham/react-v3'
+
+import { LinkedAccount } from './linked-account'
+
+export type LinkedAccountsProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+
+/**
+ * Render a card showing linked social accounts and available social providers to link.
+ *
+ * Linked accounts (excluding the "credential" provider) are shown with an unlink control;
+ * available providers are shown with a link control. Button states and labels reflect
+ * ongoing link/unlink activity and use localization for provider-specific text.
+ *
+ * @returns A JSX element containing the linked accounts card
+ */
+export const LinkedAccounts = ({
+  className,
+  variant,
+  ...props
+}: LinkedAccountsProps & Omit<CardProps, 'children'>) => {
+  const {
+    authClient,
+    allowUnlinkingAllAccounts,
+    localization,
+    multipleAccountsPerProvider,
+    socialProviders
+  } = useAuth()
+
+  const { data: accounts, isPending } = useListAccounts(authClient)
+
+  const linkedAccounts = accounts?.filter(
+    account => account.providerId !== 'credential'
+  )
+  const canUnlink =
+    allowUnlinkingAllAccounts === true || (accounts?.length ?? 0) > 1
+
+  const linkedProviderIds = new Set(linkedAccounts?.map(a => a.providerId))
+
+  const availableProviders =
+    multipleAccountsPerProvider === false
+      ? socialProviders?.filter(
+          provider => !linkedProviderIds.has(getProviderId(provider))
+        )
+      : socialProviders
+
+  const allRows = [
+    ...(linkedAccounts?.map(account => ({
+      key: account.id,
+      account,
+      provider:
+        socialProviders?.find(
+          provider => getProviderId(provider) === account.providerId
+        ) ?? account.providerId
+    })) ?? []),
+    ...(availableProviders?.map(provider => ({
+      key: getProviderId(provider),
+      account: undefined,
+      provider
+    })) ?? [])
+  ]
+
+  return (
+    <div>
+      <h2 className={cn('mb-3 text-sm font-semibold')}>
+        {localization.settings.linkedAccounts}
+      </h2>
+
+      <Card className={cn(className)} variant={variant} {...props}>
+        <Card.Content className="gap-0">
+          {isPending
+            ? socialProviders?.map((provider, index) => (
+                <div key={getProviderId(provider)}>
+                  {index > 0 && (
+                    <div className="-mx-4 my-4 border-b border-dashed" />
+                  )}
+                  <AccountRowSkeleton />
+                </div>
+              ))
+            : allRows.map((row, index) => (
+                <div key={row.key}>
+                  {index > 0 && (
+                    <div className="-mx-4 my-4 border-b border-dashed" />
+                  )}
+
+                  <LinkedAccount
+                    account={row.account}
+                    canUnlink={canUnlink}
+                    provider={row.provider}
+                  />
+                </div>
+              ))}
+        </Card.Content>
+      </Card>
+    </div>
+  )
+}
+
+function AccountRowSkeleton() {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Skeleton className="size-10 rounded-xl" />
+
+        <div className="flex flex-col gap-1">
+          <Skeleton className="h-4 w-20 rounded-lg" />
+          <Skeleton className="h-3 w-32 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  )
+}

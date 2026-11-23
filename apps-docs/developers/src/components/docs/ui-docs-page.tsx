@@ -36,6 +36,7 @@ export const UiDocsPage = ({ library, data, params }: Props) => {
 
   return (
     <PlatformDocsRoutePage
+      library={library}
       data={data}
       platform={platform}
       docs={getPlatformDocs(platform, library)}

@@ -1,0 +1,272 @@
+import { type ComponentProps, useEffect, useMemo } from 'react'
+
+import type {
+  OrganizationAuthClient,
+  OrganizationView
+} from '@vezham/auth-ui-core/plugins/organization'
+import { organizationPlugin } from '@vezham/auth-ui-core/plugins/organization'
+import { useAuth, useAuthPlugin, useAuthenticate } from '@vezham/auth-ui-react'
+import {
+  useActiveOrganization,
+  useHasPermission
+} from '@vezham/auth-ui-react/plugins/organization'
+import {
+  Settings as Gear,
+  User as Person,
+  UsersGroupRounded as Persons,
+  Shield
+} from '@vezham/icons-react'
+import { type CardProps, Tabs, cn } from '@vezham/react-v3'
+
+import { OrganizationPeople } from './organization-people'
+import { OrganizationRoles } from './organization-roles'
+import { OrganizationSettings } from './organization-settings'
+import { OrganizationTeams } from './organization-teams'
+
+export type OrganizationProps = {
+  className?: string
+  hideNav?: boolean
+  path?: string
+  variant?: CardProps['variant']
+  /** Built-in view name or a plugin-contributed organization tab id. */
+  view?: OrganizationView | (string & {})
+}
+
+/**
+ * Organization management shell: tabs for profile / danger zone and for
+ * people (members / invitations). Path segments come from
+ * `useAuthPlugin(organizationPlugin).viewPaths.organization`.
+ */
+export const Organization = ({
+  className,
+  hideNav,
+  path,
+  variant,
+  view,
+  ...props
+}: OrganizationProps & ComponentProps<'div'>) => {
+  if (!view && !path) {
+    throw new Error('[Vezham Auth] Either `view` or `path` must be provided')
+  }
+
+  const { authClient, basePaths, localization, navigate, plugins } =
+    useAuth<OrganizationAuthClient>()
+  useAuthenticate(authClient)
+
+  const {
+    localization: organizationLocalization,
+    viewPaths: organizationViewPaths,
+    slug,
+    slugPrefix,
+    teams,
+    dynamicAccessControl
+  } = useAuthPlugin(organizationPlugin)
+
+  const { data: activeOrganization, isPending } =
+    useActiveOrganization(authClient)
+  const extensionTabs = useMemo(
+    () => plugins.flatMap(plugin => plugin.organizationTabs ?? []),
+    [plugins]
+  )
+  const rolesEnabled = dynamicAccessControl?.enabled === true
+  const canReadRoles = useHasPermission(authClient, {
+    organizationId: activeOrganization?.id,
+    permissions: { ac: ['read'] },
+    enabled: rolesEnabled && Boolean(activeOrganization?.id)
+  })
+
+  useEffect(() => {
+    if (!isPending && !activeOrganization) {
+      navigate({
+        to: `${basePaths.settings}/${organizationViewPaths.settings?.organizations}`,
+        replace: true
+      })
+    }
+  }, [
+    basePaths.settings,
+    isPending,
+    navigate,
+    organizationViewPaths.settings?.organizations,
+    activeOrganization
+  ])
+
+  const currentView = useMemo(() => {
+    if (view) return view === 'roles' && !rolesEnabled ? undefined : view
+
+    const match = [
+      ...Object.entries(organizationViewPaths.organization).filter(
+        ([name]) => rolesEnabled || name !== 'roles'
+      ),
+      ...extensionTabs.map(tab => [tab.id, tab.path] as const)
+    ].find(([, segment]) => segment === path)
+
+    return match?.[0]
+  }, [
+    extensionTabs,
+    view,
+    path,
+    organizationViewPaths.organization,
+    rolesEnabled
+  ])
+
+  if (!currentView) {
+    const validPaths = Object.entries(organizationViewPaths.organization)
+      .filter(([name]) => rolesEnabled || name !== 'roles')
+      .map(([, segment]) => segment)
+      .join(', ')
+    throw new Error(
+      `[Vezham Auth] Unknown organization path "${path}". Valid paths are: ${validPaths}`
+    )
+  }
+
+  if (!isPending && !activeOrganization) {
+    return null
+  }
+
+  const selectedView =
+    currentView === 'roles' &&
+    !canReadRoles.isPending &&
+    !canReadRoles.data?.success
+      ? 'settings'
+      : currentView
+
+  return (
+    <Tabs
+      className={cn(className)}
+      orientation="horizontal"
+      selectedKey={selectedView}
+      {...props}>
+      {!hideNav && (
+        <Tabs.ListContainer>
+          <Tabs.List
+            aria-label={localization.settings.settings}
+            className="max-w-fit [scrollbar-width:none] overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <Tabs.Tab
+              id="settings"
+              href={
+                slug
+                  ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.settings}`
+                  : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
+              }
+              className="gap-2"
+              onPress={e =>
+                e.target.scrollIntoView({
+                  behavior: 'smooth',
+                  inline: 'center'
+                })
+              }>
+              <Gear size={16} className="text-muted" />
+
+              {localization.settings.settings}
+
+              <Tabs.Indicator />
+            </Tabs.Tab>
+            {teams && (
+              <Tabs.Tab
+                id="teams"
+                href={
+                  slug
+                    ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.teams}`
+                    : `${basePaths.organization}/${organizationViewPaths.organization.teams}`
+                }
+                className="gap-2">
+                <Persons size={16} className="text-muted" />
+                {organizationLocalization.teams}
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            )}
+            {rolesEnabled && (
+              <Tabs.Tab
+                id="roles"
+                isDisabled={
+                  canReadRoles.isPending || !canReadRoles.data?.success
+                }
+                href={
+                  slug
+                    ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.roles}`
+                    : `${basePaths.organization}/${organizationViewPaths.organization.roles}`
+                }
+                className="gap-2">
+                <Shield size={16} className="text-muted" />
+                {organizationLocalization.roles}
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            )}
+            {extensionTabs.map(tab => (
+              <Tabs.Tab
+                id={tab.id}
+                key={tab.id}
+                href={
+                  slug
+                    ? `${basePaths.organization}/${slugPrefix}${slug}/${tab.path}`
+                    : `${basePaths.organization}/${tab.path}`
+                }
+                className="gap-2">
+                {tab.label}
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            ))}
+
+            <Tabs.Tab
+              id="people"
+              href={
+                slug
+                  ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.people}`
+                  : `${basePaths.organization}/${organizationViewPaths.organization.people}`
+              }
+              className="gap-2"
+              onPress={e =>
+                e.target.scrollIntoView({
+                  behavior: 'smooth',
+                  inline: 'center'
+                })
+              }>
+              <Person size={16} className="text-muted" />
+
+              {organizationLocalization.people}
+
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs.ListContainer>
+      )}
+
+      <Tabs.Panel id="settings" className="px-0">
+        {activeOrganization && (
+          <OrganizationSettings
+            organizationId={activeOrganization.id}
+            organizationSlug={activeOrganization.slug}
+            variant={variant}
+          />
+        )}
+      </Tabs.Panel>
+
+      <Tabs.Panel id="people" className="px-0">
+        <OrganizationPeople />
+      </Tabs.Panel>
+      {teams && (
+        <Tabs.Panel id="teams" className="px-0">
+          <OrganizationTeams />
+        </Tabs.Panel>
+      )}
+      {rolesEnabled && (
+        <Tabs.Panel id="roles" className="px-0">
+          {canReadRoles.data?.success ? (
+            <OrganizationRoles organizationId={activeOrganization?.id ?? ''} />
+          ) : null}
+        </Tabs.Panel>
+      )}
+      {extensionTabs.map(tab => {
+        const Extension = tab.component
+        return (
+          <Tabs.Panel id={tab.id} key={tab.id} className="px-0">
+            <Extension
+              organizationId={activeOrganization?.id ?? ''}
+              organizationSlug={activeOrganization?.slug ?? ''}
+            />
+          </Tabs.Panel>
+        )
+      })}
+    </Tabs>
+  )
+}

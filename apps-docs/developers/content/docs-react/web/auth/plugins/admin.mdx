@@ -1,0 +1,228 @@
+---
+title: 'Admin'
+description: 'Add static user management, session details, and impersonation to an administration area.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/admin
+---
+
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The Admin plugin adds a static `/admin/users` page and a user-detail drawer.
+It also adds a "Stop impersonating" action to `<Auth.User.Button />`.
+
+## Setup
+
+<Steps>
+
+<Step>
+
+### Enable the Better Auth admin plugin
+
+Add `admin()` to the server configuration:
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { admin } from '@vezham/auth/plugins'
+
+// [!code highlight]
+
+export const auth = betterAuth({
+  // ...
+  plugins: [
+    admin() // [!code highlight]
+  ]
+})
+```
+
+Update your database schema after enabling the plugin. Better Auth adds admin
+fields to users and an `impersonatedBy` field to sessions.
+
+</Step>
+
+<Step>
+
+### Add the matching client plugin
+
+```ts title="lib/auth-client.ts"
+import { adminClient } from '@vezham/auth/client/plugins'
+import { createAuthClient } from '@vezham/auth/react'
+
+// [!code highlight]
+
+export const authClient = createAuthClient({
+  plugins: [adminClient()] // [!code highlight]
+})
+```
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+```tsx title="components/providers.tsx"
+import { Auth } from '@vezham/react/auth'
+import { Admin } from '@vezham/react/auth/plugins/admin'
+
+// [!code highlight]
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[Admin.plugin()]} // [!code highlight]
+>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+</Steps>
+
+## Add the users route
+
+Create one static route for the users page:
+
+```tsx title="app/admin/users/page.tsx"
+import { Admin } from '@vezham/react/auth/plugins/admin'
+
+export default function AdminUsersPage() {
+  return <Admin view="users" />
+}
+```
+
+Use `<Admin path="users" />` when a parent route passes the final static path
+segment. The user-detail drawer keeps user IDs out of the route contract.
+
+Applications can control the drawer through `<Admin.Users />`:
+
+```tsx
+<Admin.Users
+  selectedUserId={selectedUserId}
+  onSelectedUserIdChange={setSelectedUserId}
+/>
+```
+
+## Inspector tabs
+
+The user inspector includes local Overview and Sessions tabs. Registered
+plugins can add more tabs without adding routes.
+
+The Dash integration adds an Activity tab when both UI plugins are registered.
+Dash applies its own organization owner or admin access rules to this tab.
+
+## User actions
+
+The users page can create users. The drawer can update a user's name and role,
+set a password, ban or unban the user, impersonate the user, delete the user,
+and revoke one or all of the user's sessions.
+
+The UI checks the matching Admin client permission before it enables each
+action. Dangerous actions require confirmation. The UI also disables actions
+that would ban, delete, impersonate, or revoke sessions for the current user.
+
+## Permissions and privacy
+
+The users page calls the Better Auth permission API before it requests the
+user list. Do not authorize the page from a role string alone.
+
+The table searches one field per request. The supported fields are `email`
+and `name`.
+
+Passwords stay in local form state and never enter query keys. The forms clear
+each password after the request or when the user closes the form. Session IP
+addresses are hidden unless `showIpAddress` is `true`.
+
+Configure custom roles with the same names in Better Auth and the UI plugin:
+
+```ts
+Admin.plugin({
+  allowMultipleRoles: false,
+  defaultRole: 'member',
+  impersonationRedirectTo: '/',
+  pageSize: 25,
+  roles: ['member', 'support', 'admin'],
+  showIpAddress: false
+})
+```
+
+Set `allowMultipleRoles` to `false` to make the create and edit forms accept
+one role. This option does not change `adminRoles`, which controls administrator
+access.
+
+The public Admin client does not provide account disconnection, global
+organization administration, or a Sentinel dashboard. These views are not
+part of this integration.
+
+## User button behavior
+
+`Admin.plugin()` contributes `<Admin.StopImpersonating />` through the
+`userMenuItems` slot. `<Auth.User.Button />` places it above sign out.
+
+The action renders only when `session.session.impersonatedBy` is present.
+Selecting it calls `authClient.admin.stopImpersonating()` and refreshes the
+cached session before the pending state completes.
+
+```tsx
+import { Admin } from '@vezham/react/auth/plugins/admin'
+
+;<Admin.StopImpersonating />
+```
+
+```tsx title="StopImpersonatingProps"
+type StopImpersonatingProps = {
+  className?: string
+}
+```
+
+## Options
+
+```ts
+Admin.plugin({
+  localization: {
+    stopImpersonating: 'Return to admin'
+  }
+})
+```
+
+```tsx title="AdminPluginOptions"
+type AdminPluginOptions = {
+  /** Roles Better Auth treats as administrators. @default ["admin"] */
+  adminRoles?: string | readonly string[]
+  /** User IDs Better Auth treats as administrators regardless of role. */
+  adminUserIds?: readonly string[]
+  /** Whether users can have more than one role. @default true */
+  allowMultipleRoles?: boolean
+  /** Default role selected when an administrator creates a user. @default "user" */
+  defaultRole?: string
+  /** Where to navigate after starting an impersonation session. */
+  impersonationRedirectTo?: string
+  /**
+   * Override the plugin's default localization strings.
+   * @remarks `AdminLocalization`
+   */
+  localization?: Partial<AdminLocalization>
+  /** Number of users loaded per page. Clamped to 1-100. @default 20 */
+  pageSize?: number
+  /** Roles offered by user-management forms. @default ["user", "admin"] */
+  roles?: readonly string[]
+  /** Show session IP addresses. @default false */
+  showIpAddress?: boolean
+}
+```
+
+## Localization
+
+```tsx title="AdminLocalization"
+type AdminLocalization = typeof adminLocalization
+```
+
+## Mutation API
+
+```tsx
+import { useStopImpersonating } from '@vezham/auth-ui-react/plugins/admin'
+
+const stopImpersonating = useStopImpersonating(authClient)
+```
+
+Use the hook when you need the same behavior outside the user button. It
+restores the admin session and awaits invalidation of the shared session query.

@@ -138,7 +138,145 @@
       "import": "./dist/lib/pages/settings/index.js",
       "default": "./dist/lib/pages/settings/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./auth": {
+      "@vx/fe-kit": "./src/lib-27/auth/index.tsx",
+      "types": "./dist/lib-27/auth/index.d.ts",
+      "import": "./dist/lib-27/auth/index.js",
+      "default": "./dist/lib-27/auth/index.js"
+    },
+    "./auth/email": {
+      "@vx/fe-kit": "./src/lib-27/auth/email/index.ts",
+      "types": "./dist/lib-27/auth/email/index.d.ts",
+      "import": "./dist/lib-27/auth/email/index.js",
+      "default": "./dist/lib-27/auth/email/index.js"
+    },
+    "./auth/plugins/admin": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/admin/index.ts",
+      "types": "./dist/lib-27/auth/plugins/admin/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/admin/index.js",
+      "default": "./dist/lib-27/auth/plugins/admin/index.js"
+    },
+    "./auth/plugins/agent-auth": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/agent-auth/index.ts",
+      "types": "./dist/lib-27/auth/plugins/agent-auth/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/agent-auth/index.js",
+      "default": "./dist/lib-27/auth/plugins/agent-auth/index.js"
+    },
+    "./auth/plugins/anonymous": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/anonymous/index.ts",
+      "types": "./dist/lib-27/auth/plugins/anonymous/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/anonymous/index.js",
+      "default": "./dist/lib-27/auth/plugins/anonymous/index.js"
+    },
+    "./auth/plugins/api-key": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/api-key/index.ts",
+      "types": "./dist/lib-27/auth/plugins/api-key/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/api-key/index.js",
+      "default": "./dist/lib-27/auth/plugins/api-key/index.js"
+    },
+    "./auth/plugins/billing": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/billing/index.ts",
+      "types": "./dist/lib-27/auth/plugins/billing/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/billing/index.js",
+      "default": "./dist/lib-27/auth/plugins/billing/index.js"
+    },
+    "./auth/plugins/dash": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/dash/index.ts",
+      "types": "./dist/lib-27/auth/plugins/dash/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/dash/index.js",
+      "default": "./dist/lib-27/auth/plugins/dash/index.js"
+    },
+    "./auth/plugins/delete-user": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/delete-user/index.ts",
+      "types": "./dist/lib-27/auth/plugins/delete-user/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/delete-user/index.js",
+      "default": "./dist/lib-27/auth/plugins/delete-user/index.js"
+    },
+    "./auth/plugins/device-authorization": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/device-authorization/index.ts",
+      "types": "./dist/lib-27/auth/plugins/device-authorization/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/device-authorization/index.js",
+      "default": "./dist/lib-27/auth/plugins/device-authorization/index.js"
+    },
+    "./auth/plugins/email-otp": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/email-otp/index.ts",
+      "types": "./dist/lib-27/auth/plugins/email-otp/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/email-otp/index.js",
+      "default": "./dist/lib-27/auth/plugins/email-otp/index.js"
+    },
+    "./auth/plugins/last-login-method": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/last-login-method/index.ts",
+      "types": "./dist/lib-27/auth/plugins/last-login-method/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/last-login-method/index.js",
+      "default": "./dist/lib-27/auth/plugins/last-login-method/index.js"
+    },
+    "./auth/plugins/magic-link": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/magic-link/index.ts",
+      "types": "./dist/lib-27/auth/plugins/magic-link/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/magic-link/index.js",
+      "default": "./dist/lib-27/auth/plugins/magic-link/index.js"
+    },
+    "./auth/plugins/multi-session": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/multi-session/index.ts",
+      "types": "./dist/lib-27/auth/plugins/multi-session/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/multi-session/index.js",
+      "default": "./dist/lib-27/auth/plugins/multi-session/index.js"
+    },
+    "./auth/plugins/oauth-provider": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/oauth-provider/index.ts",
+      "types": "./dist/lib-27/auth/plugins/oauth-provider/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/oauth-provider/index.js",
+      "default": "./dist/lib-27/auth/plugins/oauth-provider/index.js"
+    },
+    "./auth/plugins/organization": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/organization/index.ts",
+      "types": "./dist/lib-27/auth/plugins/organization/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/organization/index.js",
+      "default": "./dist/lib-27/auth/plugins/organization/index.js"
+    },
+    "./auth/plugins/passkey": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/passkey/index.ts",
+      "types": "./dist/lib-27/auth/plugins/passkey/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/passkey/index.js",
+      "default": "./dist/lib-27/auth/plugins/passkey/index.js"
+    },
+    "./auth/plugins/phone-number": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/phone-number/index.ts",
+      "types": "./dist/lib-27/auth/plugins/phone-number/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/phone-number/index.js",
+      "default": "./dist/lib-27/auth/plugins/phone-number/index.js"
+    },
+    "./auth/plugins/siwe": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/siwe/index.ts",
+      "types": "./dist/lib-27/auth/plugins/siwe/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/siwe/index.js",
+      "default": "./dist/lib-27/auth/plugins/siwe/index.js"
+    },
+    "./auth/plugins/sso": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/sso/index.ts",
+      "types": "./dist/lib-27/auth/plugins/sso/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/sso/index.js",
+      "default": "./dist/lib-27/auth/plugins/sso/index.js"
+    },
+    "./auth/plugins/theme": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/theme/index.ts",
+      "types": "./dist/lib-27/auth/plugins/theme/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/theme/index.js",
+      "default": "./dist/lib-27/auth/plugins/theme/index.js"
+    },
+    "./auth/plugins/two-factor": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/two-factor/index.ts",
+      "types": "./dist/lib-27/auth/plugins/two-factor/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/two-factor/index.js",
+      "default": "./dist/lib-27/auth/plugins/two-factor/index.js"
+    },
+    "./auth/plugins/username": {
+      "@vx/fe-kit": "./src/lib-27/auth/plugins/username/index.ts",
+      "types": "./dist/lib-27/auth/plugins/username/index.d.ts",
+      "import": "./dist/lib-27/auth/plugins/username/index.js",
+      "default": "./dist/lib-27/auth/plugins/username/index.js"
+    }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -147,15 +285,72 @@
   "files": [
     "!**/*.tsbuildinfo",
     "dist",
-    "LICENSE"
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "dependencies": {
+    "@internationalized/date": "catalog:",
+    "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-hotkeys": "catalog:",
+    "@tanstack/react-pacer": "^0.23.0",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-store": "^0.11.2",
+    "@tanstack/react-table": "^9.3.1",
+    "@vezham/auth": "catalog:",
+    "@vezham/auth-ui-core": "workspace:^",
+    "@vezham/auth-ui-react": "workspace:^",
     "@vezham/docs-core": "npm:@vx-oss/docs-core@1.0.17",
     "@vezham/docs-react": "npm:@vx-oss/docs-base-ui@1.0.17",
     "@vezham/env": "workspace:*",
     "@vezham/hooks": "workspace:*",
+    "@vezham/icons-react": "catalog:",
+    "@vezham/react-v3": "catalog:",
+    "@vezham/styles-v3": "npm:@heroui/styles@3.2.7",
     "@vezham/tamizhi-ui": "workspace:*",
+    "bowser": "^2.15.0",
+    "libphonenumber-js": "^1.13.16",
     "react-aria-components": "catalog:"
+  },
+  "devDependencies": {
+    "@testing-library/user-event": "^14.6.9",
+    "@vezham/auth-agent-auth": "catalog:",
+    "@vezham/auth-api-key": "catalog:",
+    "@vezham/auth-infra": "catalog:",
+    "@vezham/auth-oauth-provider": "catalog:",
+    "@vezham/auth-passkey": "catalog:",
+    "@vezham/auth-sso": "catalog:",
+    "react-email": "6.11.11"
+  },
+  "peerDependencies": {
+    "@vezham/auth-agent-auth": "catalog:",
+    "@vezham/auth-api-key": "catalog:",
+    "@vezham/auth-infra": "catalog:",
+    "@vezham/auth-oauth-provider": "catalog:",
+    "@vezham/auth-passkey": "catalog:",
+    "@vezham/auth-sso": "catalog:",
+    "react-email": "6.11.11"
+  },
+  "peerDependenciesMeta": {
+    "@vezham/auth-agent-auth": {
+      "optional": true
+    },
+    "@vezham/auth-api-key": {
+      "optional": true
+    },
+    "@vezham/auth-infra": {
+      "optional": true
+    },
+    "@vezham/auth-oauth-provider": {
+      "optional": true
+    },
+    "@vezham/auth-passkey": {
+      "optional": true
+    },
+    "@vezham/auth-sso": {
+      "optional": true
+    },
+    "react-email": {
+      "optional": true
+    }
   }
 }

@@ -1,0 +1,99 @@
+import {
+  getAuthErrorMessage,
+  isReauthenticationRequiredError
+} from '@vezham/auth-ui-core'
+import { useAuth, useListSessions, useSession } from '@vezham/auth-ui-react'
+import { Card, type CardProps, Skeleton, cn } from '@vezham/react-v3'
+
+import { ReauthenticationAction } from '../../reauthentication'
+import { ActiveSession } from './active-session'
+import { SessionActions } from './session-actions'
+
+export type ActiveSessionsProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+
+/**
+ * Render a card listing all active sessions for the current user with revoke controls.
+ *
+ * Shows each session's browser, OS, IP address, and creation time. The current session is marked
+ * and navigates to sign-out on click, while other sessions can be revoked individually.
+ *
+ * @returns A JSX element containing the sessions card
+ */
+export const ActiveSessions = ({
+  className,
+  variant,
+  ...props
+}: ActiveSessionsProps & Omit<CardProps, 'children'>) => {
+  const { authClient, localization } = useAuth()
+  const { data: session } = useSession(authClient)
+
+  const sessionsQuery = useListSessions(authClient, {
+    meta: { errorPresentation: 'inline' }
+  })
+  const { data: sessions, error, isPending } = sessionsQuery
+
+  const activeSessions =
+    sessions &&
+    [...sessions].sort((a, b) =>
+      a.id === session?.session.id ? -1 : b.id === session?.session.id ? 1 : 0
+    )
+
+  return (
+    <div>
+      <h2 className={cn('mb-3 text-sm font-semibold')}>
+        {localization.settings.activeSessions}
+      </h2>
+
+      <Card className={cn('gap-0', className)} variant={variant} {...props}>
+        <Card.Content className="gap-0 p-0">
+          {isReauthenticationRequiredError(error) ? (
+            <ReauthenticationAction />
+          ) : error ? (
+            <div role="alert" className="text-danger p-4 text-sm">
+              {getAuthErrorMessage(error, localization) ??
+                localization.errors.generic}
+            </div>
+          ) : isPending ? (
+            <SessionRowSkeleton />
+          ) : (
+            activeSessions?.map(activeSession => (
+              <div
+                className="border-divider border-b px-4 py-3 last:border-b-0"
+                key={activeSession.id}>
+                <ActiveSession activeSession={activeSession} />
+              </div>
+            ))
+          )}
+        </Card.Content>
+
+        {!isPending && !error && (
+          <SessionActions
+            hasOtherSessions={
+              activeSessions?.some(
+                activeSession => activeSession.id !== session?.session.id
+              ) ?? false
+            }
+          />
+        )}
+      </Card>
+    </div>
+  )
+}
+
+function SessionRowSkeleton() {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Skeleton className="size-10 rounded-xl" />
+
+        <div className="flex flex-col gap-1">
+          <Skeleton className="h-4 w-32 rounded-lg" />
+          <Skeleton className="h-3 w-24 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  )
+}

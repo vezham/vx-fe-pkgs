@@ -3,7 +3,7 @@ import { getPlatformDocsRuntime } from '@components/docs/platform-docs'
 import type { UiLibrary } from '@config/ui-libraries'
 
 const getCatalog = (
-  section: 'components' | 'layouts',
+  section: 'components' | 'layouts' | 'auth',
   platform: 'web' | 'native',
   library: UiLibrary,
   locale: string
@@ -39,3 +39,9 @@ export const getLayoutCatalog = (
   library: UiLibrary = 'react',
   locale: string = i18n.defaultLanguage
 ) => getCatalog('layouts', platform, library, locale)
+
+export const getAuthCatalog = (
+  platform: 'web' | 'native',
+  library: UiLibrary = 'react',
+  locale: string = i18n.defaultLanguage
+) => getCatalog('auth', platform, library, locale)

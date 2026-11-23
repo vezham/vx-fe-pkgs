@@ -1,0 +1,83 @@
+---
+title: '<AuthEmail.Otp />'
+description: 'Email template component that sends one-time password (OTP) verification codes to users.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/auth-ui/react/src/components/auth/email/otp-email.tsx
+---
+
+import { ComponentPreview } from '../../../../../../src/components/docs/component-preview/index.tsx'
+
+## Usage
+
+Render this template in your server email callback. Pass your application branding and the server-generated action URL or verification code.
+
+<ComponentPreview name="react-auth-email-otp-email">
+
+```tsx title="otp-email.tsx"
+// vx-bot/INFO: Adapted from Better Auth UI; see the Auth demos LICENSE.
+import { AuthEmail } from '@vezham/react/auth/email'
+
+import { EmailPreview } from '../email-preview'
+
+export const OtpEmailDemo = () => (
+  <EmailPreview title="One-Time Password Email Preview">
+    <AuthEmail.Otp
+      verificationCode="123456"
+      email="user@example.com"
+      appName="Vezham"
+      expirationMinutes={10}
+      darkMode={true}
+      poweredBy={true}
+    />
+  </EmailPreview>
+)
+```
+
+```tsx title="email-preview.tsx"
+import { type ReactNode, useEffect, useState } from 'react'
+
+type Props = { children: ReactNode; title: string }
+
+export const EmailPreview = ({ children, title }: Props) => {
+  const [html, setHtml] = useState<string>()
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    void (async () => {
+      try {
+        const { renderToReadableStream } = await import('react-dom/server')
+        const stream = await renderToReadableStream(children)
+        const value = await new Response(stream).text()
+        if (active) setHtml(value)
+      } catch {
+        if (active) setFailed(true)
+      }
+    })()
+    return () => {
+      active = false
+    }
+  }, [children])
+
+  if (failed) return <p role="alert">The email preview could not render.</p>
+  if (!html) return <p role="status">Rendering email…</p>
+  return (
+    <iframe
+      title={title}
+      srcDoc={html}
+      sandbox=""
+      className="h-[680px] w-full rounded-lg border bg-white"
+    />
+  )
+}
+```
+
+</ComponentPreview>
+
+## Props
+
+```tsx
+import type { OtpEmailProps } from '@vezham/react/auth/email'
+```
+
+Use the exported props type for inherited configuration and component props.

@@ -1,0 +1,52 @@
+---
+title: TanStack Start
+description: Connect the auth provider to TanStack Router navigation.
+---
+
+Create your auth client once, and mount `Auth.Provider` inside the router so its navigation callback can use `useRouter`. The backend auth handler remains application-owned.
+
+```tsx title="auth-client.ts"
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient()
+```
+
+```tsx title="auth-provider.tsx"
+import { useRouter } from '@tanstack/react-router'
+import type { ReactNode } from 'react'
+
+import { Auth } from '@vezham/react/auth'
+
+import { authClient } from './auth-client'
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter()
+  return (
+    <Auth.Provider
+      authClient={authClient}
+      navigate={({ to, replace }) =>
+        replace ? router.history.replace(to) : router.history.push(to)
+      }>
+      {children}
+    </Auth.Provider>
+  )
+}
+```
+
+Wrap your root route's `<Outlet />` with this provider. If the application already owns a TanStack Query client, pass it through `queryClient` to share its cache.
+
+## Auth routes
+
+Render `<Auth path={Route.useParams().path} />` on your `/auth/$path` route. The default base path is `/auth`; paths such as `/auth/sign-in` and `/auth/sign-up` select the matching view. Use an explicit view for a dedicated route:
+
+```tsx title="sign-in.tsx"
+import { createFileRoute } from '@tanstack/react-router'
+
+import { Auth } from '@vezham/react/auth'
+
+export const Route = createFileRoute('/auth/sign-in')({
+  component: () => <Auth.SignIn />
+})
+```
+
+Render `<Auth.Settings view="account" />` and `<Auth.Settings view="security" />` in your settings routes. Match `basePaths`, `viewPaths`, and `redirectTo` to the routes your application actually defines. Protect server data in the application's server handlers.
