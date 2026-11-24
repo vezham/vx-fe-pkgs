@@ -19,7 +19,9 @@
       "**/public/{sw.js,404.html,offline.html}",
       "**/src/generated/**",
       "**/routeTree.gen.ts",
-      "apps*/**/*-mock/**"
+      "apps*/**/*-mock/**",
+      "apps-docs/developers/src/demos/heroui/**",
+      "apps-docs/developers/src/demos/heroui-pro/**"
     ],
     "overrides": [
       {

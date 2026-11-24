@@ -4,12 +4,8 @@ description: Get up and running with HeroUI Native
 icon: rocket
 ---
 
-import {
-  Callout,
-  CopyPrompt,
-  Tab,
-  Tabs
-} from '../../../../../src/components/docs/heroui-mdx.tsx'
+import { Callout, CopyPrompt, Tab, Tabs } from '../../../../../src/components/docs/heroui-mdx.tsx'
+
 
 Choose the path that fits your project:
 
@@ -20,11 +16,27 @@ Choose the path that fits your project:
 
 The fastest way to start. The CLI scaffolds an Expo project with HeroUI Native, all required peer dependencies, Uniwind / Tailwind CSS, global styles, and the `HeroUINativeProvider` already wired up — so you can jump straight to building.
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">```bash npx create-heroui-native-app@latest ```</Tab>
-  <Tab value="pnpm">```bash pnpm create heroui-native-app@latest ```</Tab>
-  <Tab value="yarn">```bash yarn create heroui-native-app ```</Tab>
-  <Tab value="bun">```bash bun create heroui-native-app@latest ```</Tab>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npx create-heroui-native-app@latest
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm create heroui-native-app@latest
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn create heroui-native-app
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun create heroui-native-app@latest
+    ```
+  </Tab>
 </Tabs>
 
 Follow the interactive prompts, then start the dev server:
@@ -37,9 +49,7 @@ npm run start
 You're ready to build. Skip ahead to [Use Your First Component](#use-your-first-component) or [browse components](/docs/ui/react-v3/native/components).
 
 <Callout type="info">
-  The scaffold includes Expo with TypeScript, Uniwind + Tailwind CSS
-  preconfigured, `global.css` with the required imports, and the app entry
-  already wrapped in `GestureHandlerRootView` and `HeroUINativeProvider`.
+  The scaffold includes Expo with TypeScript, Uniwind + Tailwind CSS preconfigured, `global.css` with the required imports, and the app entry already wrapped in `GestureHandlerRootView` and `HeroUINativeProvider`.
 </Callout>
 
 ## Option 2: Add to an Existing Project
@@ -55,7 +65,7 @@ Before making any changes:
 
 1. Analyze the project. Detect the package manager (npm / pnpm / yarn / bun), framework (Expo or bare React Native), TypeScript usage, and the location of node_modules. This matters for global.css — the @source path must be written relative to global.css itself and must resolve to node_modules/heroui-native/lib.
 2. Read package.json and only install what is missing. Pin to the exact versions listed in the MCP quick-start to avoid compatibility issues.
-3. Inspect the app entry (App.tsx, app/\_layout.tsx, index.tsx, etc.) and check whether GestureHandlerRootView already wraps the app. If it does, reuse it — do not nest a second GestureHandlerRootView.
+3. Inspect the app entry (App.tsx, app/_layout.tsx, index.tsx, etc.) and check whether GestureHandlerRootView already wraps the app. If it does, reuse it — do not nest a second GestureHandlerRootView.
 
 Then apply the setup:
 
@@ -65,62 +75,72 @@ Then apply the setup:
 - Add HeroUINativeProvider as a direct child of GestureHandlerRootView, wrapping the rest of the app.
 
 When done, summarize the changes you made and tell me how to run the app on iOS / Android.`}
-
-> **Prefer to let your AI assistant do it?** Install the [HeroUI Native MCP Server](/docs/ui/react-v3/native/getting-started/mcp-server) in your editor, then paste the prompt into your AI assistant — it will analyze your project and handle the entire setup for you.
-
+>
+  **Prefer to let your AI assistant do it?** Install the [HeroUI Native MCP Server](/docs/ui/react-v3/native/getting-started/mcp-server) in your editor, then paste the prompt into your AI assistant — it will analyze your project and handle the entire setup for you.
 </CopyPrompt>
 
 ### 1. Install HeroUI Native
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">```bash npm install heroui-native ```</Tab>
-  <Tab value="pnpm">```bash pnpm add heroui-native ```</Tab>
-  <Tab value="yarn">```bash yarn add heroui-native ```</Tab>
-  <Tab value="bun">```bash bun add heroui-native ```</Tab>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npm install heroui-native
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add heroui-native
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add heroui-native
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add heroui-native
+    ```
+  </Tab>
 </Tabs>
 
 ### 2. Install Mandatory Peer Dependencies
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
   <Tab value="npm">
-    ```bash npm install react-native-reanimated@^4.1.1
-    "react-native-gesture-handler@^2.28.0 || ^3.0.0"
-    react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0
-    react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0 ```
+    ```bash
+    npm install react-native-reanimated@^4.1.1 "react-native-gesture-handler@^2.28.0 || ^3.0.0" react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0 react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0
+    ```
   </Tab>
   <Tab value="pnpm">
-    ```bash pnpm add react-native-reanimated@^4.1.1
-    "react-native-gesture-handler@^2.28.0 || ^3.0.0"
-    react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0
-    react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0 ```
+    ```bash
+    pnpm add react-native-reanimated@^4.1.1 "react-native-gesture-handler@^2.28.0 || ^3.0.0" react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0 react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0
+    ```
   </Tab>
   <Tab value="yarn">
-    ```bash yarn add react-native-reanimated@^4.1.1
-    "react-native-gesture-handler@^2.28.0 || ^3.0.0"
-    react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0
-    react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0 ```
+    ```bash
+    yarn add react-native-reanimated@^4.1.1 "react-native-gesture-handler@^2.28.0 || ^3.0.0" react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0 react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0
+    ```
   </Tab>
   <Tab value="bun">
-    ```bash bun add react-native-reanimated@^4.1.1
-    "react-native-gesture-handler@^2.28.0 || ^3.0.0"
-    react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0
-    react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0 ```
+    ```bash
+    bun add react-native-reanimated@^4.1.1 "react-native-gesture-handler@^2.28.0 || ^3.0.0" react-native-worklets@^0.5.1 react-native-safe-area-context@^5.6.0 react-native-svg@^15.12.1 tailwind-variants@^3.2.2 tailwind-merge@^3.4.0
+    ```
   </Tab>
 </Tabs>
 
 <Callout type="warning">
-  It's recommended to use the exact versions specified above to avoid
-  compatibility issues. Version mismatches may cause unexpected bugs.
+  It's recommended to use the exact versions specified above to avoid compatibility issues. Version mismatches may cause unexpected bugs.
 </Callout>
 
 ### 3. Optional Dependencies
 
 These packages are only needed if you use specific components or features:
 
-| Package                | Version   | Required for                                                            |
-| ---------------------- | --------- | ----------------------------------------------------------------------- |
-| `react-native-screens` | `^4.16.0` | BottomSheet, Dialog, Menu, Popover, Select, Toast                       |
-| `@gorhom/bottom-sheet` | `^5.2.9`  | BottomSheet, Menu / Popover / Select when `presentation="bottom-sheet"` |
+| Package | Version | Required for |
+| --- | --- | --- |
+| `react-native-screens` | `^4.16.0` | BottomSheet, Dialog, Menu, Popover, Select, Toast |
+| `@gorhom/bottom-sheet` | `^5.2.9` | BottomSheet, Menu / Popover / Select when `presentation="bottom-sheet"` |
 
 ### 4. Set Up Uniwind
 
@@ -153,15 +173,15 @@ Inside your `global.css` file add the following imports:
 Wrap your application with `HeroUINativeProvider`. You must wrap it with `GestureHandlerRootView`:
 
 ```tsx
-import { HeroUINativeProvider } from 'heroui-native'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { HeroUINativeProvider } from 'heroui-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <HeroUINativeProvider>{/* Your app content */}</HeroUINativeProvider>
     </GestureHandlerRootView>
-  )
+  );
 }
 ```
 
@@ -170,15 +190,15 @@ export default function App() {
 ## Use Your First Component
 
 ```tsx
-import { Button } from 'heroui-native'
-import { View } from 'react-native'
+import { Button } from 'heroui-native';
+import { View } from 'react-native';
 
 export default function MyComponent() {
   return (
-    <View className="bg-background flex-1 items-center justify-center">
+    <View className="flex-1 justify-center items-center bg-background">
       <Button onPress={() => console.log('Pressed!')}>Get Started</Button>
     </View>
-  )
+  );
 }
 ```
 
@@ -209,9 +229,7 @@ Granular imports are ideal when you only need a few components, as they help kee
 - `heroui-native/hooks` - Custom hooks
 
 <Callout type="warning">
-  **Important**: To keep the bundle size under control, you must follow the
-  pattern with granular imports consistently. Even one general import from
-  `heroui-native` will break this optimization strategy.
+  **Important**: To keep the bundle size under control, you must follow the pattern with granular imports consistently. Even one general import from `heroui-native` will break this optimization strategy.
 </Callout>
 
 > **Tip**: For even more control over your bundle, consider using [`HeroUINativeProviderRaw`](/docs/ui/react-v3/native/getting-started/provider#raw-provider) — a lightweight provider that excludes `ToastProvider` and `PortalHost`.
@@ -225,7 +243,5 @@ Granular imports are ideal when you only need a few components, as they help kee
 ## Running on Web (Expo)
 
 <Callout type="warning">
-  HeroUI Native is currently not recommended for web use. We are focusing on
-  mobile platforms (iOS and Android) at this time. For web development, please
-  use [HeroUI React](/docs/ui/react-v3/web/getting-started/quick-start) instead.
+  HeroUI Native is currently not recommended for web use. We are focusing on mobile platforms (iOS and Android) at this time. For web development, please use [HeroUI React](/docs/ui/react-v3/web/getting-started/quick-start) instead.
 </Callout>

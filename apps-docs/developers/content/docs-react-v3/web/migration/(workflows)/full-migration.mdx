@@ -3,11 +3,8 @@ title: Full Migration
 description: Step-by-step guide for migrating HeroUI v2 to v3 using full migration approach
 ---
 
-import {
-  Callout,
-  Tab,
-  Tabs
-} from '../../../../../src/components/docs/heroui-mdx.tsx'
+import { Callout, Tab, Tabs } from '../../../../../src/components/docs/heroui-mdx.tsx'
+
 
 ## Overview
 
@@ -43,11 +40,27 @@ AI assistants can help with migration. Use the [Migration MCP Server](/docs/ui/r
 
 v3 requires React 19+. Update your React version:
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">```bash npm install react@^19.0.0 react-dom@^19.0.0 ```</Tab>
-  <Tab value="pnpm">```bash pnpm add react@^19.0.0 react-dom@^19.0.0 ```</Tab>
-  <Tab value="yarn">```bash yarn add react@^19.0.0 react-dom@^19.0.0 ```</Tab>
-  <Tab value="bun">```bash bun add react@^19.0.0 react-dom@^19.0.0 ```</Tab>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npm install react@^19.0.0 react-dom@^19.0.0
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add react@^19.0.0 react-dom@^19.0.0
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add react@^19.0.0 react-dom@^19.0.0
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add react@^19.0.0 react-dom@^19.0.0
+    ```
+  </Tab>
 </Tabs>
 
 **Note**: These dependency updates can be done before switching HeroUI (won't break project). However, the HeroUI package switch should only happen AFTER all component code is migrated.
@@ -56,22 +69,30 @@ v3 requires React 19+. Update your React version:
 
 **Important**: Do this AFTER migrating all component code. Remove v2 packages and install v3:
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
   <Tab value="npm">
-    ```bash npm uninstall @heroui/react @heroui/theme npm install @heroui/styles
-    @heroui/react ```
+    ```bash
+    npm uninstall @heroui/react @heroui/theme
+    npm install @heroui/styles @heroui/react
+    ```
   </Tab>
   <Tab value="pnpm">
-    ```bash pnpm remove @heroui/react @heroui/theme pnpm add @heroui/styles
-    @heroui/react ```
+    ```bash
+    pnpm remove @heroui/react @heroui/theme
+    pnpm add @heroui/styles @heroui/react
+    ```
   </Tab>
   <Tab value="yarn">
-    ```bash yarn remove @heroui/react @heroui/theme yarn add @heroui/styles
-    @heroui/react ```
+    ```bash
+    yarn remove @heroui/react @heroui/theme
+    yarn add @heroui/styles @heroui/react
+    ```
   </Tab>
   <Tab value="bun">
-    ```bash bun remove @heroui/react @heroui/theme bun add @heroui/styles
-    @heroui/react ```
+    ```bash
+    bun remove @heroui/react @heroui/theme
+    bun add @heroui/styles @heroui/react
+    ```
   </Tab>
 </Tabs>
 
@@ -79,22 +100,54 @@ v3 requires React 19+. Update your React version:
 
 v3 no longer requires Framer Motion:
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">```bash npm uninstall framer-motion ```</Tab>
-  <Tab value="pnpm">```bash pnpm remove framer-motion ```</Tab>
-  <Tab value="yarn">```bash yarn remove framer-motion ```</Tab>
-  <Tab value="bun">```bash bun remove framer-motion ```</Tab>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npm uninstall framer-motion
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm remove framer-motion
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn remove framer-motion
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun remove framer-motion
+    ```
+  </Tab>
 </Tabs>
 
 #### Update Tailwind CSS
 
 Ensure you're using Tailwind CSS v4:
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">```bash npm install tailwindcss@^4.0.0 ```</Tab>
-  <Tab value="pnpm">```bash pnpm add tailwindcss@^4.0.0 ```</Tab>
-  <Tab value="yarn">```bash yarn add tailwindcss@^4.0.0 ```</Tab>
-  <Tab value="bun">```bash bun add tailwindcss@^4.0.0 ```</Tab>
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npm install tailwindcss@^4.0.0
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add tailwindcss@^4.0.0
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add tailwindcss@^4.0.0
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add tailwindcss@^4.0.0
+    ```
+  </Tab>
 </Tabs>
 
 </section>
@@ -109,16 +162,16 @@ Ensure you're using Tailwind CSS v4:
 
 ```js
 // tailwind.config.js
-const { heroui } = require('@heroui/react')
+const {heroui} = require("@heroui/react");
 
 module.exports = {
   content: [
-    './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}'
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
-  plugins: [heroui()]
+  plugins: [heroui()],
   // ... other config
-}
+};
 ```
 
 **v3 Configuration:**
@@ -140,8 +193,8 @@ Remove the `heroui()` plugin from your Tailwind config. If you only used Tailwin
 
 ```css
 /* globals.css or main.css */
-@import 'tailwindcss';
-@import '@heroui/styles'; /* [!code highlight]*/
+@import "tailwindcss";
+@import "@heroui/styles"; /* [!code highlight]*/
 ```
 
 <Callout type="warning">
@@ -168,14 +221,14 @@ v3 does not require a Provider component. Remove it from your application root.
 
 ```tsx
 // app.tsx or App.tsx
-import { HeroUIProvider } from '@heroui/react'
+import {HeroUIProvider} from "@heroui/react";
 
 function App() {
   return (
     <HeroUIProvider>
       <YourApplication />
     </HeroUIProvider>
-  )
+  );
 }
 ```
 
@@ -184,7 +237,7 @@ function App() {
 ```tsx
 // app.tsx or App.tsx
 function App() {
-  return <YourApplication />
+  return <YourApplication />;
 }
 ```
 
@@ -215,7 +268,6 @@ v3 removes the Framer Motion dependency and handles animations differently:
 HeroUI v2 provided component hooks (like `useSwitch`, `useInput`, `useCheckbox`, etc.) and utility hooks like `useDisclosure`. HeroUI v3 removes most component hooks in favor of compound components, and replaces `useDisclosure` with `useOverlayState`.
 
 See the comprehensive [Hooks Migration Guide](/docs/ui/react-v3/web/migration/hooks) for:
-
 - Component hooks removal and migration to compound components
 - `useDisclosure` → `useOverlayState` migration
 - Migration strategies and examples
@@ -243,7 +295,7 @@ import {Button, Card} from "@heroui/react";
 
 ```tsx
 // All components from single package
-import { Button, Card } from '@heroui/react'
+import {Button, Card} from "@heroui/react";
 ```
 
 #### TypeScript Considerations
@@ -252,18 +304,18 @@ If you're using TypeScript, be aware of type changes in v3:
 
 ```tsx
 // Import types alongside components
-import { Button, type ButtonProps } from '@heroui/react'
+import {Button, type ButtonProps} from "@heroui/react";
+
 // Compound component types are properly exported
-import { Checkbox, type CheckboxProps } from '@heroui/react'
+import {Checkbox, type CheckboxProps} from "@heroui/react";
 
 // Type names may have changed - check component documentation
 type MyButtonProps = ButtonProps & {
-  customProp?: string
-}
+  customProp?: string;
+};
 ```
 
 **Common type changes:**
-
 - Component prop interfaces may have different names or properties
 - Compound component parts have their own type exports
 - Ref types updated to match React 19 patterns
@@ -277,7 +329,6 @@ type MyButtonProps = ButtonProps & {
 Use the [Component Migration Reference](/docs/ui/react-v3/web/migration#component-migration-reference) table to find migration guides for each component. Migrate components according to their specific guides.
 
 **Key points:**
-
 - Review individual component migration guides as needed
 - Migrate component APIs, props, and structure
 - Update compound component patterns (Checkbox, Radio, Switch, Card, Modal, etc.)
@@ -297,7 +348,7 @@ If you had custom theme overrides in v2, you'll need to update them for v3's CSS
 
 ```js
 // tailwind.config.js
-const { heroui } = require('@heroui/react')
+const {heroui} = require("@heroui/react");
 
 module.exports = {
   plugins: [
@@ -307,13 +358,13 @@ module.exports = {
           colors: {
             primary: {
               // custom colors
-            }
-          }
-        }
-      }
-    })
-  ]
-}
+            },
+          },
+        },
+      },
+    }),
+  ],
+};
 ```
 
 **v3 Theme Customization:**
@@ -322,8 +373,8 @@ v3 uses CSS variables. Override them in your CSS:
 
 ```css
 /* globals.css */
-@import 'tailwindcss';
-@import '@heroui/styles';
+@import "tailwindcss";
+@import "@heroui/styles";
 
 :root {
   --color-primary: /* your color */;
@@ -404,20 +455,17 @@ After migration, thoroughly test your application:
 Use this checklist to track your full migration progress:
 
 ### Dependencies
-
 - Update React to v19+
 - Update HeroUI packages to v3 (after component migration)
 - Remove Framer Motion
 - Update Tailwind CSS to v4
 
 ### Configuration
-
 - Remove `heroui()` plugin from Tailwind config
 - Update CSS imports
 - Remove `hero.ts` file (if exists)
 
 ### Application Code - Component Migration
-
 - Remove `HeroUIProvider` wrapper
 - Handle Provider props migration (router, locale, animations)
 - Update all component imports to `@heroui/react`
@@ -431,7 +479,6 @@ Use this checklist to track your full migration progress:
 - **Verify component functionality before proceeding to hooks migration**
 
 ### Application Code - Hooks Migration
-
 - Review [Hooks Migration Guide](/docs/ui/react-v3/web/migration/hooks)
 - Replace component hooks (`useSwitch`, `useInput`, `useCheckbox`, etc.) with compound components
 - Replace `useDisclosure` with `useOverlayState` for overlay state management
@@ -439,7 +486,6 @@ Use this checklist to track your full migration progress:
 - **Verify hooks migration before proceeding to styling migration**
 
 ### Application Code - Styling Migration
-
 - Review [Styling Migration Guide](/docs/ui/react-v3/web/migration/styling)
 - Update utility classes (`text-tiny` → `text-xs`, `rounded-small` → `rounded-sm`, etc.)
 - Update color tokens (`bg-primary` → `bg-accent`, `bg-secondary` → `bg-default`, etc.)
@@ -451,7 +497,6 @@ Use this checklist to track your full migration progress:
 - Test visual appearance and adjust as needed
 
 ### Testing
-
 - Visual regression testing
 - Functionality testing
 - Accessibility testing

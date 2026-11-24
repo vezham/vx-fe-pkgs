@@ -24,6 +24,8 @@ const ignores = [
   '**/test-output',
   '**/node_modules',
   'packages/tamizhi/ui/src/lib/vendor/**',
+  'apps-docs/developers/src/demos/heroui/**',
+  'apps-docs/developers/src/demos/heroui-pro/**',
   '**/coverage',
   '**/.next',
   '**/.next/**',

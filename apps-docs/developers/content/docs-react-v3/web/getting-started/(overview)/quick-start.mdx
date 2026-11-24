@@ -4,11 +4,8 @@ description: Get started with HeroUI v3 in minutes
 icon: rocket
 ---
 
-import {
-  Callout,
-  CopyPrompt,
-  InstallTabs
-} from '../../../../../src/components/docs/heroui-mdx.tsx'
+import { Callout, CopyPrompt, InstallTabs } from '../../../../../src/components/docs/heroui-mdx.tsx'
+
 
 ## Requirements
 
@@ -36,9 +33,8 @@ Then apply the setup:
 - Add a small smoke test by rendering a \`<Button>\` from \`@heroui/react\` somewhere visible to confirm styles are applied.
 
 When done, summarize the changes you made and tell me how to start the dev server.`}
-
-> **Prefer to let your AI assistant do it?** Install the [HeroUI MCP Server](/docs/ui/react-v3/web/getting-started/mcp-server) in your editor, then paste the prompt into your AI assistant — it will analyze your project and handle the entire setup for you.
-
+>
+  **Prefer to let your AI assistant do it?** Install the [HeroUI MCP Server](/docs/ui/react-v3/web/getting-started/mcp-server) in your editor, then paste the prompt into your AI assistant — it will analyze your project and handle the entire setup for you.
 </CopyPrompt>
 
 Install HeroUI and required dependencies:
@@ -50,8 +46,8 @@ Install HeroUI and required dependencies:
 Add to your main CSS file `globals.css`:
 
 ```css
-@import 'tailwindcss';
-@import '@heroui/styles'; /* [!code highlight]*/
+@import "tailwindcss";
+@import "@heroui/styles"; /* [!code highlight]*/
 ```
 
 <Callout type="warning">
@@ -61,10 +57,14 @@ Add to your main CSS file `globals.css`:
 ## Use Components
 
 ```tsx
-import { Button } from '@heroui/react'
+import { Button } from '@heroui/react';
 
 function App() {
-  return <Button>My Button</Button>
+  return (
+    <Button>
+      My Button
+    </Button>
+  );
 }
 ```
 
