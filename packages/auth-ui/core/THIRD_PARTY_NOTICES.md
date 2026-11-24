@@ -2,6 +2,8 @@
 
 Adapted from [Better Auth UI](https://github.com/better-auth-ui/better-auth-ui), `packages/core`, version 1.7.34, commit `f4dde31f636ed51c48c43e13e6e0982e74a9a2ce`. This package contains the implementation locally and has no Better Auth UI package dependency.
 
+Reviewed against upstream HEAD `5767ba5568cf4798b2a222652bfefbf8d57f0152`.
+
 MIT License
 
 Copyright (c) 2025 daveycodez
