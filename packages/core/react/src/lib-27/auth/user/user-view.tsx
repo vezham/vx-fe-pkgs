@@ -23,6 +23,63 @@ export type UserViewProps = {
   }
 }
 
+type UserViewContentProps = {
+  className?: string
+  hideSubtitle: boolean
+  size: AvatarProps['size']
+  user?: UserViewProps['user']
+  divProps: ComponentProps<'div'>
+}
+
+const UserViewSkeleton = ({
+  className,
+  hideSubtitle,
+  size,
+  divProps
+}: Omit<UserViewContentProps, 'user'>) => (
+  <div
+    className={cn('flex min-w-0 items-center gap-2', className)}
+    {...divProps}>
+    <UserAvatar
+      isPending
+      className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
+      size={size === 'lg' ? 'md' : 'sm'}
+    />
+    <div className="flex min-w-0 flex-col gap-1">
+      <Skeleton className="h-3.5 w-24 rounded-lg" />
+      {hideSubtitle ? null : <Skeleton className="h-3 w-32 rounded-lg" />}
+    </div>
+  </div>
+)
+
+const UserViewContent = ({
+  className,
+  hideSubtitle,
+  size,
+  user,
+  divProps
+}: UserViewContentProps) => (
+  <div
+    className={cn('flex min-w-0 items-center gap-2', className)}
+    {...divProps}>
+    <UserAvatar
+      className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
+      user={user}
+      size={size === 'lg' ? 'md' : 'sm'}
+    />
+    <div className="flex min-w-0 flex-col">
+      <p className="text-foreground truncate text-sm leading-tight font-medium">
+        {user?.displayUsername || user?.name || user?.email}
+      </p>
+      {!hideSubtitle && (user?.displayUsername || user?.name) ? (
+        <p className="text-muted truncate overflow-x-hidden text-xs leading-tight">
+          {user.email}
+        </p>
+      ) : null}
+    </div>
+  </div>
+)
+
 /**
  * Render a compact user item with an avatar, a primary label (display username, name, or email), and an optional subtitle (email).
  *
@@ -49,48 +106,22 @@ export const UserView = ({
 
   if ((isPending || sessionPending) && !user) {
     return (
-      <div
-        className={cn('flex min-w-0 items-center gap-2', className)}
-        {...props}>
-        <UserAvatar
-          isPending
-          className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
-          size={size === 'lg' ? 'md' : 'sm'}
-        />
-
-        <div className="flex min-w-0 flex-col gap-1">
-          <Skeleton className="h-3.5 w-24 rounded-lg" />
-
-          {!hideSubtitle ? <Skeleton className="h-3 w-32 rounded-lg" /> : null}
-        </div>
-      </div>
+      <UserViewSkeleton
+        className={className}
+        hideSubtitle={hideSubtitle}
+        size={size}
+        divProps={props}
+      />
     )
   }
 
   return (
-    <div
-      className={cn('flex min-w-0 items-center gap-2', className)}
-      {...props}>
-      <UserAvatar
-        className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
-        user={resolvedUser}
-        size={size === 'lg' ? 'md' : 'sm'}
-      />
-
-      <div className="flex min-w-0 flex-col">
-        <p className="text-foreground truncate text-sm leading-tight font-medium">
-          {resolvedUser?.displayUsername ||
-            resolvedUser?.name ||
-            resolvedUser?.email}
-        </p>
-
-        {!hideSubtitle &&
-        (resolvedUser?.displayUsername || resolvedUser?.name) ? (
-          <p className="text-muted truncate overflow-x-hidden text-xs leading-tight">
-            {resolvedUser?.email}
-          </p>
-        ) : null}
-      </div>
-    </div>
+    <UserViewContent
+      className={className}
+      hideSubtitle={hideSubtitle}
+      size={size}
+      user={resolvedUser}
+      divProps={props}
+    />
   )
 }

@@ -122,6 +122,7 @@ function SetPassword({
     useRequestPasswordResetOtp(authClient, {
       onError: () => resetFetchOptions(),
       onSuccess: (_data, { email }) => {
+        // react-doctor-disable-next-line react-doctor/auth-token-in-web-storage -- This stores only the submitted email to prefill the next screen, not a credential or token.
         sessionStorage.setItem('vezham.auth.reset-password-otp', email)
         navigate({
           to: getAuthLinkURL(

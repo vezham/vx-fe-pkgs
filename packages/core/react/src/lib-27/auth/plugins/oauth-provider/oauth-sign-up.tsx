@@ -13,15 +13,9 @@ import {
   useOAuthContinue,
   usePublicOAuthClient
 } from '@vezham/auth-ui-react/plugins/oauth-provider'
-import {
-  Button,
-  Card,
-  type CardProps,
-  Spinner,
-  cn,
-  useIsHydrated
-} from '@vezham/react-v3'
+import { Button, Card, type CardProps, Spinner, cn } from '@vezham/react-v3'
 
+import { useBrowserSearch } from '../../lib/use-browser-search'
 import type { SocialLayout } from '../../provider-buttons'
 import { SignUp } from '../../sign-up'
 
@@ -55,10 +49,8 @@ export const OAuthSignUp = ({
   const { localization } = useAuthPlugin(oauthProviderPlugin)
   const oauthClient = authClient
 
-  const isHydrated = useIsHydrated()
-  const request = isHydrated
-    ? parseOAuthAuthorizationRequest(window.location.search)
-    : undefined
+  const search = useBrowserSearch()
+  const request = search ? parseOAuthAuthorizationRequest(search) : undefined
   const [isCreated, setIsCreated] = useState(false)
 
   const isOAuthSignUp = Boolean(request && hasOAuthPrompt(request, 'create'))

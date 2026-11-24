@@ -19,34 +19,37 @@ export const VersionSelector = ({
   if (platform === 'native') return null
 
   return (
-    <Popover isOpen={open} onOpenChange={setOpen}>
-      <Popover.Trigger className={styles.trigger()}>
-        <span className={styles.label()}>v{vxCore.version}</span>
-        <AltArrowDown size={12} className={styles.chevron({ open })} />
-      </Popover.Trigger>
-      <Popover.Content className={styles.popover()} placement="bottom start">
-        <Popover.Dialog className={styles.content()}>
-          <div className={styles.list()}>
-            <div className={styles.item({ selected: true })}>
-              <span>v{majorVersion}</span>
-              <span className={styles.version({ selected: true })}>
-                {vxCore.version}
-              </span>
+    <>
+      {/* react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- Each docs app owns its generated package version and navigation style, so this small shared-looking menu stays local to each app. */}
+      <Popover isOpen={open} onOpenChange={setOpen}>
+        <Popover.Trigger className={styles.trigger()}>
+          <span className={styles.label()}>v{vxCore.version}</span>
+          <AltArrowDown size={12} className={styles.chevron({ open })} />
+        </Popover.Trigger>
+        <Popover.Content className={styles.popover()} placement="bottom start">
+          <Popover.Dialog className={styles.content()}>
+            <div className={styles.list()}>
+              <div className={styles.item({ selected: true })}>
+                <span>v{majorVersion}</span>
+                <span className={styles.version({ selected: true })}>
+                  {vxCore.version}
+                </span>
+              </div>
+              <div className={styles.separator()}>
+                <Separator />
+              </div>
+              <a
+                className={styles.item()}
+                href="https://vezham.com?utm_source=vezham.app"
+                rel="noopener noreferrer"
+                target="_blank">
+                <span>v2</span>
+                <span className={styles.version()}>2.x.x</span>
+              </a>
             </div>
-            <div className={styles.separator()}>
-              <Separator />
-            </div>
-            <a
-              className={styles.item()}
-              href="https://vezham.com?utm_source=vezham.app"
-              rel="noopener noreferrer"
-              target="_blank">
-              <span>v2</span>
-              <span className={styles.version()}>2.x.x</span>
-            </a>
-          </div>
-        </Popover.Dialog>
-      </Popover.Content>
-    </Popover>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+    </>
   )
 }

@@ -258,15 +258,20 @@ export const parseAdditionalFieldValues = async (
 ): Promise<Record<string, AdditionalFieldValue | null>> => {
   const values: Record<string, AdditionalFieldValue | null> = {}
 
-  for (const field of fields) {
-    if (field.readOnly) continue
+  const writableFields = fields.filter(field => !field.readOnly)
+  const validatedFields = await Promise.all(
+    writableFields.map(async field => {
+      const entry = formData.get(field.name)
+      const value = parseAdditionalFieldValue(
+        field,
+        typeof entry === 'string' ? entry : null
+      )
+      await field.validate?.(value)
+      return { field, value }
+    })
+  )
 
-    const entry = formData.get(field.name)
-    const value = parseAdditionalFieldValue(
-      field,
-      typeof entry === 'string' ? entry : null
-    )
-    await field.validate?.(value)
+  for (const { field, value } of validatedFields) {
     if (value !== undefined) values[field.name] = value
   }
 

@@ -9,8 +9,10 @@ const asRecord = (value: unknown): ErrorRecord | undefined => {
 
 const errorChain = (error: unknown): ErrorRecord[] => {
   const chain: ErrorRecord[] = []
+  const seen = new Set<ErrorRecord>()
   let current = asRecord(error)
-  while (current && !chain.includes(current) && chain.length < 8) {
+  while (current && !seen.has(current) && chain.length < 8) {
+    seen.add(current)
     chain.push(current)
     current = asRecord(current.error) ?? asRecord(current.cause)
   }

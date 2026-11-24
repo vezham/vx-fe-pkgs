@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { formatLocaleDate } from '@vezham/auth-ui-core'
 import {
   type AuthorizedOAuthApplication,
   type OAuthProviderAuthClient,
@@ -84,7 +85,8 @@ export const AuthorizedApplication = ({
 
           {application.updatedAt ? (
             <span className="text-muted text-xs">
-              {`${localization.lastAuthorized} ${application.updatedAt.toLocaleDateString(
+              {`${localization.lastAuthorized} ${formatLocaleDate(
+                application.updatedAt,
                 locale.languageTag,
                 { dateStyle: 'medium' }
               )}`}

@@ -10,10 +10,10 @@ import {
   Link,
   Spinner,
   cn,
-  toast,
-  useIsHydrated
+  toast
 } from '@vezham/react-v3'
 
+import { useSessionStorageValue } from './lib/use-session-storage-value'
 import { OpenEmailButton } from './open-email-button'
 
 export type VerifyEmailProps = {
@@ -47,10 +47,7 @@ export const VerifyEmail = ({ className, variant }: VerifyEmailProps) => {
     viewPaths
   } = useAuth()
 
-  const isHydrated = useIsHydrated()
-  const email = isHydrated
-    ? (sessionStorage.getItem('vezham.auth.verify-email') ?? '')
-    : ''
+  const email = useSessionStorageValue('vezham.auth.verify-email')
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS)
 
   useEffect(() => {

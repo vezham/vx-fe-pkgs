@@ -205,13 +205,15 @@ export const parseTableUrlState = (
 ): TableUrlState => {
   const filterPrefix = `${stateKey}.filter.`
   const columnFilters: TableUrlState['columnFilters'] = []
+  const allowedColumnIdSet =
+    allowedColumnIds === undefined ? undefined : new Set(allowedColumnIds)
 
   for (const [key, value] of params) {
     const id = key.slice(filterPrefix.length)
     if (
       key.startsWith(filterPrefix) &&
       value &&
-      (!allowedColumnIds || allowedColumnIds.includes(id))
+      (!allowedColumnIdSet || allowedColumnIdSet.has(id))
     ) {
       columnFilters.push({ id, value: parseTableFilterValue(value) })
     }

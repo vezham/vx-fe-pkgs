@@ -98,18 +98,25 @@ export const matchAuthLocale = <TLocale extends AuthLocale>({
     .filter((entry): entry is { locale: TLocale; languageTag: string } =>
       Boolean(entry.languageTag)
     )
+  const exactCandidates = new Map(
+    candidates.map(candidate => [candidate.languageTag, candidate.locale])
+  )
+  const baseCandidates = new Map<string, TLocale>()
+
+  for (const candidate of candidates) {
+    const baseLanguage = candidate.languageTag.split('-')[0]
+    if (!baseCandidates.has(baseLanguage)) {
+      baseCandidates.set(baseLanguage, candidate.locale)
+    }
+  }
 
   for (const requestedLanguage of parseRequestedLanguages(requested)) {
-    const exact = candidates.find(
-      candidate => candidate.languageTag === requestedLanguage
-    )
-    if (exact) return exact.locale
+    const exact = exactCandidates.get(requestedLanguage)
+    if (exact) return exact
 
     const requestedBaseLanguage = requestedLanguage.split('-')[0]
-    const baseLanguage = candidates.find(
-      candidate => candidate.languageTag.split('-')[0] === requestedBaseLanguage
-    )
-    if (baseLanguage) return baseLanguage.locale
+    const baseLanguage = baseCandidates.get(requestedBaseLanguage)
+    if (baseLanguage) return baseLanguage
   }
 
   return fallback

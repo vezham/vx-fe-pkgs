@@ -63,8 +63,10 @@ export const groupOAuthConsents = (
 
     application.consentIds.push(consent.id)
 
+    const scopes = new Set(application.scopes)
     for (const scope of consent.scopes ?? []) {
-      if (scope && !application.scopes.includes(scope)) {
+      if (scope && !scopes.has(scope)) {
+        scopes.add(scope)
         application.scopes.push(scope)
       }
     }

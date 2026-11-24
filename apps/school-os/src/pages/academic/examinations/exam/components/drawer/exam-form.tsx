@@ -48,6 +48,7 @@ export const ExamForm = ({
             </DateField.Suffix>
           </DateField.Group>
 
+          {/* react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- This calendar belongs to the app's date field; the similar package field has independent validation and form behavior. */}
           <DatePicker.Popover>
             <Calendar aria-label="Event date">
               <Calendar.Header>

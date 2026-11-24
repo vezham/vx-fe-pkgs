@@ -1,10 +1,6 @@
 const TEXT_FILE_TYPE = 'text/plain;charset=utf-8'
 const PRINT_FRAME_CLEANUP_DELAY = 60_000
 
-const createTextFileUrl = (text: string) => {
-  return URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
-}
-
 /**
  * Download plain text as a `.txt` file generated in the browser.
  *
@@ -12,7 +8,7 @@ const createTextFileUrl = (text: string) => {
  * @param filename - Suggested download filename.
  */
 export const downloadTextFile = (text: string, filename: `${string}.txt`) => {
-  const url = createTextFileUrl(text)
+  const url = URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
   const link = document.createElement('a')
 
   link.download = filename
@@ -34,7 +30,8 @@ export const downloadTextFile = (text: string, filename: `${string}.txt`) => {
  * @param text - Exact text content to print.
  */
 export const printTextFile = (text: string) => {
-  const url = createTextFileUrl(text)
+  // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- The URL is revoked by cleanup after printing or on error.
+  const url = URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
   const frame = document.createElement('iframe')
   const viewportWidth = document.documentElement.clientWidth
   const viewportHeight = document.documentElement.clientHeight

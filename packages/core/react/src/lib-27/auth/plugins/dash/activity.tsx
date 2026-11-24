@@ -13,11 +13,13 @@ import { createElement, useEffect, useMemo } from 'react'
 
 import {
   DEFAULT_TABLE_SEARCH_DEBOUNCE_MS,
+  formatLocaleDate,
   getClampedTablePageIndex
 } from '@vezham/auth-ui-core'
 import type {
   DashAuditLog,
-  DashAuthClient
+  DashAuthClient,
+  DashLocalization
 } from '@vezham/auth-ui-core/plugins/dash'
 import {
   dashPlugin,
@@ -180,9 +182,7 @@ const ActivityRow = ({ event }: { event: DashAuditLog }) => {
     localization.unknownEvent
   const detail = getDashEventDetail(event)
   const location = getDashEventLocation(event, showIpAddress)
-  const absoluteTime = new Date(event.createdAt).toLocaleString(
-    locale.languageTag
-  )
+  const absoluteTime = formatLocaleDate(event.createdAt, locale.languageTag)
 
   return (
     <li className="flex items-start gap-3 border-b border-dashed py-4 first:pt-0 last:border-b-0 last:pb-0">
@@ -226,14 +226,224 @@ const ActivityRowSkeleton = () => {
   )
 }
 
-const ActivityFeed = ({
+const ActivityHeader = ({
+  access,
+  localization,
+  organizationId
+}: {
+  access: ActivityAccess
+  localization: DashLocalization
+  organizationId?: string
+}) => {
+  const description =
+    access === 'admin'
+      ? localization.adminActivityDescription
+      : access === 'admin-user'
+        ? localization.adminUserActivityDescription
+        : organizationId
+          ? localization.organizationActivityDescription
+          : localization.activityDescription
+
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-col gap-1">
+        <h2 className="text-sm font-semibold">{localization.activity}</h2>
+        <p className="text-muted text-sm">{description}</p>
+      </div>
+      {organizationId ? (
+        <Chip className="shrink-0" size="sm" variant="secondary">
+          {access === 'organization'
+            ? localization.organizationWide
+            : localization.personalOnly}
+        </Chip>
+      ) : null}
+    </div>
+  )
+}
+
+const ActivityFilters = ({
+  eventOptions,
+  eventType,
+  globalFilter,
+  localization,
+  onEventTypeChange,
+  onIdentifierChange
+}: {
+  eventOptions: Array<[string, string]>
+  eventType: string
+  globalFilter: string
+  localization: DashLocalization
+  onEventTypeChange: (value: string | number | null) => void
+  onIdentifierChange: (value: string) => void
+}) => (
+  <div className="grid gap-2 sm:grid-cols-[12rem_minmax(14rem,1fr)]">
+    <Select value={eventType} onChange={onEventTypeChange}>
+      <Label>{localization.eventType}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          <ListBox.Item id="all">{localization.allEvents}</ListBox.Item>
+          {eventOptions.map(([key, label]) => (
+            <ListBox.Item id={key} key={key} textValue={label}>
+              {label}
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </Select.Popover>
+    </Select>
+    <SearchField
+      aria-label={localization.identifier}
+      value={globalFilter}
+      onChange={onIdentifierChange}>
+      <Label>{localization.identifier}</Label>
+      <SearchField.Group>
+        <SearchField.SearchIcon />
+        <SearchField.Input placeholder={localization.identifierPlaceholder} />
+        <SearchField.ClearButton />
+      </SearchField.Group>
+    </SearchField>
+  </div>
+)
+
+const ActivityResult = ({
+  data,
+  error,
+  isPending,
+  localization,
+  onRetry,
+  rows
+}: {
+  data?: { events: DashAuditLog[] }
+  error: unknown
+  isPending: boolean
+  localization: DashLocalization
+  onRetry: () => void
+  rows: Array<{ id: string; original: DashAuditLog }>
+}) => {
+  if (isPending) {
+    return (
+      <ul>
+        {generateN(3).map(skeletonId => (
+          <ActivityRowSkeleton key={skeletonId} />
+        ))}
+      </ul>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
+        <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
+          <Pulse size={16} className="text-muted size-4" />
+        </div>
+        <div className="flex max-w-sm flex-col gap-1">
+          <p className="text-sm font-medium">
+            {localization.activityLoadError}
+          </p>
+          <p className="text-muted text-xs">
+            {localization.activityLoadErrorDescription}
+          </p>
+        </div>
+        <Button size="sm" variant="secondary" onPress={onRetry}>
+          {localization.retry}
+        </Button>
+      </div>
+    )
+  }
+
+  if (data?.events.length) {
+    return (
+      <ul>
+        {rows.map(row => (
+          <ActivityRow key={row.id} event={row.original} />
+        ))}
+      </ul>
+    )
+  }
+
+  return (
+    <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
+      <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
+        <Pulse size={16} className="text-muted size-4" />
+      </div>
+      <div className="flex max-w-sm flex-col gap-1">
+        <p className="text-sm font-medium">{localization.noActivity}</p>
+        <p className="text-muted text-xs">
+          {localization.noActivityDescription}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+const ActivityPagination = ({
+  isFetching,
+  localization,
+  numberFormatter,
+  canNextPage,
+  canPreviousPage,
+  onNextPage,
+  onPreviousPage,
+  offset,
+  pageEnd,
+  total
+}: {
+  canNextPage: boolean
+  canPreviousPage: boolean
+  isFetching: boolean
+  localization: DashLocalization
+  numberFormatter: Intl.NumberFormat
+  onNextPage: () => void
+  onPreviousPage: () => void
+  offset: number
+  pageEnd: number
+  total: number
+}) => (
+  <Card.Footer className="flex-row items-center justify-between gap-3 border-t border-dashed">
+    <div className="flex items-center gap-2">
+      <p className="text-muted text-xs tabular-nums">
+        {localization.paginationRange
+          .replace('{{from}}', numberFormatter.format(offset + 1))
+          .replace('{{to}}', numberFormatter.format(pageEnd))
+          .replace('{{total}}', numberFormatter.format(total))}
+      </p>
+      {isFetching ? <Spinner size="sm" color="current" /> : null}
+    </div>
+    <div className="flex gap-1">
+      <Button
+        isIconOnly
+        aria-label={localization.previousPage}
+        size="sm"
+        variant="ghost"
+        isDisabled={isFetching || !canPreviousPage}
+        onPress={onPreviousPage}>
+        <ChevronLeft size={16} />
+      </Button>
+      <Button
+        isIconOnly
+        aria-label={localization.nextPage}
+        size="sm"
+        variant="ghost"
+        isDisabled={isFetching || !canNextPage}
+        onPress={onNextPage}>
+        <ChevronRight size={16} />
+      </Button>
+    </div>
+  </Card.Footer>
+)
+
+const useActivityFeedState = ({
   access,
   organizationId,
   ready = true,
-  className,
-  userId,
-  variant
-}: ActivityFeedProps) => {
+  userId
+}: Pick<
+  ActivityFeedProps,
+  'access' | 'organizationId' | 'ready' | 'userId'
+>) => {
   const { authClient, locale } = useAuth<DashAuthClient>()
   const { localization, pageSize } = useAuthPlugin(dashPlugin)
   const tableState = useServerTableState({ pageSize })
@@ -249,7 +459,10 @@ const ActivityFeed = ({
     () => Object.entries(localization.eventLabels),
     [localization.eventLabels]
   )
-  const numberFormatter = new Intl.NumberFormat(locale.languageTag)
+  const numberFormatter = useMemo(
+    () => new Intl.NumberFormat(locale.languageTag),
+    [locale.languageTag]
+  )
   const offset = pagination.pageIndex * pagination.pageSize
   const params = {
     eventType: eventType === 'all' ? undefined : eventType,
@@ -317,159 +530,97 @@ const ActivityFeed = ({
     },
     () => null
   )
+  return {
+    data,
+    error,
+    eventOptions,
+    eventType,
+    globalFilter,
+    isFetching,
+    localization,
+    numberFormatter,
+    offset,
+    pageEnd,
+    query,
+    showPending,
+    table
+  }
+}
+
+const ActivityFeed = ({
+  access,
+  organizationId,
+  ready = true,
+  className,
+  userId,
+  variant
+}: ActivityFeedProps) => {
+  const {
+    data,
+    error,
+    eventOptions,
+    eventType,
+    globalFilter,
+    isFetching,
+    localization,
+    numberFormatter,
+    offset,
+    pageEnd,
+    query,
+    showPending,
+    table
+  } = useActivityFeedState({ access, organizationId, ready, userId })
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="text-sm font-semibold">{localization.activity}</h2>
-          <p className="text-muted text-sm">
-            {access === 'admin'
-              ? localization.adminActivityDescription
-              : access === 'admin-user'
-                ? localization.adminUserActivityDescription
-                : organizationId
-                  ? localization.organizationActivityDescription
-                  : localization.activityDescription}
-          </p>
-        </div>
+      <ActivityHeader
+        access={access}
+        localization={localization}
+        organizationId={organizationId}
+      />
 
-        {organizationId && (
-          <Chip className="shrink-0" size="sm" variant="secondary">
-            {access === 'organization'
-              ? localization.organizationWide
-              : localization.personalOnly}
-          </Chip>
-        )}
-      </div>
-
-      <div className="grid gap-2 sm:grid-cols-[12rem_minmax(14rem,1fr)]">
-        <Select
-          value={eventType}
-          onChange={value => {
-            const nextEventType = String(value)
-            table
-              .getColumn('eventType')
-              ?.setFilterValue(
-                nextEventType === 'all' ? undefined : nextEventType
-              )
-          }}>
-          <Label>{localization.eventType}</Label>
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="all">{localization.allEvents}</ListBox.Item>
-              {eventOptions.map(([key, label]) => (
-                <ListBox.Item id={key} key={key} textValue={label}>
-                  {label}
-                </ListBox.Item>
-              ))}
-            </ListBox>
-          </Select.Popover>
-        </Select>
-        <SearchField
-          aria-label={localization.identifier}
-          value={globalFilter}
-          onChange={value => {
-            table.setGlobalFilter(value)
-          }}>
-          <Label>{localization.identifier}</Label>
-          <SearchField.Group>
-            <SearchField.SearchIcon />
-            <SearchField.Input
-              placeholder={localization.identifierPlaceholder}
-            />
-            <SearchField.ClearButton />
-          </SearchField.Group>
-        </SearchField>
-      </div>
+      <ActivityFilters
+        eventOptions={eventOptions}
+        eventType={eventType}
+        globalFilter={globalFilter}
+        localization={localization}
+        onEventTypeChange={value => {
+          const nextEventType = String(value)
+          table
+            .getColumn('eventType')
+            ?.setFilterValue(
+              nextEventType === 'all' ? undefined : nextEventType
+            )
+        }}
+        onIdentifierChange={value => table.setGlobalFilter(value)}
+      />
 
       <Card variant={variant} aria-busy={showPending || isFetching}>
         <Card.Content>
-          {showPending ? (
-            <ul>
-              {generateN(3).map(skeletonId => (
-                <ActivityRowSkeleton key={skeletonId} />
-              ))}
-            </ul>
-          ) : error ? (
-            <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
-              <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
-                <Pulse size={16} className="text-muted size-4" />
-              </div>
-              <div className="flex max-w-sm flex-col gap-1">
-                <p className="text-sm font-medium">
-                  {localization.activityLoadError}
-                </p>
-                <p className="text-muted text-xs">
-                  {localization.activityLoadErrorDescription}
-                </p>
-              </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                onPress={() => void query.refetch()}>
-                {localization.retry}
-              </Button>
-            </div>
-          ) : data?.events.length ? (
-            <ul>
-              {table.getRowModel().rows.map(row => (
-                <ActivityRow key={row.id} event={row.original} />
-              ))}
-            </ul>
-          ) : (
-            <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
-              <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
-                <Pulse size={16} className="text-muted size-4" />
-              </div>
-              <div className="flex max-w-sm flex-col gap-1">
-                <p className="text-sm font-medium">{localization.noActivity}</p>
-                <p className="text-muted text-xs">
-                  {localization.noActivityDescription}
-                </p>
-              </div>
-            </div>
-          )}
+          <ActivityResult
+            data={data}
+            error={error}
+            isPending={showPending}
+            localization={localization}
+            onRetry={() => void query.refetch()}
+            rows={table.getRowModel().rows}
+          />
         </Card.Content>
 
-        {!error && !!data?.total && (
-          <Card.Footer className="flex-row items-center justify-between gap-3 border-t border-dashed">
-            <div className="flex items-center gap-2">
-              <p className="text-muted text-xs tabular-nums">
-                {localization.paginationRange
-                  .replace('{{from}}', numberFormatter.format(offset + 1))
-                  .replace('{{to}}', numberFormatter.format(pageEnd))
-                  .replace('{{total}}', numberFormatter.format(data.total))}
-              </p>
-              {isFetching && <Spinner size="sm" color="current" />}
-            </div>
-
-            <div className="flex gap-1">
-              <Button
-                isIconOnly
-                aria-label={localization.previousPage}
-                size="sm"
-                variant="ghost"
-                isDisabled={isFetching || !table.getCanPreviousPage()}
-                onPress={() => table.previousPage()}>
-                <ChevronLeft size={16} />
-              </Button>
-              <Button
-                isIconOnly
-                aria-label={localization.nextPage}
-                size="sm"
-                variant="ghost"
-                isDisabled={isFetching || !table.getCanNextPage()}
-                onPress={() => table.nextPage()}>
-                <ChevronRight size={16} />
-              </Button>
-            </div>
-          </Card.Footer>
-        )}
+        {!error && data?.total ? (
+          <ActivityPagination
+            isFetching={isFetching}
+            localization={localization}
+            numberFormatter={numberFormatter}
+            canNextPage={table.getCanNextPage()}
+            canPreviousPage={table.getCanPreviousPage()}
+            onNextPage={() => table.nextPage()}
+            onPreviousPage={() => table.previousPage()}
+            offset={offset}
+            pageEnd={pageEnd}
+            total={data.total}
+          />
+        ) : null}
       </Card>
     </div>
   )

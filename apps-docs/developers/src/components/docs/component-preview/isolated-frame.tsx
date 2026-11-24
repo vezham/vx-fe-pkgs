@@ -42,6 +42,7 @@ export const IsolatedFrame = ({ name, title, search = '' }: Props) => {
         <iframe
           title={title}
           src={src}
+          sandbox="allow-scripts allow-forms"
           className="bg-background block h-140 border-0"
           style={{ width: width ?? '100%' }}
         />

@@ -44,8 +44,10 @@ export const createEip1193WalletConnector = (
     label: options.label ?? 'Ethereum wallet',
     async connect() {
       const provider = resolveInjectedProvider(options.provider)
-      const accounts = await provider.request({ method: 'eth_requestAccounts' })
-      const chainId = await provider.request({ method: 'eth_chainId' })
+      const [accounts, chainId] = await Promise.all([
+        provider.request({ method: 'eth_requestAccounts' }),
+        provider.request({ method: 'eth_chainId' })
+      ])
       const address = Array.isArray(accounts) ? accounts[0] : undefined
 
       if (typeof address !== 'string' || typeof chainId !== 'string') {

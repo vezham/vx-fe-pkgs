@@ -1,4 +1,5 @@
 import { keepPreviousData } from '@tanstack/react-query'
+import type { PaginationState } from '@tanstack/react-table'
 import {
   type ComponentProps,
   type ReactNode,
@@ -105,14 +106,176 @@ const validatePageSize = (pageSize?: number) => {
   return pageSize
 }
 
+const getMemberListQuery = ({
+  isPaged,
+  pageIndex,
+  pageSize,
+  roleFilter,
+  sorting
+}: {
+  isPaged: boolean
+  pageIndex: number
+  pageSize: number
+  roleFilter: string
+  sorting: ReturnType<typeof useOrganizationTableState>['sorting']
+}) => {
+  if (!isPaged) return undefined
+
+  const roleFilterParams =
+    roleFilter === 'all'
+      ? {}
+      : {
+          filterField: 'role' as const,
+          filterValue: roleFilter,
+          // vx-bot/NOTE: Roles are stored comma-joined, so an exact match would
+          // vx-bot/NOTE: drop anyone holding more than one.
+          filterOperator: 'contains' as const
+        }
+  const sortParams =
+    sorting[0]?.id === 'role'
+      ? {
+          sortBy: 'role' as const,
+          sortDirection: sorting[0].desc ? ('desc' as const) : ('asc' as const)
+        }
+      : {}
+
+  return {
+    limit: pageSize,
+    offset: pageIndex * pageSize,
+    ...roleFilterParams,
+    ...sortParams
+  }
+}
+
+const isMemberListPending = ({
+  organizationPending,
+  membersPending,
+  ownersPending,
+  deletePermissionPending,
+  teamsEnabled,
+  teamsPermissionPending
+}: {
+  organizationPending: boolean
+  membersPending: boolean
+  ownersPending: boolean
+  deletePermissionPending: boolean
+  teamsEnabled: boolean
+  teamsPermissionPending: boolean
+}) =>
+  organizationPending ||
+  membersPending ||
+  ownersPending ||
+  deletePermissionPending ||
+  (teamsEnabled && teamsPermissionPending)
+
+const hasReachedMembershipLimit = (limit: number | undefined, total: number) =>
+  limit !== undefined && total >= limit
+
+const canSelectOrganizationMember = ({
+  member,
+  ownerCount,
+  isOwner,
+  currentUserId,
+  canDelete,
+  creatorRole
+}: {
+  member: MemberRow
+  ownerCount?: number
+  isOwner: boolean
+  currentUserId?: string
+  canDelete: boolean
+  creatorRole: string
+}) => {
+  const targetIsOwner = hasMemberRole(member.role, creatorRole)
+  const isLastOwner =
+    targetIsOwner && (ownerCount === undefined || ownerCount <= 1)
+  return (
+    canDelete &&
+    member.userId !== currentUserId &&
+    (isOwner || !targetIsOwner) &&
+    !isLastOwner
+  )
+}
+
+const removeSelectedOrganizationMembers = async ({
+  organizationId,
+  selectedMemberIds,
+  removeMember,
+  successMessage,
+  clearSelection
+}: {
+  organizationId?: string
+  selectedMemberIds: string[]
+  removeMember: (input: {
+    memberIdOrEmail: string
+    organizationId: string
+  }) => Promise<unknown>
+  successMessage: string
+  clearSelection: () => void
+}) => {
+  if (!organizationId) return
+  const results = await Promise.allSettled(
+    selectedMemberIds.map(memberIdOrEmail =>
+      removeMember({ memberIdOrEmail, organizationId })
+    )
+  )
+  const removedCount = results.filter(
+    result => result.status === 'fulfilled'
+  ).length
+  if (removedCount > 0) {
+    toast.success(successMessage.replace('{{count}}', String(removedCount)))
+  }
+  clearSelection()
+}
+
+const useResetMemberPageOnOrganizationChange = (
+  organizationId: string | undefined,
+  setPagination: (updater: (state: PaginationState) => PaginationState) => void
+) => {
+  const previousOrganizationId = useRef<string | undefined>(undefined)
+  useEffect(() => {
+    if (!organizationId) return
+    if (
+      previousOrganizationId.current &&
+      previousOrganizationId.current !== organizationId
+    ) {
+      setPagination(current => ({ ...current, pageIndex: 0 }))
+    }
+    previousOrganizationId.current = organizationId
+  }, [organizationId, setPagination])
+}
+
+const useClampMemberPage = ({
+  hasData,
+  isReady,
+  isPaged,
+  pageIndex,
+  pageSize,
+  setPagination,
+  total
+}: {
+  hasData: boolean
+  isReady: boolean
+  isPaged: boolean
+  pageIndex: number
+  pageSize: number
+  setPagination: (updater: (state: PaginationState) => PaginationState) => void
+  total: number
+}) => {
+  useEffect(() => {
+    if (!isPaged || !isReady || !hasData) return
+    const lastPageIndex = getClampedTablePageIndex(pageIndex, pageSize, total)
+    if (pageIndex > lastPageIndex) {
+      // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent -- Clamp URL-backed pagination after the server total arrives so the table does not remain on an empty page.
+      setPagination(current => ({ ...current, pageIndex: lastPageIndex }))
+    }
+  }, [hasData, isPaged, isReady, pageIndex, pageSize, setPagination, total])
+}
+
 /**
  * Organization members table with title, invite control, and per-row actions.
  */
-export const OrganizationMembers = ({
-  className,
-  pageSize,
-  ...props
-}: OrganizationMembersProps & ComponentProps<'div'>) => {
+const useOrganizationMembersState = (pageSize?: number) => {
   const validatedPageSize = validatePageSize(pageSize)
   const { authClient, localization } = useAuth<OrganizationAuthClient>()
   const {
@@ -138,47 +301,19 @@ export const OrganizationMembers = ({
     columnFilters.find(filter => filter.id === 'role')?.value,
     'all'
   )
-  const previousOrganizationId = useRef<string | undefined>(undefined)
-
-  useEffect(() => {
-    const organizationId = activeOrganization?.id
-    if (!organizationId) return
-    if (
-      previousOrganizationId.current &&
-      previousOrganizationId.current !== organizationId
-    ) {
-      setPagination(current => ({ ...current, pageIndex: 0 }))
-    }
-    previousOrganizationId.current = organizationId
-  }, [activeOrganization?.id, setPagination])
+  useResetMemberPageOnOrganizationChange(activeOrganization?.id, setPagination)
 
   const { data: membersData, isPending: membersPending } =
     useListOrganizationMembers(authClient, {
       enabled: !paged || tableState.ready,
       placeholderData: paged ? keepPreviousData : undefined,
-      query: paged
-        ? {
-            limit: pagination.pageSize,
-            offset: pagination.pageIndex * pagination.pageSize,
-            ...(roleFilter === 'all'
-              ? {}
-              : {
-                  filterField: 'role',
-                  filterValue: roleFilter,
-                  // vx-bot/NOTE: Roles are stored comma-joined, so an exact match would
-                  // vx-bot/NOTE: drop anyone holding more than one.
-                  filterOperator: 'contains' as const
-                }),
-            ...(sorting[0]?.id === 'role'
-              ? {
-                  sortBy: 'role',
-                  sortDirection: sorting[0].desc
-                    ? ('desc' as const)
-                    : ('asc' as const)
-                }
-              : {})
-          }
-        : undefined
+      query: getMemberListQuery({
+        isPaged: paged,
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+        roleFilter,
+        sorting
+      })
     })
 
   // vx-bot/NOTE: The signed-in user need not be on the loaded page, so their own role comes
@@ -210,40 +345,28 @@ export const OrganizationMembers = ({
     enabled: Boolean(activeOrganization?.id)
   })
 
-  const isPending =
-    activeOrganizationPending ||
-    membersPending ||
-    owners.isPending ||
-    canDeleteMembers.isPending ||
-    (teams && canListMemberTeams.isPending)
+  const isPending = isMemberListPending({
+    organizationPending: activeOrganizationPending,
+    membersPending,
+    ownersPending: owners.isPending,
+    deletePermissionPending: canDeleteMembers.isPending,
+    teamsEnabled: teams,
+    teamsPermissionPending: canListMemberTeams.isPending
+  })
 
   const [inviteOpen, setInviteOpen] = useState(false)
 
   const total = membersData?.total ?? membersData?.members.length ?? 0
 
-  useEffect(() => {
-    if (!paged || !tableState.ready || !membersData) return
-
-    const lastPageIndex = getClampedTablePageIndex(
-      pagination.pageIndex,
-      pagination.pageSize,
-      total
-    )
-    if (pagination.pageIndex > lastPageIndex) {
-      setPagination(current => ({
-        ...current,
-        pageIndex: lastPageIndex
-      }))
-    }
-  }, [
-    membersData,
-    paged,
-    pagination.pageIndex,
-    pagination.pageSize,
-    tableState.ready,
+  useClampMemberPage({
+    hasData: Boolean(membersData),
+    isReady: tableState.ready,
+    isPaged: paged,
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
     setPagination,
     total
-  ])
+  })
   const isOwner = hasMemberRole(activeMemberRole?.role, creatorRole)
   const ownerCount = owners.data?.total ?? owners.data?.members.length
   const showTeams = teams && canListMemberTeams.data?.success === true
@@ -254,13 +377,14 @@ export const OrganizationMembers = ({
       columns: showTeams ? memberColumns : memberColumnsWithoutTeams,
       data: membersData?.members ?? EMPTY_MEMBERS,
       enableRowSelection: row => {
-        const targetIsOwner = hasMemberRole(row.original.role, creatorRole)
-        return (
-          canDeleteMembers.data?.success === true &&
-          row.original.userId !== session?.user.id &&
-          (isOwner || !targetIsOwner) &&
-          !(targetIsOwner && (ownerCount === undefined || ownerCount <= 1))
-        )
+        return canSelectOrganizationMember({
+          member: row.original,
+          ownerCount,
+          isOwner,
+          currentUserId: session?.user.id,
+          canDelete: canDeleteMembers.data?.success === true,
+          creatorRole
+        })
       },
       globalFilterFn: 'includesString',
       getRowId: member => member.id,
@@ -278,36 +402,85 @@ export const OrganizationMembers = ({
   const showSelection = canDeleteMembers.data?.success === true
 
   const removeSelectedMembers = async () => {
-    if (!activeOrganization) return
-    const results = await Promise.allSettled(
-      selectedMembers.map(row =>
-        removeMembers.mutateAsync({
-          memberIdOrEmail: row.original.id,
-          organizationId: activeOrganization.id
-        })
-      )
-    )
-    const removedCount = results.filter(
-      result => result.status === 'fulfilled'
-    ).length
-    if (removedCount > 0)
-      toast.success(
-        organizationLocalization.membersRemoved.replace(
-          '{{count}}',
-          String(removedCount)
-        )
-      )
-    table.resetRowSelection(true)
+    await removeSelectedOrganizationMembers({
+      organizationId: activeOrganization?.id,
+      selectedMemberIds: selectedMembers.map(row => row.original.id),
+      removeMember: removeMembers.mutateAsync,
+      successMessage: organizationLocalization.membersRemoved,
+      clearSelection: () => table.resetRowSelection(true)
+    })
   }
 
-  const membershipLimitReached =
-    membershipLimit !== undefined && total >= membershipLimit
+  const membershipLimitReached = hasReachedMembershipLimit(
+    membershipLimit,
+    total
+  )
 
   const columnIds = [
     ...(showSelection ? ['select'] : []),
     ...table.getVisibleLeafColumns().map(column => column.id),
     'actions'
   ]
+
+  return {
+    activeOrganization,
+    cancelLabel: localization.settings.cancel,
+    canInvite,
+    columnIds,
+    globalFilter,
+    inviteOpen,
+    isOwner,
+    isPending,
+    membershipLimitReached,
+    organizationLocalization,
+    ownerCount,
+    paged,
+    pagination,
+    removeMembers,
+    removeSelectedMembers,
+    roleFacetRows,
+    roleFilter,
+    roles,
+    selectedMembers,
+    setInviteOpen,
+    showSelection,
+    showTeams,
+    sorting,
+    table
+  }
+}
+
+export const OrganizationMembers = ({
+  className,
+  pageSize,
+  ...props
+}: OrganizationMembersProps & ComponentProps<'div'>) => {
+  const {
+    activeOrganization,
+    cancelLabel,
+    canInvite,
+    columnIds,
+    globalFilter,
+    inviteOpen,
+    isOwner,
+    isPending,
+    membershipLimitReached,
+    organizationLocalization,
+    ownerCount,
+    paged,
+    pagination,
+    removeMembers,
+    removeSelectedMembers,
+    roleFacetRows,
+    roleFilter,
+    roles,
+    selectedMembers,
+    setInviteOpen,
+    showSelection,
+    showTeams,
+    sorting,
+    table
+  } = useOrganizationMembersState(pageSize)
 
   const headerCells: Record<string, ReactNode> = {
     select: (
@@ -359,7 +532,6 @@ export const OrganizationMembers = ({
       </Table.Column>
     )
   }
-
   return (
     <div className={cn('flex flex-col gap-3', className)} {...props}>
       <div className="flex items-end justify-between gap-3">
@@ -496,7 +668,7 @@ export const OrganizationMembers = ({
         )}
 
         <OrganizationTableBulkAction
-          cancelLabel={localization.settings.cancel}
+          cancelLabel={cancelLabel}
           confirmLabel={organizationLocalization.removeSelectedMembers}
           description={
             organizationLocalization.removeSelectedMembersDescription

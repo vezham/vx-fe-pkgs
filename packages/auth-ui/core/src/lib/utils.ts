@@ -37,12 +37,11 @@ const isPlainObject = (item: unknown): item is Record<string, unknown> => {
  * @param extension - Output format. Use `"inherit"` to keep the original format.
  * @returns A promise that resolves to the processed `File`.
  */
-export const resizeAvatar = (
+export const resizeAvatar = async (
   file: File,
   size = 256,
   extension: 'png' | 'jpg' | 'webp' | 'inherit' = 'png'
 ): Promise<File> => {
-  const MAX_SIZE = size
   const resolvedExtension =
     extension === 'inherit' ? file.name.split('.').pop() : extension
   const mimeType =
@@ -50,61 +49,26 @@ export const resizeAvatar = (
       ? file.type
       : `image/${extension === 'jpg' ? 'jpeg' : extension}`
 
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
+  const image = await loadImage(file)
+  const side = Math.min(image.naturalWidth, image.naturalHeight)
+  const cropX = (image.naturalWidth - side) / 2
+  const cropY = (image.naturalHeight - side) / 2
+  const outSize = Math.min(side, size)
+  const canvas = document.createElement('canvas')
+  canvas.width = outSize
+  canvas.height = outSize
 
-    img.addEventListener('load', () => {
-      URL.revokeObjectURL(url)
+  const context = canvas.getContext('2d')
+  if (!context) throw new Error('Could not get canvas context')
 
-      const { naturalWidth: w, naturalHeight: h } = img
-      const side = Math.min(w, h)
+  context.drawImage(image, cropX, cropY, side, side, 0, 0, outSize, outSize)
+  const blob = await canvasToBlob(canvas, mimeType, 1)
 
-      const cropX = (w - side) / 2
-      const cropY = (h - side) / 2
-
-      const outSize = Math.min(side, MAX_SIZE)
-
-      const canvas = document.createElement('canvas')
-      canvas.width = outSize
-      canvas.height = outSize
-
-      const ctx = canvas.getContext('2d')
-      if (!ctx) {
-        reject(new Error('Could not get canvas context'))
-        return
-      }
-
-      ctx.drawImage(img, cropX, cropY, side, side, 0, 0, outSize, outSize)
-
-      canvas.toBlob(
-        blob => {
-          if (!blob) {
-            reject(new Error('Could not create blob from canvas'))
-            return
-          }
-          resolve(
-            new File(
-              [blob],
-              file.name.replace(/\.[^.]+$/, `.${resolvedExtension}`),
-              {
-                type: mimeType
-              }
-            )
-          )
-        },
-        mimeType,
-        1
-      )
-    })
-
-    img.addEventListener('error', () => {
-      URL.revokeObjectURL(url)
-      reject(new Error('Failed to load image'))
-    })
-
-    img.src = url
-  })
+  return new File(
+    [blob],
+    file.name.replace(/\.[^.]+$/, `.${resolvedExtension}`),
+    { type: mimeType }
+  )
 }
 
 /**
@@ -156,6 +120,27 @@ const canvasToBlob = (
   })
 }
 
+const loadImage = (file: File): Promise<HTMLImageElement> => {
+  // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- Both load and error handlers revoke this URL.
+  const url = URL.createObjectURL(file)
+  const image = new Image()
+
+  return new Promise((resolve, reject) => {
+    const onLoad = () => {
+      URL.revokeObjectURL(url)
+      resolve(image)
+    }
+    const onError = () => {
+      URL.revokeObjectURL(url)
+      reject(new Error('Failed to load image'))
+    }
+
+    image.addEventListener('load', onLoad)
+    image.addEventListener('error', onError)
+    image.src = url
+  })
+}
+
 const embeddedAvatarDimensions = (maxDimension: number) => {
   const dimensions: number[] = []
   let dimension = maxDimension
@@ -182,59 +167,45 @@ const embeddedAvatarDimensions = (maxDimension: number) => {
  * @returns A promise that resolves to a compact WebP data URL.
  */
 export const fileToAvatarDataUrl = async (file: File): Promise<string> => {
-  const sourceUrl = URL.createObjectURL(file)
-  const image = new Image()
+  const image = await loadImage(file)
+  const sourceSide = Math.min(image.naturalWidth, image.naturalHeight)
+  const maxDimension = Math.min(sourceSide, EMBEDDED_AVATAR_MAX_DIMENSION)
+  const cropX = (image.naturalWidth - sourceSide) / 2
+  const cropY = (image.naturalHeight - sourceSide) / 2
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
 
-  try {
-    await new Promise<void>((resolve, reject) => {
-      image.addEventListener('load', () => resolve())
-      image.addEventListener('error', () =>
-        reject(new Error('Failed to load avatar'))
-      )
-      image.src = sourceUrl
-    })
+  if (!context) {
+    throw new Error('Could not get canvas context')
+  }
 
-    const sourceSide = Math.min(image.naturalWidth, image.naturalHeight)
-    const maxDimension = Math.min(sourceSide, EMBEDDED_AVATAR_MAX_DIMENSION)
-    const cropX = (image.naturalWidth - sourceSide) / 2
-    const cropY = (image.naturalHeight - sourceSide) / 2
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
+  for (const dimension of embeddedAvatarDimensions(maxDimension)) {
+    canvas.width = dimension
+    canvas.height = dimension
+    context.clearRect(0, 0, dimension, dimension)
+    context.drawImage(
+      image,
+      cropX,
+      cropY,
+      sourceSide,
+      sourceSide,
+      0,
+      0,
+      dimension,
+      dimension
+    )
 
-    if (!context) {
-      throw new Error('Could not get canvas context')
-    }
+    for (const quality of EMBEDDED_AVATAR_QUALITIES) {
+      const blob = await canvasToBlob(canvas, 'image/webp', quality)
+      const dataUrl = await blobToDataUrl(blob)
 
-    for (const dimension of embeddedAvatarDimensions(maxDimension)) {
-      canvas.width = dimension
-      canvas.height = dimension
-      context.clearRect(0, 0, dimension, dimension)
-      context.drawImage(
-        image,
-        cropX,
-        cropY,
-        sourceSide,
-        sourceSide,
-        0,
-        0,
-        dimension,
-        dimension
-      )
-
-      for (const quality of EMBEDDED_AVATAR_QUALITIES) {
-        const blob = await canvasToBlob(canvas, 'image/webp', quality)
-        const dataUrl = await blobToDataUrl(blob)
-
-        if (dataUrl.length <= EMBEDDED_AVATAR_MAX_BYTES) {
-          return dataUrl
-        }
+      if (dataUrl.length <= EMBEDDED_AVATAR_MAX_BYTES) {
+        return dataUrl
       }
     }
-
-    throw new Error('Could not reduce avatar to a safe embedded size')
-  } finally {
-    URL.revokeObjectURL(sourceUrl)
   }
+
+  throw new Error('Could not reduce avatar to a safe embedded size')
 }
 
 /**

@@ -1,3 +1,4 @@
+import { formatLocaleDate } from '@vezham/auth-ui-core'
 import type { OrganizationAuthClient } from '@vezham/auth-ui-core/plugins/organization'
 import { organizationPlugin } from '@vezham/auth-ui-core/plugins/organization'
 import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
@@ -47,7 +48,7 @@ export const UserInvitationRow = ({ invitation }: UserInvitationRowProps) => {
         </div>
 
         <span className="text-muted truncate text-xs">
-          {new Date(invitation.createdAt).toLocaleString(locale.languageTag, {
+          {formatLocaleDate(invitation.createdAt, locale.languageTag, {
             dateStyle: 'medium',
             timeStyle: 'short'
           })}

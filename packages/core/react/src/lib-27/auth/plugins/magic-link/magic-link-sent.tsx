@@ -1,14 +1,8 @@
 import { magicLinkPlugin } from '@vezham/auth-ui-core/plugins/magic-link'
 import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
-import {
-  Card,
-  type CardProps,
-  Description,
-  Link,
-  cn,
-  useIsHydrated
-} from '@vezham/react-v3'
+import { Card, type CardProps, Description, Link, cn } from '@vezham/react-v3'
 
+import { useSessionStorageValue } from '../../lib/use-session-storage-value'
 import { OpenEmailButton } from '../../open-email-button'
 
 /** `sessionStorage` key the magic-link form stores the submitted email under. */
@@ -35,10 +29,7 @@ export const MagicLinkSent = ({ className, variant }: MagicLinkSentProps) => {
   const { basePaths, emailAndPassword, localization, viewPaths } = useAuth()
   const { localization: magicLinkLocalization } = useAuthPlugin(magicLinkPlugin)
 
-  const isHydrated = useIsHydrated()
-  const email = isHydrated
-    ? (sessionStorage.getItem(MAGIC_LINK_SENT_STORAGE_KEY) ?? '')
-    : ''
+  const email = useSessionStorageValue(MAGIC_LINK_SENT_STORAGE_KEY)
 
   return (
     <Card

@@ -46,6 +46,7 @@ export const RemoveAuthorizationDialog = ({
       // vx-bot/NOTE: Sequential so a mid-list failure leaves a predictable server state
       // vx-bot/NOTE: that the refetched list reflects accurately.
       for (const id of application.consentIds) {
+        // react-doctor-disable-next-line react-doctor/async-await-in-loop -- Revoke records sequentially to avoid racing independent mutations that update the active application list.
         await deleteConsent({ id })
       }
 

@@ -29,10 +29,10 @@ import {
   ListBox,
   Skeleton,
   Spinner,
-  cn,
-  useIsHydrated
+  cn
 } from '@vezham/react-v3'
 
+import { useBrowserSearch } from '../../lib/use-browser-search'
 import { UserAvatar } from '../../user/user-avatar'
 
 export type OAuthSelectAccountProps = {
@@ -42,6 +42,148 @@ export type OAuthSelectAccountProps = {
 
 const interpolateClient = (template: string, clientName: string) =>
   template.replace('{{client}}', clientName)
+
+const OAuthClientHeader = ({
+  clientName,
+  description,
+  isLoading,
+  logoUrl,
+  title
+}: {
+  clientName: string
+  description: string
+  isLoading: boolean
+  logoUrl?: string
+  title: string
+}) => (
+  <Card.Header className="grid justify-items-center gap-5 p-6 text-center">
+    <div className="grid justify-items-center gap-3">
+      {isLoading ? (
+        <Skeleton className="size-16 rounded-full" />
+      ) : (
+        <Avatar className="size-16">
+          <Avatar.Image
+            alt={clientName}
+            referrerPolicy="no-referrer"
+            src={logoUrl}
+          />
+          <Avatar.Fallback>
+            <Shield size={16} className="size-7" />
+          </Avatar.Fallback>
+        </Avatar>
+      )}
+      {isLoading ? (
+        <Skeleton className="h-5 w-36" />
+      ) : (
+        <p className="max-w-full text-base font-medium break-words">
+          {clientName}
+        </p>
+      )}
+    </div>
+    <div className="grid gap-1">
+      <Card.Title className="text-xl font-semibold">{title}</Card.Title>
+      <Card.Description>{description}</Card.Description>
+    </div>
+  </Card.Header>
+)
+
+const DeviceSessionRow = ({
+  deviceSession,
+  isCurrent,
+  isPending,
+  currentLabel
+}: {
+  deviceSession: ListDeviceSession<OAuthProviderMultiSessionAuthClient>
+  isCurrent: boolean
+  isPending: boolean
+  currentLabel: string
+}) => (
+  <ListBox.Item
+    id={deviceSession.session.id}
+    className="gap-3 rounded-none p-4"
+    textValue={deviceSession.user.name || deviceSession.user.email}>
+    <UserAvatar className="size-10" user={deviceSession.user} />
+    <div className="flex min-w-0 flex-col">
+      <Label className="text-base break-words">
+        {deviceSession.user.name || deviceSession.user.email}
+      </Label>
+      {deviceSession.user.name ? (
+        <Description className="text-sm break-all">
+          {deviceSession.user.email}
+        </Description>
+      ) : null}
+    </div>
+    <div className="ml-auto flex shrink-0 items-center gap-2">
+      {isCurrent ? (
+        <Chip size="sm" variant="secondary">
+          {currentLabel}
+        </Chip>
+      ) : null}
+      {isPending ? <Spinner color="current" size="sm" /> : null}
+    </div>
+  </ListBox.Item>
+)
+
+const OAuthDeviceSessions = ({
+  sessions,
+  isLoading,
+  isDisabled,
+  currentSessionId,
+  pendingSessionId,
+  clientName,
+  labels,
+  onAction
+}: {
+  sessions?: ListDeviceSession<OAuthProviderMultiSessionAuthClient>[] | null
+  isLoading: boolean
+  isDisabled: boolean
+  currentSessionId?: string
+  pendingSessionId?: string
+  clientName: string
+  labels: {
+    selectAccount: string
+    noAccounts: string
+    noAccountsDescription: string
+    currentAccount: string
+  }
+  onAction: (key: string | number) => void
+}) => (
+  <Card.Content className="px-4 pb-6 sm:px-6">
+    {isLoading ? (
+      <div className="flex items-center gap-3">
+        <Skeleton className="size-8 rounded-full" />
+        <div className="flex flex-1 flex-col gap-2">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+      </div>
+    ) : !sessions?.length ? (
+      <div className="flex flex-col items-center gap-1 py-6 text-center">
+        <p className="text-sm font-semibold">{labels.noAccounts}</p>
+        <p className="text-muted text-xs">
+          {interpolateClient(labels.noAccountsDescription, clientName)}
+        </p>
+      </div>
+    ) : (
+      <ListBox
+        className="divide-separator bg-surface-secondary divide-y rounded-lg p-0"
+        aria-label={labels.selectAccount}
+        disabledKeys={isDisabled ? sessions.map(item => item.session.id) : []}
+        selectionMode="none"
+        onAction={onAction}>
+        {sessions.map(deviceSession => (
+          <DeviceSessionRow
+            key={deviceSession.session.id}
+            deviceSession={deviceSession}
+            isCurrent={deviceSession.session.id === currentSessionId}
+            isPending={pendingSessionId === deviceSession.session.id}
+            currentLabel={labels.currentAccount}
+          />
+        ))}
+      </ListBox>
+    )}
+  </Card.Content>
+)
 
 /**
  * Account chooser for a signed OAuth authorization request.
@@ -63,10 +205,8 @@ export const OAuthSelectAccount = ({
   const oauthClient = authClient
 
   const { data: session, isPending: isSessionPending } = useSession(oauthClient)
-  const isHydrated = useIsHydrated()
-  const request = isHydrated
-    ? parseOAuthAuthorizationRequest(window.location.search)
-    : undefined
+  const search = useBrowserSearch()
+  const request = search ? parseOAuthAuthorizationRequest(search) : undefined
   const [pendingSessionId, setPendingSessionId] = useState<string>()
 
   const publicClient = usePublicOAuthClient(oauthClient, request?.clientId, {
@@ -136,114 +276,36 @@ export const OAuthSelectAccount = ({
         className
       )}
       variant={variant}>
-      <Card.Header className="grid justify-items-center gap-5 p-6 text-center">
-        <div className="grid justify-items-center gap-3">
-          {client ? (
-            <Avatar className="size-16">
-              <Avatar.Image
-                alt={clientName}
-                referrerPolicy="no-referrer"
-                src={logoUrl}
-              />
-              <Avatar.Fallback>
-                <Shield size={16} className="size-7" />
-              </Avatar.Fallback>
-            </Avatar>
-          ) : (
-            <Skeleton className="size-16 rounded-full" />
-          )}
-          {client ? (
-            <p className="max-w-full text-base font-medium break-words">
-              {clientName}
-            </p>
-          ) : (
-            <Skeleton className="h-5 w-36" />
-          )}
-        </div>
-        <div className="grid gap-1">
-          <Card.Title className="text-xl font-semibold">
-            {localization.selectAccount}
-          </Card.Title>
-          <Card.Description>
-            {interpolateClient(
-              localization.selectAccountDescription,
-              clientName
-            )}
-          </Card.Description>
-        </div>
-      </Card.Header>
-
-      <Card.Content className="px-4 pb-6 sm:px-6">
-        {isDeviceSessionsPending ? (
-          <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-full" />
-            <div className="flex flex-1 flex-col gap-2">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-3 w-40" />
-            </div>
-          </div>
-        ) : !deviceSessions?.length ? (
-          <div className="flex flex-col items-center gap-1 py-6 text-center">
-            <p className="text-sm font-semibold">{localization.noAccounts}</p>
-            <p className="text-muted text-xs">
-              {interpolateClient(
-                localization.noAccountsDescription,
-                clientName
-              )}
-            </p>
-          </div>
-        ) : (
-          <ListBox
-            className="divide-separator bg-surface-secondary divide-y rounded-lg p-0"
-            aria-label={localization.selectAccount}
-            disabledKeys={
-              isBusy || !client || isSessionPending
-                ? deviceSessions.map(s => s.session.id)
-                : []
-            }
-            selectionMode="none"
-            onAction={key => {
-              const deviceSession = deviceSessions.find(
-                candidate => candidate.session.id === key
-              )
-
-              if (deviceSession) void selectAccount(deviceSession)
-            }}>
-            {deviceSessions.map(deviceSession => (
-              <ListBox.Item
-                id={deviceSession.session.id}
-                key={deviceSession.session.id}
-                className="gap-3 rounded-none p-4"
-                textValue={deviceSession.user.name || deviceSession.user.email}>
-                <UserAvatar className="size-10" user={deviceSession.user} />
-
-                <div className="flex min-w-0 flex-col">
-                  <Label className="text-base break-words">
-                    {deviceSession.user.name || deviceSession.user.email}
-                  </Label>
-                  {deviceSession.user.name ? (
-                    <Description className="text-sm break-all">
-                      {deviceSession.user.email}
-                    </Description>
-                  ) : null}
-                </div>
-
-                <div className="ml-auto flex shrink-0 items-center gap-2">
-                  {deviceSession.session.id === session?.session.id && (
-                    <Chip size="sm" variant="secondary">
-                      {localization.currentAccount}
-                    </Chip>
-                  )}
-
-                  {pendingSessionId === deviceSession.session.id && (
-                    <Spinner color="current" size="sm" />
-                  )}
-                </div>
-              </ListBox.Item>
-            ))}
-          </ListBox>
+      <OAuthClientHeader
+        clientName={clientName}
+        description={interpolateClient(
+          localization.selectAccountDescription,
+          clientName
         )}
-      </Card.Content>
+        isLoading={!client}
+        logoUrl={logoUrl}
+        title={localization.selectAccount}
+      />
+      <OAuthDeviceSessions
+        sessions={deviceSessions}
+        isLoading={isDeviceSessionsPending}
+        isDisabled={isBusy || !client || isSessionPending}
+        currentSessionId={session?.session.id}
+        pendingSessionId={pendingSessionId}
+        clientName={clientName}
+        labels={{
+          selectAccount: localization.selectAccount,
+          noAccounts: localization.noAccounts,
+          noAccountsDescription: localization.noAccountsDescription,
+          currentAccount: localization.currentAccount
+        }}
+        onAction={key => {
+          const deviceSession = deviceSessions?.find(
+            candidate => candidate.session.id === String(key)
+          )
+          if (deviceSession) void selectAccount(deviceSession)
+        }}
+      />
     </Card>
   )
 }

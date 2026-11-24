@@ -52,14 +52,15 @@ export const isAdminTarget = (
   adminRoles: readonly string[] = ['admin'],
   adminUserIds: readonly string[] = []
 ) => {
-  if (adminUserIds.includes(user.id)) return true
+  if (new Set(adminUserIds).has(user.id)) return true
 
   const roles = user.role
     ?.split(',')
     .map(role => role.trim())
     .filter(Boolean)
 
-  return roles?.some(role => adminRoles.includes(role)) ?? false
+  const adminRoleSet = new Set(adminRoles)
+  return roles?.some(role => adminRoleSet.has(role)) ?? false
 }
 
 export type ImpersonatingSession = {

@@ -30,11 +30,11 @@ import {
   Label,
   REGEXP_ONLY_DIGITS_AND_CHARS,
   Spinner,
-  cn,
-  useIsHydrated
+  cn
 } from '@vezham/react-v3'
 
 import { submitAuthForm, useAuthForm } from '../../auth-form'
+import { useBrowserSearch } from '../../lib/use-browser-search'
 import { UserAvatar } from '../../user/user-avatar'
 
 type DeviceAuthorizationStep = 'code' | 'approval' | 'approved' | 'denied'
@@ -123,11 +123,9 @@ export const DeviceAuthorization = ({
   const deviceAuthClient = authClient
   const { data: session, isPending: isSessionPending } =
     useSession(deviceAuthClient)
-  const isHydrated = useIsHydrated()
+  const search = useBrowserSearch()
   const [enteredCode, setUserCode] = useState<string>()
-  const initialCode = isHydrated
-    ? (new URLSearchParams(window.location.search).get('user_code') ?? '')
-    : ''
+  const initialCode = new URLSearchParams(search ?? '').get('user_code') ?? ''
   const userCode =
     enteredCode ??
     normalizeDeviceCode(initialCode)

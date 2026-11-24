@@ -19,8 +19,7 @@ import {
   Link,
   TextField,
   cn,
-  toast,
-  useIsHydrated
+  toast
 } from '@vezham/react-v3'
 
 import { setAuthFormServerError, useAuthForm } from '../../auth-form'
@@ -28,6 +27,7 @@ import {
   RESEND_COOLDOWN_SECONDS,
   useResendCooldown
 } from '../../lib/use-resend-cooldown'
+import { useSessionStorageValue } from '../../lib/use-session-storage-value'
 import { OpenEmailButton } from '../../open-email-button'
 import { OtpField } from '../../otp-field'
 
@@ -64,12 +64,10 @@ export const VerifyEmailOtp = ({ className, variant }: VerifyEmailOtpProps) => {
     useAuthPlugin(emailOtpPlugin)
 
   const otpClient = authClient
-  const isHydrated = useIsHydrated()
+  const storedEmail = useSessionStorageValue(VERIFY_EMAIL_STORAGE_KEY)
 
   const [submittedEmail, setEmail] = useState<string>()
-  const email =
-    submittedEmail ??
-    (isHydrated ? (sessionStorage.getItem(VERIFY_EMAIL_STORAGE_KEY) ?? '') : '')
+  const email = submittedEmail ?? storedEmail
 
   const { cooldown, isCoolingDown, startCooldown } = useResendCooldown()
 
@@ -77,10 +75,8 @@ export const VerifyEmailOtp = ({ className, variant }: VerifyEmailOtpProps) => {
   // vx-bot/NOTE: the cooldown — otherwise the hydrated render would offer an immediate
   // vx-bot/NOTE: resend and walk straight into the server's rate limit.
   useEffect(() => {
-    const pendingEmail = sessionStorage.getItem(VERIFY_EMAIL_STORAGE_KEY) ?? ''
-
-    if (pendingEmail) startCooldown(RESEND_COOLDOWN_SECONDS)
-  }, [startCooldown])
+    if (storedEmail) startCooldown(RESEND_COOLDOWN_SECONDS)
+  }, [startCooldown, storedEmail])
 
   const { mutateAsync: sendVerificationOtp, isPending: isSending } =
     useSendVerificationOtp(otpClient, {

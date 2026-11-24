@@ -57,6 +57,7 @@ export const ForgotPasswordOtp = ({
       meta: { errorPresentation: 'inline' },
       onError: () => resetFetchOptions(),
       onSuccess: (_data, { email }) => {
+        // react-doctor-disable-next-line react-doctor/auth-token-in-web-storage -- This stores only the submitted email to prefill the next screen, not a credential or token.
         sessionStorage.setItem(RESET_PASSWORD_OTP_STORAGE_KEY, email)
         navigate({ to: `${basePaths.auth}/${viewPaths.auth.resetPassword}` })
       }

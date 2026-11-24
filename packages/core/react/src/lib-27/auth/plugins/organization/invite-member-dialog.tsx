@@ -155,8 +155,9 @@ export const InviteMemberDialog = ({
 
   useEffect(() => {
     const keys = Object.keys(assignableRoles)
+    const assignableRoleSet = new Set(keys)
     const current = form.getFieldValue('roles')
-    const kept = current.filter(entry => keys.includes(entry))
+    const kept = current.filter(entry => assignableRoleSet.has(entry))
     const submittedRoles =
       kept.length > 0
         ? allowMultipleRoles

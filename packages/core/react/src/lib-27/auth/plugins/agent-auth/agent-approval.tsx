@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { type ComponentProps, useEffect, useMemo, useState } from 'react'
 
 import type {
+  AgentApproval as AgentApprovalData,
   AgentApprovalRequest,
-  AgentAuthClient
+  AgentAuthClient,
+  AgentAuthLocalization,
+  AgentCapabilityGrant
 } from '@vezham/auth-ui-core/plugins/agent-auth'
 import { agentAuthPlugin } from '@vezham/auth-ui-core/plugins/agent-auth'
 import { useAuth, useAuthPlugin, useSession } from '@vezham/auth-ui-react'
@@ -32,6 +35,7 @@ import {
   cn
 } from '@vezham/react-v3'
 
+import { useBrowserSearch } from '../../lib/use-browser-search'
 import { UserAvatar } from '../../user/user-avatar'
 
 type ApprovalResult = 'approved' | 'denied'
@@ -47,9 +51,10 @@ export const AgentApproval = ({ className, variant }: AgentApprovalProps) => {
     useAuth<AgentAuthClient>()
   const plugin = useAuthPlugin(agentAuthPlugin)
   const session = useSession(authClient)
+  const search = useBrowserSearch()
   const request = useMemo<AgentApprovalRequest | undefined>(() => {
-    if (typeof window === 'undefined') return undefined
-    const query = new URLSearchParams(window.location.search)
+    if (search === null || !search) return undefined
+    const query = new URLSearchParams(search)
     const agentId = query.get('agent_id')
     if (!agentId) return undefined
     return {
@@ -57,7 +62,7 @@ export const AgentApproval = ({ className, variant }: AgentApprovalProps) => {
       approvalId: query.get('approval_id') ?? undefined,
       userCode: query.get('code') ?? query.get('user_code') ?? undefined
     }
-  }, [])
+  }, [search])
   const approval = useAgentApproval(authClient, plugin.adapter, request)
   const approve = useApproveAgent(authClient, plugin.adapter)
   const deny = useDenyAgent(authClient, plugin.adapter)
@@ -89,14 +94,14 @@ export const AgentApproval = ({ className, variant }: AgentApprovalProps) => {
     else next.delete(capability)
     setSelection(next)
   }
-  const decision = {
-    ...request,
-    agentId: request?.agentId ?? '',
-    capabilities: [...selected]
-  }
-  const denyDecision = {
-    ...request,
-    agentId: request?.agentId ?? ''
+  if (search === null) {
+    return (
+      <Card className={cn('w-full max-w-md', className)} variant={variant}>
+        <Card.Content className="flex justify-center py-8">
+          <Spinner aria-label={plugin.localization.approvalTitle} />
+        </Card.Content>
+      </Card>
+    )
   }
 
   if (!request) {
@@ -110,31 +115,347 @@ export const AgentApproval = ({ className, variant }: AgentApprovalProps) => {
   }
 
   if (result) {
-    const approved = result === 'approved'
     return (
-      <Card className={cn('w-full max-w-md', className)} variant={variant}>
-        <Card.Content className="flex flex-col items-center gap-4 py-8 text-center">
-          {approved ? (
-            <CircleCheck size={16} className="text-success size-10" />
-          ) : (
-            <CircleXmark size={16} className="text-muted size-10" />
-          )}
-          <div className="flex flex-col gap-1">
-            <h1 className="font-semibold">
-              {approved
-                ? plugin.localization.approvedTitle
-                : plugin.localization.deniedTitle}
-            </h1>
-            <p className="text-muted text-sm">
-              {approved
-                ? plugin.localization.approvedDescription
-                : plugin.localization.deniedDescription}
-            </p>
-          </div>
-        </Card.Content>
-      </Card>
+      <ApprovalResultCard
+        className={className}
+        variant={variant}
+        result={result}
+        localization={plugin.localization}
+      />
     )
   }
+
+  return (
+    <ApprovalRequestCard
+      className={className}
+      variant={variant}
+      approval={approval.data}
+      isApprovalPending={approval.isPending}
+      isApprovalError={approval.isError}
+      isApprovalFetching={approval.isFetching}
+      session={session.data}
+      isSessionPending={session.isPending}
+      grants={requested}
+      selected={selected}
+      isApprovePending={approve.isPending}
+      isDenyPending={deny.isPending}
+      localization={plugin.localization}
+      onToggleCapability={updateSelection}
+      onApprove={() =>
+        approve.mutate(
+          { ...request, capabilities: [...selected] },
+          { onSuccess: () => setResult('approved') }
+        )
+      }
+      onDeny={() =>
+        deny.mutate(request, { onSuccess: () => setResult('denied') })
+      }
+    />
+  )
+}
+
+const ApprovalResultCard = ({
+  className,
+  variant,
+  result,
+  localization
+}: {
+  className?: string
+  variant?: CardProps['variant']
+  result: ApprovalResult
+  localization: AgentAuthLocalization
+}) => {
+  const approved = result === 'approved'
+
+  return (
+    <Card className={cn('w-full max-w-md', className)} variant={variant}>
+      <Card.Content className="flex flex-col items-center gap-4 py-8 text-center">
+        {approved ? (
+          <CircleCheck size={16} className="text-success size-10" />
+        ) : (
+          <CircleXmark size={16} className="text-muted size-10" />
+        )}
+        <div className="flex flex-col gap-1">
+          <h1 className="font-semibold">
+            {approved ? localization.approvedTitle : localization.deniedTitle}
+          </h1>
+          <p className="text-muted text-sm">
+            {approved
+              ? localization.approvedDescription
+              : localization.deniedDescription}
+          </p>
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+
+type ApprovalSummary = {
+  hostId: AgentApprovalData['hostId']
+  hostName?: AgentApprovalData['hostName']
+  mode: AgentApprovalData['mode']
+  name: AgentApprovalData['name']
+}
+
+const ApprovalHeader = ({
+  approval,
+  isApprovalPending,
+  isSessionPending,
+  localization,
+  user,
+  userName
+}: {
+  approval?: ApprovalSummary
+  isApprovalPending: boolean
+  isSessionPending: boolean
+  localization: AgentAuthLocalization
+  user?: ComponentProps<typeof UserAvatar>['user']
+  userName?: string
+}) => (
+  <Card.Header className="flex flex-col items-stretch gap-5 p-6">
+    <div className="flex items-center justify-center gap-5">
+      <div className="bg-surface-secondary flex size-16 shrink-0 items-center justify-center rounded-full">
+        <FaceRobot size={16} aria-hidden="true" className="size-7" />
+      </div>
+      <Ellipsis size={16} aria-hidden="true" className="text-muted size-5" />
+      <UserAvatar
+        className="size-16"
+        user={user}
+        isPending={isSessionPending}
+      />
+    </div>
+    <div className="grid justify-items-center gap-1 text-center">
+      <Card.Title className="max-w-full text-xl font-semibold break-words">
+        {approval ? (
+          approval.name
+        ) : isApprovalPending ? (
+          <Skeleton className="h-6 w-40" />
+        ) : (
+          localization.approvalTitle
+        )}
+      </Card.Title>
+      <Card.Description>{localization.approvalDescription}</Card.Description>
+      {approval ? (
+        <p className="text-muted text-sm">
+          {approval.hostName ?? approval.hostId} ·{' '}
+          {approval.mode === 'autonomous'
+            ? localization.autonomousAgent
+            : localization.delegatedAgent}
+        </p>
+      ) : isApprovalPending ? (
+        <Skeleton className="h-4 w-48" />
+      ) : null}
+      <div className="text-muted mt-2 flex max-w-full flex-wrap justify-center gap-x-1 text-sm">
+        <span>{localization.signedInAs}</span>
+        {userName ? (
+          <span className="text-foreground font-medium break-all">
+            {userName}
+          </span>
+        ) : isSessionPending ? (
+          <Skeleton className="h-4 w-32" />
+        ) : null}
+      </div>
+    </div>
+  </Card.Header>
+)
+
+const CapabilityGrantRow = ({
+  grant,
+  isSelected,
+  isDisabled,
+  localization,
+  onChange
+}: {
+  grant: AgentCapabilityGrant
+  isSelected: boolean
+  isDisabled: boolean
+  localization: AgentAuthLocalization
+  onChange: (selected: boolean) => void
+}) => (
+  <div className="flex items-start gap-3">
+    <Checkbox
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      aria-label={grant.capability}
+      onChange={onChange}>
+      <Checkbox.Content>
+        <Checkbox.Control className="mt-1">
+          <Checkbox.Indicator>
+            <Check size={16} />
+          </Checkbox.Indicator>
+        </Checkbox.Control>
+      </Checkbox.Content>
+    </Checkbox>
+    <div className="grid min-w-0 flex-1 gap-1">
+      <span className="text-base leading-6 break-words">
+        {grant.capability}
+      </span>
+      {grant.description ? (
+        <p className="text-muted text-sm leading-5">{grant.description}</p>
+      ) : null}
+      {grant.reason ? (
+        <p className="text-muted text-sm leading-5">
+          {localization.requestReason}: {grant.reason}
+        </p>
+      ) : null}
+      {grant.approvalStrength !== 'none' ? (
+        <p className="text-muted flex items-center gap-1.5 text-sm">
+          {grant.approvalStrength === 'webauthn' ? (
+            <>
+              <Fingerprint size={16} aria-hidden="true" className="size-4" />
+              {localization.approvalWebauthn}
+            </>
+          ) : (
+            localization.approvalSession
+          )}
+        </p>
+      ) : null}
+      {grant.constraints ? (
+        <details className="text-muted mt-1 text-sm">
+          <summary className="focus-visible:outline-focus w-fit cursor-pointer rounded-sm focus-visible:outline-2">
+            {localization.constraints}
+          </summary>
+          <pre className="bg-background/50 mt-2 max-w-full overflow-x-auto rounded-md p-3 text-xs">
+            {JSON.stringify(grant.constraints, null, 2)}
+          </pre>
+        </details>
+      ) : null}
+    </div>
+  </div>
+)
+
+const ApprovalCapabilities = ({
+  grants,
+  selected,
+  isApprovalError,
+  isApprovalPending,
+  isSessionPending,
+  isMutationPending,
+  localization,
+  onToggleCapability
+}: {
+  grants: AgentCapabilityGrant[]
+  selected: Set<string>
+  isApprovalError: boolean
+  isApprovalPending: boolean
+  isSessionPending: boolean
+  isMutationPending: boolean
+  localization: AgentAuthLocalization
+  onToggleCapability: (capability: string, selected: boolean) => void
+}) => (
+  <Card.Content className="px-4 pb-6 sm:px-6">
+    <div className="bg-surface-secondary grid gap-4 rounded-lg p-5">
+      <h2 className="text-sm font-medium">
+        {localization.requestedCapabilities}
+      </h2>
+      {isApprovalError ? (
+        <p className="text-danger text-sm">{localization.approvalError}</p>
+      ) : isApprovalPending || isSessionPending ? (
+        <div className="flex gap-3">
+          <Skeleton className="size-4 shrink-0" />
+          <div className="grid flex-1 gap-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        </div>
+      ) : grants.length ? (
+        <div className="grid gap-5">
+          {grants.map(grant => (
+            <CapabilityGrantRow
+              key={grant.capability}
+              grant={grant}
+              isSelected={selected.has(grant.capability)}
+              isDisabled={isMutationPending}
+              localization={localization}
+              onChange={value => onToggleCapability(grant.capability, value)}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-muted text-sm">{localization.noCapabilities}</p>
+      )}
+    </div>
+  </Card.Content>
+)
+
+const ApprovalActions = ({
+  isApprovePending,
+  isDenyPending,
+  isDisabled,
+  hasSelection,
+  localization,
+  onApprove,
+  onDeny
+}: {
+  isApprovePending: boolean
+  isDenyPending: boolean
+  isDisabled: boolean
+  hasSelection: boolean
+  localization: AgentAuthLocalization
+  onApprove: () => void
+  onDeny: () => void
+}) => (
+  <Card.Footer className="border-separator grid shrink-0 grid-cols-2 gap-3 border-t p-4 sm:p-6">
+    <Button
+      className="h-11 w-full"
+      isDisabled={isDisabled}
+      variant="secondary"
+      onPress={onDeny}>
+      {isDenyPending && <Spinner color="current" size="sm" />}
+      {localization.deny}
+    </Button>
+    <Button
+      className="h-11 w-full"
+      isDisabled={isDisabled || !hasSelection}
+      onPress={onApprove}>
+      {isApprovePending && <Spinner color="current" size="sm" />}
+      {localization.allow}
+    </Button>
+  </Card.Footer>
+)
+
+const ApprovalRequestCard = ({
+  className,
+  variant,
+  approval,
+  isApprovalPending,
+  isApprovalError,
+  isApprovalFetching,
+  session,
+  isSessionPending,
+  grants,
+  selected,
+  isApprovePending,
+  isDenyPending,
+  localization,
+  onToggleCapability,
+  onApprove,
+  onDeny
+}: {
+  className?: string
+  variant?: CardProps['variant']
+  approval?: ApprovalSummary
+  isApprovalPending: boolean
+  isApprovalError: boolean
+  isApprovalFetching: boolean
+  session?: { user: { name: string; email: string } } | null
+  isSessionPending: boolean
+  grants: AgentCapabilityGrant[]
+  selected: Set<string>
+  isApprovePending: boolean
+  isDenyPending: boolean
+  localization: AgentAuthLocalization
+  onToggleCapability: (capability: string, selected: boolean) => void
+  onApprove: () => void
+  onDeny: () => void
+}) => {
+  const isDisabled =
+    isApprovePending ||
+    isDenyPending ||
+    !approval ||
+    !session ||
+    isApprovalFetching ||
+    isApprovalError
 
   return (
     <Card
@@ -146,185 +467,36 @@ export const AgentApproval = ({ className, variant }: AgentApprovalProps) => {
       <ScrollShadow
         className="focus-visible:outline-focus min-h-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:-outline-offset-2"
         role="region"
-        aria-label={plugin.localization.approvalTitle}
+        aria-label={localization.approvalTitle}
         tabIndex={0}>
-        <Card.Header className="flex flex-col items-stretch gap-5 p-6">
-          <div className="flex items-center justify-center gap-5">
-            <div className="bg-surface-secondary flex size-16 shrink-0 items-center justify-center rounded-full">
-              <FaceRobot size={16} aria-hidden="true" className="size-7" />
-            </div>
-            <Ellipsis
-              size={16}
-              aria-hidden="true"
-              className="text-muted size-5"
-            />
-            <UserAvatar
-              className="size-16"
-              user={session.data?.user}
-              isPending={session.isPending}
-            />
-          </div>
-          <div className="grid justify-items-center gap-1 text-center">
-            <Card.Title className="max-w-full text-xl font-semibold break-words">
-              {approval.data ? (
-                approval.data.name
-              ) : approval.isPending ? (
-                <Skeleton className="h-6 w-40" />
-              ) : (
-                plugin.localization.approvalTitle
-              )}
-            </Card.Title>
-            <Card.Description>
-              {plugin.localization.approvalDescription}
-            </Card.Description>
-            {approval.data ? (
-              <p className="text-muted text-sm">
-                {approval.data.hostName ?? approval.data.hostId} ·{' '}
-                {approval.data.mode === 'autonomous'
-                  ? plugin.localization.autonomousAgent
-                  : plugin.localization.delegatedAgent}
-              </p>
-            ) : approval.isPending ? (
-              <Skeleton className="h-4 w-48" />
-            ) : null}
-            <div className="text-muted mt-2 flex max-w-full flex-wrap justify-center gap-x-1 text-sm">
-              <span>{plugin.localization.signedInAs}</span>
-              {session.data ? (
-                <span className="text-foreground font-medium break-all">
-                  {session.data.user.name || session.data.user.email}
-                </span>
-              ) : session.isPending ? (
-                <Skeleton className="h-4 w-32" />
-              ) : null}
-            </div>
-          </div>
-        </Card.Header>
-        <Card.Content className="px-4 pb-6 sm:px-6">
-          <div className="bg-surface-secondary grid gap-4 rounded-lg p-5">
-            <h2 className="text-sm font-medium">
-              {plugin.localization.requestedCapabilities}
-            </h2>
-            {approval.isError ? (
-              <p className="text-danger text-sm">
-                {plugin.localization.approvalError}
-              </p>
-            ) : approval.isPending || session.isPending ? (
-              <div className="flex gap-3">
-                <Skeleton className="size-4 shrink-0" />
-                <div className="grid flex-1 gap-2">
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-4 w-full" />
-                </div>
-              </div>
-            ) : requested.length ? (
-              <div className="grid gap-5">
-                {requested.map(grant => (
-                  <div
-                    key={grant.capability}
-                    className="flex items-start gap-3">
-                    <Checkbox
-                      isSelected={selected.has(grant.capability)}
-                      isDisabled={approve.isPending || deny.isPending}
-                      aria-label={grant.capability}
-                      onChange={checked =>
-                        updateSelection(grant.capability, checked)
-                      }>
-                      <Checkbox.Content>
-                        <Checkbox.Control className="mt-1">
-                          <Checkbox.Indicator>
-                            <Check size={16} />
-                          </Checkbox.Indicator>
-                        </Checkbox.Control>
-                      </Checkbox.Content>
-                    </Checkbox>
-                    <div className="grid min-w-0 flex-1 gap-1">
-                      <span className="text-base leading-6 break-words">
-                        {grant.capability}
-                      </span>
-                      {grant.description ? (
-                        <p className="text-muted text-sm leading-5">
-                          {grant.description}
-                        </p>
-                      ) : null}
-                      {grant.reason ? (
-                        <p className="text-muted text-sm leading-5">
-                          {plugin.localization.requestReason}: {grant.reason}
-                        </p>
-                      ) : null}
-                      {grant.approvalStrength !== 'none' ? (
-                        <p className="text-muted flex items-center gap-1.5 text-sm">
-                          {grant.approvalStrength === 'webauthn' ? (
-                            <>
-                              <Fingerprint
-                                size={16}
-                                aria-hidden="true"
-                                className="size-4"
-                              />
-                              {plugin.localization.approvalWebauthn}
-                            </>
-                          ) : (
-                            plugin.localization.approvalSession
-                          )}
-                        </p>
-                      ) : null}
-                      {grant.constraints ? (
-                        <details className="text-muted mt-1 text-sm">
-                          <summary className="focus-visible:outline-focus w-fit cursor-pointer rounded-sm focus-visible:outline-2">
-                            {plugin.localization.constraints}
-                          </summary>
-                          <pre className="bg-background/50 mt-2 max-w-full overflow-x-auto rounded-md p-3 text-xs">
-                            {JSON.stringify(grant.constraints, null, 2)}
-                          </pre>
-                        </details>
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted text-sm">
-                {plugin.localization.noCapabilities}
-              </p>
-            )}
-          </div>
-        </Card.Content>
+        <ApprovalHeader
+          approval={approval}
+          isApprovalPending={isApprovalPending}
+          isSessionPending={isSessionPending}
+          localization={localization}
+          user={session?.user}
+          userName={session?.user.name || session?.user.email}
+        />
+        <ApprovalCapabilities
+          grants={grants}
+          selected={selected}
+          isApprovalError={isApprovalError}
+          isApprovalPending={isApprovalPending}
+          isSessionPending={isSessionPending}
+          isMutationPending={isApprovePending || isDenyPending}
+          localization={localization}
+          onToggleCapability={onToggleCapability}
+        />
       </ScrollShadow>
-      <Card.Footer className="border-separator grid shrink-0 grid-cols-2 gap-3 border-t p-4 sm:p-6">
-        <Button
-          className="h-11 w-full"
-          isDisabled={
-            approve.isPending ||
-            deny.isPending ||
-            !approval.data ||
-            !session.data ||
-            approval.isFetching ||
-            approval.isError
-          }
-          variant="secondary"
-          onPress={() =>
-            deny.mutate(denyDecision, { onSuccess: () => setResult('denied') })
-          }>
-          {deny.isPending && <Spinner color="current" size="sm" />}
-          {plugin.localization.deny}
-        </Button>
-        <Button
-          className="h-11 w-full"
-          isDisabled={
-            approve.isPending ||
-            deny.isPending ||
-            !selected.size ||
-            !approval.data ||
-            !session.data ||
-            approval.isFetching ||
-            approval.isError
-          }
-          onPress={() =>
-            approve.mutate(decision, { onSuccess: () => setResult('approved') })
-          }>
-          {approve.isPending && <Spinner color="current" size="sm" />}
-          {plugin.localization.allow}
-        </Button>
-      </Card.Footer>
+      <ApprovalActions
+        isApprovePending={isApprovePending}
+        isDenyPending={isDenyPending}
+        isDisabled={isDisabled}
+        hasSelection={selected.size > 0}
+        localization={localization}
+        onApprove={onApprove}
+        onDeny={onDeny}
+      />
     </Card>
   )
 }

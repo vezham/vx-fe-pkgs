@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { formatLocaleDate } from '@vezham/auth-ui-core'
 import { passkeyPlugin } from '@vezham/auth-ui-core/plugins/passkey'
 import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
 import { Scanner as Fingerprint, Close as Xmark } from '@vezham/icons-react'
@@ -35,7 +36,7 @@ export const Passkey = ({ passkey }: PasskeyProps) => {
         </span>
 
         <span className="text-muted text-xs">
-          {new Date(passkey.createdAt).toLocaleString(locale.languageTag, {
+          {formatLocaleDate(passkey.createdAt, locale.languageTag, {
             dateStyle: 'medium',
             timeStyle: 'short'
           })}

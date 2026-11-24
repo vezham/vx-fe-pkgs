@@ -18,6 +18,37 @@ export type UserAvatarProps = {
   size?: AvatarProps['size']
 }
 
+const avatarSizeClasses = {
+  sm: 'size-8',
+  md: 'size-10',
+  lg: 'size-12'
+} as const
+
+const avatarTextClasses = {
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-xl'
+} as const
+
+const AvatarSkeleton = ({
+  className,
+  size,
+  style
+}: Pick<UserAvatarProps & AvatarProps, 'className' | 'size' | 'style'>) => (
+  <Skeleton
+    className={cn('rounded-full', avatarSizeClasses[size ?? 'sm'], className)}
+    style={style}
+  />
+)
+
+const AvatarFallbackContent = ({
+  fallback,
+  initials
+}: {
+  fallback?: ReactNode
+  initials?: string
+}) => fallback || initials || <Person size={16} className="size-4" />
+
 /**
  * Render a user avatar that shows the user's image, initials, or a custom fallback; displays a circular skeleton while the session (or explicit pending flag) is pending.
  *
@@ -43,16 +74,7 @@ export const UserAvatar = ({
   })
 
   if ((isPending || sessionPending) && !user) {
-    return (
-      <Skeleton
-        className={cn(
-          'rounded-full',
-          size === 'sm' ? 'size-8' : size === 'md' ? 'size-10' : 'size-12',
-          className
-        )}
-        style={style}
-      />
-    )
+    return <AvatarSkeleton className={className} size={size} style={style} />
   }
 
   const resolvedUser = user ?? session?.user
@@ -81,11 +103,9 @@ export const UserAvatar = ({
       />
 
       <Avatar.Fallback
-        className={cn(
-          size === 'lg' ? 'text-xl' : size === 'md' ? 'text-base' : 'text-sm'
-        )}
+        className={cn(avatarTextClasses[size ?? 'sm'])}
         delayMs={resolvedUser?.image ? 600 : undefined}>
-        {fallback || initials || <Person size={16} className="size-4" />}
+        <AvatarFallbackContent fallback={fallback} initials={initials} />
       </Avatar.Fallback>
     </Avatar>
   )

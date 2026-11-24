@@ -227,8 +227,8 @@ describe('deepmerge', () => {
     it('should not mutate original objects', () => {
       const target = { a: { b: 1 } }
       const source = { a: { c: 2 } }
-      const targetCopy = JSON.parse(JSON.stringify(target))
-      const sourceCopy = JSON.parse(JSON.stringify(source))
+      const targetCopy = structuredClone(target)
+      const sourceCopy = structuredClone(source)
 
       // @ts-expect-error intentional divergent shape
       deepmerge(target, source)

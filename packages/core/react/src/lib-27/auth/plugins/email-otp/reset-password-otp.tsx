@@ -1,5 +1,5 @@
 import { useSelector } from '@tanstack/react-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   getAuthLinkURL,
@@ -33,6 +33,7 @@ import {
   submitAuthForm,
   useAuthForm
 } from '../../auth-form'
+import { useSessionStorageValue } from '../../lib/use-session-storage-value'
 import { OpenEmailButton } from '../../open-email-button'
 import { OtpField } from '../../otp-field'
 import { PasswordStrengthMeter } from '../../password-strength-meter'
@@ -71,9 +72,7 @@ const ResetPasswordOtpForm = ({
   const { localization: emailOtpLocalization, otpLength } =
     useAuthPlugin(emailOtpPlugin)
 
-  const isHydrated = useIsHydrated()
-  const initialEmail =
-    (isHydrated && sessionStorage.getItem(RESET_PASSWORD_OTP_STORAGE_KEY)) || ''
+  const initialEmail = useSessionStorageValue(RESET_PASSWORD_OTP_STORAGE_KEY)
   const hasStoredEmail = Boolean(initialEmail)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -131,6 +130,9 @@ const ResetPasswordOtpForm = ({
       })
     }
   })
+  useEffect(() => {
+    if (initialEmail) form.setFieldValue('email', initialEmail)
+  }, [form, initialEmail])
   const email = useSelector(form.store, state => state.values.email)
 
   return (

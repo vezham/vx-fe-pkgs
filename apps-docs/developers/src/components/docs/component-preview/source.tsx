@@ -124,9 +124,9 @@ export const PreviewSource = ({ children }: { children?: ReactNode }) => {
   )
 
   if (files.length < 2)
-    return nodes.map((child, index) =>
+    return nodes.map(child =>
       isValidElement<ComponentProps<typeof CodeBlock>>(child) ? (
-        <PreviewCodeBlock key={index} {...child.props} />
+        <PreviewCodeBlock key={child.key} {...child.props} />
       ) : (
         child
       )
@@ -136,7 +136,7 @@ export const PreviewSource = ({ children }: { children?: ReactNode }) => {
     <>
       {nodes.filter(child => !isValidElement(child))}
       <Tabs
-        defaultSelectedKey="file-0"
+        defaultSelectedKey={`file-${files[0]?.key}`}
         variant="primary"
         className="bg-background gap-0 overflow-hidden rounded-xl border">
         <div className="min-w-0 border-b px-2 py-1.5">
@@ -144,8 +144,8 @@ export const PreviewSource = ({ children }: { children?: ReactNode }) => {
             <Tabs.List aria-label="Source files" className="p-0.5">
               {files.map((file, index) => (
                 <Tabs.Tab
-                  key={index}
-                  id={`file-${index}`}
+                  key={file.key}
+                  id={`file-${file.key}`}
                   className="h-7 w-auto px-2.5 text-xs font-normal whitespace-nowrap">
                   {file.props.title || `File ${index + 1}`}
                   <Tabs.Indicator />
@@ -156,8 +156,8 @@ export const PreviewSource = ({ children }: { children?: ReactNode }) => {
         </div>
         {files.map((file, index) => (
           <Tabs.Panel
-            key={index}
-            id={`file-${index}`}
+            key={file.key}
+            id={`file-${file.key}`}
             className="m-0 min-w-0 p-0">
             <PreviewCodeBlock
               {...file.props}

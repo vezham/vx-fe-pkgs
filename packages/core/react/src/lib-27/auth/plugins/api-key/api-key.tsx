@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { formatLocaleDate } from '@vezham/auth-ui-core'
 import type { ListedApiKey } from '@vezham/auth-ui-core/plugins/api-key'
 import { apiKeyPlugin } from '@vezham/auth-ui-core/plugins/api-key'
 import { useAuth, useAuthPlugin } from '@vezham/auth-ui-react'
@@ -47,7 +48,7 @@ export const ApiKey = ({
 
         <span className="text-muted text-xs">
           {apiKeyLocalization.created}{' '}
-          {new Date(apiKey.createdAt).toLocaleString(locale.languageTag, {
+          {formatLocaleDate(apiKey.createdAt, locale.languageTag, {
             dateStyle: 'medium',
             timeStyle: 'short'
           })}
@@ -55,12 +56,14 @@ export const ApiKey = ({
 
         <span className="text-muted text-xs">
           {apiKey.expiresAt
-            ? `${apiKeyLocalization.expires} ${new Date(
-                apiKey.expiresAt
-              ).toLocaleString(locale.languageTag, {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-              })}`
+            ? `${apiKeyLocalization.expires} ${formatLocaleDate(
+                apiKey.expiresAt,
+                locale.languageTag,
+                {
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                }
+              )}`
             : apiKeyLocalization.neverExpires}
         </span>
         <span className="text-muted text-xs">
@@ -75,7 +78,7 @@ export const ApiKey = ({
         <span className="text-muted text-xs">
           {apiKeyLocalization.lastRequest}:{' '}
           {apiKey.lastRequest
-            ? new Date(apiKey.lastRequest).toLocaleString(locale.languageTag)
+            ? formatLocaleDate(apiKey.lastRequest, locale.languageTag)
             : apiKeyLocalization.neverRequested}
         </span>
       </div>

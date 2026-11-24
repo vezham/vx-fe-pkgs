@@ -50,6 +50,34 @@ const AUTH_VIEWS: Partial<Record<AuthView, ComponentType<AuthProps>>> = {
   verifyEmail: VerifyEmail
 }
 
+type AuthPluginList = ReturnType<typeof useAuth>['plugins']
+
+const resolvePluginAuthView = (
+  plugins: AuthPluginList,
+  view: AuthView | undefined,
+  authView: AuthView | undefined,
+  path: string | undefined
+) => {
+  for (const plugin of plugins) {
+    const pluginAuthPaths = plugin.viewPaths?.auth
+    const pluginView =
+      view ??
+      authView ??
+      (pluginAuthPaths &&
+        Object.keys(pluginAuthPaths).find(key => pluginAuthPaths[key] === path))
+    if (!pluginView) continue
+
+    const PluginView = plugin.views?.auth?.[pluginView]
+    if (PluginView) return PluginView
+  }
+
+  return undefined
+}
+
+const resolveSignInFallback = (plugins: AuthPluginList) =>
+  plugins.find(plugin => plugin.fallbackViews?.auth?.signIn)?.fallbackViews
+    ?.auth?.signIn
+
 /**
  * Render the appropriate authentication view based on the provided `view` or `path`.
  *
@@ -102,23 +130,9 @@ export const Auth = ({
     return null
   }
 
-  // vx-bot/NOTE: 1. Plugin overrides (`views.auth[currentView]`) — first plugin wins,
-  // vx-bot/NOTE:    including over built-in views. Resolves the view key from `view`,
-  // vx-bot/NOTE:    then `authView` (built-in path match), then plugin-introduced paths
-  // vx-bot/NOTE:    (e.g. `magicLink` → `/auth/magic-link`).
-  for (const plugin of plugins) {
-    const pluginAuthPaths = plugin.viewPaths?.auth
-
-    const pluginView =
-      view ??
-      authView ??
-      (pluginAuthPaths &&
-        Object.keys(pluginAuthPaths).find(key => pluginAuthPaths[key] === path))
-    if (!pluginView) continue
-
-    const PluginView = plugin.views?.auth?.[pluginView]
-    if (!PluginView) continue
-
+  // Plugin overrides have priority over built-in views.
+  const PluginView = resolvePluginAuthView(plugins, view, authView, path)
+  if (PluginView) {
     return (
       <PluginView
         className={className}
@@ -129,13 +143,8 @@ export const Auth = ({
     )
   }
 
-  // vx-bot/NOTE: 2. Plugin fallbacks — only when the built-in `signIn` isn't viable
-  // vx-bot/NOTE:    (password auth is off). Used by `magicLinkPlugin` to render the
-  // vx-bot/NOTE:    magic-link form as the primary passwordless sign-in surface.
   if (authView === 'signIn' && !emailAndPassword?.enabled) {
-    const Fallback = plugins.find(plugin => plugin.fallbackViews?.auth?.signIn)
-      ?.fallbackViews?.auth?.signIn
-
+    const Fallback = resolveSignInFallback(plugins)
     if (Fallback) {
       return (
         <Fallback

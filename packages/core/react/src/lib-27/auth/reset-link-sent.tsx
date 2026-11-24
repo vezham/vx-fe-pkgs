@@ -1,14 +1,8 @@
 import { getAuthLinkURL } from '@vezham/auth-ui-core'
 import { useAuth } from '@vezham/auth-ui-react'
-import {
-  Card,
-  type CardProps,
-  Description,
-  Link,
-  cn,
-  useIsHydrated
-} from '@vezham/react-v3'
+import { Card, type CardProps, Description, Link, cn } from '@vezham/react-v3'
 
+import { useSessionStorageValue } from './lib/use-session-storage-value'
 import { OpenEmailButton } from './open-email-button'
 
 /** `sessionStorage` key the forgot-password form stores the submitted email under. */
@@ -34,10 +28,7 @@ export type ResetLinkSentProps = {
 export const ResetLinkSent = ({ className, variant }: ResetLinkSentProps) => {
   const { basePaths, localization, redirectTo, viewPaths } = useAuth()
 
-  const isHydrated = useIsHydrated()
-  const email = isHydrated
-    ? (sessionStorage.getItem(RESET_LINK_SENT_STORAGE_KEY) ?? '')
-    : ''
+  const email = useSessionStorageValue(RESET_LINK_SENT_STORAGE_KEY)
 
   return (
     <Card

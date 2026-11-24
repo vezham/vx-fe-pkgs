@@ -5,13 +5,9 @@ import {
   CloseCircle as CircleXmark,
   DangerTriangle as TriangleExclamation
 } from '@vezham/icons-react'
-import {
-  Button,
-  Card,
-  type CardProps,
-  cn,
-  useIsHydrated
-} from '@vezham/react-v3'
+import { Button, Card, type CardProps, cn } from '@vezham/react-v3'
+
+import { useBrowserSearch } from './lib/use-browser-search'
 
 type Props = {
   className?: string
@@ -21,11 +17,8 @@ type Props = {
 
 const AuthResultView = ({ className, fallbackIntent, variant }: Props) => {
   const { basePaths, localization, navigate, viewPaths } = useAuth()
-  const isHydrated = useIsHydrated()
-  const result = parseAuthResult(
-    isHydrated ? window.location.search : '',
-    fallbackIntent
-  )
+  const search = useBrowserSearch()
+  const result = parseAuthResult(search ?? '', fallbackIntent)
 
   const message = getAuthResultMessage(result, localization)
   const action = (() => {

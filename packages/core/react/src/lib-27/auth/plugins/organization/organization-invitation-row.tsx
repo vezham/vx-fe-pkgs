@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 
-import { formatAdditionalFieldValue } from '@vezham/auth-ui-core'
+import {
+  formatAdditionalFieldValue,
+  formatLocaleDate
+} from '@vezham/auth-ui-core'
 import {
   type OrganizationAuthClient,
   memberRoleLabels,
@@ -114,7 +117,7 @@ export const OrganizationInvitationTableRow = ({
       <Table.Cell
         key="createdAt"
         className="text-muted text-xs whitespace-nowrap tabular-nums">
-        {new Date(invitation.createdAt).toLocaleString(locale.languageTag, {
+        {formatLocaleDate(invitation.createdAt, locale.languageTag, {
           dateStyle: 'short',
           timeStyle: 'short'
         })}

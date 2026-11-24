@@ -31,6 +31,28 @@ export type PhoneNumberAdapter = {
   ) => string | undefined
 }
 
+const displayNamesByLocale = new Map<string, Intl.DisplayNames>()
+const englishDisplayNames = new Intl.DisplayNames(['en'], { type: 'region' })
+
+const getDisplayNames = (locale?: string) => {
+  const key = locale ?? ''
+  const cached = displayNamesByLocale.get(key)
+  if (cached) return cached
+
+  let displayNames: Intl.DisplayNames
+  try {
+    // react-doctor-disable-next-line react-doctor/js-hoist-intl -- This formatter is cached by locale below.
+    displayNames = new Intl.DisplayNames(locale ? [locale] : undefined, {
+      type: 'region'
+    })
+  } catch {
+    displayNames = englishDisplayNames
+  }
+
+  displayNamesByLocale.set(key, displayNames)
+  return displayNames
+}
+
 export const defaultPhoneNumberAdapter: PhoneNumberAdapter = {
   format(value, country) {
     if (!value.trim()) return ''
@@ -68,17 +90,9 @@ export const getPhoneNumberCountries = (
   locale?: string,
   countryCodes: readonly PhoneNumberCountryCode[] = getCountries()
 ): PhoneNumberCountry[] => {
-  let displayNames: Intl.DisplayNames | undefined
   let resolvedLocale = locale
-
-  try {
-    displayNames = new Intl.DisplayNames(locale ? [locale] : undefined, {
-      type: 'region'
-    })
-  } catch {
-    resolvedLocale = 'en'
-    displayNames = new Intl.DisplayNames(['en'], { type: 'region' })
-  }
+  const displayNames = getDisplayNames(locale)
+  if (displayNames.resolvedOptions().locale === 'en') resolvedLocale = 'en'
 
   return countryCodes
     .map(code => ({

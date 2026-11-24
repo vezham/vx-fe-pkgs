@@ -59,7 +59,6 @@ export const OpenEmailButton = ({
         render={({ children, ...triggerProps }) => (
           <a
             {...triggerProps}
-            role={undefined}
             href={provider.loginUrl}
             target="_blank"
             rel="noopener noreferrer"

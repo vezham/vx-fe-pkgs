@@ -3,11 +3,12 @@
 import { useDebouncedValue } from '@tanstack/react-pacer'
 import { keepPreviousData } from '@tanstack/react-query'
 import type { SortingState } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import { type ComponentProps, useEffect, useMemo, useState } from 'react'
 
 import {
   DEFAULT_TABLE_SEARCH_DEBOUNCE_MS,
   fieldsWithModelValues,
+  formatLocaleDate,
   getAdditionalFieldDefaultValues,
   getAdditionalFieldSubmitValues,
   getClampedTablePageIndex
@@ -15,6 +16,7 @@ import {
 import {
   type AdminAuthClient,
   type AdminListUsersParams,
+  type AdminLocalization,
   type AdminUser,
   adminPlugin,
   isAdminTarget
@@ -96,12 +98,8 @@ export type AdminUsersProps = {
 
 const rowSkeletonIds = ['hero-admin-1', 'hero-admin-2', 'hero-admin-3']
 
-const formatDate = (value: Date | string | undefined | null) =>
-  value
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(
-        new Date(value)
-      )
-    : '–'
+const formatDate = (value: Date | string | undefined | null, locale: string) =>
+  value ? formatLocaleDate(value, locale, { dateStyle: 'medium' }) : '–'
 
 const getAdminErrorMessage = (error: Error | null) => {
   const details: unknown = error && 'error' in error ? error.error : undefined
@@ -155,6 +153,305 @@ const adminColumns = adminColumnHelper.columns([
 const EMPTY_USERS: AdminUser[] = []
 const INITIAL_ADMIN_SORTING: SortingState = [{ id: 'createdAt', desc: true }]
 
+const AdminUsersFilters = ({
+  localization,
+  onSearchFieldChange,
+  onSearchOperatorChange,
+  onSearchValueChange,
+  onSortChange,
+  onStatusChange,
+  searchField,
+  searchOperator,
+  searchValue,
+  sort,
+  status
+}: {
+  localization: AdminLocalization
+  onSearchFieldChange: (value: unknown) => void
+  onSearchOperatorChange: (value: unknown) => void
+  onSearchValueChange: (value: string) => void
+  onSortChange: (value: unknown) => void
+  onStatusChange: (value: unknown) => void
+  searchField: SearchFieldName
+  searchOperator: SearchOperator
+  searchValue: string
+  sort: SortOption
+  status: (typeof STATUS_FILTERS)[number]
+}) => (
+  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[9rem_10rem_minmax(14rem,1fr)_10rem_10rem] lg:items-end">
+    <Select
+      className="sm:w-36"
+      value={searchField}
+      onChange={onSearchFieldChange}>
+      <Label>{localization.search}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          <ListBox.Item id="email">{localization.email}</ListBox.Item>
+          <ListBox.Item id="name">{localization.name}</ListBox.Item>
+        </ListBox>
+      </Select.Popover>
+    </Select>
+    <Select value={searchOperator} onChange={onSearchOperatorChange}>
+      <Label>{localization.searchOperator}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          <ListBox.Item id="contains">
+            {localization.searchContains}
+          </ListBox.Item>
+          <ListBox.Item id="starts_with">
+            {localization.startsWith}
+          </ListBox.Item>
+          <ListBox.Item id="ends_with">{localization.endsWith}</ListBox.Item>
+        </ListBox>
+      </Select.Popover>
+    </Select>
+    <SearchField
+      aria-label={
+        searchField === 'email'
+          ? localization.searchByEmail
+          : localization.searchByName
+      }
+      className="w-full"
+      value={searchValue}
+      onChange={onSearchValueChange}>
+      <SearchField.Group>
+        <SearchField.SearchIcon />
+        <SearchField.Input
+          placeholder={
+            searchField === 'email'
+              ? localization.searchByEmail
+              : localization.searchByName
+          }
+        />
+        <SearchField.ClearButton />
+      </SearchField.Group>
+    </SearchField>
+    <Select value={status} onChange={onStatusChange}>
+      <Label>{localization.status}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          <ListBox.Item id="all">{localization.filterAllStatuses}</ListBox.Item>
+          <ListBox.Item id="active">{localization.active}</ListBox.Item>
+          <ListBox.Item id="banned">{localization.banned}</ListBox.Item>
+        </ListBox>
+      </Select.Popover>
+    </Select>
+    <Select value={sort} onChange={onSortChange}>
+      <Label>{localization.sort}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          <ListBox.Item id="createdAt-desc">
+            {localization.sortNewest}
+          </ListBox.Item>
+          <ListBox.Item id="createdAt-asc">
+            {localization.sortOldest}
+          </ListBox.Item>
+          <ListBox.Item id="name-asc">
+            {localization.sortNameAscending}
+          </ListBox.Item>
+          <ListBox.Item id="name-desc">
+            {localization.sortNameDescending}
+          </ListBox.Item>
+        </ListBox>
+      </Select.Popover>
+    </Select>
+  </div>
+)
+
+const AdminUsersTableBody = ({
+  canSelectUser,
+  defaultRole,
+  isPending,
+  localization,
+  locale,
+  onSelectUser,
+  users
+}: {
+  canSelectUser: boolean
+  defaultRole: string
+  isPending: boolean
+  localization: AdminLocalization
+  locale: string
+  onSelectUser: (userId: string) => void
+  users: AdminUser[]
+}) => (
+  <Table.Body>
+    {isPending
+      ? rowSkeletonIds.map(id => (
+          <Table.Row id={id} key={id}>
+            <Table.Cell>
+              <Skeleton className="h-8 w-52" />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton className="h-5 w-16" />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton className="h-5 w-16" />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton className="h-4 w-24" />
+            </Table.Cell>
+          </Table.Row>
+        ))
+      : users.map(user => (
+          <Table.Row id={user.id} key={user.id}>
+            <Table.Cell>
+              {canSelectUser ? (
+                <Button
+                  className="h-auto justify-start px-0"
+                  variant="tertiary"
+                  onPress={() => onSelectUser(user.id)}>
+                  <UserAvatar user={user} />
+                  <span className="min-w-0 text-start">
+                    <span className="block truncate font-medium">
+                      {user.name}
+                    </span>
+                    <span className="text-muted block truncate text-xs">
+                      {user.email}
+                    </span>
+                  </span>
+                </Button>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <UserAvatar user={user} />
+                  <span className="min-w-0 text-start">
+                    <span className="block truncate font-medium">
+                      {user.name}
+                    </span>
+                    <span className="text-muted block truncate text-xs">
+                      {user.email}
+                    </span>
+                  </span>
+                </div>
+              )}
+            </Table.Cell>
+            <Table.Cell>
+              <Chip size="sm">{user.role ?? defaultRole}</Chip>
+            </Table.Cell>
+            <Table.Cell>
+              <Chip color={user.banned ? 'danger' : 'default'} size="sm">
+                {user.banned ? localization.banned : localization.active}
+              </Chip>
+            </Table.Cell>
+            <Table.Cell>{formatDate(user.createdAt, locale)}</Table.Cell>
+          </Table.Row>
+        ))}
+  </Table.Body>
+)
+
+const AdminUsersResults = ({
+  canGetUser,
+  canListUsers,
+  defaultRole,
+  isPermissionPending,
+  isUsersPending,
+  isUsersError,
+  localization,
+  locale,
+  onSelectUser,
+  onSelectionChange,
+  onSortChange,
+  selectedUserId,
+  sorting,
+  users
+}: {
+  canGetUser: boolean
+  canListUsers: boolean
+  defaultRole: string
+  isPermissionPending: boolean
+  isUsersPending: boolean
+  isUsersError: boolean
+  localization: AdminLocalization
+  locale: string
+  onSelectUser: (userId: string) => void
+  onSelectionChange: NonNullable<
+    ComponentProps<typeof Table.Content>['onSelectionChange']
+  >
+  onSortChange: NonNullable<
+    ComponentProps<typeof Table.Content>['onSortChange']
+  >
+  selectedUserId?: string
+  sorting: SortingState
+  users: AdminUser[]
+}) => {
+  if (isPermissionPending) return <AdminTableSkeleton />
+  if (!canListUsers) {
+    return (
+      <AdminMessage
+        description={localization.accessDeniedDescription}
+        title={localization.accessDenied}
+      />
+    )
+  }
+  if (isUsersError) {
+    return (
+      <AdminMessage
+        description={localization.loadUsersErrorDescription}
+        title={localization.loadUsersError}
+      />
+    )
+  }
+
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label={localization.users}
+          selectedKeys={selectedUserId ? new Set([selectedUserId]) : new Set()}
+          selectionBehavior="replace"
+          selectionMode={canGetUser ? 'single' : undefined}
+          sortDescriptor={getHeroUISortDescriptor(sorting)}
+          onSelectionChange={onSelectionChange}
+          onSortChange={onSortChange}>
+          <Table.Header>
+            <Table.Column id="name" isRowHeader allowsSorting>
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  {localization.name}
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column id="role">{localization.role}</Table.Column>
+            <Table.Column id="status">{localization.status}</Table.Column>
+            <Table.Column id="createdAt" allowsSorting>
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  {localization.created}
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+          </Table.Header>
+          <AdminUsersTableBody
+            canSelectUser={canGetUser}
+            defaultRole={defaultRole}
+            isPending={isUsersPending}
+            localization={localization}
+            locale={locale}
+            onSelectUser={onSelectUser}
+            users={users}
+          />
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  )
+}
+
 /** HeroUI presentation for the static Admin users view. */
 const parseOption = <T extends string>(
   options: readonly T[],
@@ -177,7 +474,7 @@ export const AdminUsers = ({
   onSelectedUserIdChange,
   selectedUserId: controlledSelectedUserId
 }: AdminUsersProps) => {
-  const { authClient } = useAuth<AdminAuthClient>()
+  const { authClient, locale } = useAuth<AdminAuthClient>()
   const config = useAuthPlugin(adminPlugin)
   const [localSelectedUserId, setLocalSelectedUserId] = useState<string>()
   const tableState = useServerTableState({
@@ -294,261 +591,56 @@ export const AdminUsers = ({
         ) : null}
       </header>
 
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[9rem_10rem_minmax(14rem,1fr)_10rem_10rem] lg:items-end">
-        <Select
-          className="sm:w-36"
-          value={searchField}
-          onChange={value => {
-            setSearchField(parseOption(SEARCH_FIELDS, value, 'email'))
-            table.setPageIndex(0)
-          }}>
-          <Label>{config.localization.search}</Label>
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="email">
-                {config.localization.email}
-              </ListBox.Item>
-              <ListBox.Item id="name">{config.localization.name}</ListBox.Item>
-            </ListBox>
-          </Select.Popover>
-        </Select>
-        <Select
-          value={searchOperator}
-          onChange={value => {
-            setSearchOperator(parseOption(SEARCH_OPERATORS, value, 'contains'))
-            table.setPageIndex(0)
-          }}>
-          <Label>{config.localization.searchOperator}</Label>
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="contains">
-                {config.localization.searchContains}
-              </ListBox.Item>
-              <ListBox.Item id="starts_with">
-                {config.localization.startsWith}
-              </ListBox.Item>
-              <ListBox.Item id="ends_with">
-                {config.localization.endsWith}
-              </ListBox.Item>
-            </ListBox>
-          </Select.Popover>
-        </Select>
-        <SearchField
-          aria-label={
-            searchField === 'email'
-              ? config.localization.searchByEmail
-              : config.localization.searchByName
-          }
-          className="w-full"
-          value={globalFilter}
-          onChange={value => {
-            table.setGlobalFilter(value)
-          }}>
-          <SearchField.Group>
-            <SearchField.SearchIcon />
-            <SearchField.Input
-              placeholder={
-                searchField === 'email'
-                  ? config.localization.searchByEmail
-                  : config.localization.searchByName
-              }
-            />
-            <SearchField.ClearButton />
-          </SearchField.Group>
-        </SearchField>
-        <Select
-          value={status}
-          onChange={value => {
-            const nextStatus = parseOption(STATUS_FILTERS, value, 'all')
-            table
-              .getColumn('status')
-              ?.setFilterValue(nextStatus === 'all' ? undefined : nextStatus)
-          }}>
-          <Label>{config.localization.status}</Label>
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="all">
-                {config.localization.filterAllStatuses}
-              </ListBox.Item>
-              <ListBox.Item id="active">
-                {config.localization.active}
-              </ListBox.Item>
-              <ListBox.Item id="banned">
-                {config.localization.banned}
-              </ListBox.Item>
-            </ListBox>
-          </Select.Popover>
-        </Select>
-        <Select
-          value={sort}
-          onChange={value => {
-            const [id, direction] = parseSortOption(String(value))
-            table.setSorting([{ id, desc: direction === 'desc' }])
-          }}>
-          <Label>{config.localization.sort}</Label>
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="createdAt-desc">
-                {config.localization.sortNewest}
-              </ListBox.Item>
-              <ListBox.Item id="createdAt-asc">
-                {config.localization.sortOldest}
-              </ListBox.Item>
-              <ListBox.Item id="name-asc">
-                {config.localization.sortNameAscending}
-              </ListBox.Item>
-              <ListBox.Item id="name-desc">
-                {config.localization.sortNameDescending}
-              </ListBox.Item>
-            </ListBox>
-          </Select.Popover>
-        </Select>
-      </div>
+      <AdminUsersFilters
+        localization={config.localization}
+        onSearchFieldChange={value => {
+          setSearchField(parseOption(SEARCH_FIELDS, value, 'email'))
+          table.setPageIndex(0)
+        }}
+        onSearchOperatorChange={value => {
+          setSearchOperator(parseOption(SEARCH_OPERATORS, value, 'contains'))
+          table.setPageIndex(0)
+        }}
+        onSearchValueChange={value => table.setGlobalFilter(value)}
+        onStatusChange={value => {
+          const nextStatus = parseOption(STATUS_FILTERS, value, 'all')
+          table
+            .getColumn('status')
+            ?.setFilterValue(nextStatus === 'all' ? undefined : nextStatus)
+        }}
+        onSortChange={value => {
+          const [id, direction] = parseSortOption(String(value))
+          table.setSorting([{ id, desc: direction === 'desc' }])
+        }}
+        searchField={searchField}
+        searchOperator={searchOperator}
+        searchValue={globalFilter}
+        sort={sort}
+        status={status}
+      />
 
-      {permission.isPending ? (
-        <AdminTableSkeleton />
-      ) : !permission.data?.success ? (
-        <AdminMessage
-          description={config.localization.accessDeniedDescription}
-          title={config.localization.accessDenied}
-        />
-      ) : users.isError ? (
-        <AdminMessage
-          description={config.localization.loadUsersErrorDescription}
-          title={config.localization.loadUsersError}
-        />
-      ) : (
-        <Table>
-          <Table.ScrollContainer>
-            <Table.Content
-              aria-label={config.localization.users}
-              selectedKeys={
-                selectedUserId ? new Set([selectedUserId]) : new Set()
-              }
-              selectionBehavior="replace"
-              selectionMode={getPermission.data?.success ? 'single' : undefined}
-              sortDescriptor={getHeroUISortDescriptor(sorting)}
-              onSelectionChange={selection => {
-                if (selection === 'all') return
-                const [userId] = selection
-                selectUser(userId == null ? undefined : String(userId))
-              }}
-              onSortChange={descriptor =>
-                table.setSorting(getTanStackSorting(descriptor))
-              }>
-              <Table.Header>
-                <Table.Column id="name" isRowHeader allowsSorting>
-                  {({ sortDirection }) => (
-                    <Table.SortableColumnHeader sortDirection={sortDirection}>
-                      {config.localization.name}
-                    </Table.SortableColumnHeader>
-                  )}
-                </Table.Column>
-                <Table.Column id="role">
-                  {config.localization.role}
-                </Table.Column>
-                <Table.Column id="status">
-                  {config.localization.status}
-                </Table.Column>
-                <Table.Column id="createdAt" allowsSorting>
-                  {({ sortDirection }) => (
-                    <Table.SortableColumnHeader sortDirection={sortDirection}>
-                      {config.localization.created}
-                    </Table.SortableColumnHeader>
-                  )}
-                </Table.Column>
-              </Table.Header>
-              <Table.Body>
-                {users.isPending
-                  ? rowSkeletonIds.map(id => (
-                      <Table.Row id={id} key={id}>
-                        <Table.Cell>
-                          <Skeleton className="h-8 w-52" />
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Skeleton className="h-5 w-16" />
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Skeleton className="h-5 w-16" />
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Skeleton className="h-4 w-24" />
-                        </Table.Cell>
-                      </Table.Row>
-                    ))
-                  : table.getRowModel().rows.map(row => {
-                      const user = row.original
-                      return (
-                        <Table.Row id={row.id} key={row.id}>
-                          <Table.Cell>
-                            {getPermission.data?.success ? (
-                              <Button
-                                className="h-auto justify-start px-0"
-                                variant="tertiary"
-                                onPress={() => selectUser(user.id)}>
-                                <UserAvatar user={user} />
-                                <span className="min-w-0 text-start">
-                                  <span className="block truncate font-medium">
-                                    {user.name}
-                                  </span>
-                                  <span className="text-muted block truncate text-xs">
-                                    {user.email}
-                                  </span>
-                                </span>
-                              </Button>
-                            ) : (
-                              <div className="flex items-center gap-3">
-                                <UserAvatar user={user} />
-                                <span className="min-w-0 text-start">
-                                  <span className="block truncate font-medium">
-                                    {user.name}
-                                  </span>
-                                  <span className="text-muted block truncate text-xs">
-                                    {user.email}
-                                  </span>
-                                </span>
-                              </div>
-                            )}
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Chip size="sm">
-                              {user.role ?? config.defaultRole}
-                            </Chip>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Chip
-                              color={user.banned ? 'danger' : 'default'}
-                              size="sm">
-                              {user.banned
-                                ? config.localization.banned
-                                : config.localization.active}
-                            </Chip>
-                          </Table.Cell>
-                          <Table.Cell>{formatDate(user.createdAt)}</Table.Cell>
-                        </Table.Row>
-                      )
-                    })}
-              </Table.Body>
-            </Table.Content>
-          </Table.ScrollContainer>
-        </Table>
-      )}
+      <AdminUsersResults
+        canGetUser={getPermission.data?.success === true}
+        canListUsers={permission.data?.success === true}
+        defaultRole={config.defaultRole}
+        isPermissionPending={permission.isPending}
+        isUsersPending={users.isPending}
+        isUsersError={users.isError}
+        localization={config.localization}
+        locale={locale.languageTag}
+        onSelectUser={userId => selectUser(userId)}
+        onSelectionChange={selection => {
+          if (selection === 'all') return
+          const [userId] = selection
+          selectUser(userId == null ? undefined : String(userId))
+        }}
+        onSortChange={descriptor =>
+          table.setSorting(getTanStackSorting(descriptor))
+        }
+        selectedUserId={selectedUserId}
+        sorting={sorting}
+        users={users.data?.users ?? EMPTY_USERS}
+      />
 
       <footer className="text-muted flex items-center justify-between gap-2 text-sm">
         <span>
@@ -865,8 +957,14 @@ function UserDrawer({
   onOpenChange: (open: boolean) => void
   userId?: string
 }) {
-  const { additionalFields, authClient, localization, navigate, plugins } =
-    useAuth<AdminAuthClient>()
+  const {
+    additionalFields,
+    authClient,
+    localization,
+    locale,
+    navigate,
+    plugins
+  } = useAuth<AdminAuthClient>()
   const config = useAuthPlugin(adminPlugin)
   const contributedTabs = useMemo(
     () =>
@@ -1398,7 +1496,12 @@ function UserDrawer({
                                 <dt className="text-muted">
                                   {config.localization.created}
                                 </dt>
-                                <dd>{formatDate(detail.createdAt)}</dd>
+                                <dd>
+                                  {formatDate(
+                                    detail.createdAt,
+                                    locale.languageTag
+                                  )}
+                                </dd>
                               </div>
                               <div className="flex flex-col gap-1">
                                 <dt className="text-muted">
@@ -1427,7 +1530,12 @@ function UserDrawer({
                                   <dt className="text-muted">
                                     {config.localization.banExpires}
                                   </dt>
-                                  <dd>{formatDate(detail.banExpires)}</dd>
+                                  <dd>
+                                    {formatDate(
+                                      detail.banExpires,
+                                      locale.languageTag
+                                    )}
+                                  </dd>
                                 </div>
                               ) : null}
                             </dl>
@@ -1557,8 +1665,15 @@ function UserDrawer({
                                   config.localization.sessions}
                               </div>
                               <div className="text-muted text-xs">
-                                {formatDate(session.createdAt)} ·{' '}
-                                {formatDate(session.expiresAt)}
+                                {formatDate(
+                                  session.createdAt,
+                                  locale.languageTag
+                                )}
+                                {' · '}
+                                {formatDate(
+                                  session.expiresAt,
+                                  locale.languageTag
+                                )}
                               </div>
                               {config.showIpAddress && session.ipAddress ? (
                                 <div className="text-muted mt-1 font-mono text-xs">

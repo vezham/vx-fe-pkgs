@@ -1,5 +1,5 @@
 import { useSelector } from '@tanstack/react-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   isPasswordCompromisedError,
@@ -28,6 +28,7 @@ import {
   setAuthFormServerError,
   useAuthForm
 } from '../../auth-form'
+import { useSessionStorageValue } from '../../lib/use-session-storage-value'
 import { OtpField } from '../../otp-field'
 import { PasswordStrengthMeter } from '../../password-strength-meter'
 import { PHONE_NUMBER_RESET_STORAGE_KEY } from './forgot-phone-number-password'
@@ -49,9 +50,9 @@ const ResetPhoneNumberPasswordForm = ({
     otpLength,
     viewPaths: phoneNumberViewPaths
   } = useAuthPlugin(phoneNumberPlugin)
-  const isHydrated = useIsHydrated()
-  const initialPhoneNumber =
-    (isHydrated && sessionStorage.getItem(PHONE_NUMBER_RESET_STORAGE_KEY)) || ''
+  const initialPhoneNumber = useSessionStorageValue(
+    PHONE_NUMBER_RESET_STORAGE_KEY
+  )
   const hasStoredPhoneNumber = Boolean(initialPhoneNumber)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
@@ -110,6 +111,10 @@ const ResetPhoneNumberPasswordForm = ({
       })
     }
   })
+  useEffect(() => {
+    if (initialPhoneNumber)
+      form.setFieldValue('phoneNumber', initialPhoneNumber)
+  }, [form, initialPhoneNumber])
   const codeComplete = useSelector(
     form.store,
     state => state.values.code.length === otpLength
