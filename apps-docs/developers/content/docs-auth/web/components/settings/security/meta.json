@@ -1,0 +1,9 @@
+{
+  "title": "Security",
+  "pages": [
+    "security-settings",
+    "change-password",
+    "linked-accounts",
+    "active-sessions"
+  ]
+}

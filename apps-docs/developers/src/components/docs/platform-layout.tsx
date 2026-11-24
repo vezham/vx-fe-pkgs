@@ -55,7 +55,7 @@ export const getPlatformLayoutOptions = ({
       )
     },
     sidebar: {
-      components: library === 'react' ? { Folder: SidebarGroup } : undefined,
+      components: { Folder: SidebarGroup },
       banner: props => (
         <PlatformDrawerHeader
           {...props}

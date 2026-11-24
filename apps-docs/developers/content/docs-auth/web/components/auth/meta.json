@@ -1,0 +1,14 @@
+{
+  "title": "Auth",
+  "pages": [
+    "auth",
+    "sign-in",
+    "sign-up",
+    "sign-out",
+    "auth-redirect",
+    "forgot-password",
+    "reset-link-sent",
+    "reset-password",
+    "verify-email"
+  ]
+}

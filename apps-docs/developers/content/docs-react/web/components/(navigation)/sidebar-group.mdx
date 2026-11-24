@@ -13,7 +13,7 @@ import { ComponentPreview } from '../../../../../src/components/docs/component-p
 import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 ```
 
-Use `SidebarGroup` as the notebook's folder renderer. The heading toggles its child links; page links keep their own destinations. These in-house React docs use the same renderer.
+Use `SidebarGroup` as the default folder renderer for Docs and handbook notebooks. The heading toggles its child links; page links keep their own destinations.
 
 ```tsx
 <Notebook tree={tree} sidebar={{ components: { Folder: SidebarGroup } }}>

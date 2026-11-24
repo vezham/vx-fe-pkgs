@@ -1,0 +1,11 @@
+{
+  "title": "Utility",
+  "pages": [
+    "device-authorization",
+    "captcha",
+    "last-login-method",
+    "multi-session",
+    "delete-user",
+    "theme"
+  ]
+}

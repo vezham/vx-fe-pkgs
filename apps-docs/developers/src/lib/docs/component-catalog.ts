@@ -3,7 +3,7 @@ import { getPlatformDocsRuntime } from '@components/docs/platform-docs'
 import type { UiLibrary } from '@config/ui-libraries'
 
 const getCatalog = (
-  section: 'components' | 'layouts' | undefined,
+  section: 'components' | 'layouts' | 'all',
   platform: 'web' | 'native',
   library: UiLibrary,
   locale: string
@@ -12,9 +12,11 @@ const getCatalog = (
     .source.getPages(locale)
     .flatMap(page => {
       if (
-        (section && page.slugs[0] !== section) ||
-        (!section && page.slugs[0] === 'getting-started') ||
-        page.slugs.length < (section ? 2 : 1) ||
+        (section !== 'all' && page.slugs[0] !== section) ||
+        (section === 'all' &&
+          page.slugs.length === 1 &&
+          page.slugs[0] === 'getting-started') ||
+        page.slugs.length < 2 ||
         !page.data.title
       )
         return []
@@ -44,4 +46,4 @@ export const getLayoutCatalog = (
 export const getAuthCatalog = (
   platform: 'web' | 'native',
   locale: string = i18n.defaultLanguage
-) => (platform === 'web' ? getCatalog(undefined, platform, 'auth', locale) : [])
+) => (platform === 'web' ? getCatalog('all', platform, 'auth', locale) : [])

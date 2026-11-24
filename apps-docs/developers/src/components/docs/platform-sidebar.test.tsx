@@ -4,6 +4,7 @@ import type { Folder } from '@vezham/docs-core/page-tree'
 import { deserializePageTree } from '@vezham/docs-core/source/client'
 import { SidebarGroup } from '@vezham/react/components/sidebar-group'
 
+import type { UiLibrary } from '../../config/ui-libraries'
 import { createPlatformDocsLoader } from '../../lib/docs/platform-loader'
 import { getPlatformLayoutOptions } from './platform-layout'
 
@@ -25,7 +26,7 @@ afterEach(() => {
   else Reflect.deleteProperty(Element.prototype, 'getAnimations')
 })
 
-const getOptions = (library: 'react' | 'react-v3' | 'react-pro-v3') =>
+const getOptions = (library: UiLibrary) =>
   getPlatformLayoutOptions({
     library,
     locale: 'en',
@@ -56,14 +57,13 @@ const renderGroup = (item: Folder) => {
   )
 }
 
-describe('in-house React sidebar', () => {
-  it('uses the shared renderer only for the in-house library', () => {
-    expect(getOptions('react').sidebar?.components?.Folder).toBe(SidebarGroup)
-    expect(getOptions('react-v3').sidebar?.components?.Folder).toBeUndefined()
-    expect(
-      getOptions('react-pro-v3').sidebar?.components?.Folder
-    ).toBeUndefined()
-  })
+describe('UI documentation sidebar', () => {
+  it.each(['react', 'auth', 'react-v3', 'react-pro-v3'] as const)(
+    'uses SidebarGroup as the default folder renderer for %s',
+    library => {
+      expect(getOptions(library).sidebar?.components?.Folder).toBe(SidebarGroup)
+    }
+  )
 
   it.each(['en', 'cn'])(
     'renders collapsible component groups with %s page links',

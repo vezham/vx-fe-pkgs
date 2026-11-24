@@ -44,9 +44,6 @@ export const createPlatformDocsLoader =
     })
     const routeBase = `${uiLibraries[library].routeBase}/${params.platform}`
     const tree = runtime.source.getPageTree(data.locale)
-    const createSidebarTree =
-      library === 'react' ? SidebarGroup.createGroups : SidebarGroup.filterTree
-
     return {
       ...data,
       platforms,
@@ -55,7 +52,7 @@ export const createPlatformDocsLoader =
         ...tree,
         $id: `${data.locale}:${routeBase}:${section.id}`,
         name: section.title,
-        children: createSidebarTree({
+        children: SidebarGroup.createGroups({
           resolveIcon: resolveDocsIcon,
           docsBase: localizedUrl(i18n, data.locale, routeBase),
           nodes: tree.children,

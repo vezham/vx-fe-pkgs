@@ -1,4 +1,5 @@
 {
   "title": "Getting Started",
-  "pages": ["index"]
+  "root": true,
+  "pages": ["index", "frameworks", "concepts"]
 }

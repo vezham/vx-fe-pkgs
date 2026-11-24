@@ -2,5 +2,5 @@
   "icon": "windows",
   "defaultOpen": true,
   "pages": ["tanstack-start", "nextjs"],
-  "title": "Integrations"
+  "title": "Frameworks"
 }

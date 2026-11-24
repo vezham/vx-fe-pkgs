@@ -1,0 +1,15 @@
+{
+  "title": "Email",
+  "pages": [
+    "change-email-confirmation-email",
+    "delete-account-verification-email",
+    "email-changed-email",
+    "email-verification-email",
+    "magic-link-email",
+    "new-device-email",
+    "organization-invitation-email",
+    "otp-email",
+    "password-changed-email",
+    "reset-password-email"
+  ]
+}

@@ -206,7 +206,45 @@ describe('UI documentation', () => {
   it('compiles every phase-one Auth page with registered interactive examples', async () => {
     const runtime = getPlatformDocsRuntime('web', 'auth')
     const pages = runtime.source.getPages('en')
-    expect(pages).toHaveLength(59)
+    expect(pages).toHaveLength(61)
+    expect(
+      getPlatformSections('web', 'auth').map(section => section.id)
+    ).toEqual(['getting-started', 'plugins', 'components'])
+    expect(
+      getPlatformPage('web', 'getting-started/concepts/passwords', 'auth')
+    ).toBe('getting-started/concepts/passwords')
+    expect(
+      getPlatformPage('web', 'getting-started/frameworks/nextjs', 'auth')
+    ).toBe('getting-started/frameworks/nextjs')
+    const gettingStarted = await createPlatformDocsLoader('auth')({
+      params: { platform: 'web', _splat: 'getting-started' }
+    })
+    const gettingStartedTree = JSON.stringify(
+      deserializePageTree(gettingStarted.pageTree).children
+    )
+    expect(gettingStartedTree).toContain(
+      '/docs/ui/auth/web/getting-started/frameworks/tanstack-start'
+    )
+    expect(gettingStartedTree).toContain(
+      '/docs/ui/auth/web/getting-started/concepts/passwords'
+    )
+    const plugins = await createPlatformDocsLoader('auth')({
+      params: { platform: 'web', _splat: 'plugins' }
+    })
+    const pluginsTree = JSON.stringify(
+      deserializePageTree(plugins.pageTree).children
+    )
+    expect(pluginsTree).toContain('Authentication')
+    expect(pluginsTree).toContain('Authorization')
+    const components = await createPlatformDocsLoader('auth')({
+      params: { platform: 'web', _splat: 'components' }
+    })
+    const componentsTree = JSON.stringify(
+      deserializePageTree(components.pageTree).children
+    )
+    expect(componentsTree).toContain('Provider')
+    expect(componentsTree).toContain('User')
+    expect(componentsTree).toContain('Settings')
     const data = await createPlatformDocsLoader('auth')({
       params: {
         lang: 'cn',

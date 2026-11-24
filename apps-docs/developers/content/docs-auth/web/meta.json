@@ -1,10 +1,4 @@
 {
   "title": "Vezham Auth",
-  "pages": [
-    "getting-started",
-    "integrations",
-    "concepts",
-    "plugins",
-    "components"
-  ]
+  "pages": ["getting-started", "plugins", "components"]
 }

@@ -1,0 +1,4 @@
+{
+  "title": "User",
+  "pages": ["user-avatar", "user-button", "user-view"]
+}

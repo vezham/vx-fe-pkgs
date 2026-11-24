@@ -1,0 +1,14 @@
+{
+  "title": "Authentication",
+  "pages": [
+    "two-factor",
+    "username",
+    "anonymous",
+    "phone-number",
+    "magic-link",
+    "email-otp",
+    "passkey",
+    "one-tap",
+    "siwe"
+  ]
+}
