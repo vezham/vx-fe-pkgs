@@ -1,0 +1,504 @@
+---
+title: 'OAuth Provider'
+description: 'Add OAuth 2.1 consent, sign-up, account selection, and connected application management with Vezham.'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/oauth-provider
+---
+
+import { Callout } from '@vezham/docs-react/components/callout'
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+
+The OAuth Provider plugin covers the user-facing screens Better Auth's [OAuth 2.1 Provider](https://better-auth.com/docs/plugins/oauth-provider) redirects to. It also provides connected application security settings and OAuth client developer settings.
+
+## Client management
+
+Enable personal client management to add an OAuth clients tab to user settings. The tab lists, creates, edits, deletes, and rotates secrets through Better Auth's signed-in client endpoints.
+
+```tsx
+OAuthProvider.plugin({
+  clientManagement: true
+})
+```
+
+The client secret appears only after creation or rotation. The user must copy it before closing the dialog.
+
+Pass `clientManager` when personal clients also need server-only operations such as enable or disable. This manager uses `{ type: "user" }` as its owner. The UI shows the enable or disable control when the manager implements `setDisabled`.
+
+Organization clients need an application-owned `OAuthClientManager`. Every operation receives both the organization ID and slug. Authorize both values in your server endpoint. Do not infer the organization from active session state.
+
+```tsx
+OAuthProvider.plugin({
+  organizationClientManager: {
+    list: (owner, signal) => api.oauthClients.list(owner, signal),
+    create: (owner, input) => api.oauthClients.create(owner, input),
+    update: (owner, clientId, update) =>
+      api.oauthClients.update(owner, clientId, update),
+    delete: (owner, clientId) => api.oauthClients.delete(owner, clientId),
+    rotateSecret: (owner, clientId) =>
+      api.oauthClients.rotateSecret(owner, clientId),
+    setDisabled: (owner, clientId, disabled) =>
+      api.oauthClients.setDisabled(owner, clientId, disabled)
+  }
+})
+```
+
+Better Auth 1.7 exposes enable or disable through server admin APIs, so BAUI does not call it from the default browser adapter.
+
+It contributes:
+
+- An `<OAuthProvider.Consent />` view at `/auth/oauth-consent`
+- An `<OAuthProvider.SignUp />` view at `/auth/oauth-sign-up`, for `prompt=create`
+- An `<OAuthProvider.SelectAccount />` view at `/auth/select-account`, for `prompt=select_account`
+- An `<OAuthProvider.Applications />` card in security settings
+- Public OAuth client metadata loading
+- Scope labels as a map, a list, or a resolver
+- Headless continuation through `useOAuthContinue`, for your own post-login screens
+
+## How the redirect screens fit together
+
+Better Auth owns the authorization request. When it needs user input, it redirects to one of your pages.
+
+The redirect includes the signed authorization query. Call `oauth2.continue` after the user provides the input:
+
+| Prompt           | Page                 | Continuation                           |
+| ---------------- | -------------------- | -------------------------------------- |
+| `consent`        | `consentPage`        | `oauth2.consent({ accept })`           |
+| `create`         | `signup.page`        | `oauth2.continue({ created: true })`   |
+| `select_account` | `selectAccount.page` | `oauth2.continue({ selected: true })`  |
+| None             | `postLogin.page`     | `oauth2.continue({ postLogin: true })` |
+
+Keep the query string on every one of those pages. Do not strip it, rebuild it from `redirect_uri`, or navigate to the requested redirect yourself. `oauthProviderClient()` forwards the signed query to Better Auth, and Better Auth validates it and completes the redirect.
+
+## Setup
+
+<Steps>
+
+<Step>
+
+### Configure the Better Auth server
+
+Install the provider package:
+
+```bash
+bun add @vezham/auth-oauth-provider
+```
+
+Add the JWT and OAuth Provider plugins, and point each page option at the route that renders the matching view:
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { oauthProvider } from '@vezham/auth-oauth-provider'
+import { jwt, multiSession } from '@vezham/auth/plugins'
+
+export const auth = betterAuth({
+  disabledPaths: ['/token'],
+  plugins: [
+    jwt(),
+    multiSession(),
+    oauthProvider({
+      allowPublicClientPrelogin: true,
+      loginPage: '/auth/sign-in',
+      consentPage: '/auth/oauth-consent',
+      signup: {
+        page: '/auth/oauth-sign-up'
+      },
+      selectAccount: {
+        page: '/auth/select-account',
+        shouldRedirect: async () => true
+      }
+    })
+  ]
+})
+```
+
+`signup` and `selectAccount` both use `loginPage` by default. Set each `page` explicitly.
+
+Each page uses a plugin route and does not replace `/auth/sign-up`. `selectAccount.shouldRedirect` controls when the application shows the chooser.
+
+Return `true` to always show the chooser. Otherwise, use the session and scopes to make the decision.
+
+Generate or migrate your Better Auth schema after enabling the server plugin:
+
+```bash
+bunx auth@latest migrate
+```
+
+</Step>
+
+<Step>
+
+### Configure the browser client
+
+Add `oauthProviderClient()` to the auth client. It preserves Better Auth's signed authorization query when the user responds:
+
+```ts title="lib/auth-client.ts"
+import { oauthProviderClient } from '@vezham/auth-oauth-provider/client'
+import { multiSessionClient } from '@vezham/auth/client/plugins'
+import { createAuthClient } from '@vezham/auth/react'
+
+export const authClient = createAuthClient({
+  plugins: [oauthProviderClient(), multiSessionClient()]
+})
+```
+
+`multiSessionClient()` is what makes the account chooser work: it lists the device sessions and switches the active one. Skip it if you do not use `prompt=select_account`.
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+```tsx title="components/providers.tsx"
+import { Auth } from '@vezham/react/auth'
+import { OAuthProvider } from '@vezham/react/auth/plugins/oauth-provider'
+
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[OAuthProvider.plugin()]}>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+<Step>
+
+### Allow the OAuth routes
+
+Include the plugin paths in the route that renders `<Auth />`:
+
+```tsx title="routes/auth/$path.tsx"
+import { createFileRoute, notFound } from '@tanstack/react-router'
+
+import { viewPaths } from '@vezham/auth-ui-core'
+import { Auth } from '@vezham/react/auth'
+import { OAuthProvider } from '@vezham/react/auth/plugins/oauth-provider'
+
+const validAuthPathSegments = new Set([
+  ...Object.values(viewPaths.auth),
+  ...Object.values(OAuthProvider.plugin().viewPaths.auth)
+])
+
+export const Route = createFileRoute('/auth/$path')({
+  beforeLoad({ params: { path } }) {
+    if (!validAuthPathSegments.has(path)) {
+      throw notFound()
+    }
+  },
+  component: AuthPage
+})
+
+function AuthPage() {
+  const { path } = Route.useParams()
+  return <Auth path={path} />
+}
+```
+
+Keep these paths aligned with the server's `consentPage`, `signup.page`, and `selectAccount.page`.
+
+</Step>
+
+</Steps>
+
+The consent view verifies the signed authorization query with Better Auth before showing application metadata, permissions, or the redirect destination. Enable `allowPublicClientPrelogin` on the server for this check. This option does not enable dynamic client registration.
+
+Application names and logos come from the application's developer. The consent view keeps the logo, uses a neutral fallback, and shows the actual callback destination. A name or logo does not prove that an application is official.
+
+## Scope metadata
+
+`scopeMetadata` accepts three shapes. Every requested scope remains visible.
+
+If a scope has no match, the plugin uses built-in metadata. The raw scope value is the final fallback.
+
+### Map
+
+The original form. Good when the scope set is known up front:
+
+```tsx title="components/providers.tsx"
+OAuthProvider.plugin({
+  scopeMetadata: {
+    calendar: {
+      label: 'View your calendar',
+      description: 'Read your calendar events and availability.'
+    }
+  }
+})
+```
+
+### List
+
+Convenient when metadata comes out of a database or an API and arrives as an array:
+
+```tsx title="components/providers.tsx"
+OAuthProvider.plugin({
+  scopeMetadata: [
+    { scope: 'calendar', label: 'View your calendar' },
+    { scope: 'files', label: 'View your files' }
+  ]
+})
+```
+
+### Resolver
+
+For labels that depend on the requesting client or the rest of the scope set:
+
+```tsx title="components/providers.tsx"
+OAuthProvider.plugin({
+  scopeMetadata: (scope, { clientId, requestedScopes }) => {
+    if (scope.startsWith('project:')) {
+      return { label: `Access ${scope.slice('project:'.length)}` }
+    }
+
+    if (scope === 'admin' && requestedScopes.includes('offline_access')) {
+      return {
+        label: 'Administer your workspace',
+        description: `${clientId} can act on your behalf indefinitely.`
+      }
+    }
+
+    // Fall back to the built-in or raw label.
+    return undefined
+  }
+})
+```
+
+Returning `undefined` means "use the fallback", not "hide this scope".
+
+Resolvers stay synchronous, so rendering is deterministic and behaves the same under SSR. If you need remote metadata, load it before render and pass a map or a list.
+
+## Sign-up continuation
+
+`<OAuthProvider.SignUp />` lives at its own route and wraps the same `<Auth.SignUp />` component your app already uses: it does not replace the built-in sign-up view. Users who never go through OAuth never touch it.
+
+When Better Auth redirects there with `prompt=create`, the ordinary sign-up implementation creates the account, and only after that succeeds does the view call:
+
+```ts
+authClient.oauth2.continue({ created: true })
+```
+
+If the continuation request fails, the form shows a retry action. The account already exists, so do not submit the sign-up form again.
+
+Reached without `prompt=create`, it renders plain sign-up and redirects the way sign-up normally does.
+
+### Limitations
+
+Two flows deliberately do not continue on their own:
+
+- **Email verification.** When `requireEmailVerification` is on, sign-up has no usable session yet, so the view sends the user to the verify-email screen instead. Resume after verification yourself with [`useOAuthContinue`](/docs/ui/auth/web/getting-started#headless-api).
+- **Social sign-up.** The provider redirect leaves and re-enters your app, so there is no "sign-up just succeeded" moment to hook into. Resume from your social callback route instead.
+
+In both cases only call `{ created: true }` if the account really was created during this flow. An already signed-in user is not a newly created one.
+
+## Account selection
+
+`<OAuthProvider.SelectAccount />` renders the device sessions from `multiSession` in a Vezham `ListBox`. Choosing the account that is already active continues directly. Choosing a different one calls `multiSession.setActive()` first, then continues: the switch always lands before Better Auth resumes.
+
+Sessions are compared by session ID, never by user ID or list position.
+
+The chooser has no sign-out or revoke actions on purpose. Session management belongs in security settings, not in the middle of an authorization request.
+
+## Post-login selection
+
+There is no post-login view to install. An application can select a workspace, tenant, team, project, role, or another resource.
+
+Build this selection interface in the application. When the selection is complete, use the headless continuation helper:
+
+```tsx title="routes/auth/select-workspace.tsx"
+import { useAuth } from '@vezham/auth-ui-react'
+import { useOAuthContinue } from '@vezham/auth-ui-react/plugins/oauth-provider'
+
+type Workspace = { slug: string; name: string }
+
+function SelectWorkspace({ workspaces }: { workspaces: Workspace[] }) {
+  const { authClient } = useAuth()
+  const oauthContinue = useOAuthContinue(authClient)
+
+  const select = async (slug: string) => {
+    // Persist the selection the way your app normally does — by slug or ID.
+    await setActiveWorkspaceSlug(slug)
+
+    await oauthContinue.mutateAsync({ postLogin: true })
+  }
+
+  return workspaces.map(workspace => (
+    <button key={workspace.slug} onClick={() => select(workspace.slug)}>
+      {workspace.name}
+    </button>
+  ))
+}
+```
+
+Point the server's `postLogin.page` at that route.
+
+<Callout type="warn">
+  Do not use Better Auth active organizations here. Persist the selection with
+  your own slug- or ID-based mechanism.
+</Callout>
+
+## Connected applications
+
+`<OAuthProvider.Applications />` is a security card for authorized applications. It shows the client name, logo, granted scopes, and latest authorization date.
+
+The card provides a "Remove authorization" action that uses a Vezham `AlertDialog` for confirmation.
+
+Better Auth can store several consent records for one client, so records are grouped by client ID and rendered as a single application. Removing an application deletes every consent ID in that group. Each row loads its own client metadata, so one slow or missing application never blocks the rest of the card.
+
+Turn the card off with:
+
+```tsx
+OAuthProvider.plugin({ showConnectedApplications: false })
+```
+
+<Callout type="warn">
+Removing an authorization deletes the stored consent record. The application needs the user's approval before it receives new access.
+
+Existing access and refresh tokens stay valid until they expire. Better Auth does not provide complete token revocation through this endpoint.
+
+Do not tell users that this action revokes existing tokens.
+
+</Callout>
+
+The card manages consent records only. It is not a session list or token list.
+
+The card has no revoke-all control because Better Auth does not provide the required token operations.
+
+## Consent behavior
+
+The consent view accepts or denies the complete requested scope set. It does not render per-scope controls. Omitting `scope` from the consent mutation tells Better Auth to accept the scopes from the original signed request.
+
+The public client endpoint requires a signed-in session. Direct visits with missing request data, no session, or an unknown client render an invalid-request state.
+
+Login reuses the existing `signIn` view and resumes automatically when Better Auth creates the session.
+
+## Components
+
+The plugin renders each view automatically at its configured path. You can also render them directly:
+
+```tsx
+import { OAuthProvider } from '@vezham/react/auth/plugins/oauth-provider'
+
+<OAuthProvider.Consent />
+<OAuthProvider.SignUp />
+<OAuthProvider.SelectAccount />
+<OAuthProvider.Applications />
+```
+
+```tsx title="OAuthConsentProps"
+type OAuthConsentProps = {
+  className?: string
+  /** The complete signed query. Pass it from your router for same-page navigation. */
+  oauthQuery?: string
+  variant?: CardProps['variant']
+}
+```
+
+```tsx title="OAuthSignUpProps"
+type OAuthSignUpProps = {
+  className?: string
+  socialLayout?: SocialLayout
+  socialPosition?: 'top' | 'bottom'
+  variant?: CardProps['variant']
+}
+```
+
+```tsx title="OAuthSelectAccountProps"
+type OAuthSelectAccountProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+```
+
+```tsx title="AuthorizedApplicationsProps"
+type AuthorizedApplicationsProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+```
+
+## Plugin options
+
+```tsx title="OAuthProviderPluginOptions"
+type OAuthProviderPluginOptions = {
+  /**
+   * Override the plugin's default localization strings.
+   * @remarks `OAuthProviderLocalization`
+   */
+  localization?: Partial<OAuthProviderLocalization>
+  /**
+   * URL segment for the OAuth consent view.
+   * @remarks `string`
+   * @default "oauth-consent"
+   */
+  path?: string
+  /**
+   * URL segment for the OAuth-aware sign-up view.
+   *
+   * This is a route of its own rather than an override of the built-in
+   * `signUp` view, so ordinary sign-up stays untouched. Point Better Auth's
+   * `signup.page` at it.
+   * @remarks `string`
+   * @default "oauth-sign-up"
+   */
+  signUpPath?: string
+  /**
+   * URL segment for the OAuth account selection view.
+   * @remarks `string`
+   * @default "select-account"
+   */
+  selectAccountPath?: string
+  /**
+   * Labels and descriptions for OAuth scopes, as a keyed record, a static
+   * list, or a synchronous resolver.
+   *
+   * Entries override the built-in metadata for `openid`, `profile`, `email`,
+   * and `offline_access`. Unresolved scopes remain visible using their raw
+   * value.
+   * @remarks `OAuthScopeMetadataSource`
+   */
+  scopeMetadata?: OAuthScopeMetadataSource
+  /**
+   * Register the connected applications card in security settings.
+   * @remarks `boolean`
+   * @default true
+   */
+  showConnectedApplications?: boolean
+  /**
+   * Add personal OAuth client developer settings backed by Better Auth.
+   * @default false
+   */
+  clientManagement?: boolean
+  /**
+   * Replace the personal Better Auth browser adapter with an application-owned
+   * manager. Use this for server-only operations such as enable or disable.
+   */
+  clientManager?: OAuthClientManager
+  /**
+   * Add organization developer settings backed by an application-owned
+   * manager. The UI passes the organization ID and slug on every operation.
+   */
+  organizationClientManager?: OAuthClientManager
+  /** @default "oauth-clients" */
+  clientManagementPath?: string
+}
+```
+
+```tsx title="OAuthScopeMetadataContext"
+interface OAuthScopeMetadataContext {
+  /** The OAuth client ID from the signed authorization request, if known. */
+  clientId?: string
+  /** Every scope being displayed alongside this one. */
+  requestedScopes: readonly string[]
+}
+```
+
+## React APIs
+
+- [`usePublicOAuthClient`](/docs/ui/auth/web/getting-started#headless-api) loads application metadata
+- [`useOAuthConsent`](/docs/ui/auth/web/getting-started#headless-api) submits the user's decision
+- [`useOAuthContinue`](/docs/ui/auth/web/getting-started#headless-api) resumes the request after a redirect screen
+- [`useListOAuthConsents`](/docs/ui/auth/web/getting-started#headless-api) lists authorized applications
+- [`useDeleteOAuthConsent`](/docs/ui/auth/web/getting-started#headless-api) removes a stored consent
+
+Each hook also exports its TanStack Query options factory.

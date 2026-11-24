@@ -65,10 +65,10 @@ afterEach(() => {
 
 describe('local component previews', () => {
   it('loads Sign In and switches compact filename tabs with complete setup source', async () => {
-    const data = await createPlatformDocsLoader('react')({
-      params: { platform: 'web', _splat: 'auth/components/auth/sign-in' }
+    const data = await createPlatformDocsLoader('auth')({
+      params: { platform: 'web', _splat: 'components/auth/sign-in' }
     })
-    const page = getPlatformDocs('web', 'react').getPage(data.path)
+    const page = getPlatformDocs('web', 'auth').getPage(data.path)
     if (!page) throw new Error('Missing Sign In documentation')
     await page.load()
     const MDX = page.body

@@ -1,0 +1,403 @@
+---
+title: 'Two Factor'
+description: '"Add a second step after the password: authenticator codes, emailed codes, and backup codes."'
+links:
+  source: https://github.com/vezham/vx-fe-pkgs/tree/HEAD/packages/core/react/src/lib-27/auth/plugins/two-factor
+---
+
+import { Callout } from '@vezham/docs-react/components/callout'
+import { Step, Steps } from '@vezham/docs-react/components/steps'
+import {
+  Tab,
+  Tabs,
+  TabsList,
+  TabsTrigger
+} from '@vezham/docs-react/components/tabs'
+
+The two-factor plugin adds a second step to password sign-in. Better Auth withholds the session until that step succeeds, answering the sign-in request with `{ twoFactorRedirect: true, twoFactorMethods }` instead.
+
+It contributes:
+
+- A `<TwoFactor.Challenge />` view at `/auth/two-factor` covering authenticator codes, emailed codes, backup codes, and "trust this device"
+- A `<TwoFactor />` card in security settings for enrolling, showing the QR code, and managing backup codes
+- Mutation hooks for every two-factor endpoint (`useEnableTwoFactor`, `useDisableTwoFactor`, `useVerifyTotp`, `useSendTwoFactorOtp`, `useVerifyTwoFactorOtp`, `useVerifyBackupCode`, `useGenerateBackupCodes`, `useGetTotpUri`)
+
+The built-in sign-in forms detect `twoFactorRedirect` and open the challenge. They preserve `redirectTo` and use it after successful verification.
+
+<Callout type="warn">
+  Better Auth does not apply two-factor to passwordless sign-in. Magic link,
+  email OTP, passkeys, and OAuth all bypass the challenge: the second factor
+  only guards password (and username) sign-in.
+</Callout>
+
+## Setup
+
+<Steps>
+
+<Step>
+### Install the Better Auth plugin
+
+Add the [2FA](https://www.better-auth.com/docs/plugins/2fa) plugin to your server config. Wire `otpOptions.sendOTP` if you want to offer emailed codes as a second factor:
+
+```ts title="lib/auth.ts"
+import { betterAuth } from '@vezham/auth'
+import { twoFactor } from '@vezham/auth/plugins'
+
+// [!code highlight]
+
+export const auth = betterAuth({
+  // ...
+  plugins: [
+    twoFactor({
+      // [!code highlight]
+      issuer: 'My App', // [!code highlight]
+      otpOptions: {
+        // [!code highlight]
+        sendOTP: async ({ user, otp }) => {
+          // [!code highlight]
+          // Email `otp` to `user.email`. // [!code highlight]
+        } // [!code highlight]
+      } // [!code highlight]
+    }) // [!code highlight]
+  ]
+})
+```
+
+</Step>
+
+<Step>
+
+### Migrate your database
+
+The plugin adds a `twoFactor` table and a `twoFactorEnabled` field on `user`. Generate the schema and run the migration:
+
+```bash
+pnpm dlx @better-auth/cli generate
+pnpm dlx @better-auth/cli migrate
+```
+
+</Step>
+
+<Step>
+
+### Install the matching client plugin
+
+```ts title="lib/auth-client.ts"
+import { twoFactorClient } from '@vezham/auth/client/plugins'
+import { createAuthClient } from '@vezham/auth/react'
+
+// [!code highlight]
+
+export const authClient = createAuthClient({
+  plugins: [twoFactorClient()] // [!code highlight]
+})
+```
+
+Leave `twoFactorPage` and `onTwoFactorRedirect` unset: the UI handles the redirect itself and keeps `redirectTo` intact, while `twoFactorPage` forces a full page reload.
+
+</Step>
+
+<Step>
+
+### Register the UI plugin
+
+```tsx title="components/providers.tsx"
+import { Auth } from '@vezham/react/auth'
+import { TwoFactor } from '@vezham/react/auth/plugins/two-factor'
+
+// [!code highlight]
+;<Auth.Provider
+  authClient={authClient}
+  navigate={navigate}
+  plugins={[TwoFactor.plugin()]} // [!code highlight]
+>
+  {children}
+</Auth.Provider>
+```
+
+</Step>
+
+<Step>
+
+### Allow the new view path
+
+The plugin contributes a `two-factor` segment to `viewPaths.auth`. Spread `TwoFactor.plugin().viewPaths?.auth` into your auth route's allowed-paths set:
+
+<Tabs defaultValue="tanstack-start">
+
+<TabsList>
+  <TabsTrigger value="tanstack-start">TanStack Start</TabsTrigger>
+  <TabsTrigger value="next.js">Next.js</TabsTrigger>
+</TabsList>
+
+<Tab value="tanstack-start">
+
+```tsx title="routes/auth/$path.tsx"
+// [!code highlight]
+import { createFileRoute, notFound } from '@tanstack/react-router'
+
+import { viewPaths } from '@vezham/auth-ui-core'
+import { Auth } from '@vezham/react/auth'
+import { TwoFactor } from '@vezham/react/auth/plugins/two-factor'
+
+export const Route = createFileRoute('/auth/$path')({
+  beforeLoad({ params: { path } }) {
+    if (
+      !Object.values({
+        ...viewPaths.auth,
+        ...TwoFactor.plugin().viewPaths?.auth // [!code highlight]
+      }).includes(path)
+    ) {
+      throw notFound()
+    }
+  },
+  component: AuthPage
+})
+
+function AuthPage() {
+  const { path } = Route.useParams()
+  return <Auth path={path} />
+}
+```
+
+</Tab>
+
+<Tab value="next.js">
+
+```tsx title="app/auth/[path]/page.tsx"
+// [!code highlight]
+import { notFound } from 'next/navigation'
+
+import { viewPaths } from '@vezham/auth-ui-core'
+import { Auth } from '@vezham/react/auth'
+import { TwoFactor } from '@vezham/react/auth/plugins/two-factor'
+
+export default async function AuthPage({
+  params
+}: {
+  params: Promise<{ path: string }>
+}) {
+  const { path } = await params
+
+  if (
+    !Object.values({
+      ...viewPaths.auth,
+      ...TwoFactor.plugin().viewPaths?.auth // [!code highlight]
+    }).includes(path)
+  ) {
+    notFound()
+  }
+
+  return <Auth path={path} />
+}
+```
+
+</Tab>
+
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## The sign-in flow
+
+```text
+email/password or username/password
+    ↓
+{ twoFactorRedirect: true, twoFactorMethods: ["totp", "otp"] }
+    ↓
+/auth/two-factor?redirectTo=…
+    ↓ authenticator code, emailed code, or backup code
+authenticated session
+```
+
+The method names ride along in session storage: names only, never a code or token. The two-factor cookie that authorizes the challenge stays HTTP-only, exactly as Better Auth set it.
+
+Building a custom sign-in form? Check for the redirect yourself:
+
+```tsx
+import {
+  isTwoFactorRedirect,
+  storeTwoFactorMethods
+} from '@vezham/auth-ui-core/plugins/two-factor'
+
+const { mutate: signInEmail } = useSignInEmail(authClient, {
+  onSuccess: data => {
+    if (isTwoFactorRedirect(data)) {
+      storeTwoFactorMethods(data.twoFactorMethods)
+      navigate({ to: '/auth/two-factor' })
+      return
+    }
+
+    navigate({ to: redirectTo })
+  }
+})
+```
+
+## Components
+
+### `<TwoFactor.Challenge />`
+
+Rendered at `/auth/two-factor`. Offers the methods the sign-in response reported, plus backup-code recovery and an optional "trust this device" checkbox. Emailed codes are sent on request rather than automatically, so a user with an authenticator app never triggers a pointless email.
+
+```tsx
+import { TwoFactor } from '@vezham/react/auth/plugins/two-factor'
+
+;<TwoFactor.Challenge />
+```
+
+```tsx title="TwoFactorChallengeProps"
+type TwoFactorChallengeProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+```
+
+### `<TwoFactor />`
+
+Added to `<Auth.Settings.Security />` automatically. Users can enroll with an authenticator app or a delivered code. Enrolled users can regenerate backup codes or turn two-factor off.
+
+```tsx
+import { TwoFactor } from '@vezham/react/auth/plugins/two-factor'
+
+;<TwoFactor />
+```
+
+```tsx title="TwoFactorSettingsProps"
+type TwoFactorSettingsProps = {
+  className?: string
+  variant?: CardProps['variant']
+}
+```
+
+Backup codes live in component state and are never written to storage or the query cache: once the dialog closes they are gone.
+
+## Delivered-code enrollment
+
+The enrollment dialog offers authenticator apps by default. Configure OTP delivery on the server before you add the delivered-code option:
+
+```ts
+// Server
+twoFactor({
+  otpOptions: { sendOTP }
+})
+```
+
+```tsx
+// UI
+TwoFactor.plugin({ enrollmentMethods: ['totp', 'otp'] })
+```
+
+Better Auth activates OTP enrollment immediately. The dialog closes after `authClient.twoFactor.enable({ method: "otp" })` succeeds.
+
+## Passwordless accounts
+
+Set `allowPasswordless` on both sides to let passkey-only users manage two-factor without a password:
+
+```ts
+// Server
+twoFactor({ allowPasswordless: true })
+```
+
+```tsx
+// UI
+TwoFactor.plugin({ allowPasswordless: true })
+```
+
+The UI still asks for a password when the account has a credential account, matching the server's rule. It reads the linked accounts to decide, so users who do have a password are not offered a shortcut around it.
+
+## Options
+
+```ts
+TwoFactor.plugin({
+  // Override the URL segment. Default: "two-factor"
+  path: '2fa',
+  // Match the server's TOTP/OTP digits. Default: 6
+  codeLength: 6,
+  // Show backup-code recovery and management controls. Default: true
+  backupCodes: true,
+  // Hide the "Trust this device" checkbox
+  trustDevice: false,
+  // Offer delivered-code enrollment after the server configures sendOTP
+  enrollmentMethods: ['totp', 'otp']
+})
+```
+
+`backupCodes` controls the recovery and management UI. It does not disable backup codes on the server. Enrollment always shows any codes returned by the server so users can save them.
+
+```tsx title="TwoFactorPluginOptions"
+type TwoFactorPluginOptions = {
+  /**
+   * Override the plugin's default localization strings.
+   * @remarks `TwoFactorLocalization`
+   */
+  localization?: Partial<TwoFactorLocalization>
+  /**
+   * URL segment for the two-factor challenge view.
+   * @remarks `string`
+   * @default "two-factor"
+   */
+  path?: string
+  /**
+   * Number of characters rendered by the TOTP and OTP inputs.
+   *
+   * Keep this in sync with Better Auth's `twoFactor({ totpOptions: { digits } })`
+   * and `twoFactor({ otpOptions: { digits } })` server options.
+   *
+   * @remarks `number`
+   * @default 6
+   */
+  codeLength?: number
+  /**
+   * Offer backup-code recovery on the challenge view and expose backup-code
+   * management in settings.
+   *
+   * This controls the UI only. Enrollment still displays any backup codes
+   * returned by the server so users can save them.
+   *
+   * @remarks `boolean`
+   * @default true
+   */
+  backupCodes?: boolean
+  /**
+   * Show the "Trust this device" checkbox on the challenge view.
+   *
+   * @remarks `boolean`
+   * @default true
+   */
+  trustDevice?: boolean
+  /**
+   * Manage two-factor without asking for a password.
+   *
+   * Mirrors Better Auth's `twoFactor({ allowPasswordless })` server option,
+   * which only skips the password for accounts that have no credential
+   * account (e.g. passkey-only users) — set both or neither.
+   *
+   * @remarks `boolean`
+   * @default false
+   */
+  allowPasswordless?: boolean
+  /**
+   * Methods users can choose while enrolling in two-factor authentication.
+   *
+   * Add `"otp"` only when the server configures `otpOptions.sendOTP`.
+   *
+   * @remarks `TwoFactorMethod[]`
+   * @default ["totp"]
+   */
+  enrollmentMethods?: TwoFactorMethod[]
+}
+```
+
+## Localization
+
+```tsx title="TwoFactorLocalization"
+type TwoFactorLocalization = typeof twoFactorLocalization
+```
+
+Read these from `useAuthPlugin(TwoFactor.plugin).localization` inside custom slot components.
+
+## Email template
+
+Pair `otpOptions.sendOTP` with the [`<AuthEmail.Otp />`](/docs/ui/auth/web/components/email/otp-email) component for a styled code email.

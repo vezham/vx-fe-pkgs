@@ -217,35 +217,35 @@ describe('content navigation', () => {
           })
         ])
       )
-      const auth = getAuthCatalog('web', 'react', locale)
+      const auth = getAuthCatalog('web', locale)
       expect(auth).toHaveLength(58)
       expect(auth).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             title: '<Auth.Provider>',
             slug: 'auth-provider',
-            url: `${prefix}/docs/ui/react/web/auth/components/auth-provider`
+            url: `${prefix}/docs/ui/auth/web/components/auth-provider`
           }),
           expect.objectContaining({
             title: '<Auth.SignIn />',
             slug: 'sign-in',
-            url: `${prefix}/docs/ui/react/web/auth/components/auth/sign-in`
+            url: `${prefix}/docs/ui/auth/web/components/auth/sign-in`
           }),
           expect.objectContaining({
             title: 'Organization',
             slug: 'organization',
-            url: `${prefix}/docs/ui/react/web/auth/plugins/organization`
+            url: `${prefix}/docs/ui/auth/web/plugins/organization`
           }),
           expect.objectContaining({
             title: '<AuthEmail.EmailVerification />',
             slug: 'email-verification-email',
-            url: `${prefix}/docs/ui/react/web/auth/components/email/email-verification-email`
+            url: `${prefix}/docs/ui/auth/web/components/email/email-verification-email`
           })
         ])
       )
       expect(getComponentCatalog('native', 'react', locale)).toEqual([])
       expect(getLayoutCatalog('native', 'react', locale)).toEqual([])
-      expect(getAuthCatalog('native', 'react', locale)).toEqual([])
+      expect(getAuthCatalog('native', locale)).toEqual([])
     }
   )
 

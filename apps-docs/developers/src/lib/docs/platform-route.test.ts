@@ -1,4 +1,5 @@
 import { getPlatformDocsRuntime } from '../../components/docs/platform-docs'
+import { getAvailablePlatforms } from '../../components/docs/platform-docs'
 import { uiLibraries } from '../../config/ui-libraries'
 import {
   createPlatformDocsRouteOptions,
@@ -9,7 +10,7 @@ describe('shared UI documentation routes', () => {
   it.each(Object.keys(uiLibraries) as (keyof typeof uiLibraries)[])(
     'keeps %s markdown exports on the selected library and platform',
     async library => {
-      for (const platform of ['web', 'native'] as const) {
+      for (const platform of getAvailablePlatforms(library)) {
         const runtime = getPlatformDocsRuntime(platform, library)
         const { page } = runtime.getDocsPage({ slugs: ['getting-started'] })
         const response = await createPlatformMarkdownHandler(library)({
@@ -28,6 +29,14 @@ describe('shared UI documentation routes', () => {
       params: { platform: 'other' }
     })
     expect(response.status).toBe(404)
+
+    const authNative = await createPlatformMarkdownHandler('auth')({
+      params: { platform: 'native', _splat: 'getting-started' }
+    })
+    expect(authNative.status).toBe(200)
+    expect(await authNative.text()).toContain(
+      'TODO: Add Vezham Auth documentation and native package support.'
+    )
   })
 
   it('preserves localized titles and the page-specific social image', async () => {

@@ -1,5 +1,3 @@
-import { renderToStaticMarkup } from 'react-dom/server'
-
 import { deserializePageTree } from '@vezham/docs-core/source/client'
 
 import { getUiLibraryRoute } from '../../components/docs/library-routes'
@@ -28,8 +26,7 @@ describe('UI documentation', () => {
     expect(getPlatformSections('web').map(section => section.id)).toEqual([
       'getting-started',
       'components',
-      'layouts',
-      'auth'
+      'layouts'
     ])
     expect(getPlatformPage('native', 'components/button')).toBe(
       'getting-started'
@@ -64,7 +61,7 @@ describe('UI documentation', () => {
         getPlatformSections(platform, 'react').map(item => item.id)
       ).toEqual(
         platform === 'web'
-          ? ['getting-started', 'components', 'layouts', 'auth']
+          ? ['getting-started', 'components', 'layouts']
           : ['getting-started']
       )
     },
@@ -101,35 +98,6 @@ describe('UI documentation', () => {
   )
 
   it.each([
-    ['en', 'auth', 'Quick Start', '@vezham/react/auth', 'ReactAuth'],
-    [
-      'cn',
-      'auth/components/auth-provider',
-      '<Auth.Provider>',
-      '@vezham/react/auth',
-      'Auth.Provider'
-    ],
-    [
-      'en',
-      'auth/components/auth/sign-in',
-      '<Auth.SignIn />',
-      '@vezham/react/auth',
-      'react-auth-sign-in'
-    ],
-    [
-      'cn',
-      'auth/plugins/organization',
-      'Organization',
-      '@vezham/react/auth/plugins/organization',
-      'Organization.Members'
-    ],
-    [
-      'en',
-      'auth/components/email/email-verification-email',
-      '<AuthEmail.EmailVerification />',
-      '@vezham/react/auth/email',
-      'AuthEmail.EmailVerification'
-    ],
     [
       'en',
       'components/install-tabs',
@@ -231,31 +199,28 @@ describe('UI documentation', () => {
       const markdown = await runtime.getLLMText(page)
       expect(markdown).toContain(entry)
       expect(markdown).toContain(example)
-      if (path === 'auth' || path.startsWith('auth/')) {
-        const tree = deserializePageTree(data.pageTree)
-        expect(
-          tree.children
-            .filter(node => node.type === 'folder')
-            .map(node => renderToStaticMarkup(node.name))
-        ).toEqual([
-          expect.stringContaining('Integrations'),
-          expect.stringContaining('Concepts'),
-          expect.stringContaining('Plugins'),
-          expect.stringContaining('Components')
-        ])
-        expect(JSON.stringify(tree)).not.toContain('/web/components/')
-        expect(JSON.stringify(tree)).not.toContain('/layouts/')
-      }
     },
     20_000
   )
 
   it('compiles every phase-one Auth page with registered interactive examples', async () => {
-    const runtime = getPlatformDocsRuntime('web', 'react')
-    const pages = runtime.source
-      .getPages('en')
-      .filter(page => page.slugs[0] === 'auth')
+    const runtime = getPlatformDocsRuntime('web', 'auth')
+    const pages = runtime.source.getPages('en')
     expect(pages).toHaveLength(59)
+    const data = await createPlatformDocsLoader('auth')({
+      params: {
+        lang: 'cn',
+        platform: 'web',
+        _splat: 'components/auth-provider'
+      }
+    })
+    expect(data.routePath).toBe('/cn/docs/ui/auth/web/components/auth-provider')
+    expect(data.platforms).toEqual(['web', 'native'])
+    const nativeRuntime = getPlatformDocsRuntime('native', 'auth')
+    const nativePage = nativeRuntime.source.getPages('en')[0]
+    expect(await nativeRuntime.getLLMText(nativePage)).toContain(
+      'TODO: Add Vezham Auth documentation and native package support.'
+    )
     const examples = new Set<string>()
     for (const page of pages) {
       const markdown = await runtime.getLLMText(page)

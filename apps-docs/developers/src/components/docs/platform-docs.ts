@@ -7,7 +7,11 @@ import {
   docsPageSchema
 } from '@vezham/start/runtime/docs'
 
-import { type UiLibrary, uiLibraries } from '@config/ui-libraries'
+import {
+  type UiLibrary,
+  type UiPlatform,
+  uiLibraries
+} from '@config/ui-libraries'
 import { vxCore, vxDocs, vxI18n, vxMetadata } from '@generated/vx'
 
 import { componentLinksSchema } from '../../lib/docs/component-resources'
@@ -75,6 +79,26 @@ const reactPlatformDocs = defineDocs({
   meta: { schema: docsMetaSchema }
 })
 
+const authPlatformDocs = defineDocs({
+  dir: 'content/docs-auth/web',
+  docs: {
+    async: true,
+    postprocess: { includeProcessedMarkdown: true },
+    schema: platformDocsPageSchema
+  },
+  meta: { schema: docsMetaSchema }
+})
+
+const authNativePlatformDocs = defineDocs({
+  dir: 'content/docs-auth/native',
+  docs: {
+    async: true,
+    postprocess: { includeProcessedMarkdown: true },
+    schema: platformDocsPageSchema
+  },
+  meta: { schema: docsMetaSchema }
+})
+
 const nativeReactPlatformDocs = defineDocs({
   dir: 'content/docs-react/native',
   docs: {
@@ -97,6 +121,18 @@ const runtimeOptions = {
   }
 }
 
+const authWebRuntime = createStaticDocsRuntime({
+  ...runtimeOptions,
+  docs: authPlatformDocs,
+  docsRoute: `${uiLibraries.auth.routeBase}/web`
+})
+
+const authNativeRuntime = createStaticDocsRuntime({
+  ...runtimeOptions,
+  docs: authNativePlatformDocs,
+  docsRoute: `${uiLibraries.auth.routeBase}/native`
+})
+
 const runtimes = {
   web: createStaticDocsRuntime({
     ...runtimeOptions,
@@ -116,7 +152,7 @@ const proWebRuntime = createStaticDocsRuntime({
   docsRoute: `${uiLibraries['react-pro-v3'].routeBase}/web`
 })
 
-const libraryRuntimes: Record<UiLibrary, typeof runtimes> = {
+const libraryRuntimes = {
   'react-v3': runtimes,
   'react-pro-v3': {
     web: proWebRuntime,
@@ -137,26 +173,59 @@ const libraryRuntimes: Record<UiLibrary, typeof runtimes> = {
       docs: nativeReactPlatformDocs,
       docsRoute: `${uiLibraries['react'].routeBase}/native`
     })
+  },
+  auth: {
+    web: authWebRuntime,
+    native: authNativeRuntime
   }
 }
 
+const getLibraryPlatformRuntime = (
+  library: UiLibrary,
+  platform: UiPlatform
+) => {
+  if (library === 'auth') return libraryRuntimes.auth[platform]
+  if (library === 'react') return libraryRuntimes.react[platform]
+  if (library === 'react-pro-v3')
+    return libraryRuntimes['react-pro-v3'][platform]
+  return libraryRuntimes['react-v3'][platform]
+}
+
+export const getPlatformDocsRuntimes = () => [
+  libraryRuntimes['react-v3'].web,
+  libraryRuntimes['react-v3'].native,
+  libraryRuntimes['react-pro-v3'].web,
+  libraryRuntimes['react-pro-v3'].native,
+  libraryRuntimes.react.web,
+  libraryRuntimes.react.native,
+  libraryRuntimes.auth.web,
+  libraryRuntimes.auth.native
+]
+
 export const getAvailablePlatforms = (library: UiLibrary) =>
-  (['web', 'native'] as const).filter(
+  (['web', 'native'] as UiPlatform[]).filter(
     platform =>
-      (libraryRuntimes[library][platform]?.source.getPages().length ?? 0) > 0
+      (getLibraryPlatformRuntime(library, platform)?.source.getPages().length ??
+        0) > 0
   )
 
 export const getPlatformDocsRuntime = (
   platform: 'web' | 'native',
   library: UiLibrary = 'react'
 ) => {
-  return libraryRuntimes[library][platform]
+  const runtime = getLibraryPlatformRuntime(library, platform)
+  if (!runtime) {
+    throw new Error(`No ${platform} documentation runtime for ${library}`)
+  }
+  return runtime
 }
 
 export const getPlatformDocs = (
   platform: 'web' | 'native',
   library: UiLibrary = 'react'
 ) => {
+  if (library === 'auth')
+    return platform === 'native' ? authNativePlatformDocs : authPlatformDocs
   if (library === 'react-pro-v3')
     return platform === 'native' ? nativeProPlatformDocs : proPlatformDocs
   if (library === 'react')

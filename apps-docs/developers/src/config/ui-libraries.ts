@@ -1,8 +1,11 @@
-import reactPackage from '@vezham/react/package.json'
+import authReactPackage from '@vezham/auth-ui-react/package.json'
+
+export const uiPlatforms = { web: 'Web', native: 'Native' } as const
+
+export type UiPlatform = keyof typeof uiPlatforms
 
 type LibraryDefinition = {
   title: string
-  selectorVersion?: string
   description?: string
   badge?: string
   disabled?: boolean
@@ -11,9 +14,13 @@ type LibraryDefinition = {
 
 export const uiLibraries = {
   react: {
-    title: 'Vezham',
-    selectorVersion: reactPackage.version,
+    title: 'Vezham React',
     routeBase: '/docs/ui/react'
+  },
+  auth: {
+    title: 'Vezham Auth',
+    description: 'Authentication components, plugins, and integrations',
+    routeBase: '/docs/ui/auth'
   },
   'react-v3': {
     title: 'Vezham v3',
@@ -34,21 +41,19 @@ export const uiLibrarySections: {
   title?: string
   items: UiLibrary[]
 }[] = [
-  { id: 'current', items: ['react'] },
+  {
+    id: 'packages',
+    title: authReactPackage.version,
+    items: ['react', 'auth']
+  },
   { id: 'v3', title: 'v3', items: ['react-v3', 'react-pro-v3'] }
 ]
-
-export const uiPlatforms = { web: 'Web', native: 'Native' } as const
 
 export const getUiLibrary = (id: UiLibrary): LibraryDefinition =>
   uiLibraries[id]
 
-export const getUiLibrarySelectorTitle = (id: UiLibrary) => {
-  const library = getUiLibrary(id)
-  return library.selectorVersion
-    ? `${library.title} ${library.selectorVersion}`
-    : library.title
-}
+export const getUiLibrarySelectorTitle = (id: UiLibrary) =>
+  getUiLibrary(id).title
 
 export const getUiLibrarySectionTitle = (
   id: UiLibrary,

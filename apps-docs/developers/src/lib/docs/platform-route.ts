@@ -78,6 +78,8 @@ export const createPlatformMarkdownHandler =
   async ({ params }: { params: PlatformParams }) => {
     if (params.platform !== 'web' && params.platform !== 'native')
       return new Response(null, { status: 404 })
+    if (!getAvailablePlatforms(library).includes(params.platform))
+      return new Response(null, { status: 404 })
     const runtime = getPlatformDocsRuntime(params.platform, library)
     const { page } = runtime.getDocsPage({
       slugs: params._splat?.split('/') ?? [],
