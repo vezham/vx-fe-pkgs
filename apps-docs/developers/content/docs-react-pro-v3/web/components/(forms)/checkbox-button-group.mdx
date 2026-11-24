@@ -1,0 +1,886 @@
+---
+title: 'Checkbox Button Group'
+description: 'A multi-selection button group with card-style checkboxes, icons, and custom indicators.'
+sourceUrl: https://heroui.pro/docs/react/components/checkbox-button-group
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-checkbox-button-group-default">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const features = [
+  {
+    description: 'Real-time threat detection and prevention',
+    value: 'security'
+  },
+  {
+    description: 'Cloud-based storage with automatic backups',
+    value: 'storage'
+  },
+  {
+    description: 'Usage reports and performance dashboards',
+    value: 'analytics'
+  }
+]
+
+export function Default() {
+  return (
+    <CheckboxButtonGroup
+      className="w-[360px]"
+      defaultValue={['security', 'storage']}
+      name="features"
+      variant="secondary">
+      <Label>Select features</Label>
+      <Description>Choose all that apply to your project</Description>
+      {features.map(feature => (
+        <CheckboxButtonGroup.Item key={feature.value} value={feature.value}>
+          <CheckboxButtonGroup.Indicator />
+          <CheckboxButtonGroup.ItemContent>
+            <Label className="capitalize">{feature.value}</Label>
+            <Description>{feature.description}</Description>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the CheckboxButtonGroup component and access all parts using dot notation.
+
+```tsx
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+
+;<CheckboxButtonGroup>
+  <CheckboxButtonGroup.Item>
+    <CheckboxButtonGroup.ItemIcon />
+    <CheckboxButtonGroup.ItemContent />
+    <CheckboxButtonGroup.Indicator />
+  </CheckboxButtonGroup.Item>
+</CheckboxButtonGroup>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-checkbox-button-group-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CheckboxButtonGroup, NumberValue } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const addons = [
+  {
+    description: 'Automated daily backups',
+    price: 5,
+    title: 'Backups',
+    value: 'backups'
+  },
+  {
+    description: '24/7 monitoring and alerts',
+    price: 12,
+    title: 'Monitoring',
+    value: 'monitoring'
+  },
+  {
+    description: 'Priority email and chat support',
+    price: 8,
+    title: 'Support',
+    value: 'support'
+  }
+]
+
+export function Controlled() {
+  const [selected, setSelected] = useState(['backups'])
+
+  return (
+    <div className="flex w-[360px] flex-col gap-4">
+      <CheckboxButtonGroup
+        name="addons-controlled"
+        value={selected}
+        variant="secondary"
+        onChange={setSelected}>
+        <Label>Add-ons</Label>
+        <Description>Select the add-ons you need</Description>
+        {addons.map(addon => (
+          <CheckboxButtonGroup.Item key={addon.value} value={addon.value}>
+            <CheckboxButtonGroup.Indicator />
+            <CheckboxButtonGroup.ItemContent>
+              <Label>{addon.title}</Label>
+              <Description>{addon.description}</Description>
+              <NumberValue
+                className="mt-2 text-sm font-semibold"
+                currency="USD"
+                style="currency"
+                value={addon.price}>
+                <NumberValue.Suffix>
+                  <span className="text-muted text-xs font-normal">/mo</span>
+                </NumberValue.Suffix>
+              </NumberValue>
+            </CheckboxButtonGroup.ItemContent>
+          </CheckboxButtonGroup.Item>
+        ))}
+      </CheckboxButtonGroup>
+      <p className="text-muted text-sm">
+        Selected:{' '}
+        <span className="text-foreground font-medium">
+          {selected.join(', ') || 'None'}
+        </span>
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Indicator
+
+<ComponentPreview name="pro-checkbox-button-group-custom-indicator">
+
+```tsx
+'use client'
+
+import CircleCheckFill from '@gravity-ui/icons/CircleCheckFill'
+
+import { CheckboxButtonGroup, NumberValue } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const notifications = [
+  {
+    description: 'Weekly product updates and tips',
+    subscribers: 4200,
+    value: 'product-updates'
+  },
+  {
+    description: 'Security alerts and maintenance notices',
+    subscribers: 8100,
+    value: 'security-alerts'
+  },
+  {
+    description: 'Promotions, deals, and special offers',
+    subscribers: 2300,
+    value: 'marketing'
+  }
+]
+
+export function CustomIndicator() {
+  return (
+    <CheckboxButtonGroup
+      className="w-full max-w-3xl grid-cols-3"
+      defaultValue={['product-updates', 'security-alerts']}
+      layout="grid"
+      name="notifications"
+      variant="secondary">
+      <Label className="col-span-full">Notification preferences</Label>
+      {notifications.map(item => (
+        <CheckboxButtonGroup.Item key={item.value} value={item.value}>
+          <CheckboxButtonGroup.Indicator>
+            <CircleCheckFill />
+          </CheckboxButtonGroup.Indicator>
+          <CheckboxButtonGroup.ItemContent>
+            <Label className="capitalize">
+              {item.value.replace(/-/g, ' ')}
+            </Label>
+            <Description>{item.description}</Description>
+            <NumberValue
+              className="mt-3 text-sm font-semibold"
+              maximumFractionDigits={0}
+              value={item.subscribers}>
+              <NumberValue.Suffix>
+                <span className="text-muted text-xs font-normal">
+                  {' '}
+                  subscribers
+                </span>
+              </NumberValue.Suffix>
+            </NumberValue>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled Group
+
+<ComponentPreview name="pro-checkbox-button-group-disabled-group">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const features = [
+  {
+    description: 'Real-time threat detection and prevention',
+    value: 'security'
+  },
+  {
+    description: 'Cloud-based storage with automatic backups',
+    value: 'storage'
+  },
+  {
+    description: 'Usage reports and performance dashboards',
+    value: 'analytics'
+  }
+]
+
+export function DisabledGroup() {
+  return (
+    <CheckboxButtonGroup
+      isDisabled
+      className="w-[360px]"
+      defaultValue={['security']}
+      name="features-disabled"
+      variant="secondary">
+      <Label>Select features</Label>
+      <Description>Feature selection is temporarily unavailable.</Description>
+      {features.map(feature => (
+        <CheckboxButtonGroup.Item key={feature.value} value={feature.value}>
+          <CheckboxButtonGroup.Indicator />
+          <CheckboxButtonGroup.ItemContent>
+            <Label className="capitalize">{feature.value}</Label>
+            <Description>{feature.description}</Description>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Grid Layout
+
+<ComponentPreview name="pro-checkbox-button-group-grid-layout">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup, NumberValue } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const addons = [
+  {
+    description: 'Automated daily backups',
+    price: 5,
+    title: 'Backups',
+    value: 'backups'
+  },
+  {
+    description: '24/7 monitoring and alerts',
+    price: 12,
+    title: 'Monitoring',
+    value: 'monitoring'
+  },
+  {
+    description: 'Priority email and chat support',
+    price: 8,
+    title: 'Support',
+    value: 'support'
+  }
+]
+
+export function GridLayout() {
+  return (
+    <CheckboxButtonGroup
+      className="w-full max-w-2xl grid-cols-3"
+      defaultValue={['backups', 'monitoring']}
+      layout="grid"
+      name="addons"
+      variant="secondary">
+      <Label className="col-span-full">Add-ons</Label>
+      {addons.map(addon => (
+        <CheckboxButtonGroup.Item key={addon.value} value={addon.value}>
+          <CheckboxButtonGroup.Indicator />
+          <CheckboxButtonGroup.ItemContent>
+            <div className="flex flex-col gap-1">
+              <Label>{addon.title}</Label>
+              <Description>{addon.description}</Description>
+            </div>
+            <NumberValue
+              className="mt-2 text-sm font-semibold"
+              currency="USD"
+              style="currency"
+              value={addon.price}>
+              <NumberValue.Suffix>
+                <span className="text-muted text-xs font-normal">/mo</span>
+              </NumberValue.Suffix>
+            </NumberValue>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Icon Cards
+
+<ComponentPreview name="pro-checkbox-button-group-icon-cards">
+
+```tsx
+'use client'
+
+import {
+  CircleCheckFill,
+  Cloud,
+  Lock,
+  Megaphone,
+  ShieldKeyhole
+} from '@gravity-ui/icons'
+
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+import { Chip, Description, Label } from '@vezham/react-v3'
+
+const securityFeatures = [
+  {
+    badge: 'Recommended',
+    description: 'Two-factor authentication for all user accounts.',
+    icon: <Lock />,
+    title: '2FA',
+    value: '2fa'
+  },
+  {
+    description: 'Encrypt data at rest and in transit.',
+    icon: <ShieldKeyhole />,
+    title: 'Encryption',
+    value: 'encryption'
+  },
+  {
+    description: 'Automated daily backups to secure cloud storage.',
+    icon: <Cloud />,
+    title: 'Cloud Backup',
+    value: 'cloud-backup'
+  },
+  {
+    description: 'Real-time alerts for incidents and breaches.',
+    icon: <Megaphone />,
+    title: 'Alert System',
+    value: 'alerts'
+  }
+]
+
+export function IconCards() {
+  return (
+    <CheckboxButtonGroup
+      className="w-[520px]"
+      defaultValue={['2fa', 'encryption']}
+      name="security-features">
+      <Label>Security features</Label>
+      {securityFeatures.map(feature => (
+        <CheckboxButtonGroup.Item
+          key={feature.value}
+          className="bg-default"
+          value={feature.value}>
+          <CheckboxButtonGroup.Indicator>
+            <CircleCheckFill />
+          </CheckboxButtonGroup.Indicator>
+          <CheckboxButtonGroup.ItemContent>
+            <div className="flex items-center gap-3">
+              <span className="bg-surface shadow-surface flex size-8 items-center justify-center rounded-lg">
+                {feature.icon}
+              </span>
+              <div className="flex gap-2">
+                <Label className="text-sm font-semibold">{feature.title}</Label>
+                {!!feature.badge && (
+                  <Chip color="success" size="sm" variant="soft">
+                    <Chip.Label>{feature.badge}</Chip.Label>
+                  </Chip>
+                )}
+              </div>
+            </div>
+            <Description className="mt-2">{feature.description}</Description>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## No Indicator
+
+<ComponentPreview name="pro-checkbox-button-group-no-indicator">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const features = [
+  {
+    description: 'Real-time threat detection and prevention',
+    value: 'security'
+  },
+  {
+    description: 'Cloud-based storage with automatic backups',
+    value: 'storage'
+  },
+  {
+    description: 'Usage reports and performance dashboards',
+    value: 'analytics'
+  }
+]
+
+export function NoIndicator() {
+  return (
+    <CheckboxButtonGroup
+      className="w-[360px]"
+      defaultValue={['security']}
+      name="features-no-indicator">
+      <Label>Select features</Label>
+      {features.map(feature => (
+        <CheckboxButtonGroup.Item key={feature.value} value={feature.value}>
+          <CheckboxButtonGroup.ItemContent>
+            <Label className="capitalize">{feature.value}</Label>
+            <Description>{feature.description}</Description>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Render Prop Children
+
+<ComponentPreview name="pro-checkbox-button-group-render-prop-children">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup, NumberValue } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const addons = [
+  {
+    description: 'Automated daily backups',
+    price: 5,
+    title: 'Backups',
+    value: 'backups'
+  },
+  {
+    description: '24/7 monitoring and alerts',
+    price: 12,
+    title: 'Monitoring',
+    value: 'monitoring'
+  },
+  {
+    description: 'Priority email and chat support',
+    price: 8,
+    title: 'Support',
+    value: 'support'
+  }
+]
+
+export function RenderPropChildren() {
+  return (
+    <CheckboxButtonGroup
+      className="w-[360px]"
+      defaultValue={['storage']}
+      name="features-render"
+      variant="secondary">
+      <Label>Select features</Label>
+      {addons.map(addon => (
+        <CheckboxButtonGroup.Item key={addon.value} value={addon.value}>
+          {({ isSelected }) => (
+            <>
+              <CheckboxButtonGroup.Indicator />
+              <CheckboxButtonGroup.ItemContent>
+                <Label>{addon.title}</Label>
+                <Description>{addon.description}</Description>
+                <NumberValue
+                  className={`mt-2 text-sm font-semibold ${isSelected ? 'text-accent' : ''}`}
+                  currency="USD"
+                  maximumFractionDigits={0}
+                  style="currency"
+                  value={addon.price}>
+                  <NumberValue.Suffix>
+                    <span className="text-muted text-xs font-normal">/mo</span>
+                  </NumberValue.Suffix>
+                </NumberValue>
+              </CheckboxButtonGroup.ItemContent>
+            </>
+          )}
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Subscription Plans
+
+<ComponentPreview name="pro-checkbox-button-group-subscription-plans">
+
+```tsx
+'use client'
+
+import CircleCheckFill from '@gravity-ui/icons/CircleCheckFill'
+
+import { CheckboxButtonGroup, NumberValue } from '@vezham/react-pro-v3'
+import { Button, Description, Label, Link } from '@vezham/react-v3'
+
+const green = '#89c75a'
+const greenDark = '#4d8429'
+
+const subscriptions = [
+  {
+    daily: 0.4,
+    description:
+      'Full suite of saving, investing, and learning tools for you and your family.',
+    monthly: 12,
+    title: 'Gold',
+    value: 'gold'
+  },
+  {
+    daily: 0.2,
+    description:
+      'Level up your saving and investing skills with even more tools.',
+    monthly: 6,
+    title: 'Silver',
+    value: 'silver'
+  },
+  {
+    daily: 0.1,
+    description:
+      'Investing tools to get you started on your financial journey.',
+    monthly: 3,
+    title: 'Bronze',
+    value: 'bronze'
+  }
+]
+
+export function SubscriptionPlans() {
+  return (
+    <div className="flex w-[420px] flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h2 className="text-3xl font-bold tracking-tight">
+          Choose a subscription
+        </h2>
+        <p className="text-muted text-sm">
+          Pick a plan.{' '}
+          <Link
+            className="text-sm font-semibold no-underline"
+            href="#"
+            style={{ color: greenDark }}>
+            Try a month on us!
+          </Link>
+        </p>
+      </div>
+
+      <CheckboxButtonGroup
+        className="w-full"
+        defaultValue={['silver']}
+        name="subscription-plan"
+        style={
+          {
+            '--accent': green
+          } as React.CSSProperties
+        }>
+        {subscriptions.map(sub => (
+          <CheckboxButtonGroup.Item
+            key={sub.value}
+            className="data-[selected=true]:border-[--sub-green] data-[selected=true]:bg-[--sub-green]/10"
+            style={{ '--sub-green': green } as React.CSSProperties}
+            value={sub.value}>
+            {({ isSelected }) => (
+              <>
+                <CheckboxButtonGroup.Indicator>
+                  <CircleCheckFill style={{ color: green }} />
+                </CheckboxButtonGroup.Indicator>
+                <CheckboxButtonGroup.ItemContent>
+                  <Label className="text-lg font-bold">{sub.title}</Label>
+                  <Description>{sub.description}</Description>
+                  <p className="mt-3 text-sm">
+                    <span style={isSelected ? { color: greenDark } : undefined}>
+                      <NumberValue
+                        className="font-semibold"
+                        currency="USD"
+                        style="currency"
+                        value={sub.daily}>
+                        <NumberValue.Suffix>/day</NumberValue.Suffix>
+                      </NumberValue>
+                    </span>{' '}
+                    <span className="text-muted">
+                      (
+                      <NumberValue
+                        currency="USD"
+                        maximumFractionDigits={0}
+                        style="currency"
+                        value={sub.monthly}
+                      />{' '}
+                      billed monthly)
+                    </span>
+                  </p>
+                </CheckboxButtonGroup.ItemContent>
+              </>
+            )}
+          </CheckboxButtonGroup.Item>
+        ))}
+      </CheckboxButtonGroup>
+
+      <div className="flex w-full flex-col items-center gap-4">
+        <p className="text-muted px-2 text-center text-xs">
+          *APY is variable and subject to change at our discretion, without
+          prior notice.
+        </p>
+        <Button
+          fullWidth
+          className="rounded-full text-white"
+          size="lg"
+          style={{ background: green }}>
+          Try a month on us
+        </Button>
+        <Link
+          className="text-sm font-semibold no-underline"
+          href="#"
+          style={{ color: greenDark }}>
+          Compare plans
+        </Link>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Icons
+
+<ComponentPreview name="pro-checkbox-button-group-with-icons">
+
+```tsx
+'use client'
+
+import Cloud from '@gravity-ui/icons/Cloud'
+import Database from '@gravity-ui/icons/Database'
+import Lock from '@gravity-ui/icons/Lock'
+import ShieldKeyhole from '@gravity-ui/icons/ShieldKeyhole'
+
+import { CheckboxButtonGroup } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const permissions = [
+  {
+    description: 'Create, edit, and delete content',
+    title: 'Content Management',
+    value: 'content'
+  },
+  {
+    description: 'Manage team members and roles',
+    title: 'User Administration',
+    value: 'users'
+  },
+  {
+    description: 'View and export reports',
+    title: 'Analytics Access',
+    value: 'analytics'
+  },
+  {
+    description: 'Configure system preferences',
+    title: 'Settings',
+    value: 'settings'
+  }
+]
+
+const iconMap: Record<string, React.ReactNode> = {
+  analytics: <Database />,
+  content: <Cloud />,
+  settings: <Lock />,
+  users: <ShieldKeyhole />
+}
+
+export function WithIcons() {
+  return (
+    <CheckboxButtonGroup
+      className="w-full max-w-2xl grid-cols-2"
+      defaultValue={['content', 'analytics']}
+      layout="grid"
+      name="permissions"
+      variant="secondary">
+      <Label className="col-span-full">Role permissions</Label>
+      {permissions.map(perm => (
+        <CheckboxButtonGroup.Item key={perm.value} value={perm.value}>
+          <CheckboxButtonGroup.ItemContent className="flex-row items-center gap-4">
+            <CheckboxButtonGroup.ItemIcon>
+              {iconMap[perm.value]}
+            </CheckboxButtonGroup.ItemIcon>
+            <div className="flex flex-col gap-0.5">
+              <Label>{perm.title}</Label>
+              <Description>{perm.description}</Description>
+            </div>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Ripple
+
+<ComponentPreview name="pro-checkbox-button-group-with-ripple">
+
+```tsx
+'use client'
+
+import { CheckboxButtonGroup, PressableFeedback } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+const integrations = [
+  {
+    description: 'Connect your GitHub repositories',
+    title: 'GitHub',
+    value: 'github'
+  },
+  {
+    description: 'Push notifications to Slack channels',
+    title: 'Slack',
+    value: 'slack'
+  },
+  {
+    description: 'Sync tasks with Linear projects',
+    title: 'Linear',
+    value: 'linear'
+  }
+]
+
+export function WithRipple() {
+  return (
+    <CheckboxButtonGroup
+      className="w-full max-w-2xl grid-cols-3"
+      defaultValue={['github']}
+      layout="grid"
+      name="integrations"
+      variant="secondary">
+      <Label className="col-span-full">Integrations</Label>
+      {integrations.map(i => (
+        <CheckboxButtonGroup.Item key={i.value} value={i.value}>
+          <PressableFeedback.Ripple />
+          <CheckboxButtonGroup.Indicator />
+          <CheckboxButtonGroup.ItemContent>
+            <Label>{i.title}</Label>
+            <Description>{i.description}</Description>
+          </CheckboxButtonGroup.ItemContent>
+        </CheckboxButtonGroup.Item>
+      ))}
+    </CheckboxButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.checkbox-button-group` - Base CheckboxGroup container with flex layout
+
+### Layout Classes
+
+- `.checkbox-button-group--grid` - Grid layout mode
+
+### Element Classes
+
+- `.checkbox-button-group__item` - Card-like checkbox button with border and selection ring
+- `.checkbox-button-group__indicator` - Positioned top-right indicator (checkbox control or custom icon)
+- `.checkbox-button-group__item-content` - Text/content area wrapping Checkbox.Content
+- `.checkbox-button-group__item-icon` - Leading icon container
+
+### Interactive States
+
+- **Selected**: `[data-selected="true"]` on `.checkbox-button-group__item` (accent ring)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on `.checkbox-button-group__item` (focus ring)
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` on `.checkbox-button-group__item` (reduced opacity)
+
+### CSS Variables
+
+- `--checkbox-button-group-item-radius` - Border radius of items (default: `var(--radius-2xl)`)
+
+## API Reference
+
+### CheckboxButtonGroup
+
+The root component. Wraps HeroUI [CheckboxGroup](https://heroui.com/docs/react/components/checkbox-group) with card-style layout.
+
+| Prop     | Type               | Default  | Description           |
+| -------- | ------------------ | -------- | --------------------- |
+| `layout` | `'flex' \| 'grid'` | `'flex'` | Layout mode for items |
+
+Also supports all [HeroUI CheckboxGroup](https://heroui.com/docs/react/components/checkbox-group) props.
+
+### CheckboxButtonGroup.Item
+
+A selectable card wrapping HeroUI Checkbox. Supports render prop children for accessing selection state.
+
+Also supports all [HeroUI Checkbox](https://heroui.com/docs/react/components/checkbox) props.
+
+### CheckboxButtonGroup.Indicator
+
+Selection indicator positioned at the top-right of the item.
+
+- **No children**: renders the default HeroUI checkbox (Control + Indicator)
+- **With children**: renders a custom icon that appears only when selected
+
+| Prop       | Type        | Default | Description                                 |
+| ---------- | ----------- | ------- | ------------------------------------------- |
+| `children` | `ReactNode` | -       | Custom indicator icon (shown when selected) |
+
+Also supports all native `span` HTML attributes.
+
+### CheckboxButtonGroup.ItemContent
+
+Content area for title and description text. Wraps HeroUI `Checkbox.Content`.
+
+| Prop       | Type        | Default | Description      |
+| ---------- | ----------- | ------- | ---------------- |
+| `children` | `ReactNode` | -       | Content elements |
+
+Also supports all native `div` HTML attributes.
+
+### CheckboxButtonGroup.ItemIcon
+
+Leading icon container.
+
+| Prop       | Type        | Default | Description  |
+| ---------- | ----------- | ------- | ------------ |
+| `children` | `ReactNode` | -       | Icon element |
+
+Also supports all native `div` HTML attributes.

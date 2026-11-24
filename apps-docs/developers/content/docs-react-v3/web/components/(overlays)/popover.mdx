@@ -1,0 +1,442 @@
+---
+title: Popover
+description: Displays rich content in a portal triggered by a button or any custom element
+links:
+  rac: Popover
+  source: popover/popover.tsx
+  styles: popover.css
+  storybook: Components/Overlays/Popover
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { Popover } from '@heroui/react'
+```
+
+<ComponentPreview
+  name="popover-basic">
+
+```tsx
+import { Button, Popover } from '@vezham/react-v3'
+
+export function PopoverBasic() {
+  return (
+    <div className="flex items-center gap-4">
+      <Popover>
+        <Button>Click me</Button>
+        <Popover.Content className="max-w-64">
+          <Popover.Dialog>
+            <Popover.Heading>Popover Title</Popover.Heading>
+            <p className="text-muted mt-2 text-sm">
+              This is the popover content. You can put any content here.
+            </p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { Popover } from '@heroui/react'
+
+export default () => (
+  <Popover>
+    <Popover.Trigger />
+    <Popover.Content>
+      <Popover.Arrow />
+      <Popover.Dialog>
+        <Popover.Heading />
+        {/* content goes here */}
+      </Popover.Dialog>
+    </Popover.Content>
+  </Popover>
+)
+```
+
+## Examples
+
+### With Arrow
+
+<ComponentPreview
+  name="popover-with-arrow">
+
+```tsx
+import { Ellipsis } from '@gravity-ui/icons'
+
+import { Button, Popover } from '@vezham/react-v3'
+
+export function PopoverWithArrow() {
+  return (
+    <div className="flex items-center gap-4">
+      <Popover>
+        <Button variant="secondary">With Arrow</Button>
+        <Popover.Content className="max-w-64">
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <Popover.Heading>Popover with Arrow</Popover.Heading>
+            <p className="text-muted mt-2 text-sm">
+              The arrow shows which element triggered the popover.
+            </p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+
+      <Popover>
+        <Button isIconOnly aria-label="More options" variant="tertiary">
+          <Ellipsis />
+        </Button>
+        <Popover.Content className="max-w-64" offset={10}>
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <Popover.Heading>Popover with Arrow</Popover.Heading>
+            <p className="text-muted mt-2 text-sm">
+              The arrow shows which element triggered the popover.
+            </p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Interactive Content
+
+<ComponentPreview
+  name="popover-interactive">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Avatar, Button, Popover } from '@vezham/react-v3'
+
+export function PopoverInteractive() {
+  const [isFollowing, setIsFollowing] = useState(false)
+
+  return (
+    <div className="flex items-center gap-6">
+      <Popover>
+        <Popover.Trigger aria-label="User profile">
+          <div className="flex items-center gap-2">
+            <Avatar size="sm">
+              <Avatar.Image
+                alt="Sarah Johnson"
+                src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1"
+              />
+              <Avatar.Fallback>SJ</Avatar.Fallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <p className="text-sm font-medium">Sarah Johnson</p>
+              <p className="text-muted text-xs">@sarahj</p>
+            </div>
+          </div>
+        </Popover.Trigger>
+        <Popover.Content className="w-[320px]">
+          <Popover.Dialog>
+            <Popover.Heading>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar size="md">
+                    <Avatar.Image
+                      alt="Sarah Johnson"
+                      src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1"
+                    />
+                    <Avatar.Fallback>SJ</Avatar.Fallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold">Sarah Johnson</p>
+                    <p className="text-muted text-sm">@sarahj</p>
+                  </div>
+                </div>
+                <Button
+                  className="rounded-full"
+                  size="sm"
+                  variant={isFollowing ? 'tertiary' : 'primary'}
+                  onPress={() => setIsFollowing(!isFollowing)}>
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Button>
+              </div>
+            </Popover.Heading>
+            <p className="text-muted mt-3 text-sm">
+              Product designer and creative director. Building beautiful
+              experiences that matter.
+            </p>
+            <div className="mt-3 flex gap-4">
+              <div>
+                <span className="font-semibold">892</span>
+                <span className="text-muted ms-1 text-sm">Following</span>
+              </div>
+              <div>
+                <span className="font-semibold">12.5K</span>
+                <span className="text-muted ms-1 text-sm">Followers</span>
+              </div>
+            </div>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Placement
+
+<ComponentPreview
+  name="popover-placement">
+
+```tsx
+import { Button, Popover } from '@vezham/react-v3'
+
+export function PopoverPlacement() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <div />
+      <Popover>
+        <Button className="w-full" variant="tertiary">
+          Top
+        </Button>
+        <Popover.Content placement="top">
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <p className="text-sm">Top placement</p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+      <div />
+
+      <Popover>
+        <Button className="w-full" variant="tertiary">
+          Left
+        </Button>
+        <Popover.Content placement="left">
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <p className="text-sm">Left placement</p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+
+      <div className="flex items-center justify-center">
+        <span className="text-muted text-sm">Click buttons</span>
+      </div>
+
+      <Popover>
+        <Button className="w-full" variant="tertiary">
+          Right
+        </Button>
+        <Popover.Content placement="right">
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <p className="text-sm">Right placement</p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+
+      <div />
+      <Popover>
+        <Button className="w-full" variant="tertiary">
+          Bottom
+        </Button>
+        <Popover.Content placement="bottom">
+          <Popover.Dialog>
+            <Popover.Arrow />
+            <p className="text-sm">Bottom placement</p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+      <div />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Render Function
+
+<ComponentPreview
+  name="popover-render-function">
+
+```tsx
+'use client'
+
+import { Button, Popover } from '@vezham/react-v3'
+
+export function RenderFunction() {
+  return (
+    <div className="flex items-center gap-4">
+      <Popover>
+        <Button>Click me</Button>
+        <Popover.Content
+          className="max-w-64"
+          render={props => <div {...props} data-custom="foo" />}>
+          <Popover.Dialog>
+            <Popover.Heading>Popover Title</Popover.Heading>
+            <p className="text-muted mt-2 text-sm">
+              This is the popover content. You can put any content here.
+            </p>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="popover-custom-styles">
+
+```tsx
+import { Button, Popover } from '@vezham/react-v3'
+
+export function CustomStyles() {
+  return (
+    <Popover>
+      <Button variant="secondary">Details</Button>
+      <Popover.Content className="border-border/80 bg-surface/90 dark:border-border/90 dark:bg-surface/85 max-w-56 overflow-hidden rounded-xl border p-0 shadow-xl ring-1 ring-black/5 backdrop-blur-xl dark:ring-white/10">
+        <Popover.Dialog className="relative p-4">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-linear-to-b from-neutral-500/6 to-transparent dark:from-neutral-400/8"
+          />
+          <Popover.Heading className="relative font-medium text-neutral-800 dark:text-neutral-100">
+            Keyboard shortcuts
+          </Popover.Heading>
+          <dl className="relative mt-3 space-y-2 text-sm">
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted">Save</dt>
+              <dd className="font-mono text-neutral-700 dark:text-neutral-300">
+                ⌘ S
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted">Search</dt>
+              <dd className="font-mono text-neutral-700 dark:text-neutral-300">
+                ⌘ K
+              </dd>
+            </div>
+          </dl>
+        </Popover.Dialog>
+      </Popover.Content>
+    </Popover>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+To customize the Popover component classes, you can use the `@layer components` directive.
+[Learn more](https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes).
+
+```css
+@layer components {
+  .popover {
+    @apply rounded-xl shadow-2xl;
+  }
+
+  .popover__dialog {
+    @apply p-4;
+  }
+
+  .popover__heading {
+    @apply text-lg font-bold;
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+The Popover component uses these CSS classes ([View source styles](https://github.com/heroui-inc/heroui/blob/v3/packages/styles/components/popover.css)):
+
+#### Base Classes [!toc]
+
+- `.popover` - Base popover container styles
+- `.popover__dialog` - Dialog content wrapper
+- `.popover__heading` - Heading text styles
+- `.popover__trigger` - Trigger element styles
+
+### Interactive States
+
+The component supports animation states:
+
+- **Entering**: `[data-entering]` - Applied during popover appearance
+- **Exiting**: `[data-exiting]` - Applied during popover disappearance
+- **Placement**: `[data-placement="*"]` - Applied based on popover position
+- **Focus**: `:focus-visible` or `[data-focus-visible="true"]`
+
+## API Reference
+
+### Popover
+
+| Prop           | Type                        | Default | Description                              |
+| -------------- | --------------------------- | ------- | ---------------------------------------- |
+| `children`     | `React.ReactNode`           | -       | Trigger and content elements             |
+| `isOpen`       | `boolean`                   | -       | Controls popover visibility (controlled) |
+| `defaultOpen`  | `boolean`                   | `false` | Initial open state (uncontrolled)        |
+| `onOpenChange` | `(isOpen: boolean) => void` | -       | Called when open state changes           |
+
+### Popover.Content
+
+| Prop         | Type                                                                       | Default    | Description                                                      |
+| ------------ | -------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------- |
+| `children`   | `React.ReactNode`                                                          | -          | Content to display in the popover                                |
+| `placement`  | `"top" \| "bottom" \| "left" \| "right"` (and variants)                    | `"bottom"` | Placement of the popover                                         |
+| `offset`     | `number`                                                                   | `8`        | Distance from the trigger element                                |
+| `shouldFlip` | `boolean`                                                                  | `true`     | Whether popover can change orientation to fit                    |
+| `className`  | `string`                                                                   | -          | Additional CSS classes                                           |
+| `render`     | `DOMRenderFunction<keyof React.JSX.IntrinsicElements, PopoverRenderProps>` | -          | Overrides the default DOM element with a custom render function. |
+
+### Popover.Dialog
+
+| Prop        | Type              | Default | Description            |
+| ----------- | ----------------- | ------- | ---------------------- |
+| `children`  | `React.ReactNode` | -       | Dialog content         |
+| `className` | `string`          | -       | Additional CSS classes |
+
+### Popover.Trigger
+
+| Prop        | Type              | Default | Description                       |
+| ----------- | ----------------- | ------- | --------------------------------- |
+| `children`  | `React.ReactNode` | -       | Element that triggers the popover |
+| `className` | `string`          | -       | Additional CSS classes            |
+
+### Popover.Arrow
+
+| Prop        | Type                                                                            | Default | Description                                                      |
+| ----------- | ------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------- |
+| `children`  | `React.ReactNode`                                                               | -       | Custom arrow element                                             |
+| `className` | `string`                                                                        | -       | Additional CSS classes                                           |
+| `render`    | `DOMRenderFunction<keyof React.JSX.IntrinsicElements, OverlayArrowRenderProps>` | -       | Overrides the default DOM element with a custom render function. |
+
+## Related Components
+
+<RelatedComponents component="popover" />

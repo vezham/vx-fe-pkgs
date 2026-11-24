@@ -1,0 +1,562 @@
+---
+title: 'Context Menu'
+description: 'A right-click context menu with nested submenus, selection state, and long-press support for touch.'
+sourceUrl: https://heroui.pro/docs/react/components/context-menu
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-context-menu-default">
+
+```tsx
+'use client'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import { Kbd, Label } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <ContextMenu>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Right-click here
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu>
+          <ContextMenu.Item id="back" textValue="Back">
+            <Label>Back</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>[</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.Item isDisabled id="forward" textValue="Forward">
+            <Label>Forward</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>]</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="reload" textValue="Reload">
+            <Label>Reload</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>R</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.Separator />
+          <ContextMenu.Item id="view-source" textValue="View Page Source">
+            <Label>View Page Source</Label>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="inspect" textValue="Inspect">
+            <Label>Inspect</Label>
+          </ContextMenu.Item>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the ContextMenu component and access all parts using dot notation.
+
+```tsx
+import { ContextMenu } from '@vezham/react-pro-v3'
+
+;<ContextMenu>
+  <ContextMenu.Trigger />
+  <ContextMenu.Popover>
+    <ContextMenu.Menu>
+      <ContextMenu.Section>
+        <ContextMenu.Item />
+      </ContextMenu.Section>
+      <ContextMenu.Separator />
+    </ContextMenu.Menu>
+  </ContextMenu.Popover>
+</ContextMenu>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-context-menu-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function Controlled() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <p className="text-muted text-sm">Menu is {open ? 'open' : 'closed'}</p>
+      <ContextMenu open={open} onOpenChange={setOpen}>
+        <ContextMenu.Trigger>
+          <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+            Right-click here (controlled)
+          </div>
+        </ContextMenu.Trigger>
+        <ContextMenu.Popover>
+          <ContextMenu.Menu>
+            <ContextMenu.Item id="action-1" textValue="Action 1">
+              <Label>Action 1</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="action-2" textValue="Action 2">
+              <Label>Action 2</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="action-3" textValue="Action 3">
+              <Label>Action 3</Label>
+            </ContextMenu.Item>
+          </ContextMenu.Menu>
+        </ContextMenu.Popover>
+      </ContextMenu>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-context-menu-disabled">
+
+```tsx
+'use client'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <ContextMenu isDisabled>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Right-click here (disabled)
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu>
+          <ContextMenu.Item id="action-1" textValue="Action 1">
+            <Label>Action 1</Label>
+          </ContextMenu.Item>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Long Press
+
+On touch devices the menu opens on long press, since iOS does not fire a `contextmenu` event.
+
+<ComponentPreview name="pro-context-menu-long-press">
+
+```tsx
+'use client'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function LongPress() {
+  return (
+    <ContextMenu>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Long-press here (touch devices)
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu>
+          <ContextMenu.Item id="select" textValue="Select">
+            <Label>Select</Label>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="select-all" textValue="Select All">
+            <Label>Select All</Label>
+          </ContextMenu.Item>
+          <ContextMenu.Separator />
+          <ContextMenu.Item id="cut" textValue="Cut">
+            <Label>Cut</Label>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="copy" textValue="Copy">
+            <Label>Copy</Label>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="paste" textValue="Paste">
+            <Label>Paste</Label>
+          </ContextMenu.Item>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Sections
+
+<ComponentPreview name="pro-context-menu-with-sections">
+
+```tsx
+'use client'
+
+import {
+  Copy,
+  FileText,
+  Link as LinkIcon,
+  Pencil,
+  Scissors,
+  TrashBin
+} from '@gravity-ui/icons'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import { Header, Kbd, Label, Separator } from '@vezham/react-v3'
+
+export function WithSections() {
+  return (
+    <ContextMenu>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Right-click here
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu>
+          <ContextMenu.Section>
+            <Header>Edit</Header>
+            <ContextMenu.Item id="cut" textValue="Cut">
+              <Scissors className="text-muted size-4" />
+              <Label>Cut</Label>
+              <Kbd className="ms-auto" slot="keyboard" variant="light">
+                <Kbd.Abbr keyValue="command" />
+                <Kbd.Content>X</Kbd.Content>
+              </Kbd>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="copy" textValue="Copy">
+              <Copy className="text-muted size-4" />
+              <Label>Copy</Label>
+              <Kbd className="ms-auto" slot="keyboard" variant="light">
+                <Kbd.Abbr keyValue="command" />
+                <Kbd.Content>C</Kbd.Content>
+              </Kbd>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="paste" textValue="Paste">
+              <FileText className="text-muted size-4" />
+              <Label>Paste</Label>
+              <Kbd className="ms-auto" slot="keyboard" variant="light">
+                <Kbd.Abbr keyValue="command" />
+                <Kbd.Content>V</Kbd.Content>
+              </Kbd>
+            </ContextMenu.Item>
+          </ContextMenu.Section>
+          <Separator />
+          <ContextMenu.Section>
+            <Header>Manage</Header>
+            <ContextMenu.Item id="rename" textValue="Rename">
+              <Pencil className="text-muted size-4" />
+              <Label>Rename</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="copy-link" textValue="Copy Link">
+              <LinkIcon className="text-muted size-4" />
+              <Label>Copy Link</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="delete" textValue="Delete" variant="danger">
+              <TrashBin className="text-danger size-4" />
+              <Label>Delete</Label>
+            </ContextMenu.Item>
+          </ContextMenu.Section>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Selection
+
+<ComponentPreview name="pro-context-menu-with-selection">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import type { Selection } from '@vezham/react-v3'
+import { Header, Label } from '@vezham/react-v3'
+
+export function WithSelection() {
+  const [selected, setSelected] = useState<Selection>(new Set(['grid']))
+
+  return (
+    <ContextMenu>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Right-click to change view
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu
+          selectedKeys={selected}
+          selectionMode="single"
+          onSelectionChange={setSelected}>
+          <ContextMenu.Section>
+            <Header>View</Header>
+            <ContextMenu.Item id="grid" textValue="Grid">
+              <ContextMenu.ItemIndicator />
+              <Label>Grid</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="list" textValue="List">
+              <ContextMenu.ItemIndicator />
+              <Label>List</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="columns" textValue="Columns">
+              <ContextMenu.ItemIndicator />
+              <Label>Columns</Label>
+            </ContextMenu.Item>
+          </ContextMenu.Section>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Submenus
+
+<ComponentPreview name="pro-context-menu-with-submenus">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { ContextMenu } from '@vezham/react-pro-v3'
+import type { Selection } from '@vezham/react-v3'
+import { Header, Kbd, Label, Separator } from '@vezham/react-v3'
+
+export function WithSubmenus() {
+  const [bookmarksChecked, setBookmarksChecked] = useState<Selection>(
+    new Set(['bookmarks'])
+  )
+  const [person, setPerson] = useState<Selection>(new Set(['junior']))
+
+  return (
+    <ContextMenu>
+      <ContextMenu.Trigger>
+        <div className="border-border text-muted flex h-48 w-80 items-center justify-center rounded-xl border border-dashed text-sm select-none">
+          Right-click here
+        </div>
+      </ContextMenu.Trigger>
+      <ContextMenu.Popover>
+        <ContextMenu.Menu>
+          <ContextMenu.Item id="back" textValue="Back">
+            <Label>Back</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>[</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.Item isDisabled id="forward" textValue="Forward">
+            <Label>Forward</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>]</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.Item id="reload" textValue="Reload">
+            <Label>Reload</Label>
+            <Kbd className="ms-auto" slot="keyboard" variant="light">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>R</Kbd.Content>
+            </Kbd>
+          </ContextMenu.Item>
+          <ContextMenu.SubmenuTrigger>
+            <ContextMenu.Item id="more-tools" textValue="More Tools">
+              <Label>More Tools</Label>
+              <ContextMenu.SubmenuIndicator />
+            </ContextMenu.Item>
+            <ContextMenu.Popover>
+              <ContextMenu.Menu>
+                <ContextMenu.Item id="save-page" textValue="Save Page As…">
+                  <Label>Save Page As…</Label>
+                  <Kbd className="ms-auto" slot="keyboard" variant="light">
+                    <Kbd.Abbr keyValue="command" />
+                    <Kbd.Content>S</Kbd.Content>
+                  </Kbd>
+                </ContextMenu.Item>
+                <ContextMenu.Item id="shortcut" textValue="Create Shortcut…">
+                  <Label>Create Shortcut…</Label>
+                </ContextMenu.Item>
+                <ContextMenu.Item id="name-window" textValue="Name Window…">
+                  <Label>Name Window…</Label>
+                </ContextMenu.Item>
+                <ContextMenu.Separator />
+                <ContextMenu.Item id="dev-tools" textValue="Developer Tools">
+                  <Label>Developer Tools</Label>
+                </ContextMenu.Item>
+              </ContextMenu.Menu>
+            </ContextMenu.Popover>
+          </ContextMenu.SubmenuTrigger>
+          <Separator />
+          <ContextMenu.Section
+            selectedKeys={bookmarksChecked}
+            selectionMode="multiple"
+            onSelectionChange={setBookmarksChecked}>
+            <ContextMenu.Item id="bookmarks" textValue="Show Bookmarks">
+              <ContextMenu.ItemIndicator />
+              <Label>Show Bookmarks</Label>
+              <Kbd className="ms-auto" slot="keyboard" variant="light">
+                <Kbd.Abbr keyValue="command" />
+                <Kbd.Content>B</Kbd.Content>
+              </Kbd>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="urls" textValue="Show Full URLs">
+              <ContextMenu.ItemIndicator />
+              <Label>Show Full URLs</Label>
+            </ContextMenu.Item>
+          </ContextMenu.Section>
+          <Separator />
+          <ContextMenu.Section
+            selectedKeys={person}
+            selectionMode="single"
+            onSelectionChange={setPerson}>
+            <Header>People</Header>
+            <ContextMenu.Item id="junior" textValue="Junior">
+              <ContextMenu.ItemIndicator type="dot" />
+              <Label>Junior</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="andres" textValue="Andres">
+              <ContextMenu.ItemIndicator type="dot" />
+              <Label>Andres</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="volodymyr" textValue="Volodymyr">
+              <ContextMenu.ItemIndicator type="dot" />
+              <Label>Volodymyr</Label>
+            </ContextMenu.Item>
+            <ContextMenu.Item id="diego" textValue="Diego">
+              <ContextMenu.ItemIndicator type="dot" />
+              <Label>Diego</Label>
+            </ContextMenu.Item>
+          </ContextMenu.Section>
+        </ContextMenu.Menu>
+      </ContextMenu.Popover>
+    </ContextMenu>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.context-menu__trigger` — The right-click target area. Relatively positioned inline-block with `-webkit-touch-callout: none` for long-press support.
+- `.context-menu__popover` — The floating menu panel positioned at the cursor. Has `bg-overlay`, `shadow-overlay`, rounded corners, and enter/exit animations that grow from the click point via `transform-origin: var(--trigger-anchor-point)`.
+- `.context-menu__menu` — The list of menu items inside the popover. Flex column with `gap-0.5`.
+- `.context-menu__separator` — Horizontal divider between menu groups (`bg-separator`).
+
+### Interactive States
+
+- **Entering**: `[data-entering="true"]` on `.context-menu__popover` — `fade-in` + `zoom-in-90` with placement-aware slide (150ms).
+- **Exiting**: `[data-exiting="true"]` on `.context-menu__popover` — `fade-out` + `zoom-out-95` (100ms).
+- **Placement slide**: `[data-placement="top"]` slides from bottom, `[data-placement="bottom"]` from top, `[data-placement="left"]` from right, `[data-placement="right"]` from left.
+- **Focus visible**: `.context-menu__popover[data-focus-visible="true"]` — outline suppressed (`outline: none`).
+- **Reduced motion**: `motion-reduce:animate-none` on entering/exiting states.
+
+## API Reference
+
+### ContextMenu
+
+The root provider that manages open state and cursor positioning.
+
+| Prop           | Type                      | Default | Description                           |
+| -------------- | ------------------------- | ------- | ------------------------------------- |
+| `open`         | `boolean`                 | —       | Controlled open state.                |
+| `defaultOpen`  | `boolean`                 | `false` | Initial open state (uncontrolled).    |
+| `onOpenChange` | `(open: boolean) => void` | —       | Callback when open state changes.     |
+| `isDisabled`   | `boolean`                 | `false` | Whether the context menu is disabled. |
+
+### ContextMenu.Trigger
+
+The right-click (or long-press) target area. Renders a `<div>` by default.
+
+| Prop        | Type        | Default | Description                        |
+| ----------- | ----------- | ------- | ---------------------------------- |
+| `children`  | `ReactNode` | —       | Content that can be right-clicked. |
+| `className` | `string`    | —       | Additional CSS classes.            |
+
+The trigger is not focusable by default, so it stays out of the tab order and never interferes with interactive content inside it. Pass `tabIndex={0}` to make it focusable, which enables the platform keyboard shortcuts for opening a context menu (`Shift` + `F10` on Windows and Linux, `Control` + `Enter` on macOS).
+
+### ContextMenu.Popover
+
+The floating panel positioned at the cursor coordinates.
+
+| Prop        | Type        | Default          | Description                                 |
+| ----------- | ----------- | ---------------- | ------------------------------------------- |
+| `offset`    | `number`    | `2`              | Distance from the anchor point in pixels.   |
+| `placement` | `Placement` | `"bottom start"` | Preferred placement relative to the cursor. |
+
+Also supports all RAC [Popover](https://react-spectrum.adobe.com/react-aria/Popover.html) props (except `isOpen`, `triggerRef`, and `children`).
+
+### ContextMenu.Menu
+
+The list of menu items. Automatically closes the context menu when an item is selected, and receives focus when the menu opens.
+
+| Prop      | Type         | Default | Description                                                                 |
+| --------- | ------------ | ------- | --------------------------------------------------------------------------- |
+| `onClose` | `() => void` | —       | Custom close handler. Overrides the default, which closes the context menu. |
+
+Also supports all RAC [Menu](https://react-spectrum.adobe.com/react-aria/Menu.html) props.
+
+### ContextMenu.Item
+
+An individual menu item. Re-exports [HeroUI DropdownItem](https://heroui.com/docs/react/components/dropdown).
+
+Also supports all [HeroUI DropdownItem](https://heroui.com/docs/react/components/dropdown) props.
+
+### ContextMenu.ItemIndicator
+
+Selection indicator for checkbox/radio menu items. Re-exports [HeroUI DropdownItemIndicator](https://heroui.com/docs/react/components/dropdown).
+
+### ContextMenu.Section
+
+Groups related menu items. Re-exports [HeroUI DropdownSection](https://heroui.com/docs/react/components/dropdown).
+
+Also supports all [HeroUI DropdownSection](https://heroui.com/docs/react/components/dropdown) props.
+
+### ContextMenu.SubmenuTrigger
+
+Wraps a menu item that opens a nested submenu on hover. Re-exports [HeroUI DropdownSubmenuTrigger](https://heroui.com/docs/react/components/dropdown).
+
+### ContextMenu.SubmenuIndicator
+
+Chevron icon indicating a submenu. Re-exports [HeroUI DropdownSubmenuIndicator](https://heroui.com/docs/react/components/dropdown).
+
+### ContextMenu.Separator
+
+A horizontal divider between menu groups.
+
+Also supports all RAC [Separator](https://react-spectrum.adobe.com/react-aria/Separator.html) props.

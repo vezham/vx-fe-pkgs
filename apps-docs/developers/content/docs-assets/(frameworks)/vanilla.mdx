@@ -1,0 +1,222 @@
+---
+title: 'Vanilla JS / CDN'
+description: 'Use Vezham Icons with Vanilla JS / CDN.'
+logo: javascript
+---
+
+The official vanilla JavaScript package and CDN web components for Vezham. This package allows you to easily add precise, vector-based SVG icons to any JavaScript project or web application without framework dependencies.
+
+## What you can accomplish
+
+- Import individual icons as DOM element factories in vanilla JS
+- Fetch SVG markup as strings directly (fully SSR/Node.js compatible)
+- Register and render custom elements (`<vx-icon>`) inside HTML templates or SPAs
+- Load all icons via CDN script tags without build steps or bundlers
+- Tree-shake unused icons automatically when using modern bundlers
+
+---
+
+## 1. Vanilla JS / Bundler (NPM)
+
+Install the package using your preferred package manager and import tree-shakeable icons directly in your application code.
+
+### Installation
+
+<InstallTabs packages="@vezham/icons" />
+
+### Creating DOM Elements
+
+Import named icons directly from `@vezham/icons`. Each icon is a factory function that returns a native `SVGSVGElement`.
+
+```javascript
+import { Home, ShieldCheck } from '@vezham/icons'
+
+// Create SVG elements
+const home = Home({ size: 24 })
+const shield = ShieldCheck({ size: 32, color: '#6C5CE7', weight: 'filled' })
+
+// Append directly to document
+document.body.appendChild(home)
+document.body.appendChild(shield)
+```
+
+### Server-Side Rendering (SSR) & SVG Strings
+
+To render icons on the server (SSR, Node.js, or framework environments), use the `toSvg()` method on the icon functions. This returns raw SVG strings without using DOM APIs.
+
+```javascript
+import { Home } from '@vezham/icons'
+
+// Get raw SVG string - works on server side!
+const svgString = Home.toSvg({ size: 24, color: 'currentColor' })
+
+// Inject into HTML output
+res.send(`<div class="icon-wrap">${svgString}</div>`)
+```
+
+### Registering Custom Element (`<vx-icon>`)
+
+You can register and import the web component runtime right from your npm installation. Simply import `@vezham/icons/element` once in your application entry point.
+
+```javascript
+import '@vezham/icons/element'
+
+// Now use <vx-icon icon="home"></vx-icon> in your HTML templates!
+```
+
+### Direct Import for Smallest Bundles
+
+For optimal build performance, import individual icons directly from their path:
+
+```javascript
+import Home from '@vezham/icons/Home'
+
+const homeSvg = Home({ size: 24 })
+```
+
+---
+
+## 2. CDN & HTML (No Build Tools)
+
+Perfect for static HTML websites, legacy applications, and prototyping. Include a script tag and render icons instantly.
+
+### Register Custom Element (`<vx-icon>`)
+
+Include the script tag inside your HTML page. This registers a reactive `<vx-icon>` component that supports dynamic styling, sizes, weights, and gradients.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+```
+
+### CDN Provider
+
+Use **jsDelivr** for production pages because it is optimized as a global CDN and works well with pinned npm versions:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+```
+
+Use **unpkg** for quick testing or npm file browsing:
+
+```html
+<script src="https://unpkg.com/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+```
+
+Browsers automatically request gzip or Brotli compression from both CDNs. Keep the script URL pointed at `.js`, not `.js.gz`.
+
+### Basic CDN Usage
+
+Simply add the `<vx-icon>` tags directly in your HTML:
+
+```html
+<vx-icon icon="home"></vx-icon>
+<vx-icon
+  icon="shield-check"
+  weight="filled"
+  size="32"
+  color="#6C5CE7"></vx-icon>
+```
+
+### Direct SVG CDN
+
+Use a direct SVG URL when you want a specific icon file without loading the runtime:
+
+```html
+<img
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/icons/home.svg"
+  alt="Home" />
+<img
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/icons/home-filled.svg"
+  alt="Home" />
+<img
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/icons/home-duotone-outline.svg"
+  alt="Home" />
+<img
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/icons/home-duotone-filled.svg"
+  alt="Home" />
+```
+
+The default file is outline. Add `-filled`, `-duotone-outline`, or `-duotone-filled` before `.svg` for other weights.
+Every direct SVG uses a flat kebab-case filename under `/dist/cdn/icons`.
+
+### Load Functions globally via Script tag
+
+If you want to use the global `VezhamIcons` object functions directly in a browser script tag:
+
+```html
+<script src="https://unpkg.com/@vezham/icons@1.0.7/dist/umd/vezham-icons.js"></script>
+<script>
+  // Create icon elements via global object
+  document.body.appendChild(VezhamIcons.Home({ size: 32 }))
+</script>
+```
+
+### Customizing Elements (Attributes)
+
+You can customize `<vx-icon>` elements using reactive HTML attributes. Updates will be rendered instantly.
+
+```html
+<!-- Size -->
+<vx-icon icon="home" size="16"></vx-icon>
+<vx-icon icon="home" size="32"></vx-icon>
+
+<!-- Color -->
+<vx-icon icon="heart" color="#ef4444"></vx-icon>
+<vx-icon icon="heart" color="rgb(99, 102, 241)"></vx-icon>
+
+<!-- Weight -->
+<vx-icon icon="star" weight="outline"></vx-icon>
+<vx-icon icon="star" weight="filled"></vx-icon>
+```
+
+### Styling with CSS
+
+The `<vx-icon>` element acts like an inline block. It automatically inherits its parent's text color, allowing CSS utility-classes to adjust color naturally.
+
+```html
+<style>
+  .icon-primary {
+    color: #6c5ce7;
+  }
+</style>
+
+<vx-icon icon="home" class="icon-primary"></vx-icon>
+
+<!-- Inherits color from parent -->
+<div style="color: #ef4444;">
+  <vx-icon icon="heart"></vx-icon>
+</div>
+```
+
+### Full Example HTML Page
+
+A complete HTML document importing Vezham via CDN and showcasing customizations:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vezham Page</title>
+    <script src="https://unpkg.com/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+  </head>
+  <body>
+    <nav>
+      <vx-icon icon="home" size="20"></vx-icon>
+      <vx-icon icon="user" size="20"></vx-icon>
+    </nav>
+    <main>
+      <h1>
+        <vx-icon
+          icon="shield-check"
+          size="28"
+          weight="filled"
+          color="#6C5CE7"></vx-icon>
+        App Verified
+      </h1>
+    </main>
+  </body>
+</html>
+```
+
+> **Note:** If you are compiling your project with modern bundlers (e.g. Vite, Webpack, rollup), prefer installing via `npm install @vezham/icons` to enjoy full tree-shaking, static typing, and faster loading speeds.

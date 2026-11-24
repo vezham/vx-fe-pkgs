@@ -1,0 +1,84 @@
+---
+title: 'Overview'
+description: 'Tools and resources for building HeroUI Native projects with AI coding assistants'
+sourceUrl: https://heroui.pro/docs/native/getting-started/overview
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native provides three tools to help AI assistants build better mobile UIs with `heroui-native-pro`. Use them together for the best results.
+
+## Quick Setup
+
+Get your `HEROUI_PERSONAL_TOKEN` from the [Pro dashboard](https://heroui.pro/dashboard), then:
+
+### 1. MCP Server
+
+Gives your agent live access to component docs, theme variables, and guides at runtime. Add to your editor's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "heroui-native-pro": {
+      "url": "https://native-mcp.heroui.pro/mcp",
+      "headers": {
+        "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+      }
+    }
+  }
+}
+```
+
+[Full MCP setup guide](/docs/ui/react-pro-v3/native/getting-started/mcp-server)
+
+### 2. Native Skill
+
+Teaches your agent `heroui-native-pro` conventions, compound patterns, and React Native best practices.
+
+```bash
+curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-native-pro
+
+```
+
+[Full skills guide](/docs/ui/react-pro-v3/native/getting-started/agent-skills)
+
+### 3. Design Taste Skill
+
+Helps your agent better use the HeroUI design system and produce polished mobile UIs.
+
+```bash
+curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-pro-design-taste
+
+```
+
+[Full design taste guide](/docs/ui/react-pro-v3/native/getting-started/design-taste)
+
+## What Each Tool Does
+
+|                  | MCP Server                                      | Native Pro Skill                                  | Design Taste Skill                                 |
+| ---------------- | ----------------------------------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| **Purpose**      | Live access to docs, themes, and component APIs | Teaches component patterns and Native conventions | Teaches design system principles and visual polish |
+| **How it works** | Remote tools your agent calls at runtime        | Static instructions loaded into agent context     | Static instructions loaded into agent context      |
+| **Install**      | Add URL to editor MCP config                    | One-line `curl` install                           | One-line `curl` install                            |
+| **Offline**      | No (requires network)                           | Yes                                               | Yes                                                |
+| **Best for**     | "Look up the Button API"                        | "Build a screen with HeroUI Native cards"         | "Make this look production-quality"                |
+
+**Skills teach, MCP does.** Skills give your agent knowledge of patterns and conventions. The MCP server gives it live access to component documentation and theme variables.
+
+## Recommended Stack
+
+For best results, install all three:
+
+1. **MCP Server** — your agent can look up any component API, browse theme variables, and read guides in real time
+2. **Native Pro Skill** — your agent knows `heroui-native-pro` conventions, compound patterns, and common mistakes without needing to look them up
+3. **Design Taste Skill** — your agent produces polished, well-designed mobile UIs instead of generic layouts
+
+## Using with HeroUI Native OSS
+
+The tools above cover `heroui-native-pro` components. For `heroui-native` base components, use the separate [HeroUI Native OSS docs and tools](https://heroui.com/docs/native/getting-started). Both work side by side.

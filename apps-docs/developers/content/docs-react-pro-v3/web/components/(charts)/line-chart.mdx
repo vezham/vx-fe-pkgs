@@ -1,0 +1,1287 @@
+---
+title: 'Line Chart'
+description: 'A React line chart for web trend data with multi-series, sparkline, and custom tooltip support.'
+sourceUrl: https://heroui.pro/docs/react/components/line-chart
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-line-chart-default">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const trafficData = [
+  { month: 'Jan', organic: 2000, paidAds: 1000 },
+  { month: 'Feb', organic: 15000, paidAds: 10000 },
+  { month: 'Mar', organic: 8000, paidAds: 12000 },
+  { month: 'Apr', organic: 14000, paidAds: 14000 },
+  { month: 'May', organic: 15000, paidAds: 8000 },
+  { month: 'Jun', organic: 8000, paidAds: 9000 },
+  { month: 'Jul', organic: 18000, paidAds: 12000 },
+  { month: 'Aug', organic: 18000, paidAds: 10000 },
+  { month: 'Sep', organic: 20000, paidAds: 5000 },
+  { month: 'Oct', organic: 17000, paidAds: 12000 },
+  { month: 'Nov', organic: 22000, paidAds: 18000 },
+  { month: 'Dec', organic: 15000, paidAds: 9000 }
+]
+
+export function Default() {
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Traffic Source</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Organic</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Paid Ads</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content className="flex flex-col gap-4">
+        <div className="flex flex-col">
+          <span className="text-foreground text-lg font-semibold">231,856</span>
+          <span className="text-muted text-xs">Sessions</span>
+        </div>
+        <LineChart data={trafficData} height={180}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            ticks={[0, 5000, 10000, 20000]}
+            width={30}
+          />
+          <LineChart.Line
+            dataKey="organic"
+            dot={false}
+            name="Organic"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="linear"
+          />
+          <LineChart.Line
+            dataKey="paidAds"
+            dot={false}
+            name="Paid Ads"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="linear"
+          />
+          <LineChart.Tooltip
+            content={({ active, label, payload }) => {
+              if (!active || !payload?.length) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map(entry => (
+                    <ChartTooltip.Item key={String(entry.dataKey)}>
+                      <ChartTooltip.Indicator
+                        color={entry.color ?? entry.stroke}
+                      />
+                      <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                      <ChartTooltip.Value>
+                        {Number(entry.value).toLocaleString()}
+                      </ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the LineChart component and access all parts using dot notation.
+
+<Callout type="info">
+  `LineChart` is a subpath-only import (`@vezham/react-pro-v3/line-chart`)
+  because it depends on the optional `recharts` peer. It is not exported from
+  the package root, so SSR apps that don't use it never need `recharts`
+  installed.
+</Callout>
+
+```tsx
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+;<LineChart>
+  <LineChart.Grid />
+  <LineChart.XAxis />
+  <LineChart.YAxis />
+  <LineChart.Line />
+  <LineChart.Tooltip />
+</LineChart>
+```
+
+## Dashed Comparison
+
+<ComponentPreview name="pro-line-chart-dashed-comparison">
+
+```tsx
+'use client'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  { actual: 4200, month: 'Jan', target: 5000 },
+  { actual: 5800, month: 'Feb', target: 5500 },
+  { actual: 4900, month: 'Mar', target: 6000 },
+  { actual: 7200, month: 'Apr', target: 6500 },
+  { actual: 6100, month: 'May', target: 7000 },
+  { actual: 8400, month: 'Jun', target: 7500 },
+  { actual: 7800, month: 'Jul', target: 8000 },
+  { actual: 9200, month: 'Aug', target: 8500 },
+  { actual: 8600, month: 'Sep', target: 9000 },
+  { actual: 10200, month: 'Oct', target: 9500 },
+  { actual: 9800, month: 'Nov', target: 10000 },
+  { actual: 11500, month: 'Dec', target: 10500 }
+]
+
+export function DashedComparison() {
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Actual vs Target</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Actual</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="h-0 w-3 rounded-full border-t-2 border-dashed"
+              style={{ borderColor: 'var(--chart-2)' }}
+            />
+            <span className="text-muted text-xs">Target</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <LineChart data={data} height={200}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+            width={40}
+          />
+          <LineChart.Line
+            dataKey="target"
+            dot={false}
+            name="Target"
+            stroke="var(--chart-2)"
+            strokeDasharray="5 5"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="actual"
+            dot={false}
+            name="Actual"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={
+              <LineChart.TooltipContent
+                valueFormatter={v => `${Number(v).toLocaleString()}`}
+              />
+            }
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## KPI With Chart
+
+<ComponentPreview name="pro-line-chart-kpiwith-chart">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+const sparklineUp = [
+  { value: 30 },
+  { value: 35 },
+  { value: 28 },
+  { value: 42 },
+  { value: 38 },
+  { value: 45 },
+  { value: 50 },
+  { value: 48 },
+  { value: 55 },
+  { value: 60 },
+  { value: 58 },
+  { value: 65 }
+]
+
+const sparklineDown = [
+  { value: 65 },
+  { value: 60 },
+  { value: 62 },
+  { value: 55 },
+  { value: 58 },
+  { value: 52 },
+  { value: 50 },
+  { value: 48 },
+  { value: 45 },
+  { value: 42 },
+  { value: 44 },
+  { value: 40 }
+]
+
+export function KPIWithChart() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <KPI>
+        <KPI.Header>
+          <KPI.Title>Total Revenue</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              currency="USD"
+              maximumFractionDigits={0}
+              style="currency"
+              value={228451}
+            />
+            <TrendChip trend="up" variant="tertiary">
+              3.3%
+              <TrendChip.Suffix>last 30d</TrendChip.Suffix>
+            </TrendChip>
+          </div>
+          <LineChart
+            data={sparklineUp}
+            height={70}
+            margin={{ bottom: 0, left: 0, right: 0, top: 4 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--chart-3)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Title>Bounce Rate</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              maximumFractionDigits={1}
+              style="percent"
+              value={0.423}
+            />
+            <TrendChip trend="down" variant="tertiary">
+              5.9%
+              <TrendChip.Suffix>vs last 7d</TrendChip.Suffix>
+            </TrendChip>
+          </div>
+          <LineChart
+            data={sparklineDown}
+            height={70}
+            margin={{ bottom: 0, left: 0, right: 0, top: 4 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--color-danger)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Title>New Customers</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              maximumFractionDigits={0}
+              value={1234}
+            />
+            <TrendChip trend="up" variant="tertiary">
+              1.0%
+              <TrendChip.Suffix>this week</TrendChip.Suffix>
+            </TrendChip>
+          </div>
+          <LineChart
+            data={sparklineUp}
+            height={70}
+            margin={{ bottom: 0, left: 0, right: 0, top: 4 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--color-success)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multi Line Chart Colors
+
+<ComponentPreview name="pro-line-chart-multi-line-chart-colors">
+
+```tsx
+'use client'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  {
+    directTraffic: 800,
+    month: 'Jan',
+    organic: 2000,
+    paidAds: 1000,
+    referral: 500
+  },
+  {
+    directTraffic: 1500,
+    month: 'Feb',
+    organic: 5000,
+    paidAds: 3000,
+    referral: 1200
+  },
+  {
+    directTraffic: 2200,
+    month: 'Mar',
+    organic: 8000,
+    paidAds: 5000,
+    referral: 2100
+  },
+  {
+    directTraffic: 1800,
+    month: 'Apr',
+    organic: 7000,
+    paidAds: 6000,
+    referral: 2800
+  },
+  {
+    directTraffic: 2600,
+    month: 'May',
+    organic: 9500,
+    paidAds: 4000,
+    referral: 3200
+  },
+  {
+    directTraffic: 2000,
+    month: 'Jun',
+    organic: 8000,
+    paidAds: 5500,
+    referral: 2600
+  },
+  {
+    directTraffic: 3100,
+    month: 'Jul',
+    organic: 12000,
+    paidAds: 7000,
+    referral: 4100
+  },
+  {
+    directTraffic: 2800,
+    month: 'Aug',
+    organic: 11000,
+    paidAds: 6500,
+    referral: 3800
+  },
+  {
+    directTraffic: 3500,
+    month: 'Sep',
+    organic: 14000,
+    paidAds: 8000,
+    referral: 4500
+  },
+  {
+    directTraffic: 3200,
+    month: 'Oct',
+    organic: 13000,
+    paidAds: 9000,
+    referral: 5200
+  },
+  {
+    directTraffic: 4000,
+    month: 'Nov',
+    organic: 16000,
+    paidAds: 10000,
+    referral: 5800
+  },
+  {
+    directTraffic: 3700,
+    month: 'Dec',
+    organic: 15000,
+    paidAds: 9500,
+    referral: 5100
+  }
+]
+
+export function MultiLineChartColors() {
+  return (
+    <Card className="w-[600px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Traffic Sources</Card.Title>
+        <div className="flex items-center gap-3">
+          {[
+            { color: 'var(--chart-4)', label: 'Organic' },
+            { color: 'var(--chart-3)', label: 'Paid Ads' },
+            { color: 'var(--chart-2)', label: 'Referral' },
+            { color: 'var(--chart-1)', label: 'Direct' }
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span
+                className="size-3 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="text-muted text-xs">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <LineChart data={data} height={240}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={30}
+          />
+          <LineChart.Line
+            dataKey="organic"
+            dot={false}
+            name="Organic"
+            stroke="var(--chart-4)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="paidAds"
+            dot={false}
+            name="Paid Ads"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="referral"
+            dot={false}
+            name="Referral"
+            stroke="var(--chart-2)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="directTraffic"
+            dot={false}
+            name="Direct"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={<LineChart.TooltipContent indicator="line" />}
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Portfolio
+
+<ComponentPreview name="pro-line-chart-portfolio">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import type { Key } from 'react-aria-components/Breadcrumbs'
+
+import { Segment } from '@vezham/react-pro-v3'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const portfolioDataByRange: Record<
+  string,
+  { balance: string; change: string; data: { value: number }[] }
+> = {
+  '1D': {
+    balance: '$24,801.32',
+    change: '$312.55 (1.28%)',
+    data: [
+      { value: 24490 },
+      { value: 24680 },
+      { value: 24350 },
+      { value: 24520 },
+      { value: 24750 },
+      { value: 24410 },
+      { value: 24600 },
+      { value: 24380 },
+      { value: 24720 },
+      { value: 24550 },
+      { value: 24830 },
+      { value: 24460 },
+      { value: 24690 },
+      { value: 24580 },
+      { value: 24801 }
+    ]
+  },
+  '1H': {
+    balance: '$24,801.32',
+    change: '$42.10 (0.17%)',
+    data: [
+      { value: 24759 },
+      { value: 24820 },
+      { value: 24690 },
+      { value: 24780 },
+      { value: 24650 },
+      { value: 24730 },
+      { value: 24860 },
+      { value: 24710 },
+      { value: 24840 },
+      { value: 24770 },
+      { value: 24900 },
+      { value: 24680 },
+      { value: 24810 },
+      { value: 24750 },
+      { value: 24801 }
+    ]
+  },
+  '1M': {
+    balance: '$24,801.32',
+    change: '$1,242.77 (5.32%)',
+    data: [
+      { value: 18000 },
+      { value: 17500 },
+      { value: 17800 },
+      { value: 18200 },
+      { value: 19000 },
+      { value: 18500 },
+      { value: 19200 },
+      { value: 20500 },
+      { value: 20000 },
+      { value: 21000 },
+      { value: 20800 },
+      { value: 22000 },
+      { value: 21500 },
+      { value: 22800 },
+      { value: 24801 }
+    ]
+  },
+  '1W': {
+    balance: '$24,801.32',
+    change: '$842.18 (3.51%)',
+    data: [
+      { value: 23960 },
+      { value: 24100 },
+      { value: 23850 },
+      { value: 24200 },
+      { value: 24050 },
+      { value: 24350 },
+      { value: 24500 },
+      { value: 24400 },
+      { value: 24650 },
+      { value: 24801 }
+    ]
+  },
+  '1Y': {
+    balance: '$24,801.32',
+    change: '$8,401.32 (51.2%)',
+    data: [
+      { value: 16400 },
+      { value: 15200 },
+      { value: 17100 },
+      { value: 16800 },
+      { value: 18500 },
+      { value: 19200 },
+      { value: 18000 },
+      { value: 20100 },
+      { value: 21500 },
+      { value: 19800 },
+      { value: 22400 },
+      { value: 23100 },
+      { value: 21800 },
+      { value: 24200 },
+      { value: 24801 }
+    ]
+  },
+  ALL: {
+    balance: '$24,801.32',
+    change: '$19,801.32 (396%)',
+    data: [
+      { value: 5000 },
+      { value: 6200 },
+      { value: 5800 },
+      { value: 7500 },
+      { value: 9200 },
+      { value: 8400 },
+      { value: 11000 },
+      { value: 12800 },
+      { value: 14500 },
+      { value: 13200 },
+      { value: 16800 },
+      { value: 18500 },
+      { value: 20100 },
+      { value: 22400 },
+      { value: 24801 }
+    ]
+  }
+}
+
+export function Portfolio() {
+  const [range, setRange] = useState<Key>('1M')
+  const fallback = portfolioDataByRange['1M']!
+  const active = portfolioDataByRange[range as string] ?? fallback
+
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header className="flex-row items-start justify-between pb-0">
+        <div className="flex flex-col gap-3">
+          <Card.Title className="text-base">Portfolio</Card.Title>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-muted text-xs">Total balance</span>
+            <span className="text-foreground text-2xl font-semibold">
+              {active.balance}
+            </span>
+            <span className="text-xs font-medium text-green-500">
+              {active.change}
+            </span>
+          </div>
+        </div>
+        <Segment defaultSelectedKey="1M" size="sm" onSelectionChange={setRange}>
+          <Segment.Item id="1H">1H</Segment.Item>
+          <Segment.Item id="1D">1D</Segment.Item>
+          <Segment.Item id="1W">1W</Segment.Item>
+          <Segment.Item id="1M">1M</Segment.Item>
+          <Segment.Item id="1Y">1Y</Segment.Item>
+          <Segment.Item id="ALL">ALL</Segment.Item>
+        </Segment>
+      </Card.Header>
+      <Card.Content>
+        <LineChart
+          data={active.data}
+          height={182}
+          margin={{ bottom: 0, left: 0, right: 0, top: 4 }}>
+          <LineChart.YAxis hide domain={['dataMin - 1000', 'dataMax + 1000']} />
+          <LineChart.Line
+            dataKey="value"
+            dot={false}
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sparkline
+
+<ComponentPreview name="pro-line-chart-sparkline">
+
+```tsx
+'use client'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+const sparklineUp = [
+  { value: 30 },
+  { value: 35 },
+  { value: 28 },
+  { value: 42 },
+  { value: 38 },
+  { value: 45 },
+  { value: 50 },
+  { value: 48 },
+  { value: 55 },
+  { value: 60 },
+  { value: 58 },
+  { value: 65 }
+]
+
+const sparklineDown = [
+  { value: 65 },
+  { value: 60 },
+  { value: 62 },
+  { value: 55 },
+  { value: 58 },
+  { value: 52 },
+  { value: 50 },
+  { value: 48 },
+  { value: 45 },
+  { value: 42 },
+  { value: 44 },
+  { value: 40 }
+]
+
+export function Sparkline() {
+  return (
+    <div className="flex items-center gap-6">
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Revenue</span>
+        <div className="w-[120px]">
+          <LineChart
+            data={sparklineUp}
+            height={40}
+            margin={{ bottom: 0, left: 0, right: 0, top: 2 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--color-success)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Churn</span>
+        <div className="w-[120px]">
+          <LineChart
+            data={sparklineDown}
+            height={40}
+            margin={{ bottom: 0, left: 0, right: 0, top: 2 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--color-danger)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Users</span>
+        <div className="w-[120px]">
+          <LineChart
+            data={sparklineUp}
+            height={40}
+            margin={{ bottom: 0, left: 0, right: 0, top: 2 }}>
+            <LineChart.Line
+              dataKey="value"
+              dot={false}
+              stroke="var(--chart-3)"
+              strokeWidth={1.5}
+              type="monotone"
+            />
+          </LineChart>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Stats With Chart
+
+<ComponentPreview name="pro-line-chart-stats-with-chart">
+
+```tsx
+'use client'
+
+import { ArrowDown, ArrowUp } from '@gravity-ui/icons'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card, Chip } from '@vezham/react-v3'
+
+const monthlyRevenue = [
+  { month: 'Jan', revenue: 4200 },
+  { month: 'Feb', revenue: 5800 },
+  { month: 'Mar', revenue: 4900 },
+  { month: 'Apr', revenue: 7200 },
+  { month: 'May', revenue: 6100 },
+  { month: 'Jun', revenue: 8400 },
+  { month: 'Jul', revenue: 7800 },
+  { month: 'Aug', revenue: 9200 },
+  { month: 'Sep', revenue: 8600 },
+  { month: 'Oct', revenue: 10200 },
+  { month: 'Nov', revenue: 9800 },
+  { month: 'Dec', revenue: 11500 }
+]
+
+export function StatsWithChart() {
+  const stats = [
+    {
+      label: 'Revenue',
+      trend: 'up' as const,
+      trendValue: '3.3%',
+      value: '$228,441'
+    },
+    {
+      label: 'Expenses',
+      trend: 'down' as const,
+      trendValue: '3.3%',
+      value: '$25,108'
+    },
+    { label: 'Sales', trend: 'up' as const, trendValue: '3.3%', value: '458' }
+  ]
+
+  return (
+    <div className="flex w-[700px] flex-col gap-3">
+      <div className="grid grid-cols-3 gap-3">
+        {stats.map(stat => (
+          <Card key={stat.label} className="gap-1 rounded-2xl">
+            <Card.Header>
+              <Card.Description className="text-sm font-medium">
+                {stat.label}
+              </Card.Description>
+            </Card.Header>
+            <Card.Content className="flex flex-row items-center gap-2">
+              <span className="text-foreground flex-1 text-2xl font-semibold">
+                {stat.value}
+              </span>
+              <Chip
+                color={stat.trend === 'up' ? 'success' : 'danger'}
+                size="sm"
+                variant="soft">
+                {stat.trend === 'up' ? (
+                  <ArrowUp className="size-3" />
+                ) : (
+                  <ArrowDown className="size-3" />
+                )}
+                {stat.trendValue}
+              </Chip>
+            </Card.Content>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="rounded-2xl">
+        <Card.Header className="flex-row items-center justify-between">
+          <Card.Title className="text-base">Monthly Revenue</Card.Title>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="size-3 rounded-full"
+                style={{ backgroundColor: 'var(--chart-3)' }}
+              />
+              <span className="text-muted text-xs">Revenue</span>
+            </div>
+          </div>
+        </Card.Header>
+        <Card.Content>
+          <LineChart data={monthlyRevenue} height={200}>
+            <LineChart.Grid vertical={false} />
+            <LineChart.XAxis dataKey="month" tickMargin={8} />
+            <LineChart.YAxis
+              tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+              width={40}
+            />
+            <LineChart.Line
+              dataKey="revenue"
+              dot={false}
+              name="Revenue"
+              stroke="var(--chart-3)"
+              strokeWidth={2}
+              type="monotone"
+            />
+            <LineChart.Tooltip
+              content={
+                <LineChart.TooltipContent
+                  valueFormatter={v => `${Number(v).toLocaleString()}`}
+                />
+              }
+            />
+          </LineChart>
+        </Card.Content>
+      </Card>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Traffic Source
+
+<ComponentPreview name="pro-line-chart-traffic-source">
+
+```tsx
+'use client'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const trafficData = [
+  { month: 'Jan', organic: 2000, paidAds: 1000 },
+  { month: 'Feb', organic: 15000, paidAds: 10000 },
+  { month: 'Mar', organic: 8000, paidAds: 12000 },
+  { month: 'Apr', organic: 14000, paidAds: 14000 },
+  { month: 'May', organic: 15000, paidAds: 8000 },
+  { month: 'Jun', organic: 8000, paidAds: 9000 },
+  { month: 'Jul', organic: 18000, paidAds: 12000 },
+  { month: 'Aug', organic: 18000, paidAds: 10000 },
+  { month: 'Sep', organic: 20000, paidAds: 5000 },
+  { month: 'Oct', organic: 17000, paidAds: 12000 },
+  { month: 'Nov', organic: 22000, paidAds: 18000 },
+  { month: 'Dec', organic: 15000, paidAds: 9000 }
+]
+
+export function TrafficSource() {
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Traffic Source</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Organic</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Paid Ads</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content className="flex flex-col gap-4">
+        <div className="flex flex-col">
+          <span className="text-foreground text-lg font-semibold">231,856</span>
+          <span className="text-muted text-xs">Sessions</span>
+        </div>
+        <LineChart data={trafficData} height={180}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            ticks={[0, 5000, 10000, 20000]}
+            width={30}
+          />
+          <LineChart.Line
+            dataKey="organic"
+            dot={false}
+            name="Organic"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="linear"
+          />
+          <LineChart.Line
+            dataKey="paidAds"
+            dot={false}
+            name="Paid Ads"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="linear"
+          />
+          <LineChart.Tooltip content={<LineChart.TooltipContent />} />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Custom Tooltip
+
+<ComponentPreview name="pro-line-chart-custom-tooltip">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const trafficData = [
+  { month: 'Jan', organic: 2000, paidAds: 1000 },
+  { month: 'Feb', organic: 15000, paidAds: 10000 },
+  { month: 'Mar', organic: 8000, paidAds: 12000 },
+  { month: 'Apr', organic: 14000, paidAds: 14000 },
+  { month: 'May', organic: 15000, paidAds: 8000 },
+  { month: 'Jun', organic: 8000, paidAds: 9000 },
+  { month: 'Jul', organic: 18000, paidAds: 12000 },
+  { month: 'Aug', organic: 18000, paidAds: 10000 },
+  { month: 'Sep', organic: 20000, paidAds: 5000 },
+  { month: 'Oct', organic: 17000, paidAds: 12000 },
+  { month: 'Nov', organic: 22000, paidAds: 18000 },
+  { month: 'Dec', organic: 15000, paidAds: 9000 }
+]
+
+export function CustomTooltip() {
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Sessions</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Organic</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-2)' }}
+            />
+            <span className="text-muted text-xs">Paid Ads</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <LineChart data={trafficData} height={200}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={30}
+          />
+          <LineChart.Line
+            dataKey="organic"
+            dot={false}
+            name="Organic"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="paidAds"
+            dot={false}
+            name="Paid Ads"
+            stroke="var(--chart-2)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={({ active, label, payload }: any) => {
+              if (!active || !payload?.length) return null
+
+              const total = payload.reduce(
+                (sum: number, entry: any) => sum + (entry.value ?? 0),
+                0
+              )
+
+              return (
+                <ChartTooltip indicator="line">
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map((entry: any, idx: number) => (
+                    <ChartTooltip.Item key={idx}>
+                      <ChartTooltip.Indicator color={entry.stroke} />
+                      <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                      <ChartTooltip.Value>
+                        {Number(entry.value).toLocaleString()}
+                      </ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                  <div className="border-separator mt-1 flex items-center justify-between border-t pt-1.5">
+                    <span className="text-muted text-xs font-medium">
+                      Total
+                    </span>
+                    <span className="text-foreground text-xs font-semibold">
+                      {total.toLocaleString()}
+                    </span>
+                  </div>
+                </ChartTooltip>
+              )
+            }}
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Dots
+
+<ComponentPreview name="pro-line-chart-with-dots">
+
+```tsx
+'use client'
+
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Card } from '@vezham/react-v3'
+
+const monthlyRevenue = [
+  { month: 'Jan', revenue: 4200 },
+  { month: 'Feb', revenue: 5800 },
+  { month: 'Mar', revenue: 4900 },
+  { month: 'Apr', revenue: 7200 },
+  { month: 'May', revenue: 6100 },
+  { month: 'Jun', revenue: 8400 },
+  { month: 'Jul', revenue: 7800 },
+  { month: 'Aug', revenue: 9200 },
+  { month: 'Sep', revenue: 8600 },
+  { month: 'Oct', revenue: 10200 },
+  { month: 'Nov', revenue: 9800 },
+  { month: 'Dec', revenue: 11500 }
+]
+
+export function WithDots() {
+  return (
+    <Card className="w-[520px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Monthly Revenue</Card.Title>
+      </Card.Header>
+      <Card.Content>
+        <LineChart data={monthlyRevenue} height={200}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+            width={40}
+          />
+          <LineChart.Line
+            activeDot={{ r: 5 }}
+            dataKey="revenue"
+            dot={{ fill: 'var(--chart-3)', r: 3, strokeWidth: 0 }}
+            name="Revenue"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={
+              <LineChart.TooltipContent
+                valueFormatter={v => `${Number(v).toLocaleString()}`}
+              />
+            }
+          />
+        </LineChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.line-chart` — Root container wrapping `ResponsiveContainer` and the Recharts chart.
+
+### Recharts Theming
+
+The following CSS rules target Recharts internal class names to apply HeroUI design tokens automatically:
+
+- `.line-chart .recharts-cartesian-axis-tick-value` — Axis tick labels. 10px muted text.
+- `.line-chart .recharts-cartesian-axis-line` — Axis lines. Hidden by default.
+- `.line-chart .recharts-cartesian-axis-tick-line` — Tick lines. Hidden by default.
+- `.line-chart .recharts-cartesian-grid line` — Cartesian grid lines. Muted stroke at 0.15 opacity.
+- `.line-chart .recharts-tooltip-cursor` — Tooltip cursor. Dashed vertical line on hover.
+- `.line-chart .recharts-active-dot circle` — Active dot. Outlined with surface color for contrast.
+
+## API Reference
+
+### LineChart
+
+The root wrapper. Renders a `ResponsiveContainer` + Recharts `LineChart` with HeroUI CSS theming applied automatically.
+
+| Prop       | Type                                                               | Default                                    | Description                                                               |
+| ---------- | ------------------------------------------------------------------ | ------------------------------------------ | ------------------------------------------------------------------------- |
+| `data`     | `Record<string, number \| string>[]`                               | —                                          | Chart data — array of objects with numeric/string fields for each series. |
+| `height`   | `number`                                                           | `300`                                      | Chart height in pixels.                                                   |
+| `width`    | ``number \| `${number}%` ``                                        | `"100%"`                                   | Chart width in pixels or percentage string.                               |
+| `margin`   | `{ top?: number; right?: number; bottom?: number; left?: number }` | `{ top: 8, right: 8, bottom: 0, left: 0 }` | Recharts margin around the chart area.                                    |
+| `children` | `ReactNode`                                                        | —                                          | Recharts child components (`LineChart.Line`, `LineChart.XAxis`, etc.).    |
+
+Also supports all native `div` HTML attributes.
+
+### LineChart.Line
+
+Re-exported Recharts `Line` component. Follows the [Recharts Line API](https://recharts.github.io/en-US/api/Line/).
+
+### LineChart.XAxis
+
+Re-exported Recharts `XAxis` component. Follows the [Recharts XAxis API](https://recharts.github.io/en-US/api/XAxis/).
+
+### LineChart.YAxis
+
+Re-exported Recharts `YAxis` component. Follows the [Recharts YAxis API](https://recharts.github.io/en-US/api/YAxis/).
+
+### LineChart.Grid
+
+Re-exported Recharts `CartesianGrid` component. Follows the [Recharts CartesianGrid API](https://recharts.github.io/en-US/api/CartesianGrid/).
+
+### LineChart.Tooltip
+
+Re-exported Recharts `Tooltip` component. Follows the [Recharts Tooltip API](https://recharts.github.io/en-US/api/Tooltip/). Use with `LineChart.TooltipContent` for styled tooltips.
+
+### LineChart.TooltipContent
+
+Pre-built tooltip renderer for Recharts. Pass as the `content` prop of `LineChart.Tooltip`. See [ChartTooltip](https://heroui.pro/docs/react/components/chart-tooltip) for full props.

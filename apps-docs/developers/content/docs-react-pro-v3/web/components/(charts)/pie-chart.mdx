@@ -1,0 +1,918 @@
+---
+title: 'Pie Chart'
+description: 'A pie and donut chart for proportional data with labels, legends, and nested ring support.'
+sourceUrl: https://heroui.pro/docs/react/components/pie-chart
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-pie-chart-default">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const browserData = [
+  { name: 'Chrome', value: 62 },
+  { name: 'Safari', value: 19 },
+  { name: 'Firefox', value: 10 },
+  { name: 'Edge', value: 9 }
+]
+
+function PieTooltip({
+  active,
+  payload
+}: {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>{entry.value}</ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function Default() {
+  return (
+    <Card className="w-[360px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Browser Usage</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <PieChart height={220}>
+          <PieChart.Pie
+            cx="50%"
+            cy="50%"
+            data={browserData}
+            dataKey="value"
+            nameKey="name"
+            outerRadius={90}>
+            {browserData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Tooltip content={<PieTooltip />} />
+        </PieChart>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+          {browserData.map((entry, idx) => (
+            <div key={entry.name} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{
+                  backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                }}
+              />
+              <span className="text-muted text-xs">{entry.name}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the PieChart component and access all parts using dot notation.
+
+<Callout type="info">
+  `PieChart` is a subpath-only import (`@vezham/react-pro-v3/pie-chart`) because
+  it depends on the optional `recharts` peer. It is not exported from the
+  package root, so SSR apps that don't use it never need `recharts` installed.
+</Callout>
+
+```tsx
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+
+;<PieChart>
+  <PieChart.Pie>
+    <PieChart.Cell />
+    <PieChart.Label />
+  </PieChart.Pie>
+  <PieChart.Tooltip />
+</PieChart>
+```
+
+## Custom Tooltip
+
+<ComponentPreview name="pro-pie-chart-custom-tooltip">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const browserData = [
+  { name: 'Chrome', value: 62 },
+  { name: 'Safari', value: 19 },
+  { name: 'Firefox', value: 10 },
+  { name: 'Edge', value: 9 }
+]
+
+interface PieTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}
+
+function PieTooltip({ active, payload, valueFormatter }: PieTooltipProps) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function CustomTooltip() {
+  const total = browserData.reduce((sum, d) => sum + d.value, 0)
+
+  return (
+    <Card className="w-[360px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Market Share</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <PieChart height={220}>
+          <PieChart.Pie
+            cx="50%"
+            cy="50%"
+            data={browserData}
+            dataKey="value"
+            nameKey="name"
+            outerRadius={90}>
+            {browserData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Tooltip
+            content={
+              <PieTooltip
+                valueFormatter={v =>
+                  `${((Number(v) / total) * 100).toFixed(1)}%`
+                }
+              />
+            }
+          />
+        </PieChart>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+          {browserData.map((entry, idx) => (
+            <div key={entry.name} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{
+                  backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                }}
+              />
+              <span className="text-muted text-xs">{entry.name}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Donut
+
+<ComponentPreview name="pro-pie-chart-donut">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const trafficData = [
+  { name: 'Organic', value: 4500 },
+  { name: 'Direct', value: 3200 },
+  { name: 'Referral', value: 2100 },
+  { name: 'Social', value: 1400 }
+]
+
+function PieTooltip({
+  active,
+  payload,
+  valueFormatter
+}: {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function Donut() {
+  return (
+    <Card className="w-[360px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Traffic Sources</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <PieChart height={220}>
+          <PieChart.Pie
+            cornerRadius={12}
+            cx="50%"
+            cy="50%"
+            data={trafficData}
+            dataKey="value"
+            innerRadius="68%"
+            nameKey="name"
+            paddingAngle={-20}
+            strokeWidth={0}>
+            {trafficData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Tooltip
+            content={
+              <PieTooltip valueFormatter={v => Number(v).toLocaleString()} />
+            }
+          />
+        </PieChart>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+          {trafficData.map((entry, idx) => (
+            <div key={entry.name} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{
+                  backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                }}
+              />
+              <span className="text-muted text-xs">
+                {entry.name} ({entry.value.toLocaleString()})
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Donut With Content
+
+<ComponentPreview name="pro-pie-chart-donut-with-content">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const deviceData = [
+  { name: 'Mobile', value: 2800 },
+  { name: 'Desktop', value: 1200 },
+  { name: 'Tablet', value: 500 }
+]
+
+interface PieTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}
+
+function PieTooltip({ active, payload, valueFormatter }: PieTooltipProps) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function DonutWithContent() {
+  const total = deviceData.reduce((sum, d) => sum + d.value, 0)
+  const formatted =
+    total >= 1000 ? `${(total / 1000).toFixed(1)}K` : total.toString()
+
+  return (
+    <Card className="w-[360px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Connected Devices</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <PieChart height={240} width={240}>
+            <PieChart.Pie
+              cornerRadius={12}
+              cx="50%"
+              cy="50%"
+              data={deviceData}
+              dataKey="value"
+              innerRadius="68%"
+              nameKey="name"
+              paddingAngle={-20}
+              strokeWidth={0}>
+              {deviceData.map((_, idx) => (
+                <PieChart.Cell
+                  key={idx}
+                  fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                />
+              ))}
+            </PieChart.Pie>
+            <PieChart.Tooltip content={<PieTooltip />} />
+          </PieChart>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-foreground text-3xl font-bold">
+              {formatted}
+            </span>
+            <span className="text-muted text-sm">Devices</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          {deviceData.map((entry, idx) => {
+            const pct = ((entry.value / total) * 100).toFixed(0)
+
+            return (
+              <div key={entry.name} className="flex items-center gap-3">
+                <span
+                  className="size-3 shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                  }}
+                />
+                <span className="text-foreground w-16 text-sm">
+                  {entry.name}
+                </span>
+                <span className="text-foreground text-sm font-semibold">
+                  {entry.value.toLocaleString()}
+                </span>
+                <span className="text-muted text-xs">({pct}%)</span>
+              </div>
+            )
+          })}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Donut With Label
+
+<ComponentPreview name="pro-pie-chart-donut-with-label">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const storageData = [
+  { name: 'Documents', value: 42 },
+  { name: 'Media', value: 28 },
+  { name: 'Apps', value: 18 },
+  { name: 'Other', value: 12 }
+]
+
+function PieTooltip({
+  active,
+  payload,
+  valueFormatter
+}: {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function DonutWithLabel() {
+  const total = storageData.reduce((sum, d) => sum + d.value, 0)
+
+  return (
+    <Card className="w-[360px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Storage Usage</Card.Title>
+        <Card.Description className="text-muted text-xs">
+          {total} GB of 128 GB used
+        </Card.Description>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <PieChart height={220} width={220}>
+            <PieChart.Pie
+              cornerRadius={12}
+              cx="50%"
+              cy="50%"
+              data={storageData}
+              dataKey="value"
+              innerRadius="68%"
+              nameKey="name"
+              paddingAngle={-20}
+              strokeWidth={0}>
+              {storageData.map((_, idx) => (
+                <PieChart.Cell
+                  key={idx}
+                  fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                />
+              ))}
+            </PieChart.Pie>
+            <PieChart.Tooltip
+              content={<PieTooltip valueFormatter={v => `${v} GB`} />}
+            />
+          </PieChart>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-foreground text-2xl font-bold">{total}</span>
+            <span className="text-muted text-xs">GB used</span>
+          </div>
+        </div>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+          {storageData.map((entry, idx) => (
+            <div key={entry.name} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{
+                  backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                }}
+              />
+              <span className="text-muted text-xs">
+                {entry.name} ({entry.value} GB)
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Nested Donut
+
+<ComponentPreview name="pro-pie-chart-nested-donut">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const innerData = [
+  { name: 'Q1', value: 3200 },
+  { name: 'Q2', value: 4100 },
+  { name: 'Q3', value: 3800 },
+  { name: 'Q4', value: 5200 }
+]
+
+const outerData = [
+  { name: 'Q1', value: 4800 },
+  { name: 'Q2', value: 5600 },
+  { name: 'Q3', value: 5100 },
+  { name: 'Q4', value: 6800 }
+]
+
+interface PieTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}
+
+function PieTooltip({ active, payload, valueFormatter }: PieTooltipProps) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function NestedDonut() {
+  return (
+    <Card className="w-[400px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">
+          Revenue: This Year vs Last
+        </Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center gap-4">
+        <PieChart height={240}>
+          <PieChart.Pie
+            cornerRadius={12}
+            cx="50%"
+            cy="50%"
+            data={innerData}
+            dataKey="value"
+            innerRadius="34%"
+            nameKey="name"
+            outerRadius="46%"
+            paddingAngle={-20}
+            strokeWidth={0}>
+            {innerData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Pie
+            cornerRadius={12}
+            cx="50%"
+            cy="50%"
+            data={outerData}
+            dataKey="value"
+            innerRadius="56%"
+            nameKey="name"
+            outerRadius="68%"
+            paddingAngle={-20}
+            strokeWidth={0}>
+            {outerData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Tooltip
+            content={
+              <PieTooltip
+                valueFormatter={v => `${Number(v).toLocaleString()}`}
+              />
+            }
+          />
+        </PieChart>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            {['Q1', 'Q2', 'Q3', 'Q4'].map((q, idx) => (
+              <div key={q} className="flex items-center gap-1.5">
+                <span
+                  className="size-2.5 rounded-full"
+                  style={{ backgroundColor: CHART_COLORS[idx] }}
+                />
+                <span className="text-muted text-xs">{q}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="text-muted flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="bg-muted/30 size-2.5 rounded-full" />
+            <span>Last year (inner)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="bg-muted size-2.5 rounded-full" />
+            <span>This year (outer)</span>
+          </div>
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Breakdown
+
+<ComponentPreview name="pro-pie-chart-with-breakdown">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { Card } from '@vezham/react-v3'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const planData = [
+  { name: 'Enterprise', value: 340 },
+  { name: 'Pro', value: 520 },
+  { name: 'Starter', value: 280 }
+]
+
+interface PieTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    payload?: { fill?: string }
+    value?: number | string
+  }>
+  valueFormatter?: (value: number | string) => ReactNode
+}
+
+function PieTooltip({ active, payload, valueFormatter }: PieTooltipProps) {
+  const entry = payload?.[0]
+
+  if (!active || !entry) return null
+
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color={entry.payload?.fill} />
+        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+        <ChartTooltip.Value>
+          {valueFormatter ? valueFormatter(entry.value ?? '') : entry.value}
+        </ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+
+export function WithBreakdown() {
+  const total = planData.reduce((sum, d) => sum + d.value, 0)
+
+  return (
+    <Card className="w-[460px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Users by Plan</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-row items-center gap-6">
+        <div className="relative shrink-0">
+          <PieChart height={180} width={180}>
+            <PieChart.Pie
+              cornerRadius={12}
+              cx="50%"
+              cy="50%"
+              data={planData}
+              dataKey="value"
+              innerRadius="68%"
+              nameKey="name"
+              paddingAngle={-20}
+              strokeWidth={0}>
+              {planData.map((_, idx) => (
+                <PieChart.Cell
+                  key={idx}
+                  fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                />
+              ))}
+            </PieChart.Pie>
+            <PieChart.Tooltip content={<PieTooltip />} />
+          </PieChart>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-foreground text-xl font-bold">
+              {total.toLocaleString()}
+            </span>
+            <span className="text-muted text-[10px]">Total</span>
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col gap-3">
+          {planData.map((entry, idx) => {
+            const pct = ((entry.value / total) * 100).toFixed(1)
+
+            return (
+              <div key={entry.name} className="flex items-center gap-3">
+                <span
+                  className="size-3 shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: CHART_COLORS[idx % CHART_COLORS.length]
+                  }}
+                />
+                <div className="flex flex-1 items-center justify-between">
+                  <span className="text-foreground text-sm">{entry.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-foreground text-sm font-semibold">
+                      {entry.value}
+                    </span>
+                    <span className="text-muted text-xs">({pct}%)</span>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.pie-chart` — Root container wrapping `ResponsiveContainer` and the Recharts chart.
+
+### Recharts Theming
+
+The following CSS rules target Recharts internal class names to apply HeroUI design tokens automatically:
+
+- `.pie-chart .recharts-pie-sector path` — Pie sector strokes. Removed to avoid messy convergence at the center; use `paddingAngle` on `<PieChart.Pie>` for clean slice separation.
+- `.pie-chart .recharts-pie-label-text` — Outside label text. 11px muted.
+- `.pie-chart .recharts-pie-label-line` — Connector lines from slice to label. Muted at 0.3 opacity.
+- `.pie-chart .recharts-label` — Center label text for donut charts. Uses foreground color.
+- `.pie-chart .recharts-tooltip-cursor` — Tooltip cursor. Hidden for pie charts.
+- `.pie-chart .recharts-tooltip-wrapper` — Tooltip wrapper. Elevated z-index to render above center content.
+
+## API Reference
+
+### PieChart
+
+The root wrapper. Renders a `ResponsiveContainer` + Recharts `PieChart` with HeroUI CSS theming applied automatically.
+
+| Prop       | Type                        | Default  | Description                                                        |
+| ---------- | --------------------------- | -------- | ------------------------------------------------------------------ |
+| `height`   | `number`                    | `300`    | Chart height in pixels.                                            |
+| `width`    | ``number \| `${number}%` `` | `"100%"` | Chart width in pixels or percentage string.                        |
+| `children` | `ReactNode`                 | —        | Recharts child components (`PieChart.Pie`, `PieChart.Cell`, etc.). |
+
+Also supports all native `div` HTML attributes.
+
+### PieChart.Pie
+
+Re-exported Recharts `Pie` component. Follows the [Recharts Pie API](https://recharts.github.io/en-US/api/Pie/).
+
+### PieChart.Cell
+
+Re-exported Recharts `Cell` component. Follows the [Recharts Cell API](https://recharts.github.io/en-US/api/Cell/).
+
+### PieChart.Label
+
+Re-exported Recharts `Label` component. Follows the [Recharts Label API](https://recharts.github.io/en-US/api/Label/).
+
+### PieChart.Tooltip
+
+Re-exported Recharts `Tooltip` component. Follows the [Recharts Tooltip API](https://recharts.github.io/en-US/api/Tooltip/). Use with `PieChart.TooltipContent` for styled tooltips.
+
+### PieChart.TooltipContent
+
+Pre-built tooltip renderer for Recharts. Pass as the `content` prop of `PieChart.Tooltip`. See [ChartTooltip](https://heroui.pro/docs/react/components/chart-tooltip) for full props.

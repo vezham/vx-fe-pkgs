@@ -1,0 +1,825 @@
+---
+title: 'Holo Card'
+description: 'A 3D tilting card with a pointer-tracked holographic glare and texture overlay, built for membership cards, passes, and collectibles.'
+sourceUrl: https://heroui.pro/docs/react/components/holo-card
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+<Callout type="info">
+  The installed 1.0.0-beta.10 package uses its default pointer tracking. Hover
+  activation and configurable tilt settings described in the upstream reference
+  require a newer package.
+</Callout>
+
+## Usage
+
+<ComponentPreview name="pro-holo-card-default">
+
+```tsx
+'use client'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <HoloCard>
+      <HoloCard.Rotator>
+        <HoloCard.Frame>
+          <HoloCard.Surface>
+            <HoloCard.Inset />
+            <HoloCard.Pattern />
+            <HoloCard.Content className="flex-col items-center justify-center">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-3xl font-bold text-white">Holo Card</span>
+                <span className="text-[10px] font-medium tracking-widest text-white/40 uppercase">
+                  Move your pointer
+                </span>
+              </div>
+            </HoloCard.Content>
+            <HoloCard.Shine />
+          </HoloCard.Surface>
+        </HoloCard.Frame>
+      </HoloCard.Rotator>
+    </HoloCard>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the HoloCard component and access all parts using dot notation.
+
+```tsx
+import { HoloCard } from '@vezham/react-pro-v3'
+
+;<HoloCard>
+  <HoloCard.Rotator>
+    <HoloCard.Frame>
+      <HoloCard.Surface>
+        <HoloCard.Image />
+        <HoloCard.Inset />
+        <HoloCard.Pattern />
+        <HoloCard.Content />
+        <HoloCard.Shine>
+          <HoloCard.ShinePattern />
+        </HoloCard.Shine>
+      </HoloCard.Surface>
+    </HoloCard.Frame>
+  </HoloCard.Rotator>
+</HoloCard>
+```
+
+Every layer is optional except `Rotator`, `Frame`, and `Surface`. `Image` is the card
+art, `Inset` draws the hairline border, `Pattern` is the static texture, and `Shine` is
+the pointer-tracked holographic glare. `Shine` renders a `ShinePattern` for you unless
+you pass children.
+
+## Composing the card face
+
+`HoloCard.Content` is a full-bleed layer that drifts against the tilt. Render one per
+band of the card and position it with flex utilities — the layer ignores the pointer so
+stacked layers never block each other.
+
+```tsx
+<HoloCard.Content className="flex-col items-center justify-center">
+  <span className="text-3xl font-bold text-white">Marcus Wong</span>
+</HoloCard.Content>
+<HoloCard.Content className="items-end justify-center pb-10">
+  <span className="text-sm text-white/40">Member #0999</span>
+</HoloCard.Content>
+```
+
+## Image only
+
+For a collectible-style card whose face is a single piece of art, render
+`HoloCard.Image` and drop `HoloCard.Content` entirely. The image fills the surface and
+sits at the bottom of the stack, so the glare and texture blend over it.
+
+```tsx
+<HoloCard
+  style={{ '--holo-card-width': '210px', '--holo-card-height': '294px' }}>
+  <HoloCard.Rotator>
+    <HoloCard.Frame>
+      <HoloCard.Surface>
+        <HoloCard.Image alt="Neon-lit game controller" src="/card-art.jpg" />
+        <HoloCard.Pattern />
+        <HoloCard.Shine />
+      </HoloCard.Surface>
+    </HoloCard.Frame>
+  </HoloCard.Rotator>
+</HoloCard>
+```
+
+Set `--holo-card-width` and `--holo-card-height` to your art's aspect ratio — the
+defaults are `302px × 453px`, and the example above uses trading-card proportions.
+
+<ComponentPreview name="pro-holo-card-image-gallery">
+
+```tsx
+'use client'
+
+import type { CSSProperties } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+/** Trading-card proportions (2.5 × 3.5in), scaled down to fit three across. */
+const TRADING_CARD = {
+  '--holo-card-bleed': '24px',
+  '--holo-card-height': '294px',
+  '--holo-card-radius': '14px',
+  '--holo-card-width': '210px'
+} as CSSProperties
+
+const CARDS = [
+  {
+    alt: 'Neon-lit game controller',
+    src: 'https://img.heroui.chat/image/game?w=420&h=588&u=3'
+  },
+  {
+    alt: 'Collectible mascot figure',
+    src: 'https://img.heroui.chat/image/game?w=420&h=588&u=6'
+  },
+  {
+    alt: 'Backlit gaming headset',
+    src: 'https://img.heroui.chat/image/game?w=420&h=588&u=8'
+  }
+]
+
+export function ImageGallery() {
+  return (
+    <div className="flex flex-wrap items-center justify-center">
+      {CARDS.map(({ alt, src }) => (
+        <HoloCard key={src} style={TRADING_CARD}>
+          <HoloCard.Rotator>
+            <HoloCard.Frame>
+              <HoloCard.Surface>
+                <HoloCard.Image alt={alt} src={src} />
+                <HoloCard.Pattern />
+                <HoloCard.Shine />
+              </HoloCard.Surface>
+            </HoloCard.Frame>
+          </HoloCard.Rotator>
+        </HoloCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+<Callout type="info">
+  Put the art in `HoloCard.Image`, not in a `HoloCard.Content` layer. `Content`
+  stacks above `Shine` so it can carry readable text over the glare, which means
+  a full-bleed image there would cover the holographic effect instead of
+  catching it.
+</Callout>
+
+If you want the art as a plain background and have no need for an `img` element, the
+`gradient` prop takes any CSS `background` value, so a single prop is enough:
+
+```tsx
+<HoloCard gradient="url('/card-art.jpg') center / cover no-repeat" />
+```
+
+## Grids and performance
+
+A live card holds a 3D context and composited layers for as long as it is mounted. That
+is fine for one card, but a grid of them is a grid of layers, and enough of them will
+exhaust the memory a mobile browser has for re-rasterizing them on a pinch-zoom.
+
+`activateOnHover` makes a card earn that cost. It starts flat and inert — no perspective,
+no `preserve-3d`, no `will-change`, no transform, and no glare layers — builds the 3D
+context when a mouse pointer enters, and tears it down once the return spring has
+settled. A grid then costs about as much as a grid of images, with only the card under
+the pointer on the GPU. Reach for it in any collection of cards:
+
+```tsx
+<HoloCard activateOnHover hoverScale={1.04} maxTilt={8} shineOpacity={0.55}>
+  {/* ... */}
+</HoloCard>
+```
+
+The effect is also loud on a card this small, hence the gentler `maxTilt`, `hoverScale`,
+and `shineOpacity`. `maxTilt` also scales the content parallax, because that drift is
+derived from the tilt, so a smaller angle moves `HoloCard.Content` less unless
+`parallaxStrength` is raised to compensate. A smaller tilt and zoom need less room
+inside the clipping frame, so `--holo-card-bleed` can come down with them and tighten
+the grid. Use `spring` and `settleSpring` to change how the card follows the pointer
+and how it comes back.
+
+<ComponentPreview name="pro-holo-card-card-grid">
+
+```tsx
+'use client'
+
+import type { CSSProperties } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+/** Trading-card proportions (2.5 × 3.5in), small enough to fit a search-results grid. */
+const TRADING_CARD = {
+  '--holo-card-bleed': '14px',
+  '--holo-card-height': '210px',
+  '--holo-card-radius': '10px',
+  '--holo-card-width': '150px'
+} as CSSProperties
+
+const CARDS = Array.from({ length: 16 }, (_, index) => ({
+  alt: `Collectible card ${index + 1}`,
+  src: `https://img.heroui.chat/image/game?w=300&h=420&u=${index + 1}`
+}))
+
+export function CardGrid() {
+  return (
+    <div className="flex flex-wrap justify-center">
+      {CARDS.map(({ alt, src }) => (
+        <HoloCard key={src} style={TRADING_CARD}>
+          <HoloCard.Rotator>
+            <HoloCard.Frame>
+              <HoloCard.Surface>
+                <HoloCard.Image alt={alt} loading="lazy" src={src} />
+                <HoloCard.Shine />
+              </HoloCard.Surface>
+            </HoloCard.Frame>
+          </HoloCard.Rotator>
+        </HoloCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+A card left at the default stays live from the moment it mounts, which is what you want
+for a single hero card: it is ready the instant the pointer arrives, with no first-hover
+work at all.
+
+An inert card also cannot tilt under a finger, because the browser decides who owns a
+touch as it lands — before the card has had a chance to wake. `activateOnHover` therefore
+implies `tiltOnTouch={false}`, and a grid on a phone scrolls and pinch-zooms as if the
+cards were plain images.
+
+The root reflects the state as `data-active="true" | "false"`, which is also the hook
+for styling a card differently while it is live. A card that reserves touch drags for its
+tilt carries `data-tilt-on-touch="true"`, which is where its `touch-action` comes from.
+
+## Custom Gradient
+
+<ComponentPreview name="pro-holo-card-custom-gradient">
+
+```tsx
+'use client'
+
+import type { CSSProperties } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+const CARDS = [
+  {
+    gradient:
+      'linear-gradient(140deg, rgb(14, 165, 233) 0%, rgb(9, 125, 188) 30%, rgb(6, 85, 138) 66%, rgb(4, 48, 95) 100%)',
+    label: 'Ocean'
+  },
+  {
+    gradient:
+      'linear-gradient(140deg, rgb(139, 92, 246) 0%, rgb(108, 68, 208) 30%, rgb(78, 46, 162) 66%, rgb(50, 28, 118) 100%)',
+    label: 'Violet'
+  },
+  {
+    gradient:
+      'linear-gradient(140deg, rgb(16, 185, 129) 0%, rgb(12, 140, 100) 30%, rgb(9, 98, 72) 66%, rgb(5, 60, 46) 100%)',
+    label: 'Emerald'
+  }
+]
+
+/** Shrunk down so all three fit side by side. */
+const compact = {
+  '--holo-card-bleed': '20px',
+  '--holo-card-height': '260px',
+  '--holo-card-radius': '16px',
+  '--holo-card-width': '180px'
+} as CSSProperties
+
+export function CustomGradient() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-2">
+      {CARDS.map(({ gradient, label }) => (
+        <HoloCard key={label} gradient={gradient} style={compact}>
+          <HoloCard.Rotator>
+            <HoloCard.Frame>
+              <HoloCard.Surface>
+                <HoloCard.Inset />
+                <HoloCard.Content className="items-center justify-center">
+                  <span className="text-xl font-semibold text-white">
+                    {label}
+                  </span>
+                </HoloCard.Content>
+                <HoloCard.Shine />
+              </HoloCard.Surface>
+            </HoloCard.Frame>
+          </HoloCard.Rotator>
+        </HoloCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Pattern
+
+<ComponentPreview name="pro-holo-card-with-pattern">
+
+```tsx
+'use client'
+
+import type { CSSProperties } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+/**
+ * The holographic texture is just a `background-image`, so any CSS value works.
+ * Point `--holo-card-pattern` at a `url(...)` (or use the `patternSrc` prop) to
+ * use a texture file instead.
+ */
+const PATTERNS = [
+  {
+    label: 'Lattice',
+    style: {
+      '--holo-card-pattern':
+        'repeating-conic-gradient(from 45deg, rgb(255 255 255 / 0.9) 0% 25%, rgb(0 0 0 / 0.6) 25% 50%)',
+      '--holo-card-pattern-size': '24px 24px'
+    }
+  },
+  {
+    label: 'Brushed',
+    style: {
+      '--holo-card-pattern':
+        'repeating-linear-gradient(100deg, rgb(255 255 255 / 0.75) 0px, rgb(120 120 120 / 0.3) 2px, rgb(0 0 0 / 0.7) 4px)',
+      '--holo-card-pattern-size': 'auto'
+    }
+  }
+]
+
+const compact = {
+  '--holo-card-bleed': '22px',
+  '--holo-card-height': '320px',
+  '--holo-card-radius': '18px',
+  '--holo-card-width': '215px'
+}
+
+export function WithPattern() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-4">
+      {PATTERNS.map(({ label, style }) => (
+        <HoloCard key={label} style={{ ...compact, ...style } as CSSProperties}>
+          <HoloCard.Rotator>
+            <HoloCard.Frame>
+              <HoloCard.Surface>
+                <HoloCard.Inset />
+                <HoloCard.Pattern />
+                <HoloCard.Content className="items-end justify-center pb-8">
+                  <span className="text-[10px] font-medium tracking-widest text-white/50 uppercase">
+                    {label}
+                  </span>
+                </HoloCard.Content>
+                <HoloCard.Shine />
+              </HoloCard.Surface>
+            </HoloCard.Frame>
+          </HoloCard.Rotator>
+        </HoloCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Static
+
+Set `isInteractive={false}` to freeze the card flat and unlit. The card also stays
+static automatically when the user has `prefers-reduced-motion` enabled, and that
+preference hands horizontal drags back to the page.
+
+Touch and pen pointers tilt the card too, which means the card claims horizontal drags
+that start on it. Set `tiltOnTouch={false}` to hand every gesture back to the page — a
+card inside a carousel or a horizontally scrolling row needs it, or the row will not swipe.
+Vertical scrolling and pinch-zoom always reach the page either way.
+
+<ComponentPreview name="pro-holo-card-static">
+
+```tsx
+'use client'
+
+import type { CSSProperties } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+const compact = {
+  '--holo-card-bleed': '20px',
+  '--holo-card-height': '300px',
+  '--holo-card-radius': '16px',
+  '--holo-card-width': '200px'
+} as CSSProperties
+
+export function Static() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-4">
+      {[
+        { isInteractive: true, label: 'Interactive' },
+        { isInteractive: false, label: 'Static' }
+      ].map(({ isInteractive, label }) => (
+        <HoloCard key={label} isInteractive={isInteractive} style={compact}>
+          <HoloCard.Rotator>
+            <HoloCard.Frame>
+              <HoloCard.Surface>
+                <HoloCard.Inset />
+                <HoloCard.Content className="items-center justify-center">
+                  <span className="text-lg font-semibold text-white">
+                    {label}
+                  </span>
+                </HoloCard.Content>
+                <HoloCard.Shine />
+              </HoloCard.Surface>
+            </HoloCard.Frame>
+          </HoloCard.Rotator>
+        </HoloCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Membership Card
+
+<ComponentPreview name="pro-holo-card-membership-card">
+
+```tsx
+'use client'
+
+import { Gem } from '@gravity-ui/icons'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+const MEMBER = {
+  joinedAt: Date.parse('2026-03-12'),
+  memberNumber: 999,
+  name: 'Marcus Wong',
+  plan: 'Lifetime'
+}
+
+function formatJoinedDate(timestamp: number) {
+  return new Date(timestamp).toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
+
+export function MembershipCard() {
+  return (
+    <HoloCard gradient="linear-gradient(140deg, rgb(58, 55, 48) 0%, rgb(40, 40, 41) 38%, rgb(26, 27, 34) 78%, rgb(18, 19, 28) 100%)">
+      <HoloCard.Rotator>
+        <HoloCard.Frame>
+          <HoloCard.Surface>
+            <HoloCard.Inset />
+            <HoloCard.Pattern />
+
+            <HoloCard.Content className="justify-center pt-12">
+              <Gem className="size-6 text-white/40 mix-blend-soft-light" />
+            </HoloCard.Content>
+
+            <HoloCard.Content className="flex-col items-center justify-center">
+              <span className="text-3xl font-bold text-white">
+                {MEMBER.name}
+              </span>
+              <span className="text-[10px] font-medium text-white/40">
+                {MEMBER.plan} member since{' '}
+                {new Date(MEMBER.joinedAt).getFullYear()}
+              </span>
+            </HoloCard.Content>
+
+            <HoloCard.Content className="items-end justify-center pb-10">
+              <div className="flex w-[220px] justify-between">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-medium text-white/30">
+                    Joined
+                  </span>
+                  <span className="text-sm font-semibold text-white/40">
+                    {formatJoinedDate(MEMBER.joinedAt)}
+                  </span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-medium text-white/30">
+                    Member
+                  </span>
+                  <span className="text-sm font-semibold text-white/40">
+                    #{String(MEMBER.memberNumber).padStart(4, '0')}
+                  </span>
+                </div>
+              </div>
+            </HoloCard.Content>
+
+            <HoloCard.Shine />
+          </HoloCard.Surface>
+        </HoloCard.Frame>
+      </HoloCard.Rotator>
+    </HoloCard>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Credit Card
+
+The card is portrait by default. Swap `--holo-card-width` and `--holo-card-height` for a
+landscape payment card — this one uses ISO/IEC 7810 ID-1 proportions (85.6 × 54mm).
+
+<ComponentPreview name="pro-holo-card-credit-card">
+
+```tsx
+'use client'
+
+import type { CSSProperties, SVGProps } from 'react'
+
+import { HoloCard } from '@vezham/react-pro-v3'
+
+/** Payment-card proportions (ISO/IEC 7810 ID-1, 85.6 × 54mm), in landscape. */
+const PAYMENT_CARD = {
+  '--holo-card-bleed': '28px',
+  '--holo-card-height': '240px',
+  '--holo-card-radius': '16px',
+  '--holo-card-width': '380px'
+} as CSSProperties
+
+const CARD = {
+  expiry: '08/29',
+  holder: 'Marcus Wong',
+  issuer: 'HeroUI',
+  last4: '4242',
+  tier: 'Platinum'
+}
+
+/** The EMV contactless mark, as four concentric arcs. */
+function ContactlessMark(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="1.6"
+      viewBox="0 0 24 24"
+      {...props}>
+      <path d="M5.18 8.82a4.5 4.5 0 0 1 0 6.36" />
+      <path d="M7.66 6.34a8 8 0 0 1 0 11.32" />
+      <path d="M10.13 3.87a11.5 11.5 0 0 1 0 16.26" />
+      <path d="M12.61 1.39a15 15 0 0 1 0 21.22" />
+    </svg>
+  )
+}
+
+/** The chip, drawn in CSS so the demo needs no image assets. */
+function Chip() {
+  return (
+    <div
+      aria-hidden="true"
+      className="relative h-7 w-9 overflow-clip rounded-[5px] bg-gradient-to-br from-amber-100/80 via-yellow-600/70 to-amber-200/70">
+      <div className="absolute inset-x-0 top-1/3 h-px bg-black/20" />
+      <div className="absolute inset-x-0 top-2/3 h-px bg-black/20" />
+      <div className="absolute inset-y-1 left-1/2 w-px -translate-x-1/2 bg-black/20" />
+    </div>
+  )
+}
+
+export function CreditCard() {
+  return (
+    <HoloCard
+      gradient="linear-gradient(135deg, rgb(48, 50, 60) 0%, rgb(34, 36, 46) 45%, rgb(21, 22, 31) 100%)"
+      style={PAYMENT_CARD}>
+      <HoloCard.Rotator>
+        <HoloCard.Frame>
+          <HoloCard.Surface>
+            <HoloCard.Inset />
+            <HoloCard.Pattern />
+
+            <HoloCard.Content className="flex-col justify-between p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold tracking-wide text-white/80">
+                    {CARD.issuer}
+                  </span>
+                  <span className="text-[10px] font-medium tracking-widest text-white/35">
+                    {CARD.tier}
+                  </span>
+                </div>
+                <ContactlessMark className="size-5 text-white/35" />
+              </div>
+
+              <div className="flex flex-col gap-3.5">
+                <Chip />
+                <span className="font-mono text-lg tracking-[0.18em] text-white/85">
+                  <span aria-hidden="true">•••• •••• •••• </span>
+                  <span className="sr-only">Card number ending in </span>
+                  {CARD.last4}
+                </span>
+              </div>
+
+              <div className="flex items-end justify-between">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-medium text-white/30">
+                    Card holder
+                  </span>
+                  <span className="text-sm font-semibold text-white/70">
+                    {CARD.holder}
+                  </span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-medium text-white/30">
+                    Expires
+                  </span>
+                  <span className="text-sm font-semibold text-white/70 tabular-nums">
+                    {CARD.expiry}
+                  </span>
+                </div>
+              </div>
+            </HoloCard.Content>
+
+            <HoloCard.Shine />
+          </HoloCard.Surface>
+        </HoloCard.Frame>
+      </HoloCard.Rotator>
+    </HoloCard>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+- `.holo-card` - Perspective wrapper; declares every customization variable
+- `.holo-card__rotator` - 3D tilt layer
+- `.holo-card__frame` - Fixed clipping bounds the tilted card moves within
+- `.holo-card__surface` - The card body carrying the gradient background
+- `.holo-card__image` - Full-bleed card art beneath every overlay
+- `.holo-card__inset` - Hairline border inside the card edge
+- `.holo-card__pattern` - Static texture overlay beneath the content
+- `.holo-card__content` - Full-bleed parallax layer for the card face
+- `.holo-card__shine` - Holographic glare, blended over everything else
+- `.holo-card__shine-pattern` - The texture the glare reveals
+
+## CSS Variables
+
+Set these on the root (or any ancestor) to restyle the card without overriding classes.
+
+| Variable                          | Default                     | Description                                           |
+| --------------------------------- | --------------------------- | ----------------------------------------------------- |
+| `--holo-card-width`               | `302px`                     | Card width                                            |
+| `--holo-card-height`              | `453px`                     | Card height                                           |
+| `--holo-card-radius`              | `20px`                      | Card corner radius                                    |
+| `--holo-card-bleed`               | `36px`                      | Slack around the card inside the clipping frame       |
+| `--holo-card-perspective`         | `600px`                     | 3D perspective depth                                  |
+| `--holo-card-gradient`            | dark gradient               | Card surface background                               |
+| `--holo-card-inset-color`         | `rgb(255 255 255 / .06)`    | Hairline border color                                 |
+| `--holo-card-pattern`             | CSS rainbow sheen           | Texture image for both overlays                       |
+| `--holo-card-pattern-size`        | `auto`                      | `background-size` for both texture layers             |
+| `--holo-card-pattern-opacity`     | `0.9`                       | Opacity of the holographic texture                    |
+| `--holo-card-shine-pattern`       | `var(--holo-card-pattern)`  | Texture the glare reveals; set to `none` to clear it  |
+| `--holo-card-shine-opacity`       | `1`                         | Multiplier for the glare at full strength             |
+| `--holo-card-texture-opacity`     | `0.1`                       | Opacity of the static texture                         |
+| `--holo-card-content-text-shadow` | lift under the card content | Content text shadow; set to `none` for invisible text |
+
+These are driven by pointer movement and are read-only: `--holo-card-pointer-x`,
+`--holo-card-pointer-y`, `--holo-card-background-x`, `--holo-card-background-y`,
+`--holo-card-opacity`.
+
+## API Reference
+
+### HoloCard
+
+The root component. Renders a `div` that owns pointer tracking and every CSS variable.
+It shrink-wraps the card, so wrap it in a flex or grid container to position it.
+
+| Prop               | Type             | Default                         | Description                                                             |
+| ------------------ | ---------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| `gradient`         | `string`         | -                               | CSS background for the surface. Sets `--holo-card-gradient`             |
+| `patternSrc`       | `string`         | -                               | Texture image URL for both overlays. Sets `--holo-card-pattern`         |
+| `patternSize`      | `string`         | -                               | `background-size` for both overlays. Sets `--holo-card-pattern-size`    |
+| `activateOnHover`  | `boolean`        | `false`                         | Whether the card stays flat and inert until a mouse pointer is over it  |
+| `tiltOnTouch`      | `boolean`        | `true`                          | Whether touch and pen pointers tilt the card, claiming horizontal drags |
+| `isInteractive`    | `boolean`        | `true`                          | Whether the card tilts and lights up on pointer move                    |
+| `isDisabled`       | `boolean`        | `false`                         | Disables pointer tracking, leaving the card flat and unlit              |
+| `maxTilt`          | `number`         | `14.29`                         | Edge tilt in degrees. Also scales the content parallax                  |
+| `hoverScale`       | `number`         | `1.05`                          | Scale the card grows to while the pointer is over it                    |
+| `shineOpacity`     | `number`         | `1`                             | Multiplier for the glare. Sets `--holo-card-shine-opacity`              |
+| `spring`           | `HoloCardSpring` | `{damping: 28, stiffness: 180}` | Spring the card follows the pointer with                                |
+| `settleSpring`     | `HoloCardSpring` | `{damping: 22, stiffness: 120}` | Spring the card returns to rest with                                    |
+| `parallaxStrength` | `number`         | `10`                            | How far `HoloCard.Content` layers drift against the tilt                |
+| `children`         | `ReactNode`      | -                               | Card layers                                                             |
+| `className`        | `string`         | -                               | Additional CSS class                                                    |
+
+`HoloCardSpring` is `{damping?: number; mass?: number; stiffness?: number}`, merged over
+the defaults above.
+
+Also supports all native `div` HTML attributes and Motion props.
+
+### HoloCard.Rotator
+
+The 3D tilt layer. Rotates around the card center as the pointer moves.
+
+| Prop        | Type        | Default | Description          |
+| ----------- | ----------- | ------- | -------------------- |
+| `children`  | `ReactNode` | -       | Frame element        |
+| `className` | `string`    | -       | Additional CSS class |
+
+Also supports all native `div` HTML attributes and Motion props.
+
+### HoloCard.Frame
+
+Fixed clipping bounds that give the scaled, tilted card room to move.
+
+| Prop       | Type        | Default | Description     |
+| ---------- | ----------- | ------- | --------------- |
+| `children` | `ReactNode` | -       | Surface element |
+
+Also supports all native `div` HTML attributes.
+
+### HoloCard.Surface
+
+The card body. Carries the gradient background and clips every layer to the radius.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Card layers |
+
+Also supports all native `div` HTML attributes.
+
+### HoloCard.Image
+
+Full-bleed card art. Renders an `img` that covers the surface and sits below every
+overlay, so the glare and texture blend over it. The decorative layers above it are
+transparent to the pointer, so a right click still opens the browser's image menu. It is
+`draggable={false}` by default, so a native image drag can never interrupt the tilt; pass
+`draggable` to opt back in.
+
+| Prop        | Type      | Default | Description                                                           |
+| ----------- | --------- | ------- | --------------------------------------------------------------------- |
+| `alt`       | `string`  | -       | Required. Describe the art, or pass `""` when it is purely decorative |
+| `src`       | `string`  | -       | Image URL                                                             |
+| `draggable` | `boolean` | `false` | Whether the browser may start a native drag of the art                |
+
+Also supports all native `img` HTML attributes.
+
+### HoloCard.Inset
+
+Hairline border inset from the card edge. Renders no children.
+
+Supports all native `div` HTML attributes.
+
+### HoloCard.Pattern
+
+Static texture overlay that sits beneath the content. Renders no children.
+
+Supports all native `div` HTML attributes.
+
+### HoloCard.Content
+
+A full-bleed parallax layer for the card face. Render as many as you need.
+
+| Prop        | Type        | Default | Description                               |
+| ----------- | ----------- | ------- | ----------------------------------------- |
+| `parallax`  | `boolean`   | `true`  | Whether the layer drifts against the tilt |
+| `children`  | `ReactNode` | -       | Layer content                             |
+| `className` | `string`    | -       | Additional CSS class                      |
+
+Also supports all native `div` HTML attributes and Motion props.
+
+### HoloCard.Shine
+
+The pointer-tracked holographic glare. Renders a `HoloCard.ShinePattern` when no children are given.
+
+| Prop       | Type        | Default            | Description                  |
+| ---------- | ----------- | ------------------ | ---------------------------- |
+| `children` | `ReactNode` | `<ShinePattern />` | Replaces the default texture |
+
+Also supports all native `div` HTML attributes.
+
+### HoloCard.ShinePattern
+
+The texture the glare reveals, parallaxed by the pointer. Renders no children.
+
+Supports all native `div` HTML attributes.

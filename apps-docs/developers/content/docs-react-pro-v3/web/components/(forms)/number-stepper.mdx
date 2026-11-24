@@ -1,0 +1,678 @@
+---
+title: 'Number Stepper'
+description: 'A React numeric input with increment and decrement controls, bounds, step intervals, and formatting.'
+sourceUrl: https://heroui.pro/docs/react/components/number-stepper
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-number-stepper-default">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function Default() {
+  return (
+    <NumberStepper
+      aria-label="Quantity"
+      defaultValue={1}
+      maxValue={99}
+      minValue={0}>
+      <NumberStepper.Group>
+        <NumberStepper.DecrementButton />
+        <NumberStepper.Value />
+        <NumberStepper.IncrementButton />
+      </NumberStepper.Group>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the NumberStepper component and access all parts using dot notation.
+
+<Callout type="info">
+  `NumberStepper` is a subpath-only import
+  (`@vezham/react-pro-v3/number-stepper`) because it depends on the optional
+  `@number-flow/react` peer. It is not exported from the package root, so SSR
+  apps that don't use it never need `@number-flow/react` installed.
+</Callout>
+
+```tsx
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+;<NumberStepper>
+  <NumberStepper.Group>
+    <NumberStepper.DecrementButton />
+    <NumberStepper.Value />
+    <NumberStepper.IncrementButton />
+  </NumberStepper.Group>
+</NumberStepper>
+```
+
+## Guest Picker
+
+<ComponentPreview name="pro-number-stepper-guest-picker">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+const categories = [
+  {
+    defaultValue: 0,
+    description: 'Ages 13 or above',
+    label: 'Adults',
+    max: 16,
+    min: 0
+  },
+  {
+    defaultValue: 0,
+    description: 'Ages 2–12',
+    label: 'Children',
+    max: 8,
+    min: 0
+  },
+  { defaultValue: 0, description: 'Under 2', label: 'Infants', max: 5, min: 0 },
+  {
+    defaultValue: 0,
+    description: 'Bringing a service animal?',
+    label: 'Pets',
+    max: 5,
+    min: 0
+  }
+]
+
+export function GuestPicker() {
+  return (
+    <div className="divide-separator flex w-[380px] flex-col divide-y">
+      {categories.map(cat => (
+        <div key={cat.label} className="flex items-center justify-between py-5">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-foreground text-sm font-semibold">
+              {cat.label}
+            </span>
+            <span className="text-muted text-xs">{cat.description}</span>
+          </div>
+          <NumberStepper
+            aria-label={cat.label}
+            defaultValue={cat.defaultValue}
+            maxValue={cat.max}
+            minValue={cat.min}
+            size="sm">
+            <NumberStepper.Group>
+              <NumberStepper.DecrementButton />
+              <NumberStepper.Value />
+              <NumberStepper.IncrementButton />
+            </NumberStepper.Group>
+          </NumberStepper>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Controlled
+
+<ComponentPreview name="pro-number-stepper-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function Controlled() {
+  const [value, setValue] = useState(5)
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <NumberStepper
+        aria-label="Quantity"
+        maxValue={20}
+        minValue={0}
+        value={value}
+        onChange={setValue}>
+        <NumberStepper.Group>
+          <NumberStepper.DecrementButton />
+          <NumberStepper.Value />
+          <NumberStepper.IncrementButton />
+        </NumberStepper.Group>
+      </NumberStepper>
+      <span className="text-muted text-sm">Value: {value}</span>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Icons
+
+<ComponentPreview name="pro-number-stepper-custom-icons">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function CustomIcons() {
+  return (
+    <NumberStepper
+      aria-label="Zoom level"
+      defaultValue={100}
+      maxValue={200}
+      minValue={50}
+      step={10}>
+      <NumberStepper.Group>
+        <NumberStepper.DecrementButton>
+          <svg
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="16">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            <line x1="8" x2="14" y1="11" y2="11" />
+          </svg>
+        </NumberStepper.DecrementButton>
+        <NumberStepper.Value />
+        <NumberStepper.IncrementButton>
+          <svg
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="16">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            <line x1="11" x2="11" y1="8" y2="14" />
+            <line x1="8" x2="14" y1="11" y2="11" />
+          </svg>
+        </NumberStepper.IncrementButton>
+      </NumberStepper.Group>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Value
+
+<ComponentPreview name="pro-number-stepper-custom-value">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function CustomValue() {
+  return (
+    <NumberStepper
+      aria-label="Quantity"
+      defaultValue={3}
+      maxValue={10}
+      minValue={0}>
+      <NumberStepper.Group>
+        <NumberStepper.DecrementButton />
+        <NumberStepper.Value>
+          {({ value }) => (
+            <span className="mx-2">
+              {value} {value === 1 ? 'item' : 'items'}
+            </span>
+          )}
+        </NumberStepper.Value>
+        <NumberStepper.IncrementButton />
+      </NumberStepper.Group>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-number-stepper-disabled">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function Disabled() {
+  return (
+    <NumberStepper
+      isDisabled
+      aria-label="Quantity"
+      defaultValue={3}
+      maxValue={10}
+      minValue={0}>
+      <NumberStepper.Group>
+        <NumberStepper.DecrementButton />
+        <NumberStepper.Value />
+        <NumberStepper.IncrementButton />
+      </NumberStepper.Group>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Min Max Values
+
+<ComponentPreview name="pro-number-stepper-min-max-values">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function MinMaxValues() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Min: 0, Max: 5</span>
+        <NumberStepper
+          aria-label="Rating"
+          defaultValue={3}
+          maxValue={5}
+          minValue={0}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Min: -10, Max: 10</span>
+        <NumberStepper
+          aria-label="Temperature"
+          defaultValue={0}
+          maxValue={10}
+          minValue={-10}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Reversed Layout
+
+<ComponentPreview name="pro-number-stepper-reversed-layout">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function ReversedLayout() {
+  return (
+    <NumberStepper
+      aria-label="Quantity"
+      defaultValue={1}
+      maxValue={99}
+      minValue={0}>
+      <NumberStepper.Group>
+        <NumberStepper.IncrementButton />
+        <NumberStepper.Value />
+        <NumberStepper.DecrementButton />
+      </NumberStepper.Group>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-number-stepper-sizes">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function Sizes() {
+  return (
+    <div className="flex items-center gap-6">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col items-center gap-2">
+          <span className="text-muted text-xs">{size}</span>
+          <NumberStepper
+            aria-label={`Quantity ${size}`}
+            defaultValue={1}
+            maxValue={99}
+            minValue={0}
+            size={size}>
+            <NumberStepper.Group>
+              <NumberStepper.DecrementButton />
+              <NumberStepper.Value />
+              <NumberStepper.IncrementButton />
+            </NumberStepper.Group>
+          </NumberStepper>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Custom Buttons
+
+<ComponentPreview name="pro-number-stepper-with-custom-buttons">
+
+```tsx
+'use client'
+
+import Minus from '@gravity-ui/icons/Minus'
+import Plus from '@gravity-ui/icons/Plus'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+import { Button } from '@vezham/react-v3'
+
+export function WithCustomButtons() {
+  return (
+    <div className="flex gap-10">
+      <div className="flex flex-col items-center gap-5">
+        {(['primary', 'secondary', 'tertiary', 'outline'] as const).map(
+          variant => (
+            <div key={variant} className="flex flex-col items-center gap-2">
+              <span className="text-muted text-xs">{variant}</span>
+              <NumberStepper
+                aria-label={`Quantity ${variant}`}
+                defaultValue={1}
+                maxValue={10}
+                minValue={0}>
+                <NumberStepper.Group className="gap-3">
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    slot="decrement"
+                    variant={variant}>
+                    <Minus />
+                  </Button>
+                  <NumberStepper.Value />
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    slot="increment"
+                    variant={variant}>
+                    <Plus />
+                  </Button>
+                </NumberStepper.Group>
+              </NumberStepper>
+            </div>
+          )
+        )}
+      </div>
+      <div className="flex flex-col items-center gap-5">
+        {(['primary', 'secondary', 'tertiary', 'outline'] as const).map(
+          variant => (
+            <div key={variant} className="flex flex-col items-center gap-2">
+              <span className="text-muted text-xs">{variant}</span>
+              <NumberStepper
+                aria-label={`Quantity ${variant} no bg`}
+                defaultValue={1}
+                maxValue={10}
+                minValue={0}>
+                <NumberStepper.Group className="gap-3 bg-transparent">
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    slot="decrement"
+                    variant={variant}>
+                    <Minus />
+                  </Button>
+                  <NumberStepper.Value />
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    slot="increment"
+                    variant={variant}>
+                    <Plus />
+                  </Button>
+                </NumberStepper.Group>
+              </NumberStepper>
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Format Options
+
+<ComponentPreview name="pro-number-stepper-with-format-options">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function WithFormatOptions() {
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Currency (USD)</span>
+        <NumberStepper
+          aria-label="Price"
+          defaultValue={10}
+          formatOptions={{ currency: 'USD', style: 'currency' }}
+          maxValue={100}
+          minValue={0}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Percentage</span>
+        <NumberStepper
+          aria-label="Opacity"
+          defaultValue={50}
+          formatOptions={{ style: 'unit', unit: 'percent' }}
+          maxValue={100}
+          minValue={0}
+          step={10}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Label
+
+<ComponentPreview name="pro-number-stepper-with-label">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+import { Description, Label } from '@vezham/react-v3'
+
+export function WithLabel() {
+  return (
+    <NumberStepper
+      className="flex-col items-start gap-1.5"
+      defaultValue={1}
+      maxValue={10}
+      minValue={1}>
+      <Label>Guests</Label>
+      <NumberStepper.Group>
+        <NumberStepper.DecrementButton />
+        <NumberStepper.Value />
+        <NumberStepper.IncrementButton />
+      </NumberStepper.Group>
+      <Description>Maximum 10 guests per reservation</Description>
+    </NumberStepper>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Step
+
+<ComponentPreview name="pro-number-stepper-with-step">
+
+```tsx
+'use client'
+
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+
+export function WithStep() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Step: 5</span>
+        <NumberStepper
+          aria-label="Quantity step 5"
+          defaultValue={0}
+          maxValue={100}
+          minValue={0}
+          step={5}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-muted text-xs">Step: 10</span>
+        <NumberStepper
+          aria-label="Quantity step 10"
+          defaultValue={0}
+          maxValue={100}
+          minValue={0}
+          step={10}>
+          <NumberStepper.Group>
+            <NumberStepper.DecrementButton />
+            <NumberStepper.Value />
+            <NumberStepper.IncrementButton />
+          </NumberStepper.Group>
+        </NumberStepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.number-stepper` - Base root wrapper
+- `.number-stepper--sm` - Small size
+- `.number-stepper--md` - Medium size (default)
+- `.number-stepper--lg` - Large size
+
+### Element Classes
+
+- `.number-stepper__group` - Container grouping value and buttons
+- `.number-stepper__group--sm` / `--md` / `--lg` - Group size variants
+- `.number-stepper__value` - Animated number display (via Number Flow)
+- `.number-stepper__decrement-button` - Minus button
+- `.number-stepper__increment-button` - Plus button
+- `.number-stepper__input` - Hidden native input for accessibility
+
+### Interactive States
+
+- **Hover**: `:hover` or `[data-hovered="true"]` on buttons (background change)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on buttons (focus ring)
+- **Pressed**: `:active` or `[data-pressed="true"]` on buttons (scale down)
+- **Disabled**: `:disabled` or `[data-disabled="true"]` on buttons (reduced opacity)
+
+## API Reference
+
+### NumberStepper
+
+The root component. Wraps RAC [NumberField](https://react-spectrum.adobe.com/react-aria/NumberField.html).
+
+| Prop            | Type                   | Default | Description                                     |
+| --------------- | ---------------------- | ------- | ----------------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`  | Size variant                                    |
+| `formatOptions` | `Format`               | -       | Number formatting options passed to Number Flow |
+
+Also supports all RAC [NumberField](https://react-spectrum.adobe.com/react-aria/NumberField.html) props (`value`, `defaultValue`, `onChange`, `minValue`, `maxValue`, `step`, `isDisabled`, etc.).
+
+### NumberStepper.Group
+
+Container grouping value and buttons. Wraps RAC [Group](https://react-spectrum.adobe.com/react-aria/Group.html). Automatically renders a hidden input for accessibility.
+
+Also supports all RAC [Group](https://react-spectrum.adobe.com/react-aria/Group.html) props.
+
+### NumberStepper.Value
+
+Animated number display using [Number Flow](https://number-flow.barvian.me/).
+
+| Prop       | Type                                                                             | Default | Description                                           |
+| ---------- | -------------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `value`    | `number`                                                                         | -       | Override value (defaults to the root's current value) |
+| `format`   | `Format`                                                                         | -       | Override format options                               |
+| `children` | `ReactNode \| ((props: { value: number, formatOptions?: Format }) => ReactNode)` | -       | Custom content or render function                     |
+
+Also supports all Number Flow props except `value` and `children`.
+
+### NumberStepper.DecrementButton
+
+Minus button. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) with `slot="decrement"`. Renders a default minus icon when no children are provided.
+
+Also supports all RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) props.
+
+### NumberStepper.IncrementButton
+
+Plus button. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) with `slot="increment"`. Renders a default plus icon when no children are provided.
+
+Also supports all RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) props.

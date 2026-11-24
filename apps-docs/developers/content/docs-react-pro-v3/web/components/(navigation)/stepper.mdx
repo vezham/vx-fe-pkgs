@@ -1,0 +1,1470 @@
+---
+title: 'Stepper'
+description: 'A step-by-step progress indicator with numbered, icon, and bullet variants in horizontal or vertical layouts.'
+sourceUrl: https://heroui.pro/docs/react/components/stepper
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-stepper-default">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+export function Default() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[500px]">
+      <Stepper currentStep={step} onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator />
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Stepper component and access all parts using dot notation.
+
+```tsx
+import { Stepper } from '@vezham/react-pro-v3'
+
+;<Stepper>
+  <Stepper.Step>
+    <Stepper.Indicator />
+    <Stepper.Icon />
+    <Stepper.Title />
+    <Stepper.Description />
+    <Stepper.Content />
+    <Stepper.Separator />
+  </Stepper.Step>
+</Stepper>
+```
+
+## Package Tracking
+
+<ComponentPreview name="pro-stepper-package-tracking">
+
+```tsx
+'use client'
+
+import Box from '@gravity-ui/icons/Box'
+import CircleFill from '@gravity-ui/icons/CircleFill'
+import Copy from '@gravity-ui/icons/Copy'
+import Headphones from '@gravity-ui/icons/Headphones'
+import MapPin from '@gravity-ui/icons/MapPin'
+
+import { Stepper } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+const trackingSteps = [
+  {
+    date: 'Mar 28, 10:45 AM',
+    description: 'Payment verified successfully',
+    title: 'Order Placed'
+  },
+  {
+    date: 'Mar 29, 03:12 PM',
+    description: 'Picked up from warehouse',
+    title: 'Shipment Picked Up'
+  },
+  {
+    date: 'Mar 31, 07:30 AM',
+    description: 'Cleared customs in Leipzig, DE',
+    title: 'In Transit'
+  },
+  { date: '--', description: 'Pending', title: 'Out for Delivery' },
+  { date: '--', description: 'Pending', title: 'Delivered' }
+]
+
+function TrackingIndicator() {
+  const { status } = Stepper.useStep()
+
+  if (status === 'active') {
+    return (
+      <Stepper.Indicator>
+        <Stepper.Icon>
+          <CircleFill />
+        </Stepper.Icon>
+      </Stepper.Indicator>
+    )
+  }
+
+  if (status === 'inactive') {
+    return (
+      <Stepper.Indicator>
+        <></>
+      </Stepper.Indicator>
+    )
+  }
+
+  return <Stepper.Indicator />
+}
+
+function TrackingDate({ date }: { date: string }) {
+  const { status } = Stepper.useStep()
+  const isActive = status === 'active'
+
+  return (
+    <span
+      className={`shrink-0 text-right text-[11px] whitespace-nowrap ${isActive ? 'font-medium' : 'text-muted'}`}
+      style={isActive ? { color: 'var(--stepper-active-color)' } : undefined}>
+      {date}
+    </span>
+  )
+}
+
+function TrackingTitle({ children }: { children: React.ReactNode }) {
+  const { status } = Stepper.useStep()
+
+  return (
+    <Stepper.Title
+      style={
+        status === 'active'
+          ? { color: 'var(--stepper-active-color)' }
+          : undefined
+      }>
+      {children}
+    </Stepper.Title>
+  )
+}
+
+export function PackageTracking() {
+  return (
+    <div className="bg-surface shadow-surface w-[420px] rounded-2xl p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="text-muted text-xs font-medium tracking-wide">
+          Order #DHL-472891
+        </span>
+        <span
+          className="rounded-full px-2.5 py-0.5 text-[11px] font-medium"
+          style={{
+            backgroundColor:
+              'color-mix(in oklch, var(--color-accent) 12%, transparent)',
+            color: 'var(--color-accent)'
+          }}>
+          In Transit
+        </span>
+      </div>
+
+      <h2 className="text-foreground text-[22px] leading-tight font-bold">
+        Arriving Wednesday
+      </h2>
+      <p className="text-muted mb-5 text-sm">Estimated delivery by 6:00 PM</p>
+
+      <div className="bg-surface-secondary mb-6 flex items-center gap-3 rounded-xl px-3.5 py-3">
+        <div className="bg-surface text-muted flex size-10 items-center justify-center rounded-lg">
+          <Box />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span className="text-foreground text-sm font-semibold">
+            DHL Express
+          </span>
+          <span className="text-muted text-xs">TRK: 1Z 849 FL2 0347</span>
+        </div>
+        <Button
+          isIconOnly
+          aria-label="Copy tracking number"
+          className="text-muted"
+          size="sm"
+          variant="ghost">
+          <Copy />
+        </Button>
+      </div>
+
+      <Stepper
+        className="px-1"
+        currentStep={2.4}
+        orientation="vertical"
+        size="md">
+        {trackingSteps.map(step => (
+          <Stepper.Step key={step.title}>
+            <TrackingIndicator />
+            <Stepper.Content className="flex-1">
+              <TrackingTitle>{step.title}</TrackingTitle>
+              <Stepper.Description>{step.description}</Stepper.Description>
+            </Stepper.Content>
+            <TrackingDate date={step.date} />
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+
+      <div className="mt-6 flex gap-3">
+        <Button className="flex-1" size="sm">
+          <MapPin />
+          Live Map Tracking
+        </Button>
+        <Button className="flex-1" size="sm" variant="outline">
+          <Headphones />
+          Support
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Bullet Steps
+
+<ComponentPreview name="pro-stepper-bullet-steps">
+
+```tsx
+'use client'
+
+import CircleFill from '@gravity-ui/icons/CircleFill'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const checkoutSteps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+const accountSteps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function BulletSteps() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="w-[500px]">
+        <Stepper currentStep={step} onStepChange={setStep}>
+          {checkoutSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <Stepper.Indicator>
+                <Stepper.Icon>
+                  <CircleFill />
+                </Stepper.Icon>
+              </Stepper.Indicator>
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+      <div className="w-[280px]">
+        <Stepper
+          currentStep={step}
+          orientation="vertical"
+          onStepChange={setStep}>
+          {accountSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <Stepper.Indicator>
+                <Stepper.Icon>
+                  <CircleFill />
+                </Stepper.Icon>
+              </Stepper.Indicator>
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+                <Stepper.Description>{s.description}</Stepper.Description>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Controlled
+
+<ComponentPreview name="pro-stepper-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function Controlled() {
+  const [step, setStep] = useState(0)
+  const totalSteps = steps.length
+
+  return (
+    <div className="flex w-[600px] flex-col gap-6">
+      <Stepper currentStep={step} onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator />
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+      <div className="flex items-center justify-between">
+        <Button
+          isDisabled={step === 0}
+          size="sm"
+          variant="outline"
+          onPress={() => setStep(s => Math.max(0, s - 1))}>
+          Previous
+        </Button>
+        <span className="text-muted text-sm">
+          Step {step + 1} of {totalSteps}
+        </span>
+        <Button
+          isDisabled={step === totalSteps - 1}
+          size="sm"
+          onPress={() => setStep(s => Math.min(totalSteps - 1, s + 1))}>
+          Next
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Controlled Vertical
+
+<ComponentPreview name="pro-stepper-controlled-vertical">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function ControlledVertical() {
+  const [step, setStep] = useState(0)
+  const totalSteps = steps.length
+
+  return (
+    <div className="flex w-full gap-8">
+      <div className="w-[200px]">
+        <Stepper
+          currentStep={step}
+          orientation="vertical"
+          onStepChange={setStep}>
+          {steps.map(s => (
+            <Stepper.Step key={s.title}>
+              <Stepper.Indicator />
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+                <Stepper.Description>{s.description}</Stepper.Description>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+      <div className="flex w-[400px] flex-col gap-4">
+        <div className="bg-surface rounded-xl p-6 shadow-sm">
+          <h3 className="text-foreground mb-2 text-lg font-semibold">
+            {steps[step]?.title}
+          </h3>
+          <p className="text-muted text-sm">{steps[step]?.description}</p>
+        </div>
+        <div className="flex gap-3">
+          <Button
+            isDisabled={step === 0}
+            size="sm"
+            variant="outline"
+            onPress={() => setStep(s => Math.max(0, s - 1))}>
+            Back
+          </Button>
+          <Button
+            isDisabled={step === totalSteps - 1}
+            size="sm"
+            onPress={() => setStep(s => Math.min(totalSteps - 1, s + 1))}>
+            Continue
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Color
+
+<ComponentPreview name="pro-stepper-custom-color">
+
+```tsx
+'use client'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+export function CustomColor() {
+  return (
+    <div className="flex flex-col gap-6">
+      {(
+        [
+          { label: 'Accent (default)', vars: {} },
+          {
+            label: 'Success',
+            vars: {
+              '--stepper-active-color': 'var(--color-success)',
+              '--stepper-complete-color': 'var(--color-success)',
+              '--stepper-complete-fg': 'var(--color-success-foreground)'
+            }
+          },
+          {
+            label: 'Danger',
+            vars: {
+              '--stepper-active-color': 'var(--color-danger)',
+              '--stepper-complete-color': 'var(--color-danger)',
+              '--stepper-complete-fg': 'var(--color-danger-foreground)'
+            }
+          },
+          {
+            label: 'Warning',
+            vars: {
+              '--stepper-active-color': 'var(--color-warning)',
+              '--stepper-complete-color': 'var(--color-warning)',
+              '--stepper-complete-fg': 'var(--color-warning-foreground)'
+            }
+          },
+          {
+            label: 'Inverted',
+            vars: {
+              '--stepper-active-color': 'var(--color-foreground)',
+              '--stepper-complete-color': 'var(--color-foreground)',
+              '--stepper-complete-fg': 'var(--color-background)',
+              '--stepper-inactive-border': 'var(--color-foreground)',
+              '--stepper-inactive-fg': 'var(--color-foreground)'
+            }
+          }
+        ] as const
+      ).map(({ label, vars }) => (
+        <div key={label} className="flex flex-col gap-1.5">
+          <span className="text-muted text-xs font-medium">{label}</span>
+          <div className="w-[500px]">
+            <Stepper currentStep={2} style={vars as React.CSSProperties}>
+              {steps.map(s => (
+                <Stepper.Step key={s.title}>
+                  <Stepper.Indicator />
+                  <Stepper.Content>
+                    <Stepper.Title>{s.title}</Stepper.Title>
+                  </Stepper.Content>
+                  <Stepper.Separator />
+                </Stepper.Step>
+              ))}
+            </Stepper>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Color Vertical
+
+<ComponentPreview name="pro-stepper-custom-color-vertical">
+
+```tsx
+'use client'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function CustomColorVertical() {
+  return (
+    <div className="flex gap-10">
+      {(
+        [
+          { label: 'Accent', vars: {} },
+          {
+            label: 'Success',
+            vars: {
+              '--stepper-active-color': 'var(--color-success)',
+              '--stepper-complete-color': 'var(--color-success)',
+              '--stepper-complete-fg': 'var(--color-success-foreground)'
+            }
+          },
+          {
+            label: 'Danger',
+            vars: {
+              '--stepper-active-color': 'var(--color-danger)',
+              '--stepper-complete-color': 'var(--color-danger)',
+              '--stepper-complete-fg': 'var(--color-danger-foreground)'
+            }
+          },
+          {
+            label: 'Inverted',
+            vars: {
+              '--stepper-active-color': 'var(--color-foreground)',
+              '--stepper-complete-color': 'var(--color-foreground)',
+              '--stepper-complete-fg': 'var(--color-background)',
+              '--stepper-inactive-border': 'var(--color-foreground)',
+              '--stepper-inactive-fg': 'var(--color-foreground)'
+            }
+          }
+        ] as const
+      ).map(({ label, vars }) => (
+        <div key={label} className="flex flex-col gap-1.5">
+          <span className="text-muted text-xs font-medium">{label}</span>
+          <Stepper
+            currentStep={2}
+            orientation="vertical"
+            style={vars as React.CSSProperties}>
+            {steps.map(s => (
+              <Stepper.Step key={s.title}>
+                <Stepper.Indicator />
+                <Stepper.Content>
+                  <Stepper.Title>{s.title}</Stepper.Title>
+                  <Stepper.Description>{s.description}</Stepper.Description>
+                </Stepper.Content>
+                <Stepper.Separator />
+              </Stepper.Step>
+            ))}
+          </Stepper>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Completed Icon
+
+<ComponentPreview name="pro-stepper-custom-completed-icon">
+
+```tsx
+'use client'
+
+import CircleCheckFill from '@gravity-ui/icons/CircleCheckFill'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const checkoutSteps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+const accountSteps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+function CustomIndicator() {
+  const { status } = Stepper.useStep()
+
+  return (
+    <Stepper.Indicator>
+      {status === 'complete' ? (
+        <Stepper.Icon>
+          <CircleCheckFill />
+        </Stepper.Icon>
+      ) : null}
+    </Stepper.Indicator>
+  )
+}
+
+export function CustomCompletedIcon() {
+  const [step, setStep] = useState(2)
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="w-[500px]">
+        <Stepper currentStep={step} onStepChange={setStep}>
+          {checkoutSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <CustomIndicator />
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+      <div className="w-[280px]">
+        <Stepper
+          currentStep={step}
+          orientation="vertical"
+          onStepChange={setStep}>
+          {accountSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <CustomIndicator />
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+                <Stepper.Description>{s.description}</Stepper.Description>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Display Only
+
+<ComponentPreview name="pro-stepper-display-only">
+
+```tsx
+'use client'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const checkoutSteps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+const accountSteps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function DisplayOnly() {
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="w-[500px]">
+        <Stepper currentStep={2}>
+          {checkoutSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <Stepper.Indicator />
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+      <div className="w-[280px]">
+        <Stepper currentStep={2} orientation="vertical">
+          {accountSteps.map(s => (
+            <Stepper.Step key={s.title}>
+              <Stepper.Indicator />
+              <Stepper.Content>
+                <Stepper.Title>{s.title}</Stepper.Title>
+                <Stepper.Description>{s.description}</Stepper.Description>
+              </Stepper.Content>
+              <Stepper.Separator />
+            </Stepper.Step>
+          ))}
+        </Stepper>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dynamic Icon
+
+<ComponentPreview name="pro-stepper-dynamic-icon">
+
+```tsx
+'use client'
+
+import Folder from '@gravity-ui/icons/Folder'
+import FolderFill from '@gravity-ui/icons/FolderFill'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+function FolderStepIndicator() {
+  const { status } = Stepper.useStep()
+
+  return (
+    <Stepper.Indicator>
+      <Stepper.Icon>
+        {status === 'complete' ? <FolderFill /> : <Folder />}
+      </Stepper.Icon>
+    </Stepper.Indicator>
+  )
+}
+
+export function DynamicIcon() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[500px]">
+      <Stepper currentStep={step} onStepChange={setStep}>
+        {['Upload', 'Process', 'Complete'].map(title => (
+          <Stepper.Step key={title}>
+            <FolderStepIndicator />
+            <Stepper.Content>
+              <Stepper.Title>{title}</Stepper.Title>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Free Trial Timeline
+
+<ComponentPreview name="pro-stepper-free-trial-timeline">
+
+```tsx
+'use client'
+
+import BellFill from '@gravity-ui/icons/BellFill'
+import Calendar from '@gravity-ui/icons/Calendar'
+import LockOpenFill from '@gravity-ui/icons/LockOpenFill'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+export function FreeTrialTimeline() {
+  return (
+    <div className="w-[340px]">
+      <h3 className="text-foreground mb-5 text-lg font-bold">
+        Start your 14-day free trial
+      </h3>
+      <Stepper
+        currentStep={0}
+        orientation="vertical"
+        size="lg"
+        style={
+          {
+            '--stepper-active-color': 'var(--color-foreground)',
+            '--stepper-inactive-border': 'var(--color-border)'
+          } as React.CSSProperties
+        }>
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <LockOpenFill height={24} width={24} />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>Today</Stepper.Title>
+            <Stepper.Description>
+              Get instant access to all premium features, no credit card
+              required.
+            </Stepper.Description>
+          </Stepper.Content>
+          <Stepper.Separator />
+        </Stepper.Step>
+
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <BellFill height={24} width={24} />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>In 12 days</Stepper.Title>
+            <Stepper.Description>
+              We&apos;ll send you a friendly reminder that your trial is
+              wrapping up.
+            </Stepper.Description>
+          </Stepper.Content>
+          <Stepper.Separator />
+        </Stepper.Step>
+
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <Calendar height={24} width={24} />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>In 14 days</Stepper.Title>
+            <Stepper.Description>
+              Your plan activates automatically. Cancel anytime before — no
+              questions asked.
+            </Stepper.Description>
+          </Stepper.Content>
+        </Stepper.Step>
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Onboarding Timeline
+
+<ComponentPreview name="pro-stepper-onboarding-timeline">
+
+```tsx
+'use client'
+
+import Gear from '@gravity-ui/icons/Gear'
+import PersonFill from '@gravity-ui/icons/PersonFill'
+import ShieldCheck from '@gravity-ui/icons/ShieldCheck'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+export function OnboardingTimeline() {
+  return (
+    <div className="w-[340px]">
+      <h3 className="text-foreground mb-5 text-lg font-bold">
+        Getting started
+      </h3>
+      <Stepper currentStep={1} orientation="vertical" size="lg">
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <PersonFill />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>Account created</Stepper.Title>
+            <Stepper.Description>
+              Your workspace is ready. Invite your team whenever you&apos;re
+              set.
+            </Stepper.Description>
+          </Stepper.Content>
+          <Stepper.Separator />
+        </Stepper.Step>
+
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <Gear />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>Set up integrations</Stepper.Title>
+            <Stepper.Description>
+              Connect your tools — Slack, GitHub, Figma — to keep everything in
+              sync.
+            </Stepper.Description>
+          </Stepper.Content>
+          <Stepper.Separator />
+        </Stepper.Step>
+
+        <Stepper.Step>
+          <Stepper.Indicator>
+            <Stepper.Icon>
+              <ShieldCheck />
+            </Stepper.Icon>
+          </Stepper.Indicator>
+          <Stepper.Content>
+            <Stepper.Title>Create a project</Stepper.Title>
+            <Stepper.Description>
+              Launch your first project and see the magic happen.
+            </Stepper.Description>
+          </Stepper.Content>
+        </Stepper.Step>
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Render Function
+
+<ComponentPreview name="pro-stepper-render-function">
+
+```tsx
+'use client'
+
+import CircleCheckFill from '@gravity-ui/icons/CircleCheckFill'
+import CircleFill from '@gravity-ui/icons/CircleFill'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+function StatusIndicator() {
+  const { status } = Stepper.useStep()
+
+  return (
+    <Stepper.Indicator>
+      <Stepper.Icon>
+        {status === 'complete' ? <CircleCheckFill /> : <CircleFill />}
+      </Stepper.Icon>
+    </Stepper.Indicator>
+  )
+}
+
+export function RenderFunction() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[280px]">
+      <Stepper currentStep={step} orientation="vertical" onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <StatusIndicator />
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-stepper-sizes">
+
+```tsx
+'use client'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { title: 'Cart' },
+  { title: 'Shipping' },
+  { title: 'Payment' },
+  { title: 'Confirmation' }
+]
+
+export function Sizes() {
+  return (
+    <div className="flex flex-col gap-10">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col gap-2">
+          <span className="text-muted text-xs font-medium tracking-wider uppercase">
+            {size}
+          </span>
+          <div className="w-[500px]">
+            <Stepper currentStep={1} size={size}>
+              {steps.map(s => (
+                <Stepper.Step key={s.title}>
+                  <Stepper.Indicator />
+                  <Stepper.Content>
+                    <Stepper.Title>{s.title}</Stepper.Title>
+                  </Stepper.Content>
+                  <Stepper.Separator />
+                </Stepper.Step>
+              ))}
+            </Stepper>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Vertical
+
+<ComponentPreview name="pro-stepper-vertical">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function Vertical() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[320px]">
+      <Stepper currentStep={step} orientation="vertical" onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator />
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Vertical Sizes
+
+<ComponentPreview name="pro-stepper-vertical-sizes">
+
+```tsx
+'use client'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function VerticalSizes() {
+  return (
+    <div className="flex items-start gap-12">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col gap-2">
+          <span className="text-muted text-xs font-medium tracking-wider uppercase">
+            {size}
+          </span>
+          <Stepper currentStep={1} orientation="vertical" size={size}>
+            {steps.map(s => (
+              <Stepper.Step key={s.title}>
+                <Stepper.Indicator />
+                <Stepper.Content>
+                  <Stepper.Title>{s.title}</Stepper.Title>
+                  <Stepper.Description>{s.description}</Stepper.Description>
+                </Stepper.Content>
+                <Stepper.Separator />
+              </Stepper.Step>
+            ))}
+          </Stepper>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Vertical With Icons
+
+<ComponentPreview name="pro-stepper-vertical-with-icons">
+
+```tsx
+'use client'
+
+import BellFill from '@gravity-ui/icons/BellFill'
+import LockFill from '@gravity-ui/icons/LockFill'
+import PersonFill from '@gravity-ui/icons/PersonFill'
+import ThumbsUpFill from '@gravity-ui/icons/ThumbsUpFill'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  {
+    description: 'Create your account',
+    icon: <PersonFill height={24} width={24} />,
+    title: 'Account'
+  },
+  {
+    description: 'Configure preferences',
+    icon: <BellFill height={24} width={24} />,
+    title: 'Settings'
+  },
+  {
+    description: 'Security options',
+    icon: <LockFill height={24} width={24} />,
+    title: 'Security'
+  },
+  {
+    description: 'Review and confirm',
+    icon: <ThumbsUpFill height={24} width={24} />,
+    title: 'Confirm'
+  }
+]
+
+export function VerticalWithIcons() {
+  const [step, setStep] = useState(2)
+
+  return (
+    <div className="w-[320px]">
+      <Stepper currentStep={step} orientation="vertical" onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator>
+              <Stepper.Icon>{s.icon}</Stepper.Icon>
+            </Stepper.Indicator>
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Descriptions
+
+<ComponentPreview name="pro-stepper-with-descriptions">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  { description: 'Create your account', title: 'Account' },
+  { description: 'Set up your profile', title: 'Profile' },
+  { description: 'Configure preferences', title: 'Settings' },
+  { description: 'Review and confirm', title: 'Review' }
+]
+
+export function WithDescriptions() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[600px]">
+      <Stepper currentStep={step} onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator />
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Icons
+
+<ComponentPreview name="pro-stepper-with-icons">
+
+```tsx
+'use client'
+
+import { BellFill, LockFill, PersonFill, ThumbsUpFill } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Stepper } from '@vezham/react-pro-v3'
+
+const steps = [
+  {
+    description: 'Create your account',
+    icon: <PersonFill height={24} width={24} />,
+    title: 'Account'
+  },
+  {
+    description: 'Configure preferences',
+    icon: <BellFill height={24} width={24} />,
+    title: 'Settings'
+  },
+  {
+    description: 'Security options',
+    icon: <LockFill height={24} width={24} />,
+    title: 'Security'
+  },
+  {
+    description: 'Review and confirm',
+    icon: <ThumbsUpFill height={24} width={24} />,
+    title: 'Confirm'
+  }
+]
+
+export function WithIcons() {
+  const [step, setStep] = useState(1)
+
+  return (
+    <div className="w-[600px]">
+      <Stepper currentStep={step} onStepChange={setStep}>
+        {steps.map(s => (
+          <Stepper.Step key={s.title}>
+            <Stepper.Indicator>
+              <Stepper.Icon>{s.icon}</Stepper.Icon>
+            </Stepper.Indicator>
+            <Stepper.Content>
+              <Stepper.Title>{s.title}</Stepper.Title>
+              <Stepper.Description>{s.description}</Stepper.Description>
+            </Stepper.Content>
+            <Stepper.Separator />
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.stepper` - Base root container (`ol` element)
+- `.stepper--sm` - Small size (22px indicator, 12px vertical gap)
+- `.stepper--md` - Medium size (28px indicator, 16px vertical gap, default)
+- `.stepper--lg` - Large size (36px indicator, 24px vertical gap)
+
+### Orientation Classes
+
+- `.stepper--horizontal` - Horizontal layout
+- `.stepper--vertical` - Vertical layout
+
+### Element Classes
+
+- `.stepper__step` - Individual step wrapper (`li` element)
+- `.stepper__step--horizontal` / `.stepper__step--vertical` - Orientation-specific step layout
+- `.stepper__step-button` - Interactive button inside each step
+- `.stepper__step-button--horizontal` / `.stepper__step-button--vertical` - Orientation-specific button layout
+- `.stepper__indicator` - Circle badge showing step number or icon
+- `.stepper__indicator--sm` / `.stepper__indicator--md` / `.stepper__indicator--lg` - Indicator text sizing
+- `.stepper__content` - Wrapper for title and description
+- `.stepper__content--horizontal` / `.stepper__content--vertical` - Orientation-specific content alignment
+- `.stepper__title` - Step title text
+- `.stepper__title--sm` / `.stepper__title--md` / `.stepper__title--lg` - Title text sizing
+- `.stepper__description` - Step description text
+- `.stepper__description--sm` / `.stepper__description--md` / `.stepper__description--lg` - Description text sizing
+- `.stepper__icon` - Icon wrapper inside the indicator
+- `.stepper__separator` - Connector line container between steps
+- `.stepper__separator--horizontal` / `.stepper__separator--vertical` - Orientation-specific separator positioning
+- `.stepper__separator-track` - Background rail of the separator
+- `.stepper__separator-track--horizontal` / `.stepper__separator-track--vertical` - Track sizing
+- `.stepper__separator-fill` - Colored progress overlay inside the track
+- `.stepper__separator-fill--horizontal` / `.stepper__separator-fill--vertical` - Fill animation direction
+
+### Interactive States
+
+- **Clickable hover**: `[data-clickable="true"]:hover` on `.stepper__step-button` (indicator opacity change)
+- **Clickable active**: `[data-clickable="true"]:active` on `.stepper__step-button` (opacity reduction)
+- **Focus visible**: `:focus-visible` on `.stepper__step-button` (focus ring)
+
+### Data Attributes
+
+- `[data-status="inactive"]` / `[data-status="active"]` / `[data-status="complete"]` on `.stepper__indicator` and `.stepper__step` - Step status
+- `[data-clickable]` on `.stepper__step-button` - Whether the step is interactive
+- `[data-complete]` on `.stepper__separator-track` - Whether the separator is fully filled
+
+### CSS Variables
+
+- `--stepper-indicator-size` - Size of the indicator circle (set by size modifier)
+- `--stepper-separator-size` - Thickness of the separator line (default `2px`)
+- `--stepper-vertical-gap` - Gap between vertical steps (set by size modifier)
+- `--stepper-active-color` - Color for the active step (default: accent)
+- `--stepper-complete-color` - Color for completed steps (default: accent)
+- `--stepper-complete-fg` - Foreground color for completed indicator (default: accent-foreground)
+- `--stepper-inactive-border` - Border color for inactive indicator (default: border)
+- `--stepper-inactive-fg` - Text color for inactive indicator (default: muted)
+- `--stepper-separator-progress` - Progress value (0-1) controlling separator fill
+
+## API Reference
+
+### Stepper
+
+The root component. Renders an `ol` element with step progress tracking.
+
+| Prop           | Type                         | Default        | Description                                                            |
+| -------------- | ---------------------------- | -------------- | ---------------------------------------------------------------------- |
+| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction                                                       |
+| `size`         | `'sm' \| 'md' \| 'lg'`       | `'md'`         | Size variant                                                           |
+| `currentStep`  | `number`                     | -              | The current active step index (controlled)                             |
+| `defaultStep`  | `number`                     | `0`            | The initial step index (uncontrolled)                                  |
+| `onStepChange` | `(step: number) => void`     | -              | Callback when a step is clicked; makes steps interactive when provided |
+| `children`     | `ReactNode`                  | -              | Stepper steps                                                          |
+
+Also supports all native `ol` HTML attributes.
+
+### Stepper.Step
+
+A single step wrapper. Renders an `li` element and provides step context to children.
+
+| Prop       | Type        | Default | Description                                        |
+| ---------- | ----------- | ------- | -------------------------------------------------- |
+| `children` | `ReactNode` | -       | Step content (Indicator, Content, Separator, etc.) |
+
+Also supports all native `li` HTML attributes.
+
+### Stepper.Indicator
+
+The circle badge showing a step number, icon, or checkmark.
+
+Defaults:
+
+- **Inactive/Active**: displays step number (1-based)
+- **Complete**: displays an animated checkmark icon
+
+| Prop        | Type        | Default | Description                                            |
+| ----------- | ----------- | ------- | ------------------------------------------------------ |
+| `children`  | `ReactNode` | -       | Custom content overriding the default number/checkmark |
+| `className` | `string`    | -       | Additional CSS class                                   |
+
+### Stepper.Content
+
+Flex wrapper for title and description.
+
+| Prop       | Type        | Default | Description                    |
+| ---------- | ----------- | ------- | ------------------------------ |
+| `children` | `ReactNode` | -       | Title and description elements |
+
+Also supports all native `span` HTML attributes.
+
+### Stepper.Title
+
+Step title text.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Title text  |
+
+Also supports all native `span` HTML attributes.
+
+### Stepper.Description
+
+Step description text.
+
+| Prop       | Type        | Default | Description      |
+| ---------- | ----------- | ------- | ---------------- |
+| `children` | `ReactNode` | -       | Description text |
+
+Also supports all native `span` HTML attributes.
+
+### Stepper.Icon
+
+Icon wrapper rendered inside the indicator.
+
+| Prop       | Type        | Default | Description  |
+| ---------- | ----------- | ------- | ------------ |
+| `children` | `ReactNode` | -       | Icon element |
+
+Also supports all native `span` HTML attributes.
+
+### Stepper.Separator
+
+Connector line between steps. Automatically hidden on the last step.
+
+| Prop       | Type      | Default | Description                                                                  |
+| ---------- | --------- | ------- | ---------------------------------------------------------------------------- |
+| `progress` | `number`  | -       | Explicit progress value (0-1). Auto-computed from `currentStep` when omitted |
+| `force`    | `boolean` | `false` | Force rendering even on the last step                                        |
+
+Also supports all native `div` HTML attributes.
+
+### useStepperStep
+
+Hook to access per-step context from any descendant of `Stepper.Step`.
+
+Returns:
+
+| Property | Type                                   | Description                   |
+| -------- | -------------------------------------- | ----------------------------- |
+| `index`  | `number`                               | Zero-based step index         |
+| `status` | `'inactive' \| 'active' \| 'complete'` | Current step status           |
+| `isLast` | `boolean`                              | Whether this is the last step |

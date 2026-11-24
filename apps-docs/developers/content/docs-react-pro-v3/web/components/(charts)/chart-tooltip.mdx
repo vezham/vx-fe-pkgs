@@ -1,0 +1,378 @@
+---
+title: 'Chart Tooltip'
+description: 'A composable React tooltip for chart data points with customizable indicators, labels, and value formatters.'
+sourceUrl: https://heroui.pro/docs/react/components/chart-tooltip
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-chart-tooltip-default">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Header>January</ChartTooltip.Header>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-3)" />
+        <ChartTooltip.Label>Revenue</ChartTooltip.Label>
+        <ChartTooltip.Value>$12,400</ChartTooltip.Value>
+      </ChartTooltip.Item>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-1)" />
+        <ChartTooltip.Label>Expenses</ChartTooltip.Label>
+        <ChartTooltip.Value>$8,200</ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the ChartTooltip component and access all parts using dot notation.
+
+```tsx
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+;<ChartTooltip>
+  <ChartTooltip.Header />
+  <ChartTooltip.Item>
+    <ChartTooltip.Indicator />
+    <ChartTooltip.Label />
+    <ChartTooltip.Value />
+  </ChartTooltip.Item>
+</ChartTooltip>
+```
+
+## Auto Content
+
+<ComponentPreview name="pro-chart-tooltip-auto-content">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function AutoContent() {
+  return (
+    <div className="flex gap-6">
+      <ChartTooltip.Content
+        active
+        indicator="dot"
+        label="February"
+        payload={[
+          { color: 'var(--chart-3)', name: 'Revenue', value: 18200 },
+          { color: 'var(--chart-1)', name: 'Expenses', value: 9800 }
+        ]}
+      />
+      <ChartTooltip.Content
+        active
+        indicator="line"
+        label="Q1 2025"
+        payload={[
+          { name: 'Organic', stroke: 'var(--chart-3)', value: 22000 },
+          { name: 'Paid Ads', stroke: 'var(--chart-2)', value: 14500 },
+          { name: 'Referral', stroke: 'var(--chart-1)', value: 5200 }
+        ]}
+      />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Chart Colors
+
+<ComponentPreview name="pro-chart-tooltip-chart-colors">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function ChartColors() {
+  return (
+    <div className="flex gap-6">
+      <ChartTooltip>
+        <ChartTooltip.Header>All Chart Colors</ChartTooltip.Header>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-1)" />
+          <ChartTooltip.Label>chart-1</ChartTooltip.Label>
+          <ChartTooltip.Value>Lightest</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-2)" />
+          <ChartTooltip.Label>chart-2</ChartTooltip.Label>
+          <ChartTooltip.Value>Light</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-3)" />
+          <ChartTooltip.Label>chart-3</ChartTooltip.Label>
+          <ChartTooltip.Value>Accent</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-4)" />
+          <ChartTooltip.Label>chart-4</ChartTooltip.Label>
+          <ChartTooltip.Value>Darkest</ChartTooltip.Value>
+        </ChartTooltip.Item>
+      </ChartTooltip>
+
+      <ChartTooltip indicator="line">
+        <ChartTooltip.Header>Line Indicators</ChartTooltip.Header>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-1)" />
+          <ChartTooltip.Label>chart-1</ChartTooltip.Label>
+          <ChartTooltip.Value>Lightest</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-2)" />
+          <ChartTooltip.Label>chart-2</ChartTooltip.Label>
+          <ChartTooltip.Value>Light</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-3)" />
+          <ChartTooltip.Label>chart-3</ChartTooltip.Label>
+          <ChartTooltip.Value>Accent</ChartTooltip.Value>
+        </ChartTooltip.Item>
+        <ChartTooltip.Item>
+          <ChartTooltip.Indicator color="var(--chart-4)" />
+          <ChartTooltip.Label>chart-4</ChartTooltip.Label>
+          <ChartTooltip.Value>Darkest</ChartTooltip.Value>
+        </ChartTooltip.Item>
+      </ChartTooltip>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Formatters
+
+<ComponentPreview name="pro-chart-tooltip-custom-formatters">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function CustomFormatters() {
+  return (
+    <ChartTooltip.Content
+      active
+      label="2025-01-15"
+      valueFormatter={value => `${Number(value).toLocaleString()}`}
+      labelFormatter={label => {
+        const date = new Date(String(label))
+
+        return date.toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        })
+      }}
+      payload={[
+        { name: 'Portfolio', stroke: 'var(--chart-3)', value: 24801.32 },
+        { name: 'Benchmark', stroke: 'var(--chart-2)', value: 21500.0 }
+      ]}
+    />
+  )
+}
+```
+
+</ComponentPreview>
+
+## Inactive
+
+<ComponentPreview name="pro-chart-tooltip-inactive">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function Inactive() {
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-muted text-sm">
+        The tooltip below is inactive (active=false) — nothing should render:
+      </p>
+      <div className="bg-default flex h-16 items-center justify-center rounded-lg">
+        <ChartTooltip active={false}>
+          <ChartTooltip.Header>This should not be visible</ChartTooltip.Header>
+        </ChartTooltip>
+        <span className="text-muted text-xs">(empty — tooltip hidden)</span>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Line Indicator
+
+<ComponentPreview name="pro-chart-tooltip-line-indicator">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function LineIndicator() {
+  return (
+    <ChartTooltip indicator="line">
+      <ChartTooltip.Header>March 2025</ChartTooltip.Header>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-3)" />
+        <ChartTooltip.Label>Organic</ChartTooltip.Label>
+        <ChartTooltip.Value>15,200</ChartTooltip.Value>
+      </ChartTooltip.Item>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-2)" />
+        <ChartTooltip.Label>Paid Ads</ChartTooltip.Label>
+        <ChartTooltip.Value>8,400</ChartTooltip.Value>
+      </ChartTooltip.Item>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-1)" />
+        <ChartTooltip.Label>Referral</ChartTooltip.Label>
+        <ChartTooltip.Value>3,100</ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+```
+
+</ComponentPreview>
+
+## No Header
+
+<ComponentPreview name="pro-chart-tooltip-no-header">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+
+export function NoHeader() {
+  return (
+    <ChartTooltip>
+      <ChartTooltip.Item>
+        <ChartTooltip.Indicator color="var(--chart-3)" />
+        <ChartTooltip.Label>Sales</ChartTooltip.Label>
+        <ChartTooltip.Value>458</ChartTooltip.Value>
+      </ChartTooltip.Item>
+    </ChartTooltip>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.chart-tooltip` — Root tooltip card container. Rounded border with surface background and overlay shadow.
+- `.chart-tooltip__header` — Optional title row (e.g., the X-axis label). Muted 12px medium text.
+- `.chart-tooltip__item` — A single series entry row. Flex layout with gap.
+- `.chart-tooltip__indicator` — Color marker next to the series name.
+- `.chart-tooltip__indicator--dot` — Dot-shaped indicator. Small circle (8px).
+- `.chart-tooltip__indicator--line` — Line-shaped indicator. Tall narrow pill (12px × 4px).
+- `.chart-tooltip__label` — Series name text. Muted 12px, fills available space.
+- `.chart-tooltip__value` — Series data value. Semibold 12px foreground text.
+
+## API Reference
+
+### ChartTooltip
+
+The root tooltip container. Controls visibility and indicator style via context.
+
+| Prop        | Type              | Default | Description                                                                                     |
+| ----------- | ----------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `active`    | `boolean`         | `true`  | Controls visibility. When `false`, the tooltip is not rendered.                                 |
+| `indicator` | `"dot" \| "line"` | `"dot"` | Shape of the color indicator next to each series name.                                          |
+| `children`  | `ReactNode`       | —       | Tooltip content — typically `Header`, `Item`, `Indicator`, `Label`, and `Value` sub-components. |
+
+Also supports all native `div` HTML attributes.
+
+### ChartTooltip.Content
+
+Auto-renders a tooltip from Recharts payload data. Pass as the `content` prop of a Recharts `<Tooltip>`:
+
+```tsx
+<Tooltip content={<ChartTooltip.Content />} />
+```
+
+| Prop             | Type                                     | Default | Description                                                         |
+| ---------------- | ---------------------------------------- | ------- | ------------------------------------------------------------------- |
+| `active`         | `boolean`                                | —       | Provided by Recharts — whether the tooltip is active.               |
+| `label`          | `number \| string`                       | —       | Provided by Recharts — the X-axis label for the hovered data point. |
+| `payload`        | `RechartsPayloadEntry[]`                 | —       | Provided by Recharts — array of series data for the hovered point.  |
+| `hideHeader`     | `boolean`                                | `false` | Hide the header row.                                                |
+| `indicator`      | `"dot" \| "line"`                        | `"dot"` | Shape of the color indicator.                                       |
+| `labelFormatter` | `(label: number \| string) => ReactNode` | —       | Custom formatter for the header label.                              |
+| `valueFormatter` | `(value: number \| string) => ReactNode` | —       | Custom formatter for series values.                                 |
+
+### ChartTooltip.Header
+
+Optional title row rendered above the series items.
+
+| Prop       | Type        | Default | Description                                       |
+| ---------- | ----------- | ------- | ------------------------------------------------- |
+| `children` | `ReactNode` | —       | Header content (typically the X-axis label text). |
+
+Also supports all native `div` HTML attributes.
+
+### ChartTooltip.Item
+
+A single series entry row containing an indicator, label, and value.
+
+| Prop       | Type        | Default | Description                                                               |
+| ---------- | ----------- | ------- | ------------------------------------------------------------------------- |
+| `children` | `ReactNode` | —       | Row content — typically `Indicator`, `Label`, and `Value` sub-components. |
+
+Also supports all native `div` HTML attributes.
+
+### ChartTooltip.Indicator
+
+Color marker rendered next to the series name. Shape is controlled by the root `indicator` variant.
+
+| Prop    | Type     | Default | Description                                   |
+| ------- | -------- | ------- | --------------------------------------------- |
+| `color` | `string` | —       | CSS color value for the indicator background. |
+
+Also supports all native `span` HTML attributes.
+
+### ChartTooltip.Label
+
+Series name text displayed between the indicator and value.
+
+| Prop       | Type        | Default | Description                                             |
+| ---------- | ----------- | ------- | ------------------------------------------------------- |
+| `children` | `ReactNode` | —       | Label content (typically the series name or `dataKey`). |
+
+Also supports all native `span` HTML attributes.
+
+### ChartTooltip.Value
+
+Series data value displayed at the end of each item row.
+
+| Prop       | Type        | Default | Description                                            |
+| ---------- | ----------- | ------- | ------------------------------------------------------ |
+| `children` | `ReactNode` | —       | Value content (typically the formatted numeric value). |
+
+Also supports all native `span` HTML attributes.

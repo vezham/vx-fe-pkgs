@@ -1,0 +1,185 @@
+---
+title: Vezham Icons
+description: Browse vector assets and use them in your framework of choice.
+---
+
+import { assetUrl } from '../../src/lib/icon-library/catalog'
+
+Vezham brings UI icons, illustrations, and brand logos into one library. Search the catalogs, open an asset to customize its preview, and copy the code you need.
+
+## Quick start with the CDN
+
+The icon browser uses this pinned, framework-independent web component:
+
+```html
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+<vx-icon icon="home" weight="outline" size="24"></vx-icon>
+```
+
+## Choose a framework
+
+<Cards className="[&>[data-card]]:grid [&>[data-card]]:grid-cols-[auto_minmax(0,1fr)] [&>[data-card]]:content-start [&>[data-card]]:gap-x-3 [&>[data-card]>div:first-child]:row-span-2 [&>[data-card]>div:first-child]:mb-0 [&>[data-card]>div:first-child]:self-center [&>[data-card]>div:first-child]:rounded-none [&>[data-card]>div:first-child]:border-0 [&>[data-card]>div:first-child]:bg-transparent [&>[data-card]>div:first-child]:p-0 [&>[data-card]>div:first-child]:shadow-none">
+  <Card
+    title="Vanilla JS / CDN"
+    href="/docs/assets/guides/vanilla"
+    description="Use JavaScript functions or the CDN web component."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'javascript', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="React"
+    href="/docs/assets/guides/react"
+    description="Add icons with React components."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'react', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="React Native"
+    href="/docs/assets/guides/react-native"
+    description="Use icons in your native app."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'reactnative', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="Vue"
+    href="/docs/assets/guides/vue"
+    description="Add icons with Vue components."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'vue', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="Svelte"
+    href="/docs/assets/guides/svelte"
+    description="Add icons with Svelte components."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'svelte', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="Flutter"
+    href="/docs/assets/guides/flutter"
+    description="Render icons in your Flutter app."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'flutter', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="Figma"
+    href="/docs/assets/guides/figma"
+    description="Bring icons into your designs."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'figma', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="VS Code"
+    href="/docs/assets/guides/vscode"
+    description="Find and insert icons from your editor."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'visual-studio-code', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="MCP Server"
+    href="/docs/assets/guides/mcp"
+    description="Make the icon library available to AI tools."
+    icon={
+      <img
+        src={assetUrl('logos', {
+          slug: 'mcp-model-context-protocol',
+          variants: {}
+        })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+  <Card
+    title="Raw SVG"
+    href="/docs/assets/guides/svg"
+    description="Use SVG assets directly in any project."
+    icon={
+      <img
+        src={assetUrl('logos', { slug: 'svg', variants: {} })}
+        alt=""
+        width={20}
+        height={20}
+        loading="lazy"
+        className="size-5 rounded-none object-contain"
+      />
+    }
+  />
+</Cards>
+
+## Explore the library
+
+- [Icons](/docs/assets/icons) — four drawing weights, color controls, and SVG or raster exports.
+- [Illustrations](/docs/assets/illustrations) — search the full illustration collection.
+- [Logos](/docs/assets/logos) — browse brands and available variants.
+- [Packages and tools](/docs/assets/packages) — integrations for your app and design workflow.
+- [FAQ](/docs/assets/faq) — answers about the library.

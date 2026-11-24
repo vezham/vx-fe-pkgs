@@ -1,0 +1,421 @@
+---
+title: 'Number Value'
+description: 'A React number display with locale-aware currency, percentage, and compact formatting.'
+sourceUrl: https://heroui.pro/docs/react/components/number-value
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-number-value-default">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">USD</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="USD"
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">EUR</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="EUR"
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">JPY</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="JPY"
+          maximumFractionDigits={0}
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">GBP</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="GBP"
+          style="currency"
+          value={228441}
+        />
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the NumberValue component and access all parts using dot notation.
+
+```tsx
+import { NumberValue } from '@vezham/react-pro-v3'
+
+;<NumberValue>
+  <NumberValue.Prefix />
+  <NumberValue.Suffix />
+</NumberValue>
+```
+
+## Compact
+
+<ComponentPreview name="pro-number-value-compact">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function Compact() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      {(
+        [
+          { label: '1,234', value: 1234 },
+          { label: '45,678', value: 45678 },
+          { label: '1,234,567', value: 1234567 },
+          { label: '9,876,543,210', value: 9876543210 }
+        ] as const
+      ).map(item => (
+        <div key={item.value} className="flex items-baseline gap-4">
+          <span className="text-muted w-20 text-xs">{item.label}</span>
+          <NumberValue
+            className="text-foreground text-2xl font-semibold"
+            notation="compact"
+            value={item.value}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Currency
+
+<ComponentPreview name="pro-number-value-currency">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function Currency() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">USD</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="USD"
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">EUR</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="EUR"
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">JPY</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="JPY"
+          maximumFractionDigits={0}
+          style="currency"
+          value={228441}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-12 text-xs">GBP</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          currency="GBP"
+          style="currency"
+          value={228441}
+        />
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Format Options
+
+<ComponentPreview name="pro-number-value-format-options">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function FormatOptions() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-32 text-xs">Compact currency</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          value={1234567}
+          formatOptions={{
+            currency: 'USD',
+            maximumFractionDigits: 1,
+            notation: 'compact',
+            style: 'currency'
+          }}
+        />
+      </div>
+      <div className="flex items-baseline gap-4">
+        <span className="text-muted w-32 text-xs">Accounting</span>
+        <NumberValue
+          className="text-foreground text-2xl font-semibold"
+          value={-1234.56}
+          formatOptions={{
+            currency: 'USD',
+            currencySign: 'accounting',
+            style: 'currency'
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Percent
+
+<ComponentPreview name="pro-number-value-percent">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function Percent() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        maximumFractionDigits={1}
+        style="percent"
+        value={0.033}
+      />
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        maximumFractionDigits={1}
+        style="percent"
+        value={0.985}
+      />
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        signDisplay="exceptZero"
+        style="percent"
+        value={-0.021}
+      />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sign Display
+
+<ComponentPreview name="pro-number-value-sign-display">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function SignDisplay() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      {(['auto', 'always', 'exceptZero', 'never'] as const).map(sign => (
+        <div key={sign} className="flex items-baseline gap-4">
+          <span className="text-muted w-24 text-xs">{sign}</span>
+          <div className="flex gap-4">
+            <NumberValue
+              className="text-foreground font-semibold"
+              signDisplay={sign}
+              value={42}
+            />
+            <NumberValue
+              className="text-foreground font-semibold"
+              signDisplay={sign}
+              value={0}
+            />
+            <NumberValue
+              className="text-foreground font-semibold"
+              signDisplay={sign}
+              value={-42}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Tabular Nums
+
+<ComponentPreview name="pro-number-value-tabular-nums">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function TabularNums() {
+  return (
+    <div className="flex flex-col items-end gap-1 rounded-2xl p-6">
+      {[228441, 71887, 156540, 1234, 98234].map(v => (
+        <NumberValue
+          key={v}
+          className="text-foreground text-xl font-semibold"
+          currency="USD"
+          style="currency"
+          value={v}
+        />
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Prefix Suffix
+
+<ComponentPreview name="pro-number-value-with-prefix-suffix">
+
+```tsx
+'use client'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+
+export function WithPrefixSuffix() {
+  return (
+    <div className="flex flex-col gap-4 rounded-2xl p-6">
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        maximumFractionDigits={0}
+        value={228441}>
+        <NumberValue.Suffix>
+          <span className="text-muted ml-1 text-sm font-normal">revenue</span>
+        </NumberValue.Suffix>
+      </NumberValue>
+
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        notation="compact"
+        value={1234567}>
+        <NumberValue.Suffix>
+          <span className="text-muted ml-1 text-sm font-normal">users</span>
+        </NumberValue.Suffix>
+      </NumberValue>
+
+      <NumberValue
+        className="text-foreground text-2xl font-semibold"
+        currency="USD"
+        style="currency"
+        value={99.99}>
+        <NumberValue.Suffix>
+          <span className="text-muted ml-1 text-sm font-normal">/month</span>
+        </NumberValue.Suffix>
+      </NumberValue>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.number-value` - Base inline-flex wrapper
+
+### Element Classes
+
+- `.number-value__prefix` - Text before the formatted number
+- `.number-value__value` - The formatted number
+- `.number-value__suffix` - Text after the formatted number
+
+## API Reference
+
+### NumberValue
+
+The root component. Formats and displays a number using locale-aware `Intl.NumberFormat`.
+
+| Prop                    | Type                                                       | Default      | Description                                                                                 |
+| ----------------------- | ---------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| `value`                 | `number`                                                   | -            | **Required.** The numeric value to format                                                   |
+| `style`                 | `'decimal' \| 'currency' \| 'percent' \| 'unit'`           | `'decimal'`  | Formatting style                                                                            |
+| `currency`              | `string`                                                   | -            | Currency code (e.g. `"USD"`). Required when `style` is `"currency"`                         |
+| `unit`                  | `string`                                                   | -            | Unit type (e.g. `"degree"`). Required when `style` is `"unit"`                              |
+| `notation`              | `'standard' \| 'compact' \| 'scientific' \| 'engineering'` | `'standard'` | Notation style                                                                              |
+| `signDisplay`           | `'auto' \| 'always' \| 'exceptZero' \| 'never'`            | -            | Controls when the sign is displayed                                                         |
+| `minimumFractionDigits` | `number`                                                   | -            | Minimum number of fraction digits                                                           |
+| `maximumFractionDigits` | `number`                                                   | -            | Maximum number of fraction digits                                                           |
+| `locale`                | `string`                                                   | -            | Override the locale from the nearest I18nProvider                                           |
+| `formatOptions`         | `NumberFormatOptions`                                      | -            | Format options passed directly to `NumberFormatter`. Overrides individual convenience props |
+| `children`              | `ReactNode \| ((formatted: string) => ReactNode)`          | -            | Prefix/Suffix sub-components or a render function receiving the formatted string            |
+
+Also supports all native `span` HTML attributes except `children` and `style`.
+
+### NumberValue.Prefix
+
+Text displayed before the formatted number.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Prefix text |
+
+Also supports all native `span` HTML attributes.
+
+### NumberValue.Suffix
+
+Text displayed after the formatted number.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Suffix text |
+
+Also supports all native `span` HTML attributes.

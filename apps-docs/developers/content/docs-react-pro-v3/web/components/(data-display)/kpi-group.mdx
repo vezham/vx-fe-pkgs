@@ -1,0 +1,249 @@
+---
+title: 'KPI Group'
+description: 'A layout component for arranging multiple KPI cards in horizontal or vertical stacks with consistent spacing.'
+sourceUrl: https://heroui.pro/docs/react/components/kpi-group
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-kpi-group-horizontal">
+
+```tsx
+'use client'
+
+import { KPIGroup } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function Horizontal() {
+  return (
+    <div className="w-[900px] rounded-2xl p-6">
+      <KPIGroup>
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Total Subscribers</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value maximumFractionDigits={0} value={71897} />
+            <KPI.Trend trend="up">12%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Avg. Open Rate</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              maximumFractionDigits={2}
+              style="percent"
+              value={0.5816}
+            />
+            <KPI.Trend trend="up">2.02%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Avg. Click Rate</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              maximumFractionDigits={2}
+              style="percent"
+              value={0.2457}
+            />
+            <KPI.Trend trend="down">4.05%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+      </KPIGroup>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the KPIGroup component and access all parts using dot notation.
+
+```tsx
+import { KPIGroup } from '@vezham/react-pro-v3'
+
+;<KPIGroup>
+  <KPIGroup.Separator />
+</KPIGroup>
+```
+
+## Vertical
+
+<ComponentPreview name="pro-kpi-group-vertical">
+
+```tsx
+'use client'
+
+import { KPIGroup } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function Vertical() {
+  return (
+    <div className="flex w-[400px] items-center justify-center rounded-2xl p-6">
+      <KPIGroup orientation="vertical">
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Revenue</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              currency="USD"
+              maximumFractionDigits={0}
+              style="currency"
+              value={228451}
+            />
+            <KPI.Trend trend="up">+3.3%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Expenses</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              currency="USD"
+              maximumFractionDigits={0}
+              style="currency"
+              value={25108}
+            />
+            <KPI.Trend trend="down">-3.3%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Profit</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              currency="USD"
+              maximumFractionDigits={0}
+              style="currency"
+              value={203133}
+            />
+            <KPI.Trend trend="up">+4.1%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+      </KPIGroup>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With From Suffix
+
+<ComponentPreview name="pro-kpi-group-with-from-suffix">
+
+```tsx
+'use client'
+
+import { KPIGroup } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function WithFromSuffix() {
+  return (
+    <div className="w-[900px] rounded-2xl p-6">
+      <KPIGroup>
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Total Subscribers</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <div className="flex items-baseline gap-2">
+              <KPI.Value maximumFractionDigits={0} value={71897} />
+              <span className="text-muted text-sm">from 70,946</span>
+            </div>
+            <KPI.Trend trend="up">12%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Avg. Open Rate</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <div className="flex items-baseline gap-2">
+              <KPI.Value
+                maximumFractionDigits={2}
+                style="percent"
+                value={0.5816}
+              />
+              <span className="text-muted text-sm">from 56.14%</span>
+            </div>
+            <KPI.Trend trend="up">2.02%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+        <KPIGroup.Separator />
+        <KPI>
+          <KPI.Header>
+            <KPI.Title>Avg. Click Rate</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <div className="flex items-baseline gap-2">
+              <KPI.Value
+                maximumFractionDigits={2}
+                style="percent"
+                value={0.2457}
+              />
+              <span className="text-muted text-sm">from 28.62%</span>
+            </div>
+            <KPI.Trend trend="down">4.05%</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+      </KPIGroup>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.kpi-group` - Base group container with shared surface background and rounded corners
+
+### Orientation Classes
+
+- `.kpi-group--horizontal` - Horizontal layout with equal-width children
+- `.kpi-group--vertical` - Vertical layout stacking children
+
+### Element Classes
+
+- `.kpi-group__separator` - Divider between KPI cards (width or height based on orientation)
+
+## API Reference
+
+### KPIGroup
+
+The root component. Groups KPI cards with shared styling.
+
+| Prop          | Type                         | Default        | Description              |
+| ------------- | ---------------------------- | -------------- | ------------------------ |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction         |
+| `children`    | `ReactNode`                  | -              | KPI cards and separators |
+
+Also supports all native `div` HTML attributes.
+
+### KPIGroup.Separator
+
+A visual divider between KPI cards. Renders as a 1px line.
+
+Also supports all native `span` HTML attributes.

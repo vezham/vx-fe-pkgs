@@ -1,0 +1,184 @@
+---
+title: 'Prompt Suggestion'
+description: 'Suggested prompts and starter actions for AI chat empty states.'
+sourceUrl: https://heroui.pro/docs/react/components/prompt-suggestion
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `PromptSuggestion` to show suggested prompts near a composer or empty chat state.
+
+<ComponentPreview name="pro-prompt-suggestion-default">
+
+```tsx
+'use client'
+
+import { PromptSuggestion } from '@vezham/react-pro-v3'
+
+const SUGGESTED_PROMPTS = [
+  'Draft a weekly project update email for my team',
+  'Summarize this meeting transcript into action items',
+  'Help me plan a product launch checklist',
+  'Write a friendly reply to a customer support ticket',
+  'Brainstorm names for a developer tools startup',
+  'Explain this error message in plain language'
+]
+
+export function Default() {
+  return (
+    <div className="mx-auto w-full max-w-[714px]">
+      <PromptSuggestion>
+        <PromptSuggestion.Header>
+          <PromptSuggestion.Title>
+            What do you want to work on?
+          </PromptSuggestion.Title>
+          <PromptSuggestion.Description>
+            Ask a question or start from one of the suggestions below.
+          </PromptSuggestion.Description>
+        </PromptSuggestion.Header>
+        <PromptSuggestion.Items>
+          {SUGGESTED_PROMPTS.map(prompt => (
+            <PromptSuggestion.Item key={prompt}>{prompt}</PromptSuggestion.Item>
+          ))}
+        </PromptSuggestion.Items>
+      </PromptSuggestion>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Cards
+
+Use card layout for richer prompt starters.
+
+<ComponentPreview name="pro-prompt-suggestion-cards">
+
+```tsx
+'use client'
+
+import { PromptSuggestion } from '@vezham/react-pro-v3'
+import { Card } from '@vezham/react-v3'
+
+const EXPLORE_CATEGORY = {
+  description: 'Planning, updates, and stakeholder communication.',
+  label: 'At work',
+  prompts: [
+    {
+      description: 'Turn rough notes into a clear weekly update.',
+      id: 'weekly-update',
+      title: 'Weekly project update'
+    },
+    {
+      description: 'Capture decisions, owners, and next steps.',
+      id: 'meeting-summary',
+      title: 'Meeting summary'
+    },
+    {
+      description: 'Outline milestones, risks, and launch tasks.',
+      id: 'launch-plan',
+      title: 'Launch planning'
+    }
+  ]
+}
+
+export function Cards() {
+  return (
+    <div className="mx-auto w-full max-w-[960px]">
+      <PromptSuggestion variant="card">
+        <PromptSuggestion.Header>
+          <PromptSuggestion.Title>
+            Starter prompts for everyday work
+          </PromptSuggestion.Title>
+          <PromptSuggestion.Description>
+            Pick one to see what kinds of conversations this template is
+            designed for.
+          </PromptSuggestion.Description>
+        </PromptSuggestion.Header>
+        <PromptSuggestion.Group
+          description={EXPLORE_CATEGORY.description}
+          label={EXPLORE_CATEGORY.label}>
+          <PromptSuggestion.Items>
+            {EXPLORE_CATEGORY.prompts.map(prompt => (
+              <PromptSuggestion.Item key={prompt.id}>
+                <Card.Header>
+                  <PromptSuggestion.ItemTitle>
+                    {prompt.title}
+                  </PromptSuggestion.ItemTitle>
+                  <PromptSuggestion.ItemDescription>
+                    {prompt.description}
+                  </PromptSuggestion.ItemDescription>
+                </Card.Header>
+              </PromptSuggestion.Item>
+            ))}
+          </PromptSuggestion.Items>
+        </PromptSuggestion.Group>
+      </PromptSuggestion>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { PromptSuggestion } from '@vezham/react-pro-v3'
+
+;<PromptSuggestion>
+  <PromptSuggestion.Header>
+    <PromptSuggestion.Title>What can I help with?</PromptSuggestion.Title>
+    <PromptSuggestion.Description>
+      Start from a suggested prompt.
+    </PromptSuggestion.Description>
+  </PromptSuggestion.Header>
+  <PromptSuggestion.Items>
+    <PromptSuggestion.Item>
+      <PromptSuggestion.ItemTitle>
+        Summarize this document
+      </PromptSuggestion.ItemTitle>
+      <PromptSuggestion.ItemDescription>
+        Create a concise summary.
+      </PromptSuggestion.ItemDescription>
+    </PromptSuggestion.Item>
+  </PromptSuggestion.Items>
+</PromptSuggestion>
+```
+
+## CSS Classes
+
+- `.prompt-suggestion` - Root suggestion item
+- `.prompt-suggestion__header` - Header wrapper
+- `.prompt-suggestion__title` - Header title
+- `.prompt-suggestion__description` - Header description
+- `.prompt-suggestion__items` - Suggestion item grid/list
+- `.prompt-suggestion__item` - Individual suggestion item
+
+## API Reference
+
+### PromptSuggestion
+
+Root suggestion group. Supports native `div` props.
+
+### PromptSuggestion.Header, Title, Description
+
+Header slots for title and description.
+
+### PromptSuggestion.Items
+
+Container for suggestion items.
+
+### PromptSuggestion.Item
+
+Individual suggestion item. Extends HeroUI `Button` props.
+
+### PromptSuggestion.ItemTitle, ItemDescription, ItemMeta, ItemTags, ItemFooter
+
+Slots for composing rich suggestion items.

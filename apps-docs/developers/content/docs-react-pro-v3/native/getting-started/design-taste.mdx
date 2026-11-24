@@ -1,0 +1,75 @@
+---
+title: 'Design Taste'
+description: 'Teach your AI assistant how to build polished, production-quality mobile UIs with HeroUI Native'
+sourceUrl: https://heroui.pro/docs/native/getting-started/design-taste
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+The Design Taste skill teaches AI agents how to properly use the HeroUI design system to produce polished, production-quality mobile interfaces.
+
+## Installation
+
+```bash
+curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-pro-design-taste
+
+```
+
+Replace `your_token` with your token from the [Pro dashboard](https://heroui.pro/dashboard). The installer places the skill into the correct directory for your tools.
+
+## What It Teaches Your AI
+
+Without design taste, AI assistants produce functional but generic UIs. This skill fixes that across 10 categories:
+
+- **Spacing** — consistent padding, margins, and gaps using the design token scale
+- **Typography** — proper font weights, sizes, and line heights for hierarchy
+- **Color** — semantic token usage (`bg-surface`, `text-muted`, `bg-accent`) instead of arbitrary values
+- **Cards** — correct anatomy with proper slot composition and shadow usage
+- **Forms** — field grouping, label patterns, and validation styling
+- **Buttons** — variant hierarchy (primary > secondary > tertiary > ghost)
+- **Icons** — consistent sizing, semantic colors, and proper placement
+- **Navigation** — tab bars, stack navigators, and drawer patterns that feel native to mobile
+- **Accessibility** — accessible labels, roles, VoiceOver/TalkBack support, and touch target sizing
+- **General** — minimalism, no duplicate representations, prefer built-in components
+
+## Better Together
+
+| Tool                                                                              | What it does                                                     | When to use                                                          |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Design Taste**                                                                  | Teaches _how_ to design — spacing, color, typography, polish     | "Build a settings screen" — gets the design right                    |
+| **[Native Pro Skill](/docs/ui/react-pro-v3/native/getting-started/agent-skills)** | Teaches _what_ components exist and their APIs                   | "Use a BottomSheet with snap points" — gets the implementation right |
+| **[MCP Server](/docs/ui/react-pro-v3/native/getting-started/mcp-server)**         | Real-time access to `heroui-native-pro` docs and theme variables | "What props does Button accept?" — gets the details right            |
+
+Together they produce UIs that are **correctly implemented**, **beautifully designed**, and **accurately documented**.
+
+## Start Prompting
+
+```
+
+Review this screen and improve the spacing, typography, and color usage
+
+```
+
+```
+
+Build a profile screen with avatar, stats row, action buttons, and a scrollable activity feed
+
+```
+
+```
+
+Audit this screen for design consistency — check color token usage, spacing scale, and typography hierarchy
+
+```
+
+## Related
+
+- [Skills](/docs/ui/react-pro-v3/native/getting-started/agent-skills) — Install guide and full skills reference
+- [MCP Server](/docs/ui/react-pro-v3/native/getting-started/mcp-server) — Live access to `heroui-native-pro` documentation and theme variables
+- [UI for Agents](/docs/ui/react-pro-v3/native/getting-started/overview) — Overview of all AI tools

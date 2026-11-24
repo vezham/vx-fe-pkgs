@@ -1,0 +1,710 @@
+---
+title: 'Composed Chart'
+description: 'A React composed chart that combines bar, line, and area series for multi-metric web dashboards.'
+sourceUrl: https://heroui.pro/docs/react/components/composed-chart
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-composed-chart-default">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  { month: 'Jan', orders: 320, revenue: 4200 },
+  { month: 'Feb', orders: 450, revenue: 5800 },
+  { month: 'Mar', orders: 380, revenue: 4900 },
+  { month: 'Apr', orders: 520, revenue: 7200 },
+  { month: 'May', orders: 480, revenue: 6100 },
+  { month: 'Jun', orders: 600, revenue: 8400 },
+  { month: 'Jul', orders: 550, revenue: 7800 },
+  { month: 'Aug', orders: 680, revenue: 9200 },
+  { month: 'Sep', orders: 620, revenue: 8600 },
+  { month: 'Oct', orders: 750, revenue: 10200 },
+  { month: 'Nov', orders: 700, revenue: 9800 },
+  { month: 'Dec', orders: 820, revenue: 11500 }
+]
+
+export function Default() {
+  return (
+    <Card className="w-full rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Revenue & Orders</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Revenue</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Orders</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <ComposedChart data={data} height={260}>
+          <ComposedChart.Grid vertical={false} />
+          <ComposedChart.XAxis dataKey="month" tickMargin={8} />
+          <ComposedChart.YAxis
+            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+            width={40}
+            yAxisId="left"
+          />
+          <ComposedChart.YAxis orientation="right" width={40} yAxisId="right" />
+          <ComposedChart.Bar
+            barSize={16}
+            dataKey="revenue"
+            fill="var(--chart-3)"
+            name="Revenue"
+            radius={[4, 4, 0, 0]}
+            yAxisId="left"
+          />
+          <ComposedChart.Line
+            dataKey="orders"
+            dot={false}
+            name="Orders"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="monotone"
+            yAxisId="right"
+          />
+          <ComposedChart.Tooltip
+            content={({ active, label, payload }) => {
+              if (!active || !payload?.length) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map(entry => {
+                    const isRevenue = entry.dataKey === 'revenue'
+
+                    return (
+                      <ChartTooltip.Item key={String(entry.dataKey)}>
+                        <ChartTooltip.Indicator
+                          color={entry.color ?? entry.fill ?? entry.stroke}
+                        />
+                        <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                        <ChartTooltip.Value>
+                          {isRevenue
+                            ? `${Number(entry.value).toLocaleString()}`
+                            : Number(entry.value).toLocaleString()}
+                        </ChartTooltip.Value>
+                      </ChartTooltip.Item>
+                    )
+                  })}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </ComposedChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the ComposedChart component and access all parts using dot notation.
+
+<Callout type="info">
+  `ComposedChart` is a subpath-only import
+  (`@vezham/react-pro-v3/composed-chart`) because it depends on the optional
+  `recharts` peer. It is not exported from the package root, so SSR apps that
+  don't use it never need `recharts` installed.
+</Callout>
+
+```tsx
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+
+;<ComposedChart>
+  <ComposedChart.Grid />
+  <ComposedChart.XAxis />
+  <ComposedChart.YAxis />
+  <ComposedChart.Bar />
+  <ComposedChart.Line />
+  <ComposedChart.Area />
+  <ComposedChart.Tooltip />
+</ComposedChart>
+```
+
+## Stacked Bar With Line
+
+<ComponentPreview name="pro-composed-chart-stacked-bar-with-line">
+
+```tsx
+'use client'
+
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  {
+    aiPct: 72,
+    cli: 800,
+    cloudAgent: 200,
+    day: 'Mar 13',
+    ide: 2200,
+    other: 100
+  },
+  { aiPct: 65, cli: 500, cloudAgent: 100, day: 'Mar 14', ide: 1200, other: 80 },
+  { aiPct: 78, cli: 400, cloudAgent: 150, day: 'Mar 15', ide: 3200, other: 50 },
+  {
+    aiPct: 88,
+    cli: 1200,
+    cloudAgent: 300,
+    day: 'Mar 16',
+    ide: 13500,
+    other: 200
+  },
+  {
+    aiPct: 85,
+    cli: 1000,
+    cloudAgent: 250,
+    day: 'Mar 17',
+    ide: 13200,
+    other: 180
+  },
+  { aiPct: 60, cli: 200, cloudAgent: 50, day: 'Mar 18', ide: 800, other: 30 },
+  { aiPct: 55, cli: 150, cloudAgent: 40, day: 'Mar 19', ide: 600, other: 20 },
+  { aiPct: 50, cli: 100, cloudAgent: 30, day: 'Mar 22', ide: 400, other: 15 },
+  { aiPct: 48, cli: 80, cloudAgent: 20, day: 'Mar 25', ide: 300, other: 10 },
+  {
+    aiPct: 70,
+    cli: 600,
+    cloudAgent: 200,
+    day: 'Mar 28',
+    ide: 5000,
+    other: 100
+  },
+  {
+    aiPct: 75,
+    cli: 800,
+    cloudAgent: 250,
+    day: 'Mar 31',
+    ide: 8500,
+    other: 150
+  },
+  { aiPct: 68, cli: 500, cloudAgent: 150, day: 'Apr 3', ide: 3000, other: 80 },
+  {
+    aiPct: 82,
+    cli: 900,
+    cloudAgent: 300,
+    day: 'Apr 6',
+    ide: 10500,
+    other: 200
+  },
+  {
+    aiPct: 90,
+    cli: 1500,
+    cloudAgent: 500,
+    day: 'Apr 7',
+    ide: 23000,
+    other: 300
+  },
+  {
+    aiPct: 85,
+    cli: 1200,
+    cloudAgent: 400,
+    day: 'Apr 9',
+    ide: 18000,
+    other: 250
+  }
+]
+
+export function StackedBarWithLine() {
+  return (
+    <Card className="w-full max-w-[700px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">
+          AI Share of Committed Code
+        </Card.Title>
+        <div className="flex items-center gap-3">
+          {[
+            { color: 'var(--chart-4)', label: 'IDE' },
+            { color: 'var(--chart-2)', label: 'CLI' },
+            { color: 'var(--chart-3)', label: 'Cloud Agent' },
+            { color: 'var(--chart-1)', label: 'Other' },
+            { color: 'var(--muted)', label: 'AI %' }
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="text-muted text-xs">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <ComposedChart data={data} height={300}>
+          <ComposedChart.Grid vertical={false} />
+          <ComposedChart.XAxis dataKey="day" tickMargin={8} />
+          <ComposedChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}K` : `${v}`
+            }
+            width={35}
+            yAxisId="left"
+          />
+          <ComposedChart.YAxis
+            domain={[0, 100]}
+            orientation="right"
+            tickFormatter={(v: number) => `${v}%`}
+            width={40}
+            yAxisId="right"
+          />
+          <ComposedChart.Bar
+            barSize={20}
+            dataKey="ide"
+            fill="var(--chart-4)"
+            name="IDE"
+            stackId="code"
+            yAxisId="left"
+          />
+          <ComposedChart.Bar
+            dataKey="cli"
+            fill="var(--chart-2)"
+            name="CLI"
+            stackId="code"
+            yAxisId="left"
+          />
+          <ComposedChart.Bar
+            dataKey="cloudAgent"
+            fill="var(--chart-3)"
+            name="Cloud Agent"
+            stackId="code"
+            yAxisId="left"
+          />
+          <ComposedChart.Bar
+            dataKey="other"
+            fill="var(--chart-1)"
+            name="Other"
+            radius={[4, 4, 0, 0]}
+            stackId="code"
+            yAxisId="left"
+          />
+          <ComposedChart.Line
+            dataKey="aiPct"
+            dot={false}
+            name="AI %"
+            stroke="var(--muted)"
+            strokeWidth={1.5}
+            type="monotone"
+            yAxisId="right"
+          />
+          <ComposedChart.Tooltip
+            content={<ComposedChart.TooltipContent indicator="line" />}
+          />
+        </ComposedChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Area With Line
+
+<ComponentPreview name="pro-composed-chart-area-with-line">
+
+```tsx
+'use client'
+
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  { month: 'Jan', sessions: 12000, target: 15000 },
+  { month: 'Feb', sessions: 18000, target: 16000 },
+  { month: 'Mar', sessions: 15000, target: 17000 },
+  { month: 'Apr', sessions: 22000, target: 18000 },
+  { month: 'May', sessions: 19000, target: 19000 },
+  { month: 'Jun', sessions: 25000, target: 20000 },
+  { month: 'Jul', sessions: 23000, target: 21000 },
+  { month: 'Aug', sessions: 28000, target: 22000 },
+  { month: 'Sep', sessions: 26000, target: 23000 },
+  { month: 'Oct', sessions: 31000, target: 24000 },
+  { month: 'Nov', sessions: 29000, target: 25000 },
+  { month: 'Dec', sessions: 34000, target: 26000 }
+]
+
+export function AreaWithLine() {
+  return (
+    <Card className="w-full max-w-[560px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Sessions vs Target</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Sessions</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Target</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <ComposedChart data={data} height={260}>
+          <defs>
+            <linearGradient id="sessions-gradient" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="var(--chart-3)" stopOpacity={0.2} />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-3)"
+                stopOpacity={0.02}
+              />
+            </linearGradient>
+          </defs>
+          <ComposedChart.Grid vertical={false} />
+          <ComposedChart.XAxis dataKey="month" tickMargin={8} />
+          <ComposedChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={30}
+          />
+          <ComposedChart.Area
+            dataKey="sessions"
+            dot={false}
+            fill="url(#sessions-gradient)"
+            name="Sessions"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <ComposedChart.Line
+            dataKey="target"
+            dot={false}
+            name="Target"
+            stroke="var(--chart-1)"
+            strokeDasharray="6 3"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <ComposedChart.Tooltip content={<ComposedChart.TooltipContent />} />
+        </ComposedChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Bar With Area
+
+<ComponentPreview name="pro-composed-chart-bar-with-area">
+
+```tsx
+'use client'
+
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  { ctr: 3.2, impressions: 45000, month: 'Jan' },
+  { ctr: 3.8, impressions: 52000, month: 'Feb' },
+  { ctr: 3.5, impressions: 48000, month: 'Mar' },
+  { ctr: 4.2, impressions: 61000, month: 'Apr' },
+  { ctr: 4.0, impressions: 58000, month: 'May' },
+  { ctr: 4.8, impressions: 72000, month: 'Jun' },
+  { ctr: 4.5, impressions: 68000, month: 'Jul' },
+  { ctr: 5.1, impressions: 78000, month: 'Aug' },
+  { ctr: 4.9, impressions: 75000, month: 'Sep' },
+  { ctr: 5.5, impressions: 85000, month: 'Oct' },
+  { ctr: 5.2, impressions: 82000, month: 'Nov' },
+  { ctr: 5.8, impressions: 92000, month: 'Dec' }
+]
+
+export function BarWithArea() {
+  return (
+    <Card className="w-full max-w-[560px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Impressions & CTR</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Impressions</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-4)' }}
+            />
+            <span className="text-muted text-xs">CTR %</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <ComposedChart data={data} height={260}>
+          <defs>
+            <linearGradient id="ctr-gradient" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="var(--chart-4)" stopOpacity={0.15} />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-4)"
+                stopOpacity={0.02}
+              />
+            </linearGradient>
+          </defs>
+          <ComposedChart.Grid vertical={false} />
+          <ComposedChart.XAxis dataKey="month" tickMargin={8} />
+          <ComposedChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={35}
+            yAxisId="left"
+          />
+          <ComposedChart.YAxis
+            domain={[0, 8]}
+            orientation="right"
+            tickFormatter={(v: number) => `${v}%`}
+            width={35}
+            yAxisId="right"
+          />
+          <ComposedChart.Area
+            dataKey="ctr"
+            dot={false}
+            fill="url(#ctr-gradient)"
+            name="CTR"
+            stroke="none"
+            type="monotone"
+            yAxisId="right"
+          />
+          <ComposedChart.Bar
+            barSize={16}
+            dataKey="impressions"
+            fill="var(--chart-3)"
+            name="Impressions"
+            radius={[4, 4, 0, 0]}
+            yAxisId="left"
+          />
+          <ComposedChart.Line
+            dataKey="ctr"
+            dot={false}
+            legendType="none"
+            stroke="var(--chart-4)"
+            strokeWidth={2}
+            tooltipType="none"
+            type="monotone"
+            yAxisId="right"
+          />
+          <ComposedChart.Tooltip content={<ComposedChart.TooltipContent />} />
+        </ComposedChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multi Type
+
+<ComponentPreview name="pro-composed-chart-multi-type">
+
+```tsx
+'use client'
+
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { Card } from '@vezham/react-v3'
+
+const data = [
+  { bounceRate: 42, month: 'Jan', pageViews: 8200, users: 3200 },
+  { bounceRate: 38, month: 'Feb', pageViews: 11500, users: 4500 },
+  { bounceRate: 40, month: 'Mar', pageViews: 9800, users: 3800 },
+  { bounceRate: 35, month: 'Apr', pageViews: 14200, users: 5600 },
+  { bounceRate: 37, month: 'May', pageViews: 12100, users: 4800 },
+  { bounceRate: 32, month: 'Jun', pageViews: 16800, users: 6600 },
+  { bounceRate: 34, month: 'Jul', pageViews: 15200, users: 6000 },
+  { bounceRate: 30, month: 'Aug', pageViews: 18400, users: 7200 },
+  { bounceRate: 31, month: 'Sep', pageViews: 17200, users: 6800 },
+  { bounceRate: 28, month: 'Oct', pageViews: 20500, users: 8100 },
+  { bounceRate: 29, month: 'Nov', pageViews: 19600, users: 7700 },
+  { bounceRate: 26, month: 'Dec', pageViews: 23000, users: 9100 }
+]
+
+export function MultiType() {
+  return (
+    <Card className="w-full max-w-[620px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Site Analytics</Card.Title>
+        <div className="flex items-center gap-3">
+          {[
+            { color: 'var(--chart-3)', label: 'Page Views' },
+            { color: 'var(--chart-4)', label: 'Users' },
+            { color: 'var(--chart-1)', label: 'Bounce Rate' }
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="text-muted text-xs">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <ComposedChart data={data} height={280}>
+          <defs>
+            <linearGradient id="pv-gradient" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="var(--chart-3)" stopOpacity={0.15} />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-3)"
+                stopOpacity={0.02}
+              />
+            </linearGradient>
+          </defs>
+          <ComposedChart.Grid vertical={false} />
+          <ComposedChart.XAxis dataKey="month" tickMargin={8} />
+          <ComposedChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={30}
+            yAxisId="left"
+          />
+          <ComposedChart.YAxis
+            domain={[0, 60]}
+            orientation="right"
+            tickFormatter={(v: number) => `${v}%`}
+            width={35}
+            yAxisId="right"
+          />
+          <ComposedChart.Area
+            dataKey="pageViews"
+            dot={false}
+            fill="url(#pv-gradient)"
+            name="Page Views"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+            yAxisId="left"
+          />
+          <ComposedChart.Bar
+            barSize={14}
+            dataKey="users"
+            fill="var(--chart-4)"
+            name="Users"
+            radius={[4, 4, 0, 0]}
+            yAxisId="left"
+          />
+          <ComposedChart.Line
+            dataKey="bounceRate"
+            dot={{ fill: 'var(--chart-1)', r: 3, strokeWidth: 0 }}
+            name="Bounce Rate"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="monotone"
+            yAxisId="right"
+          />
+          <ComposedChart.Tooltip
+            content={<ComposedChart.TooltipContent indicator="line" />}
+          />
+        </ComposedChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.composed-chart` — Root container wrapping `ResponsiveContainer` and the Recharts chart.
+
+### Recharts Theming
+
+The following CSS rules target Recharts internal class names to apply HeroUI design tokens automatically:
+
+- `.composed-chart .recharts-cartesian-axis-tick-value` — Axis tick labels. 10px muted text.
+- `.composed-chart .recharts-cartesian-axis-line` — Axis lines. Hidden by default.
+- `.composed-chart .recharts-cartesian-axis-tick-line` — Tick lines. Hidden by default.
+- `.composed-chart .recharts-cartesian-grid line` — Cartesian grid lines. Muted stroke at 0.15 opacity.
+- `.composed-chart .recharts-tooltip-cursor` — Tooltip cursor. Dashed vertical line on hover.
+- `.composed-chart .recharts-active-dot circle` — Active dot. Outlined with surface color for contrast.
+
+## API Reference
+
+### ComposedChart
+
+The root wrapper. Renders a `ResponsiveContainer` + Recharts `ComposedChart` with HeroUI CSS theming applied automatically.
+
+| Prop       | Type                                                               | Default                                    | Description                                                                                        |
+| ---------- | ------------------------------------------------------------------ | ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `data`     | `Record<string, number \| string>[]`                               | —                                          | Chart data — array of objects with numeric/string fields for each series.                          |
+| `height`   | `number`                                                           | `300`                                      | Chart height in pixels.                                                                            |
+| `width`    | ``number \| `${number}%` ``                                        | `"100%"`                                   | Chart width in pixels or percentage string.                                                        |
+| `margin`   | `{ top?: number; right?: number; bottom?: number; left?: number }` | `{ top: 8, right: 8, bottom: 0, left: 0 }` | Recharts margin around the chart area.                                                             |
+| `children` | `ReactNode`                                                        | —                                          | Recharts child components (`ComposedChart.Bar`, `ComposedChart.Line`, `ComposedChart.Area`, etc.). |
+
+Also supports all native `div` HTML attributes.
+
+### ComposedChart.Bar
+
+Re-exported Recharts `Bar` component. Follows the [Recharts Bar API](https://recharts.github.io/en-US/api/Bar/).
+
+### ComposedChart.Line
+
+Re-exported Recharts `Line` component. Follows the [Recharts Line API](https://recharts.github.io/en-US/api/Line/).
+
+### ComposedChart.Area
+
+Re-exported Recharts `Area` component. Follows the [Recharts Area API](https://recharts.github.io/en-US/api/Area/).
+
+### ComposedChart.XAxis
+
+Re-exported Recharts `XAxis` component. Follows the [Recharts XAxis API](https://recharts.github.io/en-US/api/XAxis/).
+
+### ComposedChart.YAxis
+
+Re-exported Recharts `YAxis` component. Follows the [Recharts YAxis API](https://recharts.github.io/en-US/api/YAxis/).
+
+### ComposedChart.Grid
+
+Re-exported Recharts `CartesianGrid` component. Follows the [Recharts CartesianGrid API](https://recharts.github.io/en-US/api/CartesianGrid/).
+
+### ComposedChart.Tooltip
+
+Re-exported Recharts `Tooltip` component. Follows the [Recharts Tooltip API](https://recharts.github.io/en-US/api/Tooltip/). Use with `ComposedChart.TooltipContent` for styled tooltips.
+
+### ComposedChart.TooltipContent
+
+Pre-built tooltip renderer for Recharts. Pass as the `content` prop of `ComposedChart.Tooltip`. See [ChartTooltip](https://heroui.pro/docs/react/components/chart-tooltip) for full props.

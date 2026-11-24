@@ -1,0 +1,249 @@
+---
+title: 'Markdown'
+description: 'Render AI responses with rich markdown, memoized streaming blocks, and optional Streamdown rendering.'
+sourceUrl: https://heroui.pro/docs/react/components/markdown
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `Markdown` for AI responses that need headings, lists, inline code, and fenced code blocks with HeroUI Pro styling.
+
+<ComponentPreview name="pro-markdown-default">
+
+```tsx
+'use client'
+
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const SAMPLE = `# HeroUI Pro AI Markdown
+
+This component uses **react-markdown** with block-level memoization for streaming performance.
+
+## Features
+
+- Headings, lists, and links
+- Inline \`code\` snippets
+- Fenced code blocks with Shiki highlighting
+
+\`\`\`tsx
+<ChatMessage.Assistant>
+  <ChatMessage.Avatar alt="Assistant" fallback="AI" show />
+  <ChatMessage.Body>
+    <ChatMessage.Content>
+      <Markdown>{response}</Markdown>
+    </ChatMessage.Content>
+  </ChatMessage.Body>
+</ChatMessage.Assistant>
+\`\`\`
+
+> AI responses can include rich formatting without coupling to any SDK.
+`
+
+export function Default() {
+  return (
+    <div className="w-[640px]">
+      <Markdown>{SAMPLE}</Markdown>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Streaming
+
+The built-in Markdown component splits content into memoized blocks so token updates only re-render the blocks that changed.
+
+<ComponentPreview name="pro-markdown-streaming">
+
+```tsx
+'use client'
+
+import { useEffect, useState } from 'react'
+
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const FULL_TEXT = `# Streaming demo
+
+Each token update only re-renders changed markdown blocks.
+
+1. First item
+2. Second item
+3. Third item
+
+\`\`\`js
+console.log("streaming markdown");
+\`\`\`
+`
+
+export function Streaming() {
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    let index = 0
+    const interval = window.setInterval(() => {
+      index += 8
+      setText(FULL_TEXT.slice(0, index))
+      if (index >= FULL_TEXT.length) window.clearInterval(interval)
+    }, 120)
+
+    return () => window.clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="w-[640px]">
+      <Markdown>{text}</Markdown>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Streamdown
+
+Use Streamdown when you want incomplete markdown repair, streaming animation, and a caret while the assistant response is still being generated.
+
+<ComponentPreview name="pro-markdown-with-streamdown">
+
+```tsx
+'use client'
+
+import type { ClassAttributes, HTMLAttributes, ReactNode } from 'react'
+import { useEffect, useState } from 'react'
+import type { Components } from 'streamdown'
+import { Streamdown } from 'streamdown'
+
+import { CodeBlock } from '@vezham/react-pro-v3/code-block'
+
+const FULL_TEXT = `# Streamdown demo
+
+Streamdown repairs incomplete markdown while a response streams, so partially typed blocks stay readable.
+
+- Animated words for newly streamed text
+- Built-in caret while the response is active
+- Graceful handling for unfinished code fences
+
+\`\`\`tsx
+<Streamdown animated caret="block" isAnimating={isStreaming}>
+  {response}
+</Streamdown>
+\`\`\`
+`
+
+function extractLanguage(className?: string): string {
+  if (!className) return 'plaintext'
+  const match = className.match(/language-(\w+)/)
+
+  return match?.[1] ?? 'plaintext'
+}
+
+function HeroCodeBlock({
+  children,
+  className
+}: ClassAttributes<HTMLElement> &
+  HTMLAttributes<HTMLElement> & { children?: ReactNode }) {
+  const language = extractLanguage(className)
+  const code = String(children ?? '').replace(/\n$/, '')
+
+  return (
+    <CodeBlock>
+      <CodeBlock.Header>
+        <span className="text-muted text-xs uppercase">{language}</span>
+        <CodeBlock.CopyButton code={code} />
+      </CodeBlock.Header>
+      <CodeBlock.Code code={code} language={language} />
+    </CodeBlock>
+  )
+}
+
+export function WithStreamdown() {
+  const [text, setText] = useState('')
+  const isStreaming = true
+
+  useEffect(() => {
+    let index = 0
+
+    const interval = window.setInterval(() => {
+      index += 8
+      setText(FULL_TEXT.slice(0, index))
+
+      if (index >= FULL_TEXT.length) {
+        window.clearInterval(interval)
+      }
+    }, 120)
+
+    return () => window.clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="w-[640px]">
+      <Streamdown
+        animated
+        caret="block"
+        components={{ code: HeroCodeBlock as Components['code'] }}
+        isAnimating={isStreaming}>
+        {text}
+      </Streamdown>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+```tsx
+import { Streamdown } from 'streamdown'
+import 'streamdown/styles.css'
+
+;<Streamdown animated caret="block" isAnimating={isStreaming}>
+  {response}
+</Streamdown>
+```
+
+## Anatomy
+
+<Callout type="info">
+  `Markdown` and `StreamMarkdown` are subpath-only imports
+  (`@vezham/react-pro-v3/markdown`) because they depend on the optional
+  `streamdown`, `react-markdown`, `marked`, and `remark-*` peers. They are not
+  exported from the package root, so SSR apps that don't use them never need
+  those peers installed.
+</Callout>
+
+```tsx
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+;<Markdown>{response}</Markdown>
+```
+
+## CSS Classes
+
+### Base Classes
+
+- `.markdown` - Root markdown content wrapper
+- `.markdown__block` - Memoized block wrapper for each parsed markdown block
+
+### Element Classes
+
+- `.markdown__inline-code` - Inline code styling
+
+## API Reference
+
+### Markdown
+
+The root component. Renders markdown content with HeroUI Pro typography and code block styling.
+
+| Prop         | Type                  | Default   | Description                                 |
+| ------------ | --------------------- | --------- | ------------------------------------------- |
+| `children`   | `string`              | -         | Markdown content to render                  |
+| `components` | `Partial<Components>` | -         | Custom `react-markdown` component overrides |
+| `id`         | `string`              | generated | Stable id seed used for memoized block keys |
+| `className`  | `string`              | -         | Additional CSS class                        |
+
+Also supports all native `div` HTML attributes.

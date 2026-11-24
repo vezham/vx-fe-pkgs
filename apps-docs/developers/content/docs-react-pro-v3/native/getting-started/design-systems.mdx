@@ -1,0 +1,59 @@
+---
+title: 'Design Systems'
+description: 'Preview your HeroUI design system for Native, check it on a device, and export Uniwind-ready CSS for your app.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/design-systems
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+Use Design Systems to customize a HeroUI theme visually and export supported tokens for HeroUI Native. Your saved system also keeps brand guidance, fonts, and assets together.
+
+[Open Design Systems](https://heroui.pro/dashboard/pro/ds) to choose a saved system, or [create a Design System](https://heroui.pro/ds/new) from a website or from scratch.
+
+For creation, brand management, agent editing, saving, undo, and access requirements, see the [shared Design Systems guide](https://heroui.pro/docs/react/getting-started/design-systems). This page covers the Native workflow.
+
+## Preview for Native
+
+1. Open your Design System and select **Native** in the **Web / Native** control.
+2. In **Overview**, choose **iOS** or **Android** to check the theme in the phone preview.
+3. Adjust supported settings in **Style** and **Variables**, and check both light and dark mode.
+4. Select **Web** to return to the web components and brand workspace.
+
+The browser preview approximates native scale and token behavior. Unsupported web settings are unavailable in Native mode, and web component CSS does not carry over to the Native CSS export.
+
+### Check on a Device
+
+In **Overview**, with **Native** selected, use the **Scan to preview on device** card to test your theme on a real device. For a base theme, scan the QR code to open the current theme in the HeroUI Native app. You can also use **Copy link** from the scan card.
+
+The editor's device-preview flow does not support the Pro web variants Brutalism, Glass, and Mouve; their scan card is hidden. Custom fonts can also be unavailable in the device preview. Check the editor's font warning and use a supported suggested font when testing on a device.
+
+## Export Native CSS
+
+1. Select **Code** in the editor. Opening it from the Native preview selects **Native CSS** by default.
+2. Choose **Native CSS** if another output is selected.
+3. Copy the CSS or download `global.css`. Use **View preview** to return to the Native preview if you need to check the result.
+4. Integrate the exported tokens into your app's existing `global.css`. Preserve the imports and source paths from [Configure global.css](/docs/ui/react-pro-v3/native/getting-started/installation#configure-globalcss).
+
+The export targets HeroUI Native with Uniwind. Supported tokens apply to both OSS and Pro components. Use the Native output for your app; the Web CSS output includes web-specific styles and component overrides.
+
+You can also export **DESIGN.md** and **PRODUCT.md** to give designers and coding agents your visual guidance and product context.
+
+For CSS customization within your app, see [Theming](/docs/ui/react-pro-v3/native/getting-started/theming), [Colors](/docs/ui/react-pro-v3/native/getting-started/colors), and [Styling](/docs/ui/react-pro-v3/native/getting-started/styling).
+
+## Import Through MCP
+
+Saved Design System imports use the [HeroUI Pro MCP server](https://heroui.pro/docs/react/getting-started/mcp-server), which can export Native CSS. Connect it with your Personal Token alongside the [Native Pro MCP](/docs/ui/react-pro-v3/native/getting-started/mcp-server) used for Native component documentation. The Native Pro MCP does not expose the saved-system import tools.
+
+1. Open **Code** in your saved system and select **Copy sync prompt**, or **Save & copy prompt** if you have unsaved changes.
+2. Paste the prompt into your coding agent and specify that the project uses HeroUI Native with Uniwind.
+3. Have the agent fetch `native-css`, plus `design` and `product` if you need the accompanying guidance, and integrate the output into your existing project.
+
+See [Import a Design System](https://heroui.pro/docs/react/getting-started/mcp-server#import-a-design-system) for the `get_design_system_manifest` and `get_design_system_export` tools. These imports require a Personal Token; CI/CD tokens are not supported.
+
+For the original Native preview announcement, see [Design Systems Native](https://heroui.pro/docs/native/releases/theme-builder-native).

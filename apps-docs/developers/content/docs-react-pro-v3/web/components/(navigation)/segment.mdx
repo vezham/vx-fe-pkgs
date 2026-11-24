@@ -1,0 +1,489 @@
+---
+title: 'Segment'
+description: 'A React segmented control for switching between a small set of mutually exclusive web options.'
+sourceUrl: https://heroui.pro/docs/react/components/segment
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-segment-default">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' }
+]
+
+export function Default() {
+  return (
+    <Segment defaultSelectedKey="dashboard">
+      {tabs.map(tab => (
+        <Segment.Item key={tab.id} id={tab.id}>
+          {tab.label}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Segment component and access all parts using dot notation.
+Separators are optional; prefer omitting them by default and add them only when requested or
+when the control benefits from extra visual division.
+
+```tsx
+import { Segment } from '@vezham/react-pro-v3'
+
+;<Segment>
+  <Segment.Item id="monthly">Monthly</Segment.Item>
+  <Segment.Item id="yearly">Yearly</Segment.Item>
+</Segment>
+```
+
+Place `Segment.Separator` inside each `Segment.Item` before the item content. Do not render
+separators directly under `Segment` or between `Segment.Item` siblings.
+
+## Ghost
+
+Use `variant="ghost"` for a transparent container with an accent-colored selection indicator — ideal for inline or minimal UI contexts where the segment shouldn't draw attention to itself.
+
+<ComponentPreview name="pro-segment-ghost">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: '1w', label: '1W' },
+  { id: '4w', label: '4W' },
+  { id: '1y', label: '1Y' },
+  { id: 'mtd', label: 'MTD' },
+  { id: 'qtd', label: 'QTD' },
+  { id: 'ytd', label: 'YTD' },
+  { id: 'all', label: 'ALL' }
+]
+
+export function Ghost() {
+  return (
+    <Segment defaultSelectedKey="mtd" size="sm" variant="ghost">
+      {tabs.map(tab => (
+        <Segment.Item key={tab.id} id={tab.id}>
+          {tab.label}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Separators
+
+<ComponentPreview name="pro-segment-with-separators">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' }
+]
+
+export function WithSeparators() {
+  return (
+    <Segment defaultSelectedKey="dashboard">
+      {tabs.map(tab => (
+        <Segment.Item key={tab.id} id={tab.id}>
+          <Segment.Separator />
+          {tab.label}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Controlled
+
+<ComponentPreview name="pro-segment-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import type { Key } from 'react-aria-components/Breadcrumbs'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' }
+]
+
+export function Controlled() {
+  const [selected, setSelected] = useState<Key>('analytics')
+
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <Segment selectedKey={selected} onSelectionChange={setSelected}>
+        {tabs.map(tab => (
+          <Segment.Item key={tab.id} id={tab.id}>
+            {tab.label}
+          </Segment.Item>
+        ))}
+      </Segment>
+      <span className="text-muted text-sm">
+        Selected:{' '}
+        <strong className="text-foreground">{String(selected)}</strong>
+      </span>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-segment-disabled">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' }
+]
+
+export function Disabled() {
+  return (
+    <Segment isDisabled defaultSelectedKey="dashboard">
+      {tabs.map(tab => (
+        <Segment.Item key={tab.id} id={tab.id}>
+          {tab.label}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled Item
+
+<ComponentPreview name="pro-segment-disabled-item">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+export function DisabledItem() {
+  return (
+    <Segment defaultSelectedKey="dashboard">
+      <Segment.Item id="dashboard">Dashboard</Segment.Item>
+      <Segment.Item isDisabled id="analytics">
+        Analytics
+      </Segment.Item>
+      <Segment.Item id="reports">Reports</Segment.Item>
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-segment-sizes">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'analytics', label: 'Analytics' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'settings', label: 'Settings' }
+]
+
+export function Sizes() {
+  return (
+    <div className="flex flex-col items-start gap-6">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col gap-2">
+          <span className="text-muted text-xs">{size}</span>
+          <Segment defaultSelectedKey="dashboard" size={size}>
+            {tabs.map(tab => (
+              <Segment.Item key={tab.id} id={tab.id}>
+                {tab.label}
+              </Segment.Item>
+            ))}
+          </Segment>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Theme Switcher
+
+<ComponentPreview name="pro-segment-theme-switcher">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+export function ThemeSwitcher() {
+  return (
+    <Segment defaultSelectedKey="system" size="sm">
+      <Segment.Item aria-label="Light" id="light">
+        <svg fill="currentColor" height="16" viewBox="0 0 24 24" width="16">
+          <path d="M12 19a1 1 0 0 1 .993.883L13 20v1a1 1 0 0 1-1.993.117L11 21v-1a1 1 0 0 1 1-1m6.313-2.09l.094.083l.7.7a1 1 0 0 1-1.32 1.497l-.094-.083l-.7-.7a1 1 0 0 1 1.218-1.567zm-11.306.083a1 1 0 0 1 .083 1.32l-.083.094l-.7.7a1 1 0 0 1-1.497-1.32l.083-.094l.7-.7a1 1 0 0 1 1.414 0M4 11a1 1 0 0 1 .117 1.993L4 13H3a1 1 0 0 1-.117-1.993L3 11zm17 0a1 1 0 0 1 .117 1.993L21 13h-1a1 1 0 0 1-.117-1.993L20 11zM6.213 4.81l.094.083l.7.7a1 1 0 0 1-1.32 1.497l-.094-.083l-.7-.7A1 1 0 0 1 6.11 4.74zm12.894.083a1 1 0 0 1 .083 1.32l-.083.094l-.7.7a1 1 0 0 1-1.497-1.32l.083-.094l.7-.7a1 1 0 0 1 1.414 0M12 2a1 1 0 0 1 .993.883L13 3v1a1 1 0 0 1-1.993.117L11 4V3a1 1 0 0 1 1-1m0 5a5 5 0 1 1-4.995 5.217L7 12l.005-.217A5 5 0 0 1 12 7" />
+        </svg>
+      </Segment.Item>
+      <Segment.Item aria-label="Dark" id="dark">
+        <svg fill="currentColor" height="16" viewBox="0 0 24 24" width="16">
+          <path d="M12 1.992a10 10 0 1 0 9.236 13.838c.341-.82-.476-1.644-1.298-1.31a6.5 6.5 0 0 1-6.864-10.787l.077-.08c.551-.63.113-1.653-.758-1.653h-.266l-.068-.006z" />
+        </svg>
+      </Segment.Item>
+      <Segment.Item aria-label="System" id="system">
+        <svg
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          width="16">
+          <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zm4 15h10m-8-4v4m6-4v4" />
+        </svg>
+      </Segment.Item>
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Two Items
+
+<ComponentPreview name="pro-segment-two-items">
+
+```tsx
+'use client'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+export function TwoItems() {
+  return (
+    <Segment defaultSelectedKey="monthly" size="sm">
+      <Segment.Item id="monthly">Monthly</Segment.Item>
+      <Segment.Item id="yearly">Yearly</Segment.Item>
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Icons
+
+<ComponentPreview name="pro-segment-with-icons">
+
+```tsx
+'use client'
+
+import ChartColumn from '@gravity-ui/icons/ChartColumn'
+import Gear from '@gravity-ui/icons/Gear'
+import LayoutList from '@gravity-ui/icons/LayoutList'
+import PersonFill from '@gravity-ui/icons/PersonFill'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const iconTabs = [
+  { icon: <LayoutList />, id: 'dashboard', label: 'Dashboard' },
+  { icon: <ChartColumn />, id: 'analytics', label: 'Analytics' },
+  { icon: <PersonFill />, id: 'team', label: 'Team' },
+  { icon: <Gear />, id: 'settings', label: 'Settings' }
+]
+
+export function WithIcons() {
+  return (
+    <Segment defaultSelectedKey="dashboard">
+      {iconTabs.map(tab => (
+        <Segment.Item key={tab.id} id={tab.id}>
+          {tab.icon}
+          {tab.label}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Icon Expand
+
+Use render props on `Segment.Item` to show only icons for unselected items and icon + label for the selected item. Combine with `variant="ghost"` and `className="w-auto"` on each item so they size to their content.
+
+<ComponentPreview name="pro-segment-icon-expand">
+
+```tsx
+'use client'
+
+import Archive from '@gravity-ui/icons/Archive'
+import Comment from '@gravity-ui/icons/Comment'
+import House from '@gravity-ui/icons/House'
+import Video from '@gravity-ui/icons/Video'
+
+import { Segment } from '@vezham/react-pro-v3'
+
+const tabs = [
+  { icon: <House />, id: 'home', label: 'Home' },
+  { icon: <Comment />, id: 'chat', label: 'Chat' },
+  { icon: <Video />, id: 'meetings', label: 'Meetings' },
+  { icon: <Archive />, id: 'inbox', label: 'Inbox' }
+]
+
+export function IconExpand() {
+  return (
+    <Segment defaultSelectedKey="meetings" variant="ghost">
+      {tabs.map(tab => (
+        <Segment.Item
+          key={tab.id}
+          className="w-auto"
+          id={tab.id}
+          style={{ gap: 0 }}>
+          {({ isSelected }) => (
+            <>
+              {tab.icon}
+              <span
+                className="inline-grid transition-all duration-200 ease-out motion-reduce:transition-none"
+                style={{
+                  gridTemplateColumns: isSelected ? '1fr' : '0fr',
+                  minWidth: 0,
+                  opacity: isSelected ? 1 : 0
+                }}>
+                <span
+                  className="overflow-hidden whitespace-nowrap transition-[padding] duration-200 ease-out motion-reduce:transition-none"
+                  style={{
+                    minWidth: 0,
+                    paddingInlineStart: isSelected ? '0.375rem' : 0
+                  }}>
+                  {tab.label}
+                </span>
+              </span>
+            </>
+          )}
+        </Segment.Item>
+      ))}
+    </Segment>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.segment` - Base container with inline-flex layout and rounded corners
+- `.segment--sm` - Small size (28px height, smaller padding)
+- `.segment--md` - Medium size (32px height, default)
+- `.segment--lg` - Large size (40px height, larger padding)
+
+### Variant Classes
+
+- `.segment--ghost` - Ghost variant (transparent container, accent-colored indicator)
+- `.segment__item--ghost` - Ghost item (accent-foreground text when selected)
+- `.segment__indicator--ghost` - Ghost indicator (accent background, no shadow)
+
+### Element Classes
+
+- `.segment__item` - Individual toggle button
+- `.segment__item--sm` / `.segment__item--md` / `.segment__item--lg` - Item size variants
+- `.segment__indicator` - Animated selection indicator (positioned behind the selected item)
+- `.segment__separator` - Decorative divider between items (auto-hidden when adjacent to selected item)
+
+### Interactive States
+
+- **Selected**: `[data-selected="true"]` on `.segment__item` (foreground color change)
+- **Hover**: `:hover` or `[data-hovered="true"]` on unselected `.segment__item` (opacity reduction)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on `.segment__item` (focus ring)
+- **Disabled**: `:disabled` or `[data-disabled="true"]` or `[aria-disabled="true"]` on `.segment__item` (reduced opacity)
+
+## API Reference
+
+### Segment
+
+The root component. Wraps RAC [ToggleButtonGroup](https://react-spectrum.adobe.com/react-aria/ToggleButtonGroup.html) with a single-selection API.
+
+| Prop                 | Type                   | Default     | Description                                           |
+| -------------------- | ---------------------- | ----------- | ----------------------------------------------------- |
+| `variant`            | `'default' \| 'ghost'` | `'default'` | Visual variant                                        |
+| `size`               | `'sm' \| 'md' \| 'lg'` | `'md'`      | Size variant                                          |
+| `selectedKey`        | `Key \| null`          | -           | The key of the currently selected item (controlled)   |
+| `defaultSelectedKey` | `Key`                  | -           | The key of the initially selected item (uncontrolled) |
+| `onSelectionChange`  | `(key: Key) => void`   | -           | Handler called when the selected item changes         |
+| `isDisabled`         | `boolean`              | -           | Whether all items are disabled                        |
+| `children`           | `ReactNode`            | -           | Segment items                                         |
+
+Also supports all RAC [ToggleButtonGroup](https://react-spectrum.adobe.com/react-aria/ToggleButtonGroup.html) props except `selectionMode`, `selectedKeys`, `defaultSelectedKeys`, and `onSelectionChange`.
+
+### Segment.Item
+
+An individual option wrapping RAC [ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html). Automatically renders a `SelectionIndicator` inside.
+
+| Prop       | Type                                        | Default | Description                   |
+| ---------- | ------------------------------------------- | ------- | ----------------------------- |
+| `id`       | `Key`                                       | -       | Unique key for this item      |
+| `children` | `ReactNode \| ((renderProps) => ReactNode)` | -       | Item label or render function |
+
+Also supports all RAC [ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html) props.
+
+### Segment.Separator
+
+Decorative divider between items. Render it as a child of `Segment.Item`, before the item label or
+content. It is automatically hidden adjacent to the selected item.
+
+Also supports all native `span` HTML attributes.

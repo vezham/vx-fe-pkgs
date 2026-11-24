@@ -1,0 +1,1447 @@
+---
+title: 'Timeline'
+description: 'A composable React timeline for web activity feeds, event histories, and milestones.'
+sourceUrl: https://heroui.pro/docs/react/components/timeline
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-timeline-default">
+
+```tsx
+'use client'
+
+import {
+  ChartLine,
+  CircleCheckFill,
+  Clock,
+  Flag,
+  Megaphone,
+  ShieldExclamation
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Chip, Link } from '@vezham/react-v3'
+
+const rolloutEvents = [
+  {
+    description: (
+      <>
+        Created{' '}
+        <span className="text-foreground font-medium">checkout-redesign</span>{' '}
+        for the billing workspace.
+      </>
+    ),
+    icon: Flag,
+    meta: 'Owner assigned',
+    status: 'default',
+    time: '09:12',
+    title: 'Feature flag created'
+  },
+  {
+    description: (
+      <>
+        Enabled for{' '}
+        <span className="text-foreground font-medium">5% of workspaces</span>{' '}
+        with session replay sampling on.
+      </>
+    ),
+    icon: ChartLine,
+    meta: 'Canary',
+    metaColor: 'accent',
+    status: 'current',
+    time: '09:34',
+    title: 'Canary rollout started'
+  },
+  {
+    description: (
+      <>
+        Latency climbed in{' '}
+        <span className="text-foreground font-medium">eu-central-1</span>;
+        rollout is holding while routing warms.
+      </>
+    ),
+    icon: ShieldExclamation,
+    meta: 'Paused',
+    metaColor: 'warning',
+    status: 'warning',
+    time: '09:51',
+    title: 'Regional guardrail tripped'
+  },
+  {
+    description: (
+      <>
+        Support macro and changelog draft are ready in{' '}
+        <Link className="text-xs" href="#">
+          Launch notes
+        </Link>
+        .
+      </>
+    ),
+    icon: Megaphone,
+    meta: 'Docs',
+    status: 'default',
+    time: '10:05',
+    title: 'Customer messaging prepared'
+  },
+  {
+    description: 'Full rollout waits for the next error-budget sweep.',
+    icon: Clock,
+    meta: 'Queued',
+    status: 'muted',
+    time: '10:30',
+    title: 'Launch window scheduled'
+  },
+  {
+    description: (
+      <>
+        Rollback owner and dashboard checks are recorded in the release audit.
+      </>
+    ),
+    icon: CircleCheckFill,
+    meta: 'Ready',
+    metaColor: 'success',
+    status: 'success',
+    time: '10:42',
+    title: 'Release checklist verified'
+  }
+] as const
+
+export function Default() {
+  return (
+    <div className="w-full max-w-[560px] min-w-0">
+      <div className="mb-4">
+        <p className="text-muted m-0 text-xs font-medium">Rollout audit</p>
+        <h3 className="text-foreground m-0 text-base font-semibold">
+          Checkout redesign
+        </h3>
+      </div>
+
+      <Timeline density="compact" size="sm">
+        {rolloutEvents.map(event => {
+          const Icon = event.icon
+
+          return (
+            <Timeline.Item
+              key={event.title}
+              align="center"
+              status={event.status}>
+              <Timeline.Marker aria-hidden="true">
+                <Icon />
+              </Timeline.Marker>
+              <Timeline.Content>
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <h3 className="text-foreground m-0 text-xs leading-5 font-medium">
+                        {event.title}
+                      </h3>
+                      <Chip
+                        color={
+                          'metaColor' in event ? event.metaColor : 'default'
+                        }
+                        size="sm"
+                        variant="soft">
+                        {event.meta}
+                      </Chip>
+                    </div>
+                    <p className="text-muted m-0 mt-1 text-xs leading-5">
+                      {event.description}
+                    </p>
+                  </div>
+                  <time className="text-muted shrink-0 text-xs leading-5">
+                    {event.time}
+                  </time>
+                </div>
+              </Timeline.Content>
+            </Timeline.Item>
+          )
+        })}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+Timeline is for read-only chronology: activity feeds, audit trails, incident history, release logs,
+and milestone roadmaps. Use Stepper when the user is moving through a known sequence where current,
+complete, and upcoming steps are the primary meaning.
+
+## Anatomy
+
+Import the Timeline component and access all parts using dot notation.
+
+```tsx
+import { Timeline } from '@vezham/react-pro-v3'
+
+;<Timeline>
+  <Timeline.Item>
+    <Timeline.Rail>
+      <Timeline.Marker />
+      <Timeline.Connector />
+    </Timeline.Rail>
+    <Timeline.Content>
+      <article>
+        <h3>Event title</h3>
+        <time dateTime="2026-05-22">May 22, 2026</time>
+        <p>Event details</p>
+      </article>
+    </Timeline.Content>
+  </Timeline.Item>
+</Timeline>
+```
+
+Timeline intentionally owns only the chronology layout. It renders an `ol` with `li` items,
+keeps connectors decorative, hides empty markers from assistive technology, and marks
+`status="current"` items with `aria-current="true"`. Use semantic HTML and OSS components such as
+`Card`, `Chip`, and `Avatar` inside `Timeline.Content` for the event content itself.
+
+## Centered Milestones
+
+<ComponentPreview name="pro-timeline-centered-milestones">
+
+```tsx
+'use client'
+
+import {
+  ChartLine,
+  Flag,
+  Globe,
+  Megaphone,
+  Persons,
+  ShieldCheck
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Chip, Link } from '@vezham/react-v3'
+
+const milestones = [
+  {
+    description:
+      'Invited design partners to stress-test billing, permissions, and reporting workflows.',
+    icon: Persons,
+    metric: '24 teams',
+    tag: 'Research',
+    tagColor: 'default',
+    time: 'Jan 2026',
+    title: 'Private beta'
+  },
+  {
+    description:
+      'Metered plans went live for sandbox workspaces after invoice previews cleared review.',
+    icon: ChartLine,
+    metric: '3 plans',
+    tag: 'Billing',
+    tagColor: 'accent',
+    time: 'Mar 2026',
+    title: 'Usage-based pricing'
+  },
+  {
+    description: (
+      <>
+        Opened the EU data boundary with local support coverage and a{' '}
+        <Link className="text-xs" href="#">
+          launch brief
+        </Link>
+        .
+      </>
+    ),
+    icon: Globe,
+    metric: '2 regions',
+    tag: 'Expansion',
+    tagColor: 'success',
+    time: 'May 2026',
+    title: 'Regional launch'
+  },
+  {
+    description:
+      'First integrations shipped with shared certification notes and co-marketing assets.',
+    icon: Flag,
+    metric: '8 partners',
+    tag: 'Marketplace',
+    tagColor: 'warning',
+    time: 'Aug 2026',
+    title: 'Partner network'
+  },
+  {
+    description:
+      'Audit logs, SSO handoff, and incident exports were bundled into the admin rollout.',
+    icon: ShieldCheck,
+    metric: '5 controls',
+    tag: 'Governance',
+    tagColor: 'default',
+    time: 'Oct 2026',
+    title: 'Enterprise controls'
+  },
+  {
+    description:
+      'Customer education, lifecycle emails, and release notes moved into one launch calendar.',
+    icon: Megaphone,
+    metric: '12 touchpoints',
+    tag: 'Adoption',
+    tagColor: 'accent',
+    time: 'Dec 2026',
+    title: 'Scale motion'
+  }
+] as const
+
+type Milestone = (typeof milestones)[number]
+
+function MilestoneBody({
+  milestone,
+  order = 'time-first'
+}: {
+  milestone: Milestone
+  order?: 'tag-first' | 'time-first'
+}) {
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-2">
+        {order === 'tag-first' ? (
+          <>
+            <Chip color={milestone.tagColor} size="sm" variant="soft">
+              {milestone.tag}
+            </Chip>
+            <time className="text-muted text-xs leading-5">
+              {milestone.time}
+            </time>
+          </>
+        ) : (
+          <>
+            <time className="text-muted text-xs leading-5">
+              {milestone.time}
+            </time>
+            <Chip color={milestone.tagColor} size="sm" variant="soft">
+              {milestone.tag}
+            </Chip>
+          </>
+        )}
+      </div>
+      <h3 className="text-foreground m-0 text-sm leading-5 font-medium">
+        {milestone.title}
+      </h3>
+      <p className="text-muted m-0 text-xs leading-5">
+        {milestone.description}
+      </p>
+      <span className="text-muted text-xs leading-5">{milestone.metric}</span>
+    </>
+  )
+}
+
+export function CenteredMilestones() {
+  return (
+    <div className="w-full max-w-[700px] min-w-0 py-4">
+      <div className="mb-5 flex items-center justify-center gap-3">
+        <div className="bg-separator h-px flex-1" />
+        <Chip color="accent" size="sm" variant="soft">
+          2026 expansion
+        </Chip>
+        <div className="bg-separator h-px flex-1" />
+      </div>
+
+      <div className="sm:hidden">
+        <Timeline density="compact" size="sm">
+          {milestones.map(milestone => {
+            const Icon = milestone.icon
+
+            return (
+              <Timeline.Item key={milestone.title}>
+                <Timeline.Marker aria-hidden="true">
+                  <Icon />
+                </Timeline.Marker>
+                <Timeline.Content className="gap-1.5">
+                  <MilestoneBody milestone={milestone} />
+                </Timeline.Content>
+              </Timeline.Item>
+            )
+          })}
+        </Timeline>
+      </div>
+
+      <div className="hidden sm:block">
+        <Timeline
+          axis="center"
+          itemAlign="center"
+          placement="alternate"
+          size="sm">
+          {milestones.map((milestone, index) => {
+            const Icon = milestone.icon
+            const isStartSide = index % 2 === 1
+
+            return (
+              <Timeline.Item key={milestone.title}>
+                <Timeline.Marker aria-hidden="true">
+                  <Icon />
+                </Timeline.Marker>
+                <Timeline.Content className="max-w-[260px] gap-1.5">
+                  <MilestoneBody
+                    milestone={milestone}
+                    order={isStartSide ? 'tag-first' : 'time-first'}
+                  />
+                </Timeline.Content>
+              </Timeline.Item>
+            )
+          })}
+        </Timeline>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Studio Review
+
+<ComponentPreview name="pro-timeline-studio-review">
+
+```tsx
+'use client'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Avatar, Card, Chip, Link } from '@vezham/react-v3'
+
+const avatars = {
+  blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+  green:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  orange:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg'
+} as const
+
+const productImage =
+  'https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/shoes/product-view/2.jpeg'
+
+const reviewEvents = [
+  {
+    author: 'Mina Sol',
+    avatar: avatars.blue,
+    meta: '10:18 AM',
+    status: 'current',
+    title: 'Product asset uploaded',
+    type: 'asset'
+  },
+  {
+    author: 'Orin Vale',
+    avatar: avatars.orange,
+    body: 'The side profile reads clearly on the landing page. Keep the outsole shadow soft so the sole texture stays visible.',
+    meta: '10:27 AM',
+    status: 'warning',
+    title: 'Lighting pass reviewed',
+    type: 'note'
+  },
+  {
+    author: 'Paz Kim',
+    avatar: avatars.green,
+    body: 'Updated the launch tile copy and aligned the product badge with the approved campaign language.',
+    meta: '10:43 AM',
+    status: 'default',
+    title: 'Copy note resolved',
+    type: 'note'
+  },
+  {
+    author: 'Mina Sol',
+    avatar: avatars.blue,
+    body: 'Exported the square crop, PDP detail view, and marketplace thumbnail for final QA.',
+    meta: '11:06 AM',
+    status: 'success',
+    title: 'Review package ready',
+    type: 'note'
+  }
+] as const
+
+export function StudioReview() {
+  return (
+    <div className="w-full max-w-[620px] min-w-0">
+      <div className="mb-4">
+        <p className="text-muted m-0 text-xs font-medium">Studio review</p>
+        <h3 className="text-foreground m-0 text-base font-semibold">
+          Runner launch assets
+        </h3>
+      </div>
+
+      <Timeline density="compact" size="sm">
+        {reviewEvents.map(event => (
+          <Timeline.Item key={event.title} align="center" status={event.status}>
+            <Timeline.Marker
+              aria-hidden="true"
+              className="size-6 overflow-hidden border-0 p-0 shadow-none">
+              <Avatar className="size-full" size="sm">
+                <Avatar.Image alt="" src={event.avatar} />
+                <Avatar.Fallback>
+                  {event.author
+                    .split(' ')
+                    .map(part => part[0])
+                    .join('')}
+                </Avatar.Fallback>
+              </Avatar>
+            </Timeline.Marker>
+            <Timeline.Content className="gap-2">
+              <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <h3 className="text-foreground m-0 text-xs leading-5 font-medium">
+                    {event.title}
+                  </h3>
+                  {event.type === 'asset' ? (
+                    <Chip color="accent" size="sm" variant="soft">
+                      Review
+                    </Chip>
+                  ) : null}
+                </div>
+                <div className="text-muted flex shrink-0 items-center gap-2 text-xs leading-5">
+                  <span>{event.author}</span>
+                  <time>{event.meta}</time>
+                </div>
+              </div>
+
+              {event.type === 'asset' ? (
+                <Card
+                  className="!border-border w-full overflow-hidden !border !border-solid p-0"
+                  variant="transparent">
+                  <div className="grid min-w-0 gap-0 sm:grid-cols-[140px_minmax(0,1fr)]">
+                    <img
+                      alt="Side profile of the runner product asset"
+                      className="aspect-[4/3] w-full object-cover select-none sm:aspect-auto sm:h-full"
+                      draggable={false}
+                      src={productImage}
+                    />
+                    <div className="flex min-w-0 flex-col gap-3 p-3">
+                      <p className="text-muted m-0 text-xs leading-5">
+                        Final hero crop is ready for retouch review with the
+                        side profile, lace detail, and marketplace thumbnail
+                        queued.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Chip size="sm" variant="secondary">
+                          PDP hero
+                        </Chip>
+                        <Chip size="sm" variant="secondary">
+                          4 crops
+                        </Chip>
+                        <Link className="text-xs" href="#">
+                          Open board
+                          <Link.Icon />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ) : (
+                <p className="text-muted m-0 text-xs leading-5">{event.body}</p>
+              )}
+            </Timeline.Content>
+          </Timeline.Item>
+        ))}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Compact Log
+
+<ComponentPreview name="pro-timeline-compact-log">
+
+```tsx
+'use client'
+
+import {
+  CircleCheck,
+  CreditCard,
+  Receipt,
+  ShieldExclamation
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+
+const logEvents = [
+  {
+    description:
+      'The customer disputed a renewal charge, and the finance team has seven days to submit evidence.',
+    icon: ShieldExclamation,
+    status: 'warning',
+    time: 'Mar 6, 10:34 AM',
+    title: 'Chargeback case opened'
+  },
+  {
+    icon: CreditCard,
+    status: 'success',
+    time: 'Mar 6, 10:21 AM',
+    title: 'Payment captured'
+  },
+  {
+    icon: CircleCheck,
+    status: 'default',
+    time: 'Mar 6, 10:21 AM',
+    title: 'Payment authorized'
+  },
+  {
+    icon: Receipt,
+    status: 'muted',
+    time: 'Mar 6, 10:20 AM',
+    title: 'Invoice generated'
+  }
+] as const
+
+export function CompactLog() {
+  return (
+    <div className="box-border w-full max-w-[520px] min-w-0 px-2 sm:px-0">
+      <Timeline density="compact" size="sm">
+        {logEvents.map(event => {
+          const Icon = event.icon
+          const hasDescription = 'description' in event
+
+          return (
+            <Timeline.Item
+              key={event.title}
+              align={hasDescription ? 'start' : 'center'}
+              status={event.status}>
+              <Timeline.Marker aria-hidden="true">
+                <Icon />
+              </Timeline.Marker>
+              <Timeline.Content className="gap-1">
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                  <h3 className="text-foreground m-0 text-xs leading-tight font-medium">
+                    {event.title}
+                  </h3>
+                  <time className="text-muted shrink-0 text-xs leading-tight">
+                    {event.time}
+                  </time>
+                </div>
+                {hasDescription ? (
+                  <p className="text-muted m-0 text-xs leading-snug">
+                    {event.description}
+                  </p>
+                ) : null}
+              </Timeline.Content>
+            </Timeline.Item>
+          )
+        })}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Incident Response
+
+<ComponentPreview name="pro-timeline-incident-response">
+
+```tsx
+'use client'
+
+import {
+  CircleCheckFill,
+  Clock,
+  Comment,
+  Envelope,
+  FileText,
+  Person,
+  ThunderboltFill
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Avatar, Button, Card, Chip, Input, Link } from '@vezham/react-v3'
+
+const avatars = {
+  blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+  green:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  orange:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg'
+} as const
+
+const activityEvents = [
+  {
+    actor: 'Kaito Reed',
+    avatar: avatars.orange,
+    icon: ThunderboltFill,
+    prefix: 'Escalation acknowledged by',
+    status: 'warning',
+    time: '2:24 AM'
+  },
+  {
+    actor: 'Mira Stone',
+    avatar: avatars.green,
+    icon: Person,
+    prefix: 'Incident channel joined by',
+    status: 'default',
+    time: '2:23 AM'
+  },
+  {
+    icon: Envelope,
+    recipient: 'finance-ops',
+    status: 'default',
+    text: 'Customer update sent to',
+    time: '2:21 AM'
+  },
+  {
+    icon: CircleCheckFill,
+    status: 'success',
+    target: 'export-worker-3',
+    text: 'Mitigation deployed to',
+    time: '2:18 AM'
+  },
+  {
+    icon: Clock,
+    status: 'muted',
+    text: 'Postmortem reminder',
+    time: '2:14 AM',
+    trailingText: 'scheduled'
+  }
+] as const
+
+export function IncidentResponse() {
+  return (
+    <div className="mx-auto w-[calc(100%-2rem)] max-w-[720px] min-w-0 sm:w-full">
+      <div className="mb-5">
+        <p className="text-muted m-0 text-xs font-medium">Incident response</p>
+        <h3 className="text-foreground m-0 text-base font-semibold">
+          Export queue degradation
+        </h3>
+      </div>
+
+      <Timeline density="compact" size="sm">
+        <Timeline.Item align="center">
+          <Timeline.Rail className="items-center">
+            <Timeline.Marker
+              aria-hidden="true"
+              className="size-7 overflow-hidden border-0 p-0 shadow-none">
+              <Avatar className="size-full" size="lg">
+                <Avatar.Image alt="Nora Vazquez" src={avatars.blue} />
+                <Avatar.Fallback>NV</Avatar.Fallback>
+              </Avatar>
+            </Timeline.Marker>
+            <Timeline.Connector className="top-[calc(50%+var(--spacing)*3.5)]" />
+          </Timeline.Rail>
+          <Timeline.Content>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Input
+                aria-label="Add incident update"
+                className="min-w-0 flex-1"
+                defaultValue="Queue depth is falling after the worker pool restart."
+                variant="secondary"
+              />
+              <Button className="shrink-0" size="sm" type="button">
+                Post
+              </Button>
+            </div>
+          </Timeline.Content>
+        </Timeline.Item>
+
+        <Timeline.Item status="current">
+          <Timeline.Marker aria-hidden="true">
+            <Comment />
+          </Timeline.Marker>
+          <Timeline.Content className="gap-2.5">
+            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <span className="text-muted text-xs leading-5">
+                  Update from
+                </span>
+                <Avatar className="size-4" size="sm">
+                  <Avatar.Image alt="Nora Vazquez" src={avatars.blue} />
+                  <Avatar.Fallback>NV</Avatar.Fallback>
+                </Avatar>
+                <h3 className="text-foreground m-0 text-xs leading-5 font-medium">
+                  Nora Vazquez
+                </h3>
+                <Chip size="sm" variant="soft">
+                  On-call
+                </Chip>
+              </div>
+              <time className="text-muted shrink-0 text-xs leading-5">
+                2:28 AM
+              </time>
+            </div>
+
+            <Card
+              className="!border-border w-full !border !border-solid p-3"
+              variant="transparent">
+              <p className="text-foreground m-0 text-sm leading-relaxed">
+                Confirmed the delay is isolated to scheduled exports. API
+                requests and dashboard reads are healthy while the backlog
+                drains.
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Chip size="sm" variant="secondary">
+                  <FileText width={12} />
+                  <Chip.Label>worker-trace.har - 42 KB</Chip.Label>
+                </Chip>
+                <Link className="text-xs" href="#">
+                  Open runbook
+                  <Link.Icon />
+                </Link>
+              </div>
+            </Card>
+          </Timeline.Content>
+        </Timeline.Item>
+
+        {activityEvents.map(event => {
+          const Icon = event.icon
+
+          return (
+            <Timeline.Item
+              key={`${'prefix' in event ? event.prefix : event.text}-${event.time}`}
+              align="center"
+              status={event.status}>
+              <Timeline.Marker aria-hidden="true">
+                <Icon />
+              </Timeline.Marker>
+              <Timeline.Content>
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <p className="text-muted m-0 min-w-0 text-xs leading-5">
+                    {'actor' in event ? (
+                      <>
+                        {event.prefix}{' '}
+                        <span className="inline-flex align-middle whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5">
+                            <Avatar className="size-4" size="sm">
+                              <Avatar.Image
+                                alt={event.actor}
+                                src={event.avatar}
+                              />
+                              <Avatar.Fallback>
+                                {event.actor
+                                  .split(' ')
+                                  .map(part => part[0])
+                                  .join('')}
+                              </Avatar.Fallback>
+                            </Avatar>
+                            <span className="text-foreground font-medium">
+                              {event.actor}
+                            </span>
+                          </span>
+                        </span>
+                      </>
+                    ) : 'recipient' in event ? (
+                      <>
+                        {event.text}{' '}
+                        <Link className="truncate text-xs" href="#">
+                          {event.recipient}
+                        </Link>
+                      </>
+                    ) : 'trailingText' in event ? (
+                      <>
+                        <span className="text-foreground font-medium">
+                          {event.text}
+                        </span>{' '}
+                        {event.trailingText}
+                      </>
+                    ) : 'target' in event ? (
+                      <>
+                        {event.text}{' '}
+                        <span className="text-foreground font-medium">
+                          {event.target}
+                        </span>
+                      </>
+                    ) : null}
+                  </p>
+                  <time className="text-muted shrink-0 text-xs leading-5">
+                    {event.time}
+                  </time>
+                </div>
+              </Timeline.Content>
+            </Timeline.Item>
+          )
+        })}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Version History
+
+<ComponentPreview name="pro-timeline-document-revisions">
+
+```tsx
+'use client'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Avatar, Card, Chip, CloseButton } from '@vezham/react-v3'
+
+const authors = {
+  eli: {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+    name: 'Eli Wong'
+  },
+  maya: {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    name: 'Maya Chen'
+  },
+  nora: {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    name: 'Nora Vazquez'
+  }
+} as const
+
+const revisions = [
+  {
+    author: authors.maya,
+    label: 'Draft',
+    labelColor: 'accent',
+    status: 'current',
+    summary:
+      'Prepared billing copy, tax preview states, and the final approval checklist.',
+    time: 'Current',
+    title: 'v8'
+  },
+  {
+    author: authors.nora,
+    label: 'Live',
+    labelColor: 'success',
+    status: 'success',
+    summary:
+      'Published the pricing table refresh after support macros cleared review.',
+    time: 'May 22, 2026, 11:18 AM',
+    title: 'v7'
+  },
+  {
+    author: authors.eli,
+    status: 'default',
+    summary:
+      'Added regional tax notes and restored the upgrade confirmation banner.',
+    time: 'May 21, 2026, 04:42 PM',
+    title: 'v6'
+  },
+  {
+    author: authors.maya,
+    status: 'muted',
+    summary: 'Reworked mobile spacing for plan cards and invoice preview rows.',
+    time: 'May 20, 2026, 09:06 AM',
+    title: 'v5'
+  },
+  {
+    author: authors.nora,
+    status: 'muted',
+    summary:
+      'Imported partner terms and archived the legacy enterprise copy block.',
+    time: 'May 18, 2026, 02:31 PM',
+    title: 'v4'
+  },
+  {
+    author: authors.eli,
+    status: 'muted',
+    summary:
+      'Captured the first internal draft from the launch planning workspace.',
+    time: 'May 16, 2026, 10:14 AM',
+    title: 'v3'
+  }
+] as const
+
+export function DocumentRevisions() {
+  return (
+    <Card className="w-full max-w-[420px] gap-0 overflow-hidden p-0">
+      <Card.Header className="border-border flex-row items-center justify-between border-b px-5 py-4">
+        <h3 className="text-foreground m-0 text-base font-semibold">
+          Version history
+        </h3>
+        <CloseButton aria-label="Close revision history" />
+      </Card.Header>
+
+      <Card.Content className="px-5 py-4">
+        <Timeline density="compact" size="sm">
+          {revisions.map(revision => (
+            <Timeline.Item key={revision.title} status={revision.status}>
+              <Timeline.Marker />
+              <Timeline.Content className="gap-1.5">
+                <div className="flex min-h-5 min-w-0 items-center gap-2">
+                  <h4 className="text-foreground m-0 text-xs leading-tight font-medium">
+                    {revision.title}
+                  </h4>
+                  {'label' in revision ? (
+                    <Chip color={revision.labelColor} size="sm" variant="soft">
+                      {revision.label}
+                    </Chip>
+                  ) : null}
+                </div>
+                <p className="text-muted m-0 text-xs leading-5">
+                  {revision.summary}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Avatar className="size-4" size="sm">
+                    <Avatar.Image
+                      alt={revision.author.name}
+                      src={revision.author.avatar}
+                    />
+                    <Avatar.Fallback>
+                      {revision.author.name.charAt(0)}
+                    </Avatar.Fallback>
+                  </Avatar>
+                  <span className="text-muted text-xs leading-5">
+                    {revision.author.name}
+                  </span>
+                  <span className="text-muted text-xs leading-5">-</span>
+                  <time className="text-muted text-xs leading-5">
+                    {revision.time}
+                  </time>
+                </div>
+              </Timeline.Content>
+            </Timeline.Item>
+          ))}
+        </Timeline>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Repository Activity
+
+<ComponentPreview name="pro-timeline-repository-activity">
+
+```tsx
+'use client'
+
+import {
+  CirclePlus,
+  CodeCommits,
+  CodePullRequest,
+  CodePullRequestCheck,
+  Eye
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Card, Chip, Link } from '@vezham/react-v3'
+
+const repositoryActivity = [
+  {
+    actor: 'Rina Sol',
+    icon: CodeCommits,
+    repositories: [
+      { commits: '126 commits', name: 'lumenforge/interface' },
+      { commits: '32 commits', name: 'mistral-bench/checkout' },
+      { commits: '18 commits', name: 'pixelwell/cli' },
+      { commits: '7 commits', name: 'signalnest/webhooks' }
+    ],
+    status: 'success',
+    title: 'Committed across 4 product workspaces'
+  },
+  {
+    actor: 'Theo Park',
+    date: 'May 19',
+    icon: CodePullRequest,
+    pullRequest: {
+      comments: '8 comments',
+      description:
+        'Reworked focus rings, empty states, and column resize handles for audit tables.',
+      title: 'Tighten keyboard states in reporting grids'
+    },
+    status: 'current',
+    title: 'Merged a pull request in lumenforge/interface'
+  },
+  {
+    actor: 'Iris Moon',
+    icon: CirclePlus,
+    repositories: [
+      { commits: '16 triaged', name: 'lumenforge/interface' },
+      { commits: '9 resolved', name: 'pixelwell/cli' },
+      { commits: '6 open', name: 'signalnest/webhooks' }
+    ],
+    status: 'warning',
+    title: 'Opened 31 issues across 3 workspaces'
+  },
+  {
+    actor: 'Mara Voss',
+    date: 'May 28',
+    icon: Eye,
+    repositories: [
+      { commits: '24 reviews', name: 'lumenforge/interface' },
+      { commits: '13 reviews', name: 'mistral-bench/checkout' },
+      { commits: '9 reviews', name: 'pixelwell/cli' },
+      { commits: '5 reviews', name: 'signalnest/webhooks' }
+    ],
+    status: 'default',
+    title: 'Reviewed 51 pull requests in 4 workspaces'
+  }
+] as const
+
+export function RepositoryActivity() {
+  return (
+    <div className="w-full max-w-[620px] min-w-0">
+      <div className="mb-4 flex items-center gap-4">
+        <h3 className="text-foreground m-0 shrink-0 text-sm font-semibold">
+          May 2026
+        </h3>
+        <div className="bg-separator h-px flex-1" />
+      </div>
+
+      <Timeline size="sm">
+        {repositoryActivity.map(event => {
+          const Icon = event.icon
+
+          return (
+            <Timeline.Item key={event.title} status={event.status}>
+              <Timeline.Marker aria-hidden="true">
+                <Icon />
+              </Timeline.Marker>
+              <Timeline.Content className="gap-2.5">
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div className="min-w-0">
+                    <h3 className="text-foreground m-0 text-sm leading-5 font-medium">
+                      {event.title}
+                    </h3>
+                    <p className="text-muted m-0 text-xs leading-5">
+                      {event.actor}
+                    </p>
+                  </div>
+                  {'date' in event ? (
+                    <time className="text-muted shrink-0 text-xs leading-5">
+                      {event.date}
+                    </time>
+                  ) : null}
+                </div>
+
+                {'repositories' in event ? (
+                  <div className="grid gap-1">
+                    {event.repositories.map(repository => (
+                      <div
+                        key={repository.name}
+                        className="grid min-w-0 grid-cols-1 gap-0.5 sm:grid-cols-[minmax(0,200px)_auto] sm:items-center sm:gap-3">
+                        <Link className="truncate text-xs" href="#">
+                          {repository.name}
+                        </Link>
+                        <span className="text-muted text-xs">
+                          {repository.commits}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {'pullRequest' in event ? (
+                  <Card className="w-full min-w-0 p-3">
+                    <Card.Header className="gap-2.5 p-0">
+                      <CodePullRequestCheck className="text-accent size-4 shrink-0" />
+                      <div className="min-w-0">
+                        <Card.Title className="text-sm leading-5">
+                          {event.pullRequest.title}
+                        </Card.Title>
+                        <Card.Description className="mt-1 text-xs leading-5">
+                          {event.pullRequest.description}
+                        </Card.Description>
+                      </div>
+                    </Card.Header>
+                    <Card.Footer className="mt-3 flex flex-wrap items-center gap-2 p-0">
+                      <Chip color="success" size="sm" variant="soft">
+                        +18
+                      </Chip>
+                      <Chip color="danger" size="sm" variant="soft">
+                        -4
+                      </Chip>
+                      <div
+                        aria-hidden="true"
+                        className="flex items-center gap-0.5">
+                        <span className="bg-success size-2" />
+                        <span className="bg-success size-2" />
+                        <span className="bg-success size-2" />
+                        <span className="bg-danger size-2" />
+                        <span className="bg-separator size-2" />
+                      </div>
+                      <span className="text-muted text-xs">
+                        - {event.pullRequest.comments}
+                      </span>
+                    </Card.Footer>
+                  </Card>
+                ) : null}
+
+                {event.title.startsWith('Opened') ? (
+                  <div className="flex flex-wrap gap-2">
+                    <Chip color="success" size="sm" variant="soft">
+                      16 triaged
+                    </Chip>
+                    <Chip color="accent" size="sm" variant="soft">
+                      9 assigned
+                    </Chip>
+                    <Chip color="danger" size="sm" variant="soft">
+                      6 open
+                    </Chip>
+                  </div>
+                ) : null}
+              </Timeline.Content>
+            </Timeline.Item>
+          )
+        })}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Split Content
+
+<ComponentPreview name="pro-timeline-split-content">
+
+```tsx
+'use client'
+
+import {
+  ChartLine,
+  CircleCheckFill,
+  Flag,
+  Megaphone,
+  ShieldCheck
+} from '@gravity-ui/icons'
+
+import { Timeline } from '@vezham/react-pro-v3'
+import { Card, Chip, Link } from '@vezham/react-v3'
+
+const launchReviews = [
+  {
+    description: (
+      <>
+        Invoice copy, empty states, and seat-change messages passed the{' '}
+        <Link className="text-xs" href="#">
+          annotation review
+        </Link>
+        .
+      </>
+    ),
+    icon: Flag,
+    lane: 'Design',
+    laneColor: 'default',
+    metrics: [
+      { label: 'Screens', value: '18' },
+      { label: 'Open notes', value: '2' }
+    ],
+    owner: 'Nina Park',
+    status: 'default',
+    time: '09:15',
+    title: 'Checkout language approved'
+  },
+  {
+    description:
+      'Fraud review added a manual hold rule for high-value upgrades during the first rollout window.',
+    icon: ShieldCheck,
+    lane: 'Risk',
+    laneColor: 'warning',
+    metrics: [
+      { label: 'Threshold', value: '$750' },
+      { label: 'Review SLA', value: '4 h' }
+    ],
+    owner: 'Omar Lee',
+    status: 'warning',
+    time: '10:40',
+    title: 'Upgrade holds confirmed'
+  },
+  {
+    description:
+      'Billing telemetry is flowing into the release dashboard with workspace and plan dimensions.',
+    icon: ChartLine,
+    lane: 'Data',
+    laneColor: 'accent',
+    metrics: [
+      { label: 'Events', value: '12' },
+      { label: 'Lag', value: '42 s' }
+    ],
+    owner: 'Maya Hart',
+    status: 'default',
+    time: '12:05',
+    title: 'Metrics dashboard connected'
+  },
+  {
+    description:
+      'Support macros, changelog copy, and escalation routing are scheduled for the release window.',
+    icon: Megaphone,
+    lane: 'Ops',
+    laneColor: 'default',
+    metrics: [
+      { label: 'Macros', value: '6' },
+      { label: 'Regions', value: '3' }
+    ],
+    owner: 'Priya Shah',
+    status: 'default',
+    time: '13:30',
+    title: 'Customer messaging staged'
+  },
+  {
+    description:
+      'The rollback owner, dashboard links, and launch channel are pinned for the final go-live check.',
+    icon: CircleCheckFill,
+    lane: 'Launch',
+    laneColor: 'success',
+    metrics: [
+      { label: 'Checks', value: '9/9' },
+      { label: 'Window', value: '15 min' }
+    ],
+    owner: 'Eli Wong',
+    status: 'success',
+    time: '15:00',
+    title: 'Release checklist signed'
+  }
+] as const
+
+export function SplitContent() {
+  return (
+    <div className="w-full max-w-[680px] min-w-0 py-4">
+      <div className="mx-auto mb-5 max-w-[360px] text-center">
+        <p className="text-muted m-0 text-xs font-medium">Launch review</p>
+        <h3 className="text-foreground m-0 text-base font-semibold">
+          Billing rollout
+        </h3>
+      </div>
+
+      <Timeline axis="center" placement="end" size="sm">
+        {launchReviews.map(review => {
+          const Icon = review.icon
+
+          return (
+            <Timeline.Item key={review.title} status={review.status}>
+              <Timeline.Content className="max-w-[180px] gap-1.5" side="start">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <time className="text-foreground text-xs leading-5 font-medium">
+                    {review.time}
+                  </time>
+                  <Chip color={review.laneColor} size="sm" variant="soft">
+                    {review.lane}
+                  </Chip>
+                </div>
+                <span className="text-muted text-xs leading-5">
+                  {review.owner}
+                </span>
+              </Timeline.Content>
+              <Timeline.Marker aria-hidden="true">
+                <Icon />
+              </Timeline.Marker>
+              <Timeline.Content className="max-w-[320px] gap-2" side="end">
+                <h3 className="text-foreground m-0 text-sm leading-5 font-medium">
+                  {review.title}
+                </h3>
+
+                <Card
+                  className="!border-border w-full !border !border-solid p-3"
+                  variant="transparent">
+                  <p className="text-muted m-0 text-xs leading-5">
+                    {review.description}
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {review.metrics.map(metric => (
+                      <div key={metric.label} className="min-w-0">
+                        <span className="text-muted block text-[11px] leading-4">
+                          {metric.label}
+                        </span>
+                        <span className="text-foreground block truncate text-xs leading-5 font-medium">
+                          {metric.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </Timeline.Content>
+            </Timeline.Item>
+          )
+        })}
+      </Timeline>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## API Reference
+
+### Timeline
+
+The root component. Renders an ordered list and provides axis, placement, size, density, and item
+alignment context.
+
+| Prop        | Type                              | Default         | Description                                                         |
+| ----------- | --------------------------------- | --------------- | ------------------------------------------------------------------- |
+| `axis`      | `'start' \| 'center'`             | `'start'`       | Position of the timeline rail                                       |
+| `placement` | `'start' \| 'end' \| 'alternate'` | `'end'`         | Default side for item content; `alternate` alternates by item index |
+| `size`      | `'sm' \| 'md' \| 'lg'`            | `'md'`          | Marker and text size                                                |
+| `density`   | `'compact' \| 'comfortable'`      | `'comfortable'` | Vertical rhythm between events                                      |
+| `itemAlign` | `'start' \| 'center'`             | `'start'`       | Default vertical alignment for item content                         |
+| `children`  | `ReactNode`                       | -               | Timeline items                                                      |
+
+Also supports all native `ol` HTML attributes.
+
+### Timeline.Item
+
+A single event in the timeline.
+
+| Prop       | Type                                                                      | Default     | Description                         |
+| ---------- | ------------------------------------------------------------------------- | ----------- | ----------------------------------- |
+| `status`   | `'default' \| 'current' \| 'success' \| 'warning' \| 'danger' \| 'muted'` | `'default'` | Marker tone                         |
+| `align`    | `'start' \| 'center'`                                                     | inherited   | Vertical alignment for item content |
+| `side`     | `'start' \| 'end'`                                                        | inherited   | Content side for centered timelines |
+| `children` | `ReactNode`                                                               | -           | Item parts                          |
+
+Also supports all native `li` HTML attributes.
+
+### Timeline.Rail
+
+Rail wrapper for the marker and connector. If omitted, `Timeline.Item` renders a default rail.
+
+| Prop       | Type        | Default | Description                  |
+| ---------- | ----------- | ------- | ---------------------------- |
+| `children` | `ReactNode` | -       | Marker and connector content |
+
+Also supports all native `span` HTML attributes.
+
+### Timeline.Marker
+
+The event marker. If omitted, `Timeline.Rail` renders a default marker. Empty markers are
+decorative and hidden from assistive technology.
+
+| Prop       | Type                                                                      | Default     | Description           |
+| ---------- | ------------------------------------------------------------------------- | ----------- | --------------------- |
+| `status`   | `'default' \| 'current' \| 'success' \| 'warning' \| 'danger' \| 'muted'` | item status | Marker tone override  |
+| `children` | `ReactNode`                                                               | -           | Custom marker content |
+
+Also supports all native `span` HTML attributes.
+
+### Timeline.Connector
+
+Connector line after the current item. It is hidden automatically for the last item.
+
+| Prop    | Type      | Default | Description                           |
+| ------- | --------- | ------- | ------------------------------------- |
+| `force` | `boolean` | `false` | Force rendering even on the last item |
+
+Also supports all native `span` HTML attributes.
+
+### Timeline.Content
+
+Main event content. In centered timelines, `side` controls which side of the axis it occupies.
+
+| Prop       | Type               | Default   | Description   |
+| ---------- | ------------------ | --------- | ------------- |
+| `side`     | `'start' \| 'end'` | item side | Content side  |
+| `children` | `ReactNode`        | -         | Content parts |
+
+Also supports all native `div` HTML attributes.
+
+### useTimelineItem
+
+Hook to access per-item context from descendants of `Timeline.Item`.
+
+| Property | Type                                                                      | Description                             |
+| -------- | ------------------------------------------------------------------------- | --------------------------------------- |
+| `align`  | `'start' \| 'center'`                                                     | Resolved item content alignment         |
+| `index`  | `number`                                                                  | Zero-based item index                   |
+| `isLast` | `boolean`                                                                 | Whether this is the final timeline item |
+| `side`   | `'start' \| 'end'`                                                        | Resolved item side                      |
+| `status` | `'default' \| 'current' \| 'success' \| 'warning' \| 'danger' \| 'muted'` | Item marker status                      |

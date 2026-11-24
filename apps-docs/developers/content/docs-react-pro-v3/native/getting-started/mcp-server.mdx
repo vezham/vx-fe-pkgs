@@ -1,0 +1,293 @@
+---
+title: 'MCP Server'
+description: 'Access HeroUI Native Pro and OSS documentation from a single AI assistant connection'
+sourceUrl: https://heroui.pro/docs/native/getting-started/mcp-server
+---
+
+import { Accordion } from '@vezham/react-v3'
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+The HeroUI Native Pro MCP server gives your AI agent access to **both** `heroui-native-pro` (Pro) and `heroui-native` (OSS) — component docs, theme variables, and setup guides — all from a single connection.
+
+<Callout>
+  You do NOT need the separate `@heroui/native-mcp` (OSS MCP) installed. This
+  Pro MCP covers both packages.
+</Callout>
+
+## Setup
+
+Add the Native Pro MCP to your editor:
+
+<Tabs items={["Cursor", "Claude Code", "VS Code", "Windsurf", "Zed", "Codex"]}>
+  <Tab value="Cursor">
+    Add to `.cursor/mcp.json` or **Settings > Tools > MCP Servers**:
+
+    ```json title=".cursor/mcp.json"
+    {
+      "mcpServers": {
+        "heroui-native-pro": {
+          "url": "https://native-mcp.heroui.pro/mcp",
+          "headers": {
+            "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+          }
+        }
+      }
+    }
+    ```
+
+    Make sure the `heroui-native-pro` connection is **enabled** in **Settings > Tools & MCPs**.
+
+  </Tab>
+
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http heroui-native-pro https://native-mcp.heroui.pro/mcp --header "x-heroui-personal-token: HEROUI_PERSONAL_TOKEN"
+    ```
+
+    Or add to `.mcp.json`:
+
+    ```json title=".mcp.json"
+    {
+      "mcpServers": {
+        "heroui-native-pro": {
+          "type": "http",
+          "url": "https://native-mcp.heroui.pro/mcp",
+          "headers": {
+            "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+          }
+        }
+      }
+    }
+    ```
+
+    Restart and run `/mcp` to verify.
+
+  </Tab>
+
+  <Tab value="VS Code">
+    Add to `.vscode/mcp.json`:
+
+    ```json title=".vscode/mcp.json"
+    {
+      "servers": {
+        "heroui-native-pro": {
+          "url": "https://native-mcp.heroui.pro/mcp",
+          "headers": {
+            "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+          }
+        }
+      }
+    }
+    ```
+
+    Open the file and click **Start** next to `heroui-native-pro`.
+
+  </Tab>
+
+  <Tab value="Windsurf">
+    Add to `.windsurf/mcp.json`:
+
+    ```json title=".windsurf/mcp.json"
+    {
+      "mcpServers": {
+        "heroui-native-pro": {
+          "url": "https://native-mcp.heroui.pro/mcp",
+          "headers": {
+            "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+          }
+        }
+      }
+    }
+    ```
+
+    Restart Windsurf to activate.
+
+  </Tab>
+
+  <Tab value="Zed">
+    Add to `settings.json` (Cmd-,):
+
+    ```json title="settings.json"
+    {
+      "context_servers": {
+        "heroui-native-pro": {
+          "url": "https://native-mcp.heroui.pro/mcp",
+          "headers": {
+            "x-heroui-personal-token": "HEROUI_PERSONAL_TOKEN"
+          }
+        }
+      }
+    }
+    ```
+
+    Restart and check the Agent Panel for a green indicator.
+
+  </Tab>
+
+  <Tab value="Codex">
+    Add to your `~/.codex/config.toml` (or a project-scoped `.codex/config.toml`):
+
+    ```toml title="config.toml"
+    [mcp_servers.heroui-native-pro]
+    url = "https://native-mcp.heroui.pro/mcp"
+    http_headers = { "x-heroui-personal-token" = "HEROUI_PERSONAL_TOKEN" }
+    ```
+
+    Restart Codex and run `/mcp` to verify.
+
+  </Tab>
+</Tabs>
+
+Get your `HEROUI_PERSONAL_TOKEN` from the [Pro dashboard](https://heroui.pro/dashboard).
+
+## CI and Automation
+
+Headless clients — a PR-review bot, a docs linter, a scheduled agent — authenticate with the CI/CD Token instead, through the `x-heroui-cicd-token` header:
+
+```json title="mcp.json"
+{
+  "mcpServers": {
+    "heroui-native-pro": {
+      "type": "http",
+      "url": "https://native-mcp.heroui.pro/mcp",
+      "headers": {
+        "x-heroui-cicd-token": "HEROUI_AUTH_TOKEN"
+      }
+    }
+  }
+}
+```
+
+Use the same `HEROUI_AUTH_TOKEN` secret your pipeline already uses for installs. Only the license owner can view or rotate it — see [Licensing](/docs/ui/react-pro-v3/native/getting-started/licensing#cicd-token). The token must travel in `x-heroui-cicd-token`: the `Authorization: Bearer` fallback accepts Personal Tokens only.
+
+Why this matters for teams: the CI/CD Token belongs to the license, not to a person. Usage is attributed to the license instead of an individual teammate, and the pipeline keeps working when whoever set it up leaves.
+
+## Available Tools
+
+| Tool                  | Description                                                                       |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `list_components`     | List all components from both `heroui-native-pro` (Pro) and `heroui-native` (OSS) |
+| `get_component_docs`  | Full component documentation for any Pro or OSS native component                  |
+| `get_docs`            | Guides from both Pro and OSS native documentation                                 |
+| `get_theme_variables` | Native theme tokens (default theme)                                               |
+
+### `get_theme_variables`
+
+- `get_theme_variables()` — list available themes
+- `get_theme_variables({ theme: "default" })` — default native theme tokens
+
+### `get_docs`
+
+Pro and OSS docs use distinct path prefixes so there's no ambiguity:
+
+- Pro: `/pro/docs/native/getting-started/theming`
+- OSS: `/docs/native/getting-started/theming`
+
+## Import a Design System
+
+To apply a saved Design System to a Native project, follow [Import Through MCP](/docs/ui/react-pro-v3/native/getting-started/design-systems#import-through-mcp). Connect the HeroUI Pro MCP server with a Personal Token to fetch `native-css` and optional brand guidance. Keep the Native Pro MCP connected for Native component documentation and theme tokens; it does not expose the saved-system import tools.
+
+## Start Prompting
+
+```
+
+Build a login screen with email and password fields, a "Sign in" button, social auth options, and a "Forgot password?" link
+
+```
+
+```
+
+Create a three-step onboarding flow with illustrations, progress dots, and a "Get Started" button on the last slide
+
+```
+
+```
+
+Build a settings screen with profile avatar, account section with toggle switches, notification preferences, and a danger zone with "Delete Account"
+
+```
+
+```
+
+Show me how to build a bottom tab navigator with Home, Search, Notifications, and Profile tabs using HeroUI Native components
+
+```
+
+## Troubleshooting
+
+<Accordion>
+  <Accordion.Item>
+    <Accordion.Heading>
+      <Accordion.Trigger>
+        Not connecting
+
+        <Accordion.Indicator />
+      </Accordion.Trigger>
+    </Accordion.Heading>
+
+    <Accordion.Panel>
+      <Accordion.Body>
+        The Native Pro MCP uses HTTP transport — no Node.js required. Verify `https://native-mcp.heroui.pro/mcp` is reachable and the MCP is enabled in your editor settings.
+      </Accordion.Body>
+    </Accordion.Panel>
+
+  </Accordion.Item>
+
+  <Accordion.Item>
+    <Accordion.Heading>
+      <Accordion.Trigger>
+        Authentication errors
+
+        <Accordion.Indicator />
+      </Accordion.Trigger>
+    </Accordion.Heading>
+
+    <Accordion.Panel>
+      <Accordion.Body>
+        Check your `HEROUI_PERSONAL_TOKEN` in the `headers` field of your config. Verify the token at [heroui.pro/dashboard](https://heroui.pro/dashboard). Each token has its own header: a Personal Token goes in `x-heroui-personal-token`, and a CI/CD Token (`HEROUI_AUTH_TOKEN`) goes in `x-heroui-cicd-token`. Swapping them returns an invalid-token error. If your client only supports `Authorization: Bearer`, it can send a Personal Token that way; a CI/CD Token must use `x-heroui-cicd-token`.
+      </Accordion.Body>
+    </Accordion.Panel>
+
+  </Accordion.Item>
+
+  <Accordion.Item>
+    <Accordion.Heading>
+      <Accordion.Trigger>
+        Tools not being called
+
+        <Accordion.Indicator />
+      </Accordion.Trigger>
+    </Accordion.Heading>
+
+    <Accordion.Panel>
+      <Accordion.Body>
+        Be explicit in your prompts: "Use the HeroUI Native Pro MCP to look up the Button component API" or "Check `heroui-native-pro` docs for the Card anatomy."
+      </Accordion.Body>
+    </Accordion.Panel>
+
+  </Accordion.Item>
+
+  <Accordion.Item>
+    <Accordion.Heading>
+      <Accordion.Trigger>
+        Need help?
+
+        <Accordion.Indicator />
+      </Accordion.Trigger>
+    </Accordion.Heading>
+
+    <Accordion.Panel>
+      <Accordion.Body>
+        Contact [support@heroui.pro](mailto:support@heroui.pro) or use the live chat at [heroui.pro/dashboard](https://heroui.pro/dashboard).
+      </Accordion.Body>
+    </Accordion.Panel>
+
+  </Accordion.Item>
+</Accordion>

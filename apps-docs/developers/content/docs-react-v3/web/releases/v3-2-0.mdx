@@ -1,0 +1,754 @@
+---
+title: v3.2.0
+description: Calendar week/day views and year picker on React Aria 1.18, plus breaking Radio, Checkbox, and Switch composition changes.
+github:
+  pull: 6616
+---
+
+import {
+  Callout,
+  ComponentPreview,
+  PRContributors,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+<div className="mb-6 flex items-center gap-3">
+  <span className="text-muted text-sm">June 15, 2026</span>
+</div>
+
+Calendar gains week and day views, a reworked year picker, and range demos built on React Aria 1.18. [Autocomplete](https://heroui.com/docs/components/autocomplete) adds a Virtualizer example for large option lists. [Tooltip](https://heroui.com/docs/components/tooltip) adds theme variables for global show and hide delays. The toggles (`Radio`, `Checkbox`, `Switch`) move to React Aria's `*Field` + `*Button` composition. This release also rolls in patch fixes for virtualized lists, grouped-field autofill, toast and fieldset behavior, and scroll and RTL styles.
+
+⚠️ **Breaking changes**: `Radio`, `Checkbox`, and `Switch` move to an explicit `*.Content` composition — `*.Control` nests inside `*.Content`, the label is plain text inside `*.Content` (no nested `<Label>`), and `Description`/`FieldError` become siblings of `*.Content`. See [Breaking Changes](#%EF%B8%8F-breaking-changes).
+
+## Installation
+
+Update to the latest version:
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash npm i @heroui/styles@latest @heroui/react@latest ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash pnpm add @heroui/styles@latest @heroui/react@latest ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash yarn add @heroui/styles@latest @heroui/react@latest ```
+  </Tab>
+  <Tab value="bun">
+    ```bash bun add @heroui/styles@latest @heroui/react@latest ```
+  </Tab>
+</Tabs>
+
+<Callout type="info">
+  **Using AI assistants?** Prompt "Hey Cursor, update HeroUI to the latest
+  version" and your AI assistant will compare versions and apply the necessary
+  changes. Learn more about the [HeroUI MCP
+  Server](https://heroui.com/docs/ui-for-agents/mcp-server).
+</Callout>
+
+## What's New
+
+### Calendar
+
+`Calendar` and `RangeCalendar` gain week and day views, plus new React Aria 1.18 calendar props.
+
+- **Week / day views**: `visibleDuration` renders multi-week or single-day layouts
+- **Multiple selection**: select several dates in a single `Calendar`
+- **React Aria 1.18 props**: `weeksInMonth` and `isDateUnavailable(date, anchorDate)` for ranges
+- **Internals**: month labels use React Aria's `CalendarHeading`, and the year picker is rebuilt on React Aria calendar hooks
+
+**Week view:**
+
+<ComponentPreview name="calendar-week-view">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Calendar, Label, ListBox, Select } from '@vezham/react-v3'
+
+const weekOptions = [
+  { id: '1', name: '1 week' },
+  { id: '2', name: '2 weeks' },
+  { id: '3', name: '3 weeks' },
+  { id: '4', name: '4 weeks' },
+  { id: '5', name: '5 weeks' },
+  { id: '6', name: '6 weeks' },
+  { id: '8', name: '8 weeks' }
+] as const
+
+export function WeekView() {
+  const [weeks, setWeeks] = useState(1)
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <Select
+        className="w-40"
+        value={String(weeks)}
+        onChange={value => value && setWeeks(Number(value))}>
+        <Label>Visible weeks</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {weekOptions.map(option => (
+              <ListBox.Item
+                key={option.id}
+                id={option.id}
+                textValue={option.name}>
+                {option.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      <Calendar aria-label="Week view" visibleDuration={{ weeks }}>
+        <Calendar.Header>
+          <Calendar.Heading />
+          <Calendar.NavButton slot="previous" />
+          <Calendar.NavButton slot="next" />
+        </Calendar.Header>
+        <Calendar.Grid>
+          <Calendar.GridHeader>
+            {day => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+          </Calendar.GridHeader>
+          <Calendar.GridBody>
+            {date => <Calendar.Cell date={date} />}
+          </Calendar.GridBody>
+        </Calendar.Grid>
+      </Calendar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Day view:**
+
+<ComponentPreview name="calendar-day-view">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Calendar, Label, ListBox, Select } from '@vezham/react-v3'
+
+const dayOptions = [
+  { id: '1', name: '1 day' },
+  { id: '5', name: '5 days' },
+  { id: '7', name: '7 days' },
+  { id: '8', name: '8 days' },
+  { id: '10', name: '10 days' },
+  { id: '14', name: '14 days' },
+  { id: '21', name: '21 days' }
+] as const
+
+export function DayView() {
+  const [days, setDays] = useState(5)
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <Select
+        className="w-40"
+        value={String(days)}
+        onChange={value => value && setDays(Number(value))}>
+        <Label>Visible days</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {dayOptions.map(option => (
+              <ListBox.Item
+                key={option.id}
+                id={option.id}
+                textValue={option.name}>
+                {option.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      <Calendar aria-label="Day view" visibleDuration={{ days }}>
+        <Calendar.Header>
+          <Calendar.Heading />
+          <Calendar.NavButton slot="previous" />
+          <Calendar.NavButton slot="next" />
+        </Calendar.Header>
+        <Calendar.Grid>
+          <Calendar.GridHeader>
+            {day => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+          </Calendar.GridHeader>
+          <Calendar.GridBody>
+            {date => <Calendar.Cell date={date} />}
+          </Calendar.GridBody>
+        </Calendar.Grid>
+      </Calendar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Multiple selection:**
+
+<ComponentPreview name="calendar-multiple-selection">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { useState } from 'react'
+
+import { Calendar, Description } from '@vezham/react-v3'
+
+export function MultipleSelection() {
+  const [value, setValue] = useState<readonly DateValue[]>([])
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <Calendar
+        aria-label="Event dates"
+        selectionMode="multiple"
+        value={value}
+        onChange={setValue}>
+        <Calendar.Header>
+          <Calendar.Heading />
+          <Calendar.NavButton slot="previous" />
+          <Calendar.NavButton slot="next" />
+        </Calendar.Header>
+        <Calendar.Grid>
+          <Calendar.GridHeader>
+            {day => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+          </Calendar.GridHeader>
+          <Calendar.GridBody>
+            {date => <Calendar.Cell date={date} />}
+          </Calendar.GridBody>
+        </Calendar.Grid>
+      </Calendar>
+      <Description className="text-center">
+        {value?.length
+          ? `${value.length} date(s) selected`
+          : 'Select multiple dates'}
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Autocomplete
+
+Virtualizer support for large option lists, with docs, Storybook, and style fixes for popover sizing and listbox scroll height.
+
+- **Virtualization**: Wrap `ListBox` in React Aria's `<Virtualizer>` inside `Autocomplete.Popover` ([#6642](https://github.com/heroui-inc/heroui/pull/6642))
+- **Popover sizing**: Listbox caps at `320px` with internal scrolling; search field stays fixed above the list
+
+**Virtualization:**
+
+<ComponentPreview name="autocomplete-virtualization">
+
+```tsx
+'use client'
+
+import { useMemo, useState } from 'react'
+
+import type { Key } from '@vezham/react-v3'
+import {
+  Autocomplete,
+  Description,
+  EmptyState,
+  Label,
+  ListBox,
+  ListLayout,
+  SearchField,
+  Virtualizer,
+  useFilter
+} from '@vezham/react-v3'
+
+interface User {
+  email: string
+  id: number
+  name: string
+}
+
+function generateUsers(n: number): User[] {
+  const firstNames = [
+    'Emma',
+    'Liam',
+    'Olivia',
+    'Noah',
+    'Ava',
+    'James',
+    'Sophia',
+    'Oliver',
+    'Isabella',
+    'Lucas',
+    'Mia',
+    'Ethan',
+    'Charlotte',
+    'Mason',
+    'Amelia',
+    'Logan',
+    'Harper',
+    'Alexander',
+    'Ella',
+    'Benjamin'
+  ]
+  const lastNames = [
+    'Smith',
+    'Johnson',
+    'Williams',
+    'Brown',
+    'Jones',
+    'Garcia',
+    'Miller',
+    'Davis',
+    'Rodriguez',
+    'Martinez',
+    'Anderson',
+    'Taylor',
+    'Thomas',
+    'Jackson',
+    'White',
+    'Harris',
+    'Clark',
+    'Lewis',
+    'Robinson',
+    'Walker'
+  ]
+  const users: User[] = []
+
+  for (let i = 0; i < n; i++) {
+    const firstName = firstNames[i % firstNames.length]!
+    const lastName =
+      lastNames[Math.floor(i / firstNames.length) % lastNames.length]!
+    const name = `${firstName} ${lastName}`
+
+    users.push({
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@acme.com`,
+      id: i + 1,
+      name
+    })
+  }
+
+  return users
+}
+
+export function Virtualization() {
+  const [selectedKey, setSelectedKey] = useState<Key | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const { contains } = useFilter({ sensitivity: 'base' })
+
+  const allUsers = useMemo(() => generateUsers(1000), [])
+
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery) return allUsers
+
+    return allUsers.filter(
+      user =>
+        contains(user.name, searchQuery) || contains(user.email, searchQuery)
+    )
+  }, [allUsers, contains, searchQuery])
+
+  return (
+    <Autocomplete
+      allowsEmptyCollection
+      className="w-[300px]"
+      placeholder="Select a user"
+      selectionMode="single"
+      value={selectedKey}
+      onChange={setSelectedKey}>
+      <Label>User</Label>
+      <Autocomplete.Trigger>
+        <Autocomplete.Value />
+        <Autocomplete.ClearButton />
+        <Autocomplete.Indicator />
+      </Autocomplete.Trigger>
+      <Autocomplete.Popover>
+        <Autocomplete.Filter
+          inputValue={searchQuery}
+          onInputChange={setSearchQuery}>
+          <SearchField
+            autoFocus
+            aria-label="Search users"
+            className="sticky top-0 z-10"
+            name="search"
+            variant="secondary">
+            <SearchField.Group>
+              <SearchField.SearchIcon />
+              <SearchField.Input placeholder="Search users..." />
+              <SearchField.ClearButton />
+            </SearchField.Group>
+          </SearchField>
+          <Virtualizer layout={ListLayout} layoutOptions={{ rowHeight: 50 }}>
+            <ListBox
+              items={filteredUsers}
+              renderEmptyState={() => (
+                <EmptyState>No results found</EmptyState>
+              )}>
+              {user => (
+                <ListBox.Item id={user.id} textValue={user.name}>
+                  <div className="flex flex-col">
+                    <Label>{user.name}</Label>
+                    <Description>{user.email}</Description>
+                  </div>
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              )}
+            </ListBox>
+          </Virtualizer>
+        </Autocomplete.Filter>
+      </Autocomplete.Popover>
+    </Autocomplete>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Table.SortableColumnHeader
+
+`Table.SortableColumnHeader` renders a sortable column label with an optional ascending/descending indicator. Use it inside a `Table.Column` render prop and forward `sortDirection` ([#6588](https://github.com/heroui-inc/heroui/pull/6588)).
+
+```tsx
+<Table.Column allowsSorting>
+  {({ sortDirection }) => (
+    <Table.SortableColumnHeader sortDirection={sortDirection}>
+      Name
+    </Table.SortableColumnHeader>
+  )}
+</Table.Column>
+```
+
+- **Default indicator**: Chevron appears when a sort direction exists
+- **Custom indicator**: Pass `indicator`, or hide it with `showIndicator={false}`
+- **Style slots**: `.table__sortable-column-header` + `.table__sortable-column-indicator`
+
+<ComponentPreview name="table-sorting">
+
+```tsx
+'use client'
+
+import { useMemo, useState } from 'react'
+
+import type { SortDescriptor } from '@vezham/react-v3'
+import { Table } from '@vezham/react-v3'
+
+interface User {
+  id: number
+  name: string
+  role: string
+  status: string
+  email: string
+}
+
+const users: User[] = [
+  {
+    email: 'kate@acme.com',
+    id: 1,
+    name: 'Kate Moore',
+    role: 'CEO',
+    status: 'Active'
+  },
+  {
+    email: 'john@acme.com',
+    id: 2,
+    name: 'John Smith',
+    role: 'CTO',
+    status: 'Active'
+  },
+  {
+    email: 'sara@acme.com',
+    id: 3,
+    name: 'Sara Johnson',
+    role: 'CMO',
+    status: 'On Leave'
+  },
+  {
+    email: 'michael@acme.com',
+    id: 4,
+    name: 'Michael Brown',
+    role: 'CFO',
+    status: 'Active'
+  },
+  {
+    email: 'emily@acme.com',
+    id: 5,
+    name: 'Emily Davis',
+    role: 'Product Manager',
+    status: 'Inactive'
+  }
+]
+
+export function Sorting() {
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'name',
+    direction: 'ascending'
+  })
+
+  const sortedUsers = useMemo(() => {
+    return [...users].sort((a, b) => {
+      const col = sortDescriptor.column as keyof User
+      const first = String(a[col])
+      const second = String(b[col])
+      let cmp = first.localeCompare(second)
+
+      if (sortDescriptor.direction === 'descending') {
+        cmp *= -1
+      }
+
+      return cmp
+    })
+  }, [sortDescriptor])
+
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Sortable table"
+          className="min-w-[600px]"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}>
+          <Table.Header>
+            <Table.Column allowsSorting isRowHeader id="name">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Name
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="role">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Role
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="status">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Status
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="email">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Email
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+          </Table.Header>
+          <Table.Body>
+            {sortedUsers.map(user => (
+              <Table.Row key={user.id} id={user.id}>
+                <Table.Cell>{user.name}</Table.Cell>
+                <Table.Cell>{user.role}</Table.Cell>
+                <Table.Cell>{user.status}</Table.Cell>
+                <Table.Cell>{user.email}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Tooltip delay theme variables
+
+[Tooltip](https://heroui.com/docs/components/tooltip) reads default show and hide delays from theme CSS variables ([#6617](https://github.com/heroui-inc/heroui/pull/6617)):
+
+- `--tooltip-delay` — delay before showing a tooltip (default: `1500ms`)
+- `--tooltip-close-delay` — delay before hiding a tooltip (default: `500ms`)
+
+Override them globally:
+
+```css
+:root {
+  --tooltip-delay: 700ms;
+  --tooltip-close-delay: 0ms;
+}
+```
+
+Individual `delay` and `closeDelay` props still override these values on specific tooltips.
+
+<Callout type="warning">
+  **Behavior change:** With the default HeroUI theme, tooltip delays now default
+  to `1500ms` / `500ms` instead of the previous React Aria defaults of `700ms` /
+  `0ms`. Set the CSS variables or props explicitly to preserve the old timing.
+</Callout>
+
+## Component Fixes
+
+- **Toast**: ViewTransition updates are serialized in the toast queue, preventing skipped transitions and AbortError rejections when `toast.promise()` swaps the loading toast for success/error feedback ([#6511](https://github.com/heroui-inc/heroui/pull/6511)).
+- **Fieldset**: `disabled` propagates through React Aria Button, CheckboxGroup, Link, RadioGroup, Slider, ToggleButton, and ToggleButtonGroup contexts ([#6596](https://github.com/heroui-inc/heroui/pull/6596)).
+- **Autocomplete**: Popover content is wrapped in a React Aria `Dialog`, so opening the popover no longer leaves a stray focus ring on the listbox ([#6627](https://github.com/heroui-inc/heroui/pull/6627)).
+- **Tooltip**: The trigger uses the `useFocusable` hook instead of the `<Focusable>` wrapper, avoiding a false-positive "child must be focusable" warning when a tooltip is mounted inside an `inert` subtree (e.g. behind an open Drawer/Modal) ([#6628](https://github.com/heroui-inc/heroui/pull/6628)).
+
+## Style Fixes
+
+- **Modal / AlertDialog**: `scroll-inside` dialogs cap height with `max-h-full min-h-0` so the body scrolls instead of overflowing ([#6597](https://github.com/heroui-inc/heroui/pull/6597)).
+- **ScrollShadow**: Fade masks reserve space for visible native scrollbars via `--scroll-shadow-scrollbar-size` ([#6598](https://github.com/heroui-inc/heroui/pull/6598)).
+- **Table RTL**: Column separators and resize handles use logical `end-0` positioning in RTL ([#6606](https://github.com/heroui-inc/heroui/pull/6606)).
+- **Link**: Drops the hardcoded `text-sm` so links inherit font size from their parent, and `.link__icon` scales relative to text with `size-[0.75em]` instead of a fixed `size-2` ([#6621](https://github.com/heroui-inc/heroui/pull/6621)).
+- **DatePicker / DateRangePicker**: Calendar popovers use `min-w-(--trigger-width)` instead of `max-w-(--trigger-width)` so the calendar is at least as wide as the trigger and no longer clips horizontally ([#6622](https://github.com/heroui-inc/heroui/pull/6622)).
+- **Table**: Secondary header borders and rounded corners render correctly when the table is wrapped in React Aria's `<Virtualizer>` — column selectors no longer treat every virtualized column as both first and last child ([#6624](https://github.com/heroui-inc/heroui/pull/6624)).
+- **Autocomplete**: The popover is constrained to the trigger width and the listbox caps its height at `320px` with internal scrolling, so virtualized lists no longer overflow the popover ([#6642](https://github.com/heroui-inc/heroui/pull/6642)).
+- **ListBox**: Replaces `flex flex-col gap` with block flow + sibling margins so React Aria's Virtualizer content height is not collapsed by flex-shrink — fixes scrollbar thumb resizing during virtualized scroll ([#6636](https://github.com/heroui-inc/heroui/pull/6636)).
+- **InputGroup / NumberField / SearchField**: Browser autofill highlight lifts onto the group shell so prefix, suffix, and increment/decrement slots share the rounded highlight ([#6625](https://github.com/heroui-inc/heroui/pull/6625)).
+- **Spinner**: Uses `inline-flex` with `shrink-0` (instead of `relative`) so the spin animation renders correctly in non-flex layouts, and honors `motion-reduce` ([#6644](https://github.com/heroui-inc/heroui/pull/6644)).
+- **Toast**: Close button uses `-top-1 -right-1` on all breakpoints to align with container padding ([#6574](https://github.com/heroui-inc/heroui/pull/6574)).
+
+## Dependencies
+
+- **React Aria Components**: `1.17.0` → `1.18.0` ([#6586](https://github.com/heroui-inc/heroui/pull/6586)). 1.18 adds the `*Field` + `*Button` composition adopted by the toggles, `CalendarHeading`, and `isDateUnavailable(date, anchorDate)`.
+- **@internationalized/date**: `3.12.1` → `3.12.2`
+- **React Aria / Stately helpers**: `@react-aria/*`, `@react-stately/*`, and `@react-types/shared` patch updates
+
+## ⚠️ Breaking Changes
+
+### Radio, Checkbox & Switch: explicit `*.Content` composition
+
+These toggles now use React Aria's `*Field` + `*Button` composition under the hood. `X.Content` is now the **clickable label** (React Aria's `*Button`). Three things change:
+
+- **`X.Control` moves inside `X.Content`** — they used to be siblings.
+- **The label is plain text inside `X.Content`** — `X.Content` renders the `<label>` element, so don't nest a `<Label>` component (nested `<label>` elements are invalid HTML). For a standalone `Label`, place it **outside** and link it with `htmlFor` + the toggle `id`.
+- **`Description`/`FieldError` move out** as siblings of `X.Content`, so they're exposed via `aria-describedby` instead of being folded into the accessible name.
+
+**Checkbox**
+
+```tsx
+// v3.1
+<Checkbox>
+  <Checkbox.Control>
+    <Checkbox.Indicator />
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Label>Accept terms</Label>
+    <Description>You agree to our terms</Description>
+  </Checkbox.Content>
+</Checkbox>
+
+// v3.2
+<Checkbox>
+  <Checkbox.Content>
+    <Checkbox.Control>
+      <Checkbox.Indicator />
+    </Checkbox.Control>
+    Accept terms
+  </Checkbox.Content>
+  <Description>You agree to our terms</Description>
+</Checkbox>
+```
+
+**Radio**
+
+```tsx
+// v3.1
+<Radio value="a">
+  <Radio.Control>
+    <Radio.Indicator />
+  </Radio.Control>
+  <Radio.Content>
+    <Label>Option A</Label>
+  </Radio.Content>
+</Radio>
+
+// v3.2
+<Radio value="a">
+  <Radio.Content>
+    <Radio.Control>
+      <Radio.Indicator />
+    </Radio.Control>
+    Option A
+  </Radio.Content>
+</Radio>
+```
+
+**Switch**
+
+```tsx
+// v3.1
+<Switch>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Content>
+    <Label>Enable notifications</Label>
+  </Switch.Content>
+</Switch>
+
+// v3.2
+<Switch>
+  <Switch.Content>
+    <Switch.Control>
+      <Switch.Thumb />
+    </Switch.Control>
+    Enable notifications
+  </Switch.Content>
+</Switch>
+```
+
+**Migration summary**
+
+| v3.1                                                         | v3.2                                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `X.Control` and `X.Content` are siblings                     | `X.Control` nests inside `X.Content`                                     |
+| `X.Content` is a layout `<div>` wrapping `Label` + help text | `X.Content` is the clickable `<label>` wrapping `X.Control` + label text |
+| Label provided via `<Label>` inside `X.Content`              | Label is **plain text** inside `X.Content` (no nested `<Label>`)         |
+| `Description` / `FieldError` inside `X.Content`              | `Description` / `FieldError` as siblings of `X.Content`                  |
+
+**External label** — to use a standalone `Label`, place it outside the toggle and link it with `htmlFor` + the toggle `id`:
+
+```tsx
+<div className="flex items-center gap-3">
+  <Checkbox id="terms">
+    <Checkbox.Content>
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+    </Checkbox.Content>
+  </Checkbox>
+  <Label htmlFor="terms">Accept terms</Label>
+</div>
+```
+
+**Control-only checkboxes and switches** (no label, e.g. table row selection or icon switches) still need `X.Content` as the clickable wrapper. Wrap `Checkbox.Control` / `Switch.Control` in `X.Content`, omit the label, and pass an `aria-label` on the root.
+
+Full per-component guides: [Checkbox](/docs/ui/react-v3/web/migration/checkbox), [Checkbox Group](/docs/ui/react-v3/web/migration/checkbox-group), [Radio](/docs/ui/react-v3/web/migration/radio), [Radio Group](/docs/ui/react-v3/web/migration/radio-group), and [Switch](/docs/ui/react-v3/web/migration/switch).
+
+## Links
+
+- [Calendar Docs](/docs/ui/react-v3/web/components/calendar)
+- [Autocomplete Docs](/docs/ui/react-v3/web/components/autocomplete)
+- [Tooltip Docs](/docs/ui/react-v3/web/components/tooltip)
+- [Checkbox Docs](/docs/ui/react-v3/web/components/checkbox)
+- [Radio Group Docs](/docs/ui/react-v3/web/components/radio-group)
+- [Switch Docs](/docs/ui/react-v3/web/components/switch)
+- [Component Docs](/docs/ui/react-v3/web/components)
+- [GitHub Repository](https://github.com/heroui-inc/heroui)
+- [GitHub PR #6616](https://github.com/heroui-inc/heroui/pull/6616)
+
+## Contributors
+
+Thanks to everyone who contributed to this release!
+
+<PRContributors />

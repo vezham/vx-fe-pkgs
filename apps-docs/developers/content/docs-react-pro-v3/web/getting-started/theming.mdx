@@ -1,0 +1,116 @@
+---
+title: 'Theming'
+description: 'Configure HeroUI Pro themes, CSS variables, import order, Design Systems, and theme variants alongside HeroUI OSS.'
+sourceUrl: https://heroui.pro/docs/react/getting-started/theming
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro uses the same theming system as [HeroUI OSS](https://heroui.com) — CSS variables, BEM classes, and `@theme` directives. If you haven't already, read the full [Theming guide on heroui.com](https://heroui.com/docs/react/getting-started/theming) to understand the foundations.
+
+<Callout type="info">
+  Everything in the OSS theming guide applies to Pro components. This page
+  covers only what's **different or additional** in Pro.
+</Callout>
+
+## CSS Import Order
+
+When using HeroUI Pro, always maintain this import order in your main CSS file:
+
+```css title="globals.css"
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@vezham/react-pro-v3/css'; /* [!code highlight] */
+```
+
+The Pro CSS layer builds on top of the OSS layer. Reversing the order will cause styles to break.
+
+## Design Systems
+
+[Design Systems](https://heroui.pro/dashboard/pro/ds) lets you visually customize themes, manage brand guidance and assets, and export the result for your project. Changes apply to both OSS and Pro components through their shared CSS variables.
+
+See the [Design Systems guide](https://heroui.pro/docs/react/getting-started/design-systems) for creation, editing, AI Chat, and export workflows.
+
+## Pro Themes
+
+HeroUI Pro ships with premium design system themes that go beyond color changes — they override component styles, fonts, shadows, and radii to create distinct aesthetics.
+
+Pro themes are imported **after** `@vezham/react-pro-v3/css` and override both OSS and Pro component styles. A theme can include:
+
+- **Font loading** — custom web fonts via `@import url()` (when the theme changes typography)
+- **Theme variables** — colors, radii, shadows, spacing overrides in a `theme` layer
+- **Component overrides** — BEM class overrides for both OSS and Pro components in a `components` layer
+
+Each theme ships two modes — `<name>-light` and `<name>-dark` — scoped under class and `data-theme` selectors. Importing the CSS is not enough on its own; you also need to activate the mode on an ancestor element (usually `<html>`):
+
+```html
+<html data-theme="brutalism-light"></html>
+```
+
+You can wire this up to your existing theme toggle (for example, `next-themes`) by using `brutalism-light` / `brutalism-dark` (or `glass-light` / `glass-dark`, `mouve-light` / `mouve-dark`) as the theme values instead of `light` / `dark`.
+
+### Brutalism
+
+A bold, high-contrast theme with sharp edges, thick borders, and expressive shadows. Ships custom display/body fonts (Anton + Share Tech Mono), zero radius, and minimal shadows.
+
+```css title="globals.css"
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@vezham/react-pro-v3/css';
+@import '@vezham/react-pro-v3/themes/brutalism'; /* [!code highlight] */
+```
+
+Activate with `data-theme="brutalism-light"` or `data-theme="brutalism-dark"`.
+
+### Glass
+
+A glassmorphism theme with backdrop blur, semi-transparent surfaces, and soft overlay shadows. Overrides shadow-using components (cards, popovers, modals, dropdowns, fields, etc.) with `backdrop-filter: blur(...)`, and keeps the default typography.
+
+```css title="globals.css"
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@vezham/react-pro-v3/css';
+@import '@vezham/react-pro-v3/themes/glass'; /* [!code highlight] */
+```
+
+Activate with `data-theme="glass-light"` or `data-theme="glass-dark"`.
+
+<Callout type="info">
+  Glass relies on `backdrop-filter`. Make sure surfaces behind blurred
+  components have visible content (a background image, gradient, or the provided
+  `--background-gradient`) for the effect to be perceivable. Tune blur intensity
+  per mode via the `--glass-blur` variable.
+</Callout>
+
+### Mouve
+
+A refined, contemporary mauve/warm-purple theme. Saturated-accent surfaces (filled buttons, selected calendar cells, switch/slider/progress/meter fills, segment ghost indicator, stepper completed steps, etc.) get an elevated treatment — a layered "raised" shadow stack with an inset specular highlight, accent border, and a soft top-light gradient overlay — while neutral pill buttons (secondary, tertiary, ghost) pick up an inset "pressed" shadow on press for a tactile feel. Keeps the default typography.
+
+```css title="globals.css"
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@vezham/react-pro-v3/css';
+@import '@vezham/react-pro-v3/themes/mouve'; /* [!code highlight] */
+```
+
+Activate with `data-theme="mouve-light"` or `data-theme="mouve-dark"`.
+
+<Callout type="info">
+  Mouve exposes three reusable shadow tokens — `--mouve-raised-shadow`
+  (raised/elevated surfaces), `--mouve-pressed-shadow` (depressed/pressed
+  neutral surfaces), and `--mouve-accent-fill-shadow` (inset-only variant for
+  chips/badges) — so you can extend the look to your own components by composing
+  them into `box-shadow`.
+</Callout>
+
+### Creating Your Own Theme
+
+Follow the [Design Systems guide](https://heroui.pro/docs/react/getting-started/design-systems#customize-the-theme) to customize a theme visually and export it for your project.
+
+## Pro-Specific CSS Variables
+
+Beyond the [OSS color variables](https://heroui.com/docs/react/getting-started/colors), Pro adds chart colors that derive from your accent color. See the [Colors](https://heroui.pro/docs/react/getting-started/colors) page for details.

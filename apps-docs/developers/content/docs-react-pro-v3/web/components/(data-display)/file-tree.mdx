@@ -1,0 +1,1355 @@
+---
+title: 'File Tree'
+description: 'A hierarchical file explorer with expand/collapse, drag-and-drop, icons, and multi-selection support.'
+sourceUrl: https://heroui.pro/docs/react/components/file-tree
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-file-tree-default">
+
+```tsx
+'use client'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <FileTree
+      aria-label="Project structure"
+      className="max-h-[420px] w-80"
+      defaultExpandedKeys={[
+        'apps',
+        'frontend',
+        'api',
+        'packages',
+        'packages-react',
+        'claude'
+      ]}>
+      <FileTree.Item id="apps" textValue="apps" title="apps">
+        <FileTree.Item id="frontend" textValue="frontend" title="frontend">
+          <FileTree.Item
+            id="fe-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item
+            id="fe-tsconfig"
+            textValue="tsconfig.json"
+            title="tsconfig.json"
+          />
+          <FileTree.Item id="fe-src" textValue="src" title="src">
+            <FileTree.Item id="fe-app" textValue="app" title="app">
+              <FileTree.Item
+                id="fe-layout"
+                textValue="layout.tsx"
+                title="layout.tsx"
+              />
+              <FileTree.Item
+                id="fe-page"
+                textValue="page.tsx"
+                title="page.tsx"
+              />
+            </FileTree.Item>
+          </FileTree.Item>
+        </FileTree.Item>
+        <FileTree.Item id="api" textValue="api" title="api">
+          <FileTree.Item
+            id="api-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item id="api-src" textValue="src" title="src">
+            <FileTree.Item
+              id="api-index"
+              textValue="index.ts"
+              title="index.ts"
+            />
+            <FileTree.Item
+              id="api-routes"
+              textValue="routes.ts"
+              title="routes.ts"
+            />
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="packages" textValue="packages" title="packages">
+        <FileTree.Item id="packages-react" textValue="react" title="react">
+          <FileTree.Item
+            id="pr-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item id="pr-src" textValue="src" title="src">
+            <FileTree.Item
+              id="pr-components"
+              textValue="components"
+              title="components">
+              <FileTree.Item
+                id="pr-index"
+                textValue="index.ts"
+                title="index.ts"
+              />
+            </FileTree.Item>
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="claude" textValue=".claude" title=".claude">
+        <FileTree.Item id="claude-skills" textValue="skills" title="skills">
+          <FileTree.Item
+            id="skill-heroui"
+            textValue="heroui-react"
+            title="heroui-react">
+            <FileTree.Item
+              id="skill-md"
+              textValue="SKILL.md"
+              title="SKILL.md"
+            />
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="readme" textValue="README.md" title="README.md" />
+      <FileTree.Item id="agents" textValue="AGENTS.md" title="AGENTS.md" />
+      <FileTree.Item
+        id="root-package"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        id="root-tsconfig"
+        textValue="tsconfig.json"
+        title="tsconfig.json"
+      />
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the FileTree component and access all parts using dot notation.
+
+```tsx
+import { FileTree } from '@vezham/react-pro-v3'
+
+;<FileTree>
+  <FileTree.Section>
+    <FileTree.Header />
+    <FileTree.Item>
+      <FileTree.Indicator />
+    </FileTree.Item>
+  </FileTree.Section>
+</FileTree>
+```
+
+## Reduced Motion
+
+Pass `reduceMotion` to disable expand/collapse animation while keeping the same tree behavior.
+
+<ComponentPreview name="pro-file-tree-reduced-motion">
+
+```tsx
+'use client'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+export function ReducedMotion() {
+  return (
+    <FileTree
+      reduceMotion
+      aria-label="Project structure"
+      className="max-h-[420px] w-80"
+      defaultExpandedKeys={[
+        'apps',
+        'frontend',
+        'api',
+        'packages',
+        'packages-react',
+        'claude'
+      ]}>
+      <FileTree.Item id="apps" textValue="apps" title="apps">
+        <FileTree.Item id="frontend" textValue="frontend" title="frontend">
+          <FileTree.Item
+            id="fe-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item
+            id="fe-tsconfig"
+            textValue="tsconfig.json"
+            title="tsconfig.json"
+          />
+          <FileTree.Item id="fe-src" textValue="src" title="src">
+            <FileTree.Item id="fe-app" textValue="app" title="app">
+              <FileTree.Item
+                id="fe-layout"
+                textValue="layout.tsx"
+                title="layout.tsx"
+              />
+              <FileTree.Item
+                id="fe-page"
+                textValue="page.tsx"
+                title="page.tsx"
+              />
+            </FileTree.Item>
+          </FileTree.Item>
+        </FileTree.Item>
+        <FileTree.Item id="api" textValue="api" title="api">
+          <FileTree.Item
+            id="api-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item id="api-src" textValue="src" title="src">
+            <FileTree.Item
+              id="api-index"
+              textValue="index.ts"
+              title="index.ts"
+            />
+            <FileTree.Item
+              id="api-routes"
+              textValue="routes.ts"
+              title="routes.ts"
+            />
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="packages" textValue="packages" title="packages">
+        <FileTree.Item id="packages-react" textValue="react" title="react">
+          <FileTree.Item
+            id="pr-package"
+            textValue="package.json"
+            title="package.json"
+          />
+          <FileTree.Item id="pr-src" textValue="src" title="src">
+            <FileTree.Item
+              id="pr-components"
+              textValue="components"
+              title="components">
+              <FileTree.Item
+                id="pr-index"
+                textValue="index.ts"
+                title="index.ts"
+              />
+            </FileTree.Item>
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="claude" textValue=".claude" title=".claude">
+        <FileTree.Item id="claude-skills" textValue="skills" title="skills">
+          <FileTree.Item
+            id="skill-heroui"
+            textValue="heroui-react"
+            title="heroui-react">
+            <FileTree.Item
+              id="skill-md"
+              textValue="SKILL.md"
+              title="SKILL.md"
+            />
+          </FileTree.Item>
+        </FileTree.Item>
+      </FileTree.Item>
+      <FileTree.Item id="readme" textValue="README.md" title="README.md" />
+      <FileTree.Item id="agents" textValue="AGENTS.md" title="AGENTS.md" />
+      <FileTree.Item
+        id="root-package"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        id="root-tsconfig"
+        textValue="tsconfig.json"
+        title="tsconfig.json"
+      />
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Icons
+
+<ComponentPreview name="pro-file-tree-with-icons">
+
+```tsx
+'use client'
+
+import {
+  Code,
+  CurlyBrackets,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen,
+  Gear
+} from '@gravity-ui/icons'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+export function WithIcons() {
+  return (
+    <FileTree
+      aria-label="Project with icons"
+      className="w-[300px]"
+      defaultExpandedKeys={['src', 'components', 'utils']}>
+      <FileTree.Item icon={folderIcon} id="src" textValue="src" title="src">
+        <FileTree.Item
+          icon={folderIcon}
+          id="components"
+          textValue="components"
+          title="components">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="button-tsx"
+            textValue="button.tsx"
+            title="button.tsx"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="card-tsx"
+            textValue="card.tsx"
+            title="card.tsx"
+          />
+          <FileTree.Item
+            icon={<Code />}
+            id="button-css"
+            textValue="button.css"
+            title="button.css"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={folderIcon}
+          id="utils"
+          textValue="utils"
+          title="utils">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="compose-ts"
+            textValue="compose.ts"
+            title="compose.ts"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="cn-ts"
+            textValue="cn.ts"
+            title="cn.ts"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={<FileCode />}
+          id="index-ts"
+          textValue="index.ts"
+          title="index.ts"
+        />
+      </FileTree.Item>
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="package-json"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="tsconfig-json"
+        textValue="tsconfig.json"
+        title="tsconfig.json"
+      />
+      <FileTree.Item
+        icon={<FileText />}
+        id="readme-md"
+        textValue="README.md"
+        title="README.md"
+      />
+      <FileTree.Item icon={<Gear />} id="env" textValue=".env" title=".env" />
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Indicator
+
+<ComponentPreview name="pro-file-tree-custom-indicator">
+
+```tsx
+'use client'
+
+import {
+  CaretRight,
+  CurlyBrackets,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen
+} from '@gravity-ui/icons'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+export function CustomIndicator() {
+  return (
+    <FileTree
+      aria-label="Custom indicator"
+      className="w-[300px]"
+      defaultExpandedKeys={['src', 'components']}>
+      <FileTree.Item icon={folderIcon} id="src" textValue="src" title="src">
+        <FileTree.Indicator>
+          <CaretRight />
+        </FileTree.Indicator>
+        <FileTree.Item
+          icon={folderIcon}
+          id="components"
+          textValue="components"
+          title="components">
+          <FileTree.Indicator>
+            <CaretRight />
+          </FileTree.Indicator>
+          <FileTree.Item
+            icon={<FileCode />}
+            id="button"
+            textValue="button.tsx"
+            title="button.tsx"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="card"
+            textValue="card.tsx"
+            title="card.tsx"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={<FileCode />}
+          id="index"
+          textValue="index.ts"
+          title="index.ts"
+        />
+      </FileTree.Item>
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="pkg"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        icon={<FileText />}
+        id="readme"
+        textValue="README.md"
+        title="README.md"
+      />
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Drag And Drop
+
+<ComponentPreview name="pro-file-tree-drag-and-drop">
+
+```tsx
+'use client'
+
+import { FileCode, Folder, FolderOpen } from '@gravity-ui/icons'
+import { Collection } from 'react-aria-components/Collection'
+import { useTreeData } from 'react-aria-components/useTreeData'
+
+import { FileTree, useFileTreeDrag } from '@vezham/react-pro-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+interface DndFileNode {
+  id: string
+  title: string
+  children?: DndFileNode[]
+}
+
+const dndInitialItems: DndFileNode[] = [
+  {
+    children: [
+      {
+        children: [
+          { children: [], id: 'button-tsx', title: 'button.tsx' },
+          { children: [], id: 'card-tsx', title: 'card.tsx' },
+          { children: [], id: 'modal-tsx', title: 'modal.tsx' }
+        ],
+        id: 'components',
+        title: 'components'
+      },
+      {
+        children: [
+          { children: [], id: 'compose-ts', title: 'compose.ts' },
+          { children: [], id: 'cn-ts', title: 'cn.ts' }
+        ],
+        id: 'utils',
+        title: 'utils'
+      },
+      { children: [], id: 'index-ts', title: 'index.ts' }
+    ],
+    id: 'src',
+    title: 'src'
+  },
+  { children: [], id: 'package-json', title: 'package.json' },
+  { children: [], id: 'tsconfig-json', title: 'tsconfig.json' },
+  { children: [], id: 'readme', title: 'README.md' }
+]
+
+export function DragAndDrop() {
+  const tree = useTreeData<DndFileNode>({
+    getChildren: item => item.children ?? [],
+    getKey: item => item.id,
+    initialItems: dndInitialItems
+  })
+
+  const { dragAndDropHooks } = useFileTreeDrag({ tree })
+
+  return (
+    <FileTree
+      aria-label="Draggable file tree"
+      className="w-[300px]"
+      defaultExpandedKeys={['src', 'components', 'utils']}
+      dragAndDropHooks={dragAndDropHooks}
+      items={tree.items}
+      renderEmptyState={() => <div>No files</div>}
+      selectionMode="multiple">
+      {function renderItem(item: (typeof tree.items)[number]) {
+        const hasChildren = item.children && item.children.length > 0
+
+        return (
+          <FileTree.Item
+            icon={hasChildren ? folderIcon : <FileCode />}
+            id={item.key}
+            textValue={item.value.title}
+            title={item.value.title}>
+            {!!hasChildren && (
+              <Collection items={item.children ?? []}>{renderItem}</Collection>
+            )}
+          </FileTree.Item>
+        )
+      }}
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dynamic Collection
+
+<ComponentPreview name="pro-file-tree-dynamic-collection">
+
+```tsx
+'use client'
+
+import { Collection } from 'react-aria-components/Collection'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+interface FileNode {
+  id: string
+  name: string
+  children?: FileNode[]
+}
+
+const fileStructure: FileNode[] = [
+  {
+    children: [
+      {
+        children: [
+          { id: 'fe-layout', name: 'layout.tsx' },
+          { id: 'fe-page', name: 'page.tsx' },
+          { id: 'fe-globals', name: 'globals.css' }
+        ],
+        id: 'frontend',
+        name: 'frontend'
+      },
+      {
+        children: [
+          { id: 'api-index', name: 'index.ts' },
+          { id: 'api-routes', name: 'routes.ts' }
+        ],
+        id: 'api',
+        name: 'api'
+      }
+    ],
+    id: 'apps',
+    name: 'apps'
+  },
+  {
+    children: [
+      {
+        children: [
+          { id: 'react-index', name: 'index.ts' },
+          { id: 'react-pkg-json', name: 'package.json' }
+        ],
+        id: 'react-pkg',
+        name: 'react'
+      }
+    ],
+    id: 'packages',
+    name: 'packages'
+  },
+  { id: 'root-readme', name: 'README.md' },
+  { id: 'root-agents', name: 'AGENTS.md' },
+  { id: 'root-package', name: 'package.json' }
+]
+
+export function DynamicCollection() {
+  return (
+    <FileTree
+      aria-label="Dynamic file tree"
+      className="max-h-[380px] w-[300px]"
+      defaultExpandedKeys={['apps', 'frontend', 'packages', 'react-pkg']}
+      items={fileStructure}>
+      {function renderItem(item: FileNode) {
+        return (
+          <FileTree.Item id={item.id} textValue={item.name} title={item.name}>
+            {!!item.children && (
+              <Collection items={item.children}>{renderItem}</Collection>
+            )}
+          </FileTree.Item>
+        )
+      }}
+    </FileTree>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-file-tree-sizes">
+
+```tsx
+'use client'
+
+import {
+  Code,
+  CurlyBrackets,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen,
+  Gear
+} from '@gravity-ui/icons'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+function IconsTree(
+  props: Omit<React.ComponentProps<typeof FileTree>, 'aria-label' | 'children'>
+) {
+  return (
+    <FileTree
+      aria-label="Project with icons"
+      defaultExpandedKeys={['src', 'components', 'utils']}
+      {...props}>
+      <FileTree.Item icon={folderIcon} id="src" textValue="src" title="src">
+        <FileTree.Item
+          icon={folderIcon}
+          id="components"
+          textValue="components"
+          title="components">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="button-tsx"
+            textValue="button.tsx"
+            title="button.tsx"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="card-tsx"
+            textValue="card.tsx"
+            title="card.tsx"
+          />
+          <FileTree.Item
+            icon={<Code />}
+            id="button-css"
+            textValue="button.css"
+            title="button.css"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={folderIcon}
+          id="utils"
+          textValue="utils"
+          title="utils">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="compose-ts"
+            textValue="compose.ts"
+            title="compose.ts"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="cn-ts"
+            textValue="cn.ts"
+            title="cn.ts"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={<FileCode />}
+          id="index-ts"
+          textValue="index.ts"
+          title="index.ts"
+        />
+      </FileTree.Item>
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="package-json"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="tsconfig-json"
+        textValue="tsconfig.json"
+        title="tsconfig.json"
+      />
+      <FileTree.Item
+        icon={<FileText />}
+        id="readme-md"
+        textValue="README.md"
+        title="README.md"
+      />
+      <FileTree.Item icon={<Gear />} id="env" textValue=".env" title=".env" />
+    </FileTree>
+  )
+}
+
+export function Sizes() {
+  return (
+    <div className="flex items-start gap-6">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col gap-2">
+          <span className="text-muted text-xs">{size}</span>
+          <IconsTree className="w-[260px]" size={size} />
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Guide Lines
+
+<ComponentPreview name="pro-file-tree-guide-lines">
+
+```tsx
+'use client'
+
+import {
+  Code,
+  CurlyBrackets,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen,
+  Gear
+} from '@gravity-ui/icons'
+
+import { FileTree } from '@vezham/react-pro-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+function IconsTree(
+  props: Omit<React.ComponentProps<typeof FileTree>, 'aria-label' | 'children'>
+) {
+  return (
+    <FileTree
+      aria-label="Project with icons"
+      defaultExpandedKeys={['src', 'components', 'utils']}
+      {...props}>
+      <FileTree.Item icon={folderIcon} id="src" textValue="src" title="src">
+        <FileTree.Item
+          icon={folderIcon}
+          id="components"
+          textValue="components"
+          title="components">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="button-tsx"
+            textValue="button.tsx"
+            title="button.tsx"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="card-tsx"
+            textValue="card.tsx"
+            title="card.tsx"
+          />
+          <FileTree.Item
+            icon={<Code />}
+            id="button-css"
+            textValue="button.css"
+            title="button.css"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={folderIcon}
+          id="utils"
+          textValue="utils"
+          title="utils">
+          <FileTree.Item
+            icon={<FileCode />}
+            id="compose-ts"
+            textValue="compose.ts"
+            title="compose.ts"
+          />
+          <FileTree.Item
+            icon={<FileCode />}
+            id="cn-ts"
+            textValue="cn.ts"
+            title="cn.ts"
+          />
+        </FileTree.Item>
+        <FileTree.Item
+          icon={<FileCode />}
+          id="index-ts"
+          textValue="index.ts"
+          title="index.ts"
+        />
+      </FileTree.Item>
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="package-json"
+        textValue="package.json"
+        title="package.json"
+      />
+      <FileTree.Item
+        icon={<CurlyBrackets />}
+        id="tsconfig-json"
+        textValue="tsconfig.json"
+        title="tsconfig.json"
+      />
+      <FileTree.Item
+        icon={<FileText />}
+        id="readme-md"
+        textValue="README.md"
+        title="README.md"
+      />
+      <FileTree.Item icon={<Gear />} id="env" textValue=".env" title=".env" />
+    </FileTree>
+  )
+}
+
+export function GuideLines() {
+  return (
+    <div className="flex items-start gap-6">
+      {([true, 'hover', false] as const).map(variant => (
+        <div key={String(variant)} className="flex flex-col gap-2">
+          <span className="text-muted text-xs">
+            {variant === true ? 'always' : variant === false ? 'none' : 'hover'}
+          </span>
+          <IconsTree className="w-[260px]" showGuideLines={variant} />
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multiple Selection
+
+<ComponentPreview name="pro-file-tree-multiple-selection">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { FileTree } from '@vezham/react-pro-v3'
+import type { Selection } from '@vezham/react-v3'
+
+export function MultipleSelection() {
+  const [selected, setSelected] = useState<Selection>(new Set())
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <FileTree
+        aria-label="Selectable file tree"
+        className="w-[280px]"
+        defaultExpandedKeys={['src', 'components']}
+        selectedKeys={selected}
+        selectionMode="multiple"
+        onSelectionChange={setSelected}>
+        <FileTree.Item id="src" textValue="src" title="src">
+          <FileTree.Item
+            id="components"
+            textValue="components"
+            title="components">
+            <FileTree.Item
+              id="button"
+              textValue="button.tsx"
+              title="button.tsx"
+            />
+            <FileTree.Item id="card" textValue="card.tsx" title="card.tsx" />
+            <FileTree.Item id="modal" textValue="modal.tsx" title="modal.tsx" />
+          </FileTree.Item>
+          <FileTree.Item id="utils" textValue="utils" title="utils">
+            <FileTree.Item
+              id="helpers"
+              textValue="helpers.ts"
+              title="helpers.ts"
+            />
+          </FileTree.Item>
+        </FileTree.Item>
+        <FileTree.Item id="readme" textValue="README.md" title="README.md" />
+      </FileTree>
+      <p className="text-muted text-sm">
+        Selected:{' '}
+        {selected === 'all' ? 'all' : [...selected].join(', ') || 'none'}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## PR File Review
+
+<ComponentPreview name="pro-file-tree-prfile-review">
+
+```tsx
+'use client'
+
+import {
+  BarsDescendingAlignCenter,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen
+} from '@gravity-ui/icons'
+import { useMemo, useState } from 'react'
+import { Collection } from 'react-aria-components/Collection'
+
+import { FileTree, useFileTree } from '@vezham/react-pro-v3'
+import type { Selection } from '@vezham/react-v3'
+import {
+  Button,
+  Dropdown,
+  Header,
+  Label,
+  SearchField,
+  Separator
+} from '@vezham/react-v3'
+
+const folderIcon = ({ isExpanded }: { isExpanded: boolean }) =>
+  isExpanded ? <FolderOpen /> : <Folder />
+
+interface PRFile {
+  id: string
+  name: string
+  ext?: string
+  children?: PRFile[]
+}
+
+const prFiles: PRFile[] = [
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [
+              { children: [], id: 'api-lib', name: 'lib' },
+              { children: [], id: 'api-routes', name: 'routes' },
+              {
+                children: [
+                  {
+                    children: [
+                      {
+                        ext: '.ts',
+                        id: 'cli-auth-spec',
+                        name: 'cliAuthMiddleware.spec.ts'
+                      }
+                    ],
+                    id: 'api-tests-mw',
+                    name: 'middlewares'
+                  },
+                  {
+                    children: [
+                      {
+                        ext: '.ts',
+                        id: 'license-key-spec',
+                        name: 'license-key.spec.ts'
+                      }
+                    ],
+                    id: 'api-tests-routes',
+                    name: 'routes'
+                  },
+                  {
+                    children: [
+                      {
+                        ext: '.ts',
+                        id: 'project-svc-spec',
+                        name: 'projectService.spec.ts'
+                      }
+                    ],
+                    id: 'api-tests-services',
+                    name: 'services'
+                  },
+                  {
+                    children: [
+                      { ext: '.ts', id: 'email-spec', name: 'email.spec.ts' }
+                    ],
+                    id: 'api-tests-utils',
+                    name: 'utils'
+                  }
+                ],
+                id: 'api-tests',
+                name: 'tests'
+              },
+              { ext: '.ts', id: 'api-auth', name: 'auth.ts' },
+              { ext: '.ts', id: 'api-index', name: 'index.ts' },
+              { ext: '.ts', id: 'api-openapi', name: 'openapi.ts' }
+            ],
+            id: 'api-src',
+            name: 'src'
+          },
+          { ext: '.jsonc', id: 'api-wrangler', name: 'wrangler.jsonc' }
+        ],
+        id: 'api',
+        name: 'api'
+      },
+      {
+        children: [
+          {
+            children: [
+              { children: [], id: 'fe-dashboard', name: 'dashboard' },
+              { children: [], id: 'fe-invite', name: 'invite/[token]' }
+            ],
+            id: 'fe-app',
+            name: 'app'
+          },
+          {
+            children: [
+              {
+                children: [
+                  {
+                    ext: '.tsx',
+                    id: 'fe-sidebar',
+                    name: 'dashboard-sidebar.tsx'
+                  }
+                ],
+                id: 'fe-comp-dashboard',
+                name: 'dashboard'
+              },
+              {
+                children: [
+                  {
+                    ext: '.tsx',
+                    id: 'fe-create-modal',
+                    name: 'create-license-key-modal.tsx'
+                  }
+                ],
+                id: 'fe-comp-license',
+                name: 'license-keys'
+              },
+              {
+                children: [
+                  {
+                    ext: '.tsx',
+                    id: 'fe-team-editor',
+                    name: 'team-name-editor.tsx'
+                  }
+                ],
+                id: 'fe-comp-teams',
+                name: 'teams'
+              }
+            ],
+            id: 'fe-components',
+            name: 'components'
+          },
+          {
+            children: [
+              { ext: '.ts', id: 'fe-license-api', name: 'license-key-api.ts' }
+            ],
+            id: 'fe-lib',
+            name: 'lib'
+          }
+        ],
+        id: 'frontend-src',
+        name: 'frontend/src'
+      }
+    ],
+    id: 'apps',
+    name: 'apps'
+  }
+]
+
+export function PRFileReview() {
+  const { expandableKeys, filterTree, leaves } = useFileTree({ items: prFiles })
+
+  const extCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+
+    for (const f of leaves) {
+      if (f.ext) counts[f.ext] = (counts[f.ext] || 0) + 1
+    }
+
+    return counts
+  }, [leaves])
+
+  const allExts = useMemo(() => Object.keys(extCounts).sort(), [extCounts])
+
+  const [selectedExts, setSelectedExts] = useState<Selection>(new Set(allExts))
+  const [search, setSearch] = useState('')
+
+  const filtered = useMemo(
+    () =>
+      filterTree(node => {
+        const matchesExt =
+          !node.ext ||
+          selectedExts === 'all' ||
+          (selectedExts as Set<string>).has(node.ext)
+        const matchesSearch =
+          !search || node.name.toLowerCase().includes(search.toLowerCase())
+
+        return matchesExt && matchesSearch
+      }),
+    [filterTree, selectedExts, search]
+  )
+
+  return (
+    <div className="flex w-[310px] flex-col gap-3">
+      <div className="flex w-full items-center gap-3 px-2">
+        <SearchField
+          aria-label="Filter files"
+          className="w-full"
+          value={search}
+          onChange={setSearch}>
+          <SearchField.Group>
+            <SearchField.SearchIcon />
+            <SearchField.Input
+              className="w-full"
+              placeholder="Filter files..."
+            />
+            <SearchField.ClearButton />
+          </SearchField.Group>
+        </SearchField>
+        <Dropdown>
+          <Button
+            isIconOnly
+            aria-label="File extensions"
+            className="shrink-0"
+            variant="secondary">
+            <BarsDescendingAlignCenter />
+          </Button>
+          <Dropdown.Popover className="min-w-[210px]">
+            <Dropdown.Menu
+              selectedKeys={selectedExts}
+              selectionMode="multiple"
+              onSelectionChange={setSelectedExts}>
+              <Dropdown.Section>
+                <Header>File extensions</Header>
+                {allExts.map(ext => (
+                  <Dropdown.Item key={ext} id={ext} textValue={ext}>
+                    <Dropdown.ItemIndicator />
+                    <Label>{ext}</Label>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Section>
+              <Separator />
+              <Dropdown.Section>
+                <Dropdown.Item>
+                  <Label>Deleted files</Label>
+                  <Dropdown.ItemIndicator />
+                </Dropdown.Item>
+                <Dropdown.Item>
+                  <Label>Viewed files</Label>
+                  <Dropdown.ItemIndicator />
+                </Dropdown.Item>
+              </Dropdown.Section>
+            </Dropdown.Menu>
+          </Dropdown.Popover>
+        </Dropdown>
+      </div>
+
+      <FileTree
+        aria-label="PR changed files"
+        defaultExpandedKeys={expandableKeys}
+        items={filtered}
+        showGuideLines="hover">
+        {function renderItem(item: PRFile) {
+          return (
+            <FileTree.Item
+              id={item.id}
+              textValue={item.name}
+              title={item.name}
+              icon={
+                item.children ? (
+                  folderIcon
+                ) : item.ext === '.tsx' ? (
+                  <FileCode />
+                ) : item.ext === '.ts' ? (
+                  <FileCode />
+                ) : (
+                  <FileText />
+                )
+              }>
+              {!!item.children && (
+                <Collection items={item.children}>{renderItem}</Collection>
+              )}
+            </FileTree.Item>
+          )
+        }}
+      </FileTree>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.file-tree` — Root tree container. Sets flex column layout, padding, and outline.
+- `.file-tree--sm` — Small size. Tighter indent and smaller item padding/font.
+- `.file-tree--md` — Medium size (default). Moderate indent and padding.
+- `.file-tree--lg` — Large size. Wider indent and larger item padding/font.
+
+### Element Classes
+
+- `.file-tree__item` — Individual tree row (file or folder). Rounded with interactive cursor.
+- `.file-tree__item--sm` — Small item sizing (`text-xs`, compact padding).
+- `.file-tree__item--md` — Medium item sizing (`text-sm`, default padding).
+- `.file-tree__item--lg` — Large item sizing (`text-base`, spacious padding).
+- `.file-tree__item-content` — Flex layout wrapper inside each item. Handles indent via `--tree-item-level`.
+- `.file-tree__guide-line` — Vertical indent guide spanning the full row height, one per parent level.
+- `.file-tree__guide-line--hover` — Guide lines only visible when the tree is hovered.
+- `.file-tree__guide-line--none` — Guide lines hidden (`display: none`).
+- `.file-tree__chevron` — Expand/collapse toggle button. Hidden when item has no children.
+- `.file-tree__indicator` — The expand/collapse icon inside the chevron. Rotates 90° when expanded.
+- `.file-tree__icon` — File/folder icon area next to the label.
+- `.file-tree__label` — Text label for the tree item. Truncates with ellipsis.
+- `.file-tree__section` — Optional grouping wrapper for related items.
+- `.file-tree__section-header` — Section heading label. Muted, uppercase-style text.
+- `.file-tree__drag-handle` — Grip button rendered when dragging is allowed. Appears on hover.
+
+### Interactive States
+
+- **Hover**: `&:hover` / `[data-hovered="true"]` on `.file-tree__item` — applies `bg-default`.
+- **Pressed**: `&:active` / `[data-pressed="true"]` on `.file-tree__item` — applies `bg-default-hover`.
+- **Focus visible**: `[data-focus-visible="true"]` on `.file-tree__item` — applies focus ring.
+- **Disabled**: `[aria-disabled="true"]` on `.file-tree__item` — applies disabled opacity.
+- **Selected**: `[data-selected="true"]` on `.file-tree__item` — applies `bg-default` with merged border-radius for adjacent selected items.
+- **Expanded**: `[data-expanded]` on `.file-tree__item` — rotates `.file-tree__indicator` to 90°.
+- **Dragging**: `[data-dragging]` on `.file-tree__item` — reduced opacity (0.4).
+- **Drop target**: `[data-drop-target]` on `.file-tree__item` — accent background with outline.
+- **Empty tree**: `[data-empty]` on `.file-tree` — centered italic placeholder text.
+
+### CSS Variables
+
+- `--file-tree-indent` — Indentation width per nesting level (varies by size).
+- `--file-tree-item-px` — Horizontal padding for item content.
+- `--file-tree-guide-color` — Color of the indent guide lines (default: `color-mix(in srgb, currentColor 10%, transparent)`).
+
+## API Reference
+
+### FileTree
+
+The root tree container. Renders a `<div role="treegrid">` internally.
+
+| Prop             | Type                   | Default | Description                                                                                           |
+| ---------------- | ---------------------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| `reduceMotion`   | `boolean`              | `false` | Disables expand/collapse animation. The user's reduced-motion preference is still respected.          |
+| `showGuideLines` | `boolean \| "hover"`   | `true`  | Whether to show indent guide lines. `true` = always, `false` = never, `"hover"` = on tree hover only. |
+| `size`           | `"sm" \| "md" \| "lg"` | `"md"`  | Size variant controlling item padding, font size, and indent width.                                   |
+
+Also supports all RAC [Tree](https://react-spectrum.adobe.com/react-aria/Tree.html) props.
+
+### FileTree.Item
+
+An individual tree row representing a file or folder.
+
+| Prop       | Type                                                           | Default            | Description                                                                                                         |
+| ---------- | -------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `title`    | `ReactNode`                                                    | —                  | Label content rendered as the item text. Required.                                                                  |
+| `icon`     | `ReactNode \| ((props: FileTreeItemRenderProps) => ReactNode)` | —                  | Icon rendered before the label. Can be a render function receiving `{ isExpanded, hasChildItems, allowsDragging }`. |
+| `dragIcon` | `ReactNode \| false`                                           | `<GripVertical />` | Drag handle icon shown when dragging is allowed. Pass `false` to hide.                                              |
+
+Also supports all RAC [TreeItem](https://react-spectrum.adobe.com/react-aria/Tree.html#treeitem) props.
+
+### FileTree.Indicator
+
+Custom expand/collapse icon used inside the chevron button. Defaults to a `ChevronRight` icon that rotates on expand.
+
+| Prop        | Type        | Default | Description                                                       |
+| ----------- | ----------- | ------- | ----------------------------------------------------------------- |
+| `children`  | `ReactNode` | —       | Custom icon element. When provided, replaces the default chevron. |
+| `className` | `string`    | —       | Additional CSS classes.                                           |
+
+### FileTree.Section
+
+Groups related tree items under an optional header.
+
+Also supports all RAC [TreeSection](https://react-spectrum.adobe.com/react-aria/Tree.html) props.
+
+### FileTree.Header
+
+Section heading label rendered above a group of items.
+
+Also supports all RAC [TreeHeader](https://react-spectrum.adobe.com/react-aria/Tree.html) props.
+
+### useFileTree
+
+A utility hook for working with tree data structures.
+
+```tsx
+const { expandableKeys, filterTree, leaves } = useFileTree({ items })
+```
+
+| Option   | Type                   | Default                                | Description                                                      |
+| -------- | ---------------------- | -------------------------------------- | ---------------------------------------------------------------- |
+| `items`  | `TreeNode[]`           | —                                      | The tree data. Each node must have `id` and optional `children`. |
+| `isLeaf` | `(node: T) => boolean` | `!children \|\| children.length === 0` | Custom predicate to identify leaf nodes.                         |
+
+**Returns:**
+
+| Property         | Type                                       | Description                                                   |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------- |
+| `expandableKeys` | `string[]`                                 | All branch node keys — useful for `defaultExpandedKeys`.      |
+| `filterTree`     | `(predicate: (node: T) => boolean) => T[]` | Filters the tree by a leaf predicate, pruning empty branches. |
+| `leaves`         | `T[]`                                      | All leaf nodes flattened from the tree.                       |
+
+### useFileTreeDrag
+
+A hook that wires up drag-and-drop for the file tree using RAC's `useDragAndDrop`.
+
+```tsx
+const { dragAndDropHooks } = useFileTreeDrag({ tree })
+```
+
+| Option     | Type                                                                   | Default                             | Description                                                      |
+| ---------- | ---------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| `tree`     | `TreeDataManager`                                                      | —                                   | The mutable tree data object returned by `useTreeData` from RAC. |
+| `getItems` | `(keys: Set<Key>) => DragItem[]`                                       | Serializes each key as `text/plain` | Custom drag data per item.                                       |
+| `onMove`   | `(keys: Set<Key>, target: { key: Key; dropPosition: string }) => void` | —                                   | Callback after items are successfully moved.                     |
+
+**Returns:** `{ dragAndDropHooks }` — pass directly to the `<FileTree>` component.

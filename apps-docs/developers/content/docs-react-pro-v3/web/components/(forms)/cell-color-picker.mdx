@@ -1,0 +1,448 @@
+---
+title: 'Cell Color Picker'
+description: 'A compact color picker styled as a settings cell with preset palettes and custom color input.'
+sourceUrl: https://heroui.pro/docs/react/components/cell-color-picker
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-cell-color-picker-default">
+
+```tsx
+'use client'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import { ColorArea, ColorSlider, Label } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <div className="w-[252px]">
+      <CellColorPicker aria-label="Accent" defaultValue="#3B82F6">
+        <CellColorPicker.Trigger>
+          <CellColorPicker.Label>Accent</CellColorPicker.Label>
+          <CellColorPicker.ValueDisplay />
+          <CellColorPicker.Swatch />
+        </CellColorPicker.Trigger>
+        <CellColorPicker.Popover>
+          <ColorArea
+            aria-label="Color area"
+            className="max-w-full"
+            colorSpace="hsb"
+            xChannel="saturation"
+            yChannel="brightness">
+            <ColorArea.Thumb />
+          </ColorArea>
+          <ColorSlider
+            aria-label="Hue"
+            channel="hue"
+            className="gap-1 px-1"
+            colorSpace="hsb">
+            <Label>Hue</Label>
+            <ColorSlider.Output className="text-muted" />
+            <ColorSlider.Track>
+              <ColorSlider.Thumb />
+            </ColorSlider.Track>
+          </ColorSlider>
+        </CellColorPicker.Popover>
+      </CellColorPicker>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the CellColorPicker component and access all parts using dot notation.
+
+```tsx
+import { CellColorPicker } from '@vezham/react-pro-v3'
+
+;<CellColorPicker>
+  <CellColorPicker.Label />
+  <CellColorPicker.Trigger />
+  <CellColorPicker.ValueDisplay />
+  <CellColorPicker.Popover>
+    <CellColorPicker.Swatch />
+  </CellColorPicker.Popover>
+</CellColorPicker>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-cell-color-picker-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import { ColorArea, ColorSlider, Label, parseColor } from '@vezham/react-v3'
+
+export function Controlled() {
+  const [color, setColor] = useState(parseColor('#3B82F6'))
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellColorPicker aria-label="Accent" value={color} onChange={setColor}>
+        <CellColorPicker.Trigger>
+          <CellColorPicker.Label>Accent</CellColorPicker.Label>
+          <CellColorPicker.ValueDisplay />
+          <CellColorPicker.Swatch />
+        </CellColorPicker.Trigger>
+        <CellColorPicker.Popover>
+          <ColorArea
+            aria-label="Color area"
+            className="max-w-full"
+            colorSpace="hsb"
+            xChannel="saturation"
+            yChannel="brightness">
+            <ColorArea.Thumb />
+          </ColorArea>
+          <ColorSlider
+            aria-label="Hue"
+            channel="hue"
+            className="gap-1 px-1"
+            colorSpace="hsb">
+            <Label>Hue</Label>
+            <ColorSlider.Output className="text-muted" />
+            <ColorSlider.Track>
+              <ColorSlider.Thumb />
+            </ColorSlider.Track>
+          </ColorSlider>
+        </CellColorPicker.Popover>
+      </CellColorPicker>
+      <p className="text-muted px-1 text-sm">
+        Selected: {color.toString('hex').toUpperCase()}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-cell-color-picker-disabled">
+
+```tsx
+'use client'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import { ColorArea } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <div className="w-[252px]">
+      <CellColorPicker aria-label="Accent" defaultValue="#3B82F6">
+        <CellColorPicker.Trigger isDisabled>
+          <CellColorPicker.Label>Accent</CellColorPicker.Label>
+          <CellColorPicker.ValueDisplay />
+          <CellColorPicker.Swatch />
+        </CellColorPicker.Trigger>
+        <CellColorPicker.Popover>
+          <ColorArea
+            aria-label="Color area"
+            className="max-w-full"
+            colorSpace="hsb"
+            xChannel="saturation"
+            yChannel="brightness">
+            <ColorArea.Thumb />
+          </ColorArea>
+        </CellColorPicker.Popover>
+      </CellColorPicker>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Settings Group
+
+<ComponentPreview name="pro-cell-color-picker-settings-group">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import type { Color } from 'react-aria-components/ColorArea'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import { ColorArea, ColorSlider, Label, parseColor } from '@vezham/react-v3'
+
+export function SettingsGroup() {
+  const [accent, setAccent] = useState<Color>(parseColor('#3B82F6'))
+  const [success, setSuccess] = useState<Color>(parseColor('#22C55E'))
+  const [danger, setDanger] = useState<Color>(parseColor('#EF4444'))
+
+  const colors = [
+    { color: accent, label: 'Accent', setColor: setAccent },
+    { color: success, label: 'Success', setColor: setSuccess },
+    { color: danger, label: 'Danger', setColor: setDanger }
+  ] as const
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      {colors.map(({ color, label, setColor }) => (
+        <CellColorPicker
+          key={label}
+          aria-label={label}
+          value={color}
+          onChange={setColor}>
+          <CellColorPicker.Trigger>
+            <CellColorPicker.Label>{label}</CellColorPicker.Label>
+            <CellColorPicker.ValueDisplay />
+            <CellColorPicker.Swatch />
+          </CellColorPicker.Trigger>
+          <CellColorPicker.Popover>
+            <ColorArea
+              aria-label="Color area"
+              className="max-w-full"
+              colorSpace="hsb"
+              xChannel="saturation"
+              yChannel="brightness">
+              <ColorArea.Thumb />
+            </ColorArea>
+            <ColorSlider
+              aria-label="Hue"
+              channel="hue"
+              className="gap-1 px-1"
+              colorSpace="hsb">
+              <Label>Hue</Label>
+              <ColorSlider.Output className="text-muted" />
+              <ColorSlider.Track>
+                <ColorSlider.Thumb />
+              </ColorSlider.Track>
+            </ColorSlider>
+          </CellColorPicker.Popover>
+        </CellColorPicker>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-cell-color-picker-variants">
+
+```tsx
+'use client'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import { ColorArea, ColorSlider, Label } from '@vezham/react-v3'
+
+export function Variants() {
+  const variants = ['default', 'secondary'] as const
+
+  return (
+    <div className="flex w-[252px] flex-col gap-3">
+      {variants.map(variant => (
+        <div key={variant} className="flex flex-col gap-1">
+          <span className="text-muted text-xs">{variant}</span>
+          <CellColorPicker
+            aria-label="Accent"
+            defaultValue="#3B82F6"
+            variant={variant}>
+            <CellColorPicker.Trigger>
+              <CellColorPicker.Label>Accent</CellColorPicker.Label>
+              <CellColorPicker.ValueDisplay />
+              <CellColorPicker.Swatch />
+            </CellColorPicker.Trigger>
+            <CellColorPicker.Popover>
+              <ColorArea
+                aria-label="Color area"
+                className="max-w-full"
+                colorSpace="hsb"
+                xChannel="saturation"
+                yChannel="brightness">
+                <ColorArea.Thumb />
+              </ColorArea>
+              <ColorSlider
+                aria-label="Hue"
+                channel="hue"
+                className="gap-1 px-1"
+                colorSpace="hsb">
+                <Label>Hue</Label>
+                <ColorSlider.Output className="text-muted" />
+                <ColorSlider.Track>
+                  <ColorSlider.Thumb />
+                </ColorSlider.Track>
+              </ColorSlider>
+            </CellColorPicker.Popover>
+          </CellColorPicker>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Presets
+
+<ComponentPreview name="pro-cell-color-picker-with-presets">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellColorPicker } from '@vezham/react-pro-v3'
+import {
+  ColorArea,
+  ColorField,
+  ColorSlider,
+  ColorSwatch,
+  ColorSwatchPicker,
+  Label,
+  parseColor
+} from '@vezham/react-v3'
+
+const colorPresets = [
+  '#ef4444',
+  '#f97316',
+  '#eab308',
+  '#22c55e',
+  '#06b6d4',
+  '#3b82f6',
+  '#8b5cf6',
+  '#ec4899',
+  '#f43f5e'
+]
+
+export function WithPresets() {
+  const [color, setColor] = useState(parseColor('#3B82F6'))
+
+  return (
+    <div className="w-[252px]">
+      <CellColorPicker
+        aria-label="Brand Color"
+        value={color}
+        onChange={setColor}>
+        <CellColorPicker.Trigger>
+          <CellColorPicker.Label>Brand Color</CellColorPicker.Label>
+          <CellColorPicker.ValueDisplay />
+          <CellColorPicker.Swatch />
+        </CellColorPicker.Trigger>
+        <CellColorPicker.Popover>
+          <ColorSwatchPicker className="justify-center pt-2" size="xs">
+            {colorPresets.map(preset => (
+              <ColorSwatchPicker.Item key={preset} color={preset}>
+                <ColorSwatchPicker.Swatch />
+              </ColorSwatchPicker.Item>
+            ))}
+          </ColorSwatchPicker>
+          <ColorArea
+            aria-label="Color area"
+            className="max-w-full"
+            colorSpace="hsb"
+            xChannel="saturation"
+            yChannel="brightness">
+            <ColorArea.Thumb />
+          </ColorArea>
+          <ColorSlider
+            aria-label="Hue"
+            channel="hue"
+            className="gap-1 px-1"
+            colorSpace="hsb">
+            <Label>Hue</Label>
+            <ColorSlider.Output className="text-muted" />
+            <ColorSlider.Track>
+              <ColorSlider.Thumb />
+            </ColorSlider.Track>
+          </ColorSlider>
+          <ColorField aria-label="Hex value">
+            <ColorField.Group variant="secondary">
+              <ColorField.Prefix>
+                <ColorSwatch size="xs" />
+              </ColorField.Prefix>
+              <ColorField.Input />
+            </ColorField.Group>
+          </ColorField>
+        </CellColorPicker.Popover>
+      </CellColorPicker>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.cell-color-picker` - Root wrapper
+
+### Element Classes
+
+- `.cell-color-picker__trigger` - The visible cell row button
+- `.cell-color-picker__trigger--default` - Default variant trigger styling
+- `.cell-color-picker__trigger--secondary` - Secondary variant trigger styling
+- `.cell-color-picker__label` - Leading text label
+- `.cell-color-picker__value-display` - Hex value text display
+- `.cell-color-picker__swatch` - Color swatch preview
+- `.cell-color-picker__popover` - Dropdown color picker panel
+
+## API Reference
+
+### CellColorPicker
+
+The root component. Wraps HeroUI [ColorPicker](https://heroui.com/docs/react/components/color-picker) with cell-style layout.
+
+| Prop      | Type                       | Default     | Description          |
+| --------- | -------------------------- | ----------- | -------------------- |
+| `variant` | `'default' \| 'secondary'` | `'default'` | Visual style variant |
+
+Also supports all RAC [ColorPicker](https://react-spectrum.adobe.com/react-aria/ColorPicker.html) props except `children` (`defaultValue`, `value`, `onChange`, etc.).
+
+### CellColorPicker.Trigger
+
+The visible cell row button. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html).
+
+Also supports all RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) props.
+
+### CellColorPicker.Label
+
+Leading text label rendered as a `span`.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Label text  |
+
+Also supports all native `span` HTML attributes.
+
+### CellColorPicker.ValueDisplay
+
+Displays the current color as a hex value (e.g. `#FF5733`). Automatically reads from the color picker state.
+
+Also supports all native `span` HTML attributes.
+
+### CellColorPicker.Swatch
+
+Color swatch preview. Wraps HeroUI [ColorSwatch](https://heroui.com/docs/react/components/color-picker).
+
+Also supports all HeroUI ColorSwatch props.
+
+### CellColorPicker.Popover
+
+Dropdown color picker panel. Wraps HeroUI `ColorPicker.Popover`.
+
+| Prop        | Type        | Default        | Description                               |
+| ----------- | ----------- | -------------- | ----------------------------------------- |
+| `placement` | `Placement` | `'bottom end'` | Popover placement relative to the trigger |
+
+Also supports all HeroUI ColorPicker.Popover props.

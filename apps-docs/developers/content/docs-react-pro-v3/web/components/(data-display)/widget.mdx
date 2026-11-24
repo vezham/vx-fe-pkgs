@@ -1,0 +1,1068 @@
+---
+title: 'Widget'
+description: 'A dashboard container that wraps charts, tables, KPIs, or any content with a consistent surface treatment — secondary background shell with an elevated white content area.'
+sourceUrl: https://heroui.pro/docs/react/components/widget
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+The Widget component provides a cohesive dashboard container with a `surface-secondary` outer shell and an elevated `bg-surface` content area. While it's especially useful for charts, it works with any content — tables, KPIs, metrics, or custom layouts.
+
+<ComponentPreview name="pro-widget-default">
+
+```tsx
+'use client'
+
+import { ChartTooltip, Widget } from '@vezham/react-pro-v3'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+const tokensData = [
+  { date: '2025-09-01', input: 35000, output: 22000 },
+  { date: '2025-09-02', input: 80000, output: 35000 },
+  { date: '2025-09-03', input: 130000, output: 48000 },
+  { date: '2025-09-04', input: 140000, output: 50000 },
+  { date: '2025-09-05', input: 15000, output: 5000 },
+  { date: '2025-09-06', input: 50000, output: 30000 },
+  { date: '2025-09-07', input: 65000, output: 35000 },
+  { date: '2025-09-08', input: 70000, output: 40000 },
+  { date: '2025-09-09', input: 60000, output: 45000 },
+  { date: '2025-09-10', input: 40000, output: 15000 },
+  { date: '2025-09-11', input: 55000, output: 28000 },
+  { date: '2025-09-12', input: 75000, output: 35000 },
+  { date: '2025-09-13', input: 50000, output: 30000 },
+  { date: '2025-09-14', input: 45000, output: 25000 },
+  { date: '2025-09-15', input: 90000, output: 40000 },
+  { date: '2025-09-16', input: 95000, output: 45000 },
+  { date: '2025-09-17', input: 110000, output: 48000 },
+  { date: '2025-09-18', input: 60000, output: 30000 },
+  { date: '2025-09-19', input: 55000, output: 25000 },
+  { date: '2025-09-20', input: 70000, output: 20000 },
+  { date: '2025-09-21', input: 60000, output: 22000 },
+  { date: '2025-09-22', input: 55000, output: 18000 },
+  { date: '2025-09-23', input: 65000, output: 25000 },
+  { date: '2025-09-24', input: 50000, output: 15000 },
+  { date: '2025-09-25', input: 45000, output: 18000 },
+  { date: '2025-09-26', input: 55000, output: 20000 },
+  { date: '2025-09-27', input: 40000, output: 15000 },
+  { date: '2025-09-28', input: 35000, output: 12000 },
+  { date: '2025-09-29', input: 30000, output: 10000 },
+  { date: '2025-09-30', input: 28000, output: 8000 }
+]
+
+export function Default() {
+  return (
+    <Widget className="w-full max-w-[520px]">
+      <Widget.Header>
+        <Widget.Title>Tokens Over Time</Widget.Title>
+        <Widget.Legend>
+          <Widget.LegendItem color="var(--chart-4)">Input</Widget.LegendItem>
+          <Widget.LegendItem color="var(--chart-1)">Output</Widget.LegendItem>
+        </Widget.Legend>
+      </Widget.Header>
+      <Widget.Content>
+        <LineChart data={tokensData} height={220}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis
+            dataKey="date"
+            tickMargin={8}
+            tickFormatter={(v: string) => {
+              const d = new Date(v)
+
+              return d.toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: '2-digit'
+              })
+            }}
+          />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={40}
+          />
+          <LineChart.Line
+            dataKey="input"
+            dot={false}
+            name="Input"
+            stroke="var(--chart-4)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="output"
+            dot={false}
+            name="Output"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={({ active, label, payload }) => {
+              if (!active || !payload?.length) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map(entry => (
+                    <ChartTooltip.Item key={String(entry.dataKey)}>
+                      <ChartTooltip.Indicator
+                        color={entry.color ?? entry.stroke}
+                      />
+                      <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                      <ChartTooltip.Value>
+                        {Number(entry.value).toLocaleString()}
+                      </ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </LineChart>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Widget component and access all parts using dot notation.
+
+```tsx
+import { Widget } from '@vezham/react-pro-v3'
+
+;<Widget>
+  <Widget.Header>
+    <Widget.Title />
+    <Widget.Description />
+  </Widget.Header>
+  <Widget.Content />
+  <Widget.Footer />
+  <Widget.Legend>
+    <Widget.LegendItem />
+  </Widget.Legend>
+</Widget>
+```
+
+## With Bar Chart
+
+<ComponentPreview name="pro-widget-with-bar-chart">
+
+```tsx
+'use client'
+
+import { ChartTooltip, Widget } from '@vezham/react-pro-v3'
+import { BarChart } from '@vezham/react-pro-v3/bar-chart'
+
+const requestsData = [
+  { date: '2025-09-01', requests: 680 },
+  { date: '2025-09-02', requests: 1150 },
+  { date: '2025-09-03', requests: 1470 },
+  { date: '2025-09-04', requests: 1130 },
+  { date: '2025-09-05', requests: 560 },
+  { date: '2025-09-06', requests: 470 },
+  { date: '2025-09-07', requests: 960 },
+  { date: '2025-09-08', requests: 1200 },
+  { date: '2025-09-09', requests: 1120 },
+  { date: '2025-09-10', requests: 1060 },
+  { date: '2025-09-11', requests: 780 },
+  { date: '2025-09-12', requests: 930 },
+  { date: '2025-09-13', requests: 950 },
+  { date: '2025-09-14', requests: 1050 },
+  { date: '2025-09-15', requests: 1740 },
+  { date: '2025-09-16', requests: 940 },
+  { date: '2025-09-17', requests: 1570 },
+  { date: '2025-09-18', requests: 1250 },
+  { date: '2025-09-19', requests: 930 },
+  { date: '2025-09-20', requests: 1280 },
+  { date: '2025-09-21', requests: 1180 },
+  { date: '2025-09-22', requests: 1320 },
+  { date: '2025-09-23', requests: 950 },
+  { date: '2025-09-24', requests: 980 },
+  { date: '2025-09-25', requests: 680 },
+  { date: '2025-09-26', requests: 510 },
+  { date: '2025-09-27', requests: 960 },
+  { date: '2025-09-28', requests: 860 },
+  { date: '2025-09-29', requests: 630 },
+  { date: '2025-09-30', requests: 380 }
+]
+
+export function WithBarChart() {
+  return (
+    <Widget className="w-full max-w-[520px]">
+      <Widget.Header>
+        <Widget.Title>Requests Over Time</Widget.Title>
+        <Widget.Legend>
+          <Widget.LegendItem color="var(--chart-3)">Requests</Widget.LegendItem>
+        </Widget.Legend>
+      </Widget.Header>
+      <Widget.Content>
+        <BarChart data={requestsData} height={220}>
+          <BarChart.Grid vertical={false} />
+          <BarChart.XAxis
+            dataKey="date"
+            tickMargin={8}
+            tickFormatter={(v: string) => {
+              const d = new Date(v)
+
+              return d.toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: '2-digit'
+              })
+            }}
+          />
+          <BarChart.YAxis width={40} />
+          <BarChart.Bar
+            dataKey="requests"
+            fill="var(--chart-3)"
+            radius={[2, 2, 0, 0]}
+          />
+          <BarChart.Tooltip
+            content={({ active, label, payload }) => {
+              if (!active || !payload?.length) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map(entry => (
+                    <ChartTooltip.Item key={String(entry.dataKey)}>
+                      <ChartTooltip.Indicator
+                        color={entry.color ?? entry.fill}
+                      />
+                      <ChartTooltip.Label>Requests</ChartTooltip.Label>
+                      <ChartTooltip.Value>
+                        {Number(entry.value).toLocaleString()}
+                      </ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </BarChart>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Line Chart
+
+<ComponentPreview name="pro-widget-with-line-chart">
+
+```tsx
+'use client'
+
+import { ChartTooltip, Widget } from '@vezham/react-pro-v3'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+const trafficData = [
+  { month: 'Jan', organic: 2000, paidAds: 1000 },
+  { month: 'Feb', organic: 15000, paidAds: 10000 },
+  { month: 'Mar', organic: 8000, paidAds: 12000 },
+  { month: 'Apr', organic: 14000, paidAds: 14000 },
+  { month: 'May', organic: 15000, paidAds: 8000 },
+  { month: 'Jun', organic: 8000, paidAds: 9000 },
+  { month: 'Jul', organic: 18000, paidAds: 12000 },
+  { month: 'Aug', organic: 18000, paidAds: 10000 },
+  { month: 'Sep', organic: 20000, paidAds: 5000 },
+  { month: 'Oct', organic: 17000, paidAds: 12000 },
+  { month: 'Nov', organic: 22000, paidAds: 18000 },
+  { month: 'Dec', organic: 15000, paidAds: 9000 }
+]
+
+export function WithLineChart() {
+  return (
+    <Widget className="w-full max-w-[520px]">
+      <Widget.Header>
+        <Widget.Title>Traffic Sources</Widget.Title>
+        <Widget.Legend>
+          <Widget.LegendItem color="var(--chart-3)">Organic</Widget.LegendItem>
+          <Widget.LegendItem color="var(--chart-1)">Paid Ads</Widget.LegendItem>
+        </Widget.Legend>
+      </Widget.Header>
+      <Widget.Content>
+        <LineChart data={trafficData} height={200}>
+          <LineChart.Grid vertical={false} />
+          <LineChart.XAxis dataKey="month" tickMargin={8} />
+          <LineChart.YAxis
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+            }
+            width={30}
+          />
+          <LineChart.Line
+            dataKey="organic"
+            dot={false}
+            name="Organic"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Line
+            dataKey="paidAds"
+            dot={false}
+            name="Paid Ads"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+            type="monotone"
+          />
+          <LineChart.Tooltip
+            content={({ active, label, payload }) => {
+              if (!active || !payload?.length) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                  {payload.map(entry => (
+                    <ChartTooltip.Item key={String(entry.dataKey)}>
+                      <ChartTooltip.Indicator
+                        color={entry.color ?? entry.stroke}
+                      />
+                      <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                      <ChartTooltip.Value>
+                        {Number(entry.value).toLocaleString()}
+                      </ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </LineChart>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Pie Chart
+
+<ComponentPreview name="pro-widget-with-pie-chart">
+
+```tsx
+'use client'
+
+import { ChartTooltip, Widget } from '@vezham/react-pro-v3'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+
+const CHART_COLORS = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)'
+]
+
+const browserData = [
+  { name: 'Chrome', value: 62 },
+  { name: 'Safari', value: 19 },
+  { name: 'Firefox', value: 10 },
+  { name: 'Edge', value: 9 }
+]
+
+export function WithPieChart() {
+  return (
+    <Widget className="w-full max-w-[360px]">
+      <Widget.Header>
+        <Widget.Title>Browser Usage</Widget.Title>
+      </Widget.Header>
+      <Widget.Content className="flex flex-col items-center gap-4">
+        <PieChart height={200}>
+          <PieChart.Pie
+            cx="50%"
+            cy="50%"
+            data={browserData}
+            dataKey="value"
+            nameKey="name"
+            outerRadius={80}>
+            {browserData.map((_, idx) => (
+              <PieChart.Cell
+                key={idx}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+              />
+            ))}
+          </PieChart.Pie>
+          <PieChart.Tooltip
+            content={({ active, payload }) => {
+              const entry = payload?.[0]
+
+              if (!active || !entry) return null
+
+              return (
+                <ChartTooltip>
+                  <ChartTooltip.Item>
+                    <ChartTooltip.Indicator color={entry.payload?.fill} />
+                    <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                    <ChartTooltip.Value>{entry.value}%</ChartTooltip.Value>
+                  </ChartTooltip.Item>
+                </ChartTooltip>
+              )
+            }}
+          />
+        </PieChart>
+        <Widget.Legend className="flex-wrap justify-center">
+          {browserData.map((entry, idx) => (
+            <Widget.LegendItem
+              key={entry.name}
+              color={CHART_COLORS[idx % CHART_COLORS.length]!}>
+              {entry.name}
+            </Widget.LegendItem>
+          ))}
+        </Widget.Legend>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With KPIs
+
+Combine Widget with [KPIGroup](https://heroui.pro/docs/react/components/kpi-group) for a metrics overview with inline sparklines.
+
+<ComponentPreview name="pro-widget-with-kpis">
+
+```tsx
+'use client'
+
+import { KPIGroup, TrendChip, Widget } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+const sparklineUp = [
+  { value: 30 },
+  { value: 35 },
+  { value: 28 },
+  { value: 42 },
+  { value: 38 },
+  { value: 45 },
+  { value: 50 },
+  { value: 48 },
+  { value: 55 },
+  { value: 60 },
+  { value: 58 },
+  { value: 65 }
+]
+
+const sparklineDown = [
+  { value: 65 },
+  { value: 60 },
+  { value: 62 },
+  { value: 55 },
+  { value: 58 },
+  { value: 52 },
+  { value: 50 },
+  { value: 48 },
+  { value: 45 },
+  { value: 42 },
+  { value: 44 },
+  { value: 40 }
+]
+
+export function WithKPIs() {
+  return (
+    <Widget className="w-full max-w-[900px]">
+      <Widget.Header>
+        <Widget.Title>Key Metrics</Widget.Title>
+        <Widget.Description>Last 30 days</Widget.Description>
+      </Widget.Header>
+      <Widget.Content>
+        <KPIGroup className="bg-transparent shadow-none">
+          <KPI>
+            <KPI.Header>
+              <KPI.Title>Total Revenue</KPI.Title>
+            </KPI.Header>
+            <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+              <div className="flex flex-col gap-1">
+                <KPI.Value
+                  className="text-3xl"
+                  currency="USD"
+                  maximumFractionDigits={0}
+                  style="currency"
+                  value={228451}
+                />
+                <TrendChip trend="up" variant="tertiary">
+                  3.3%
+                  <TrendChip.Suffix>last 30d</TrendChip.Suffix>
+                </TrendChip>
+              </div>
+              <KPI.Chart
+                color="var(--color-accent)"
+                data={sparklineUp}
+                height={60}
+                strokeWidth={1.5}
+              />
+            </KPI.Content>
+          </KPI>
+          <KPIGroup.Separator />
+          <KPI>
+            <KPI.Header>
+              <KPI.Title>Bounce Rate</KPI.Title>
+            </KPI.Header>
+            <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+              <div className="flex flex-col gap-1">
+                <KPI.Value
+                  className="text-3xl"
+                  maximumFractionDigits={1}
+                  style="percent"
+                  value={0.423}
+                />
+                <TrendChip trend="down" variant="tertiary">
+                  5.9%
+                  <TrendChip.Suffix>vs last 7d</TrendChip.Suffix>
+                </TrendChip>
+              </div>
+              <KPI.Chart
+                color="var(--color-danger)"
+                data={sparklineDown}
+                height={60}
+                strokeWidth={1.5}
+              />
+            </KPI.Content>
+          </KPI>
+          <KPIGroup.Separator />
+          <KPI>
+            <KPI.Header>
+              <KPI.Title>Active Users</KPI.Title>
+            </KPI.Header>
+            <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+              <div className="flex flex-col gap-1">
+                <KPI.Value
+                  className="text-3xl"
+                  maximumFractionDigits={0}
+                  notation="compact"
+                  value={97859}
+                />
+                <TrendChip trend="up" variant="tertiary">
+                  10.9%
+                  <TrendChip.Suffix>this month</TrendChip.Suffix>
+                </TrendChip>
+              </div>
+              <KPI.Chart
+                color="var(--color-success)"
+                data={sparklineUp}
+                height={60}
+                strokeWidth={1.5}
+              />
+            </KPI.Content>
+          </KPI>
+        </KPIGroup>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Usage Summary
+
+A table with [ProgressCircle](https://heroui.com/docs/react/components/progress-circle) indicators inside Widget — no charts involved, just structured data.
+
+<ComponentPreview name="pro-widget-usage-summary">
+
+```tsx
+'use client'
+
+import { Widget } from '@vezham/react-pro-v3'
+import { ProgressCircle, Table } from '@vezham/react-v3'
+
+const usageData = [
+  {
+    amount: '33.1K',
+    color: 'default' as const,
+    label: 'Total API Requests',
+    progress: 33
+  },
+  {
+    amount: '98.2M',
+    color: 'accent' as const,
+    label: 'Input Tokens',
+    progress: 62
+  },
+  {
+    amount: '59M',
+    color: 'accent' as const,
+    label: 'Output Tokens',
+    progress: 37
+  },
+  {
+    amount: '$149.61',
+    color: 'accent' as const,
+    label: 'Total Spend',
+    progress: 75
+  }
+]
+
+export function UsageSummary() {
+  return (
+    <Widget className="w-full max-w-[520px]">
+      <div className="grid grid-cols-[5fr_2fr] items-center px-5 py-2">
+        <span className="text-muted text-xs font-medium">Usage Type</span>
+        <span className="text-muted text-xs font-medium">Amount</span>
+      </div>
+      <Widget.Content className="flex flex-col gap-0 p-0">
+        <Table variant="secondary">
+          <Table.ScrollContainer>
+            <Table.Content aria-label="Usage summary">
+              <Table.Header className="sr-only">
+                <Table.Column isRowHeader className="bg-transparent">
+                  Usage Type
+                </Table.Column>
+                <Table.Column className="bg-transparent">Amount</Table.Column>
+              </Table.Header>
+              <Table.Body>
+                {usageData.map((item, idx) => (
+                  <Table.Row
+                    key={item.label}
+                    className={
+                      idx === usageData.length - 1 ? '[&_td]:border-b-0' : ''
+                    }>
+                    <Table.Cell>
+                      <div className="flex items-center gap-3">
+                        <ProgressCircle
+                          aria-label={`${item.label} usage`}
+                          color={item.color}
+                          size="sm"
+                          value={item.progress}>
+                          <ProgressCircle.Track>
+                            <ProgressCircle.TrackCircle />
+                            <ProgressCircle.FillCircle />
+                          </ProgressCircle.Track>
+                        </ProgressCircle>
+                        <span className="text-foreground text-sm font-medium">
+                          {item.label}
+                        </span>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="text-foreground text-sm font-semibold">
+                        {item.amount}
+                      </span>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Content>
+          </Table.ScrollContainer>
+        </Table>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Table
+
+Widget works with non-chart content too. Use `variant="secondary"` on the [Table](https://heroui.com/docs/react/components/table) to remove the default table background and let Widget.Content provide the surface.
+
+<ComponentPreview name="pro-widget-with-table">
+
+```tsx
+'use client'
+
+import { Widget } from '@vezham/react-pro-v3'
+import { Table } from '@vezham/react-v3'
+
+const teamMembers = [
+  { email: 'kate@acme.com', name: 'Kate Moore', role: 'CEO', status: 'Active' },
+  { email: 'john@acme.com', name: 'John Smith', role: 'CTO', status: 'Active' },
+  {
+    email: 'sara@acme.com',
+    name: 'Sara Johnson',
+    role: 'CMO',
+    status: 'On Leave'
+  },
+  {
+    email: 'michael@acme.com',
+    name: 'Michael Brown',
+    role: 'CFO',
+    status: 'Active'
+  }
+]
+
+export function WithTable() {
+  return (
+    <Widget className="w-full max-w-[640px]">
+      <Widget.Header>
+        <Widget.Title>Team Members</Widget.Title>
+        <Widget.Description>4 members</Widget.Description>
+      </Widget.Header>
+      <Widget.Content className="p-0">
+        <Table variant="secondary">
+          <Table.ScrollContainer>
+            <Table.Content aria-label="Team members">
+              <Table.Header className="sr-only">
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
+                <Table.Column>Email</Table.Column>
+              </Table.Header>
+              <Table.Body>
+                {teamMembers.map((member, idx) => (
+                  <Table.Row
+                    key={member.email}
+                    className={
+                      idx === teamMembers.length - 1 ? '[&_td]:border-b-0' : ''
+                    }>
+                    <Table.Cell>{member.name}</Table.Cell>
+                    <Table.Cell>{member.role}</Table.Cell>
+                    <Table.Cell>{member.status}</Table.Cell>
+                    <Table.Cell>{member.email}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Content>
+          </Table.ScrollContainer>
+        </Table>
+      </Widget.Content>
+    </Widget>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dashboard Grid
+
+Multiple Widgets compose naturally into responsive dashboard layouts with consistent visual rhythm.
+
+<ComponentPreview name="pro-widget-dashboard-grid">
+
+```tsx
+'use client'
+
+import { ChartTooltip, TrendChip, Widget } from '@vezham/react-pro-v3'
+import { AreaChart } from '@vezham/react-pro-v3/area-chart'
+import { BarChart } from '@vezham/react-pro-v3/bar-chart'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+
+const revenueData = [
+  { month: 'Jan', revenue: 4200 },
+  { month: 'Feb', revenue: 5800 },
+  { month: 'Mar', revenue: 4900 },
+  { month: 'Apr', revenue: 7200 },
+  { month: 'May', revenue: 6100 },
+  { month: 'Jun', revenue: 8400 },
+  { month: 'Jul', revenue: 7800 },
+  { month: 'Aug', revenue: 9200 },
+  { month: 'Sep', revenue: 8600 },
+  { month: 'Oct', revenue: 10200 },
+  { month: 'Nov', revenue: 9800 },
+  { month: 'Dec', revenue: 11500 }
+]
+
+const trafficData = [
+  { month: 'Jan', organic: 2000, paidAds: 1000 },
+  { month: 'Feb', organic: 5000, paidAds: 3000 },
+  { month: 'Mar', organic: 8000, paidAds: 5000 },
+  { month: 'Apr', organic: 7000, paidAds: 6000 },
+  { month: 'May', organic: 9500, paidAds: 4000 },
+  { month: 'Jun', organic: 8000, paidAds: 5500 }
+]
+
+const salesData = [
+  { month: 'Jan', sales: 18 },
+  { month: 'Feb', sales: 32 },
+  { month: 'Mar', sales: 28 },
+  { month: 'Apr', sales: 45 },
+  { month: 'May', sales: 38 },
+  { month: 'Jun', sales: 52 },
+  { month: 'Jul', sales: 42 },
+  { month: 'Aug', sales: 55 },
+  { month: 'Sep', sales: 48 },
+  { month: 'Oct', sales: 60 },
+  { month: 'Nov', sales: 53 },
+  { month: 'Dec', sales: 58 }
+]
+
+export function DashboardGrid() {
+  return (
+    <div className="grid w-full max-w-[960px] grid-cols-1 gap-3 md:grid-cols-2">
+      {/* KPI row spanning full width */}
+      <Widget className="md:col-span-2">
+        <Widget.Header>
+          <Widget.Title>Overview</Widget.Title>
+        </Widget.Header>
+        <Widget.Content className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[
+            {
+              change: '12.5%',
+              title: 'Revenue',
+              trend: 'up' as const,
+              value: '$228K'
+            },
+            {
+              change: '8.2%',
+              title: 'Orders',
+              trend: 'up' as const,
+              value: '1,234'
+            },
+            {
+              change: '3.1%',
+              title: 'Customers',
+              trend: 'up' as const,
+              value: '8,921'
+            },
+            {
+              change: '0.4%',
+              title: 'Conversion',
+              trend: 'down' as const,
+              value: '3.2%'
+            }
+          ].map(item => (
+            <div key={item.title} className="flex flex-col gap-1">
+              <span className="text-muted text-xs">{item.title}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-foreground text-xl font-semibold">
+                  {item.value}
+                </span>
+                <TrendChip trend={item.trend} variant="soft">
+                  {item.change}
+                </TrendChip>
+              </div>
+            </div>
+          ))}
+        </Widget.Content>
+      </Widget>
+
+      {/* Area chart */}
+      <Widget>
+        <Widget.Header>
+          <Widget.Title>Revenue</Widget.Title>
+          <TrendChip trend="up" variant="tertiary">
+            12.5%
+          </TrendChip>
+        </Widget.Header>
+        <Widget.Content>
+          <AreaChart data={revenueData} height={180}>
+            <defs>
+              <linearGradient id="dash-revenue" x1="0" x2="0" y1="0" y2="1">
+                <stop
+                  offset="0%"
+                  stopColor="var(--chart-3)"
+                  stopOpacity={0.2}
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--chart-3)"
+                  stopOpacity={0.02}
+                />
+              </linearGradient>
+            </defs>
+            <AreaChart.Grid vertical={false} />
+            <AreaChart.XAxis dataKey="month" tickMargin={8} />
+            <AreaChart.YAxis
+              tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+              width={40}
+            />
+            <AreaChart.Area
+              dataKey="revenue"
+              dot={false}
+              fill="url(#dash-revenue)"
+              stroke="var(--chart-3)"
+              strokeWidth={2}
+              type="monotone"
+            />
+            <AreaChart.Tooltip content={<AreaChart.TooltipContent />} />
+          </AreaChart>
+        </Widget.Content>
+      </Widget>
+
+      {/* Line chart */}
+      <Widget>
+        <Widget.Header>
+          <Widget.Title>Traffic</Widget.Title>
+          <Widget.Legend>
+            <Widget.LegendItem color="var(--chart-3)">
+              Organic
+            </Widget.LegendItem>
+            <Widget.LegendItem color="var(--chart-1)">Paid</Widget.LegendItem>
+          </Widget.Legend>
+        </Widget.Header>
+        <Widget.Content>
+          <LineChart data={trafficData} height={180}>
+            <LineChart.Grid vertical={false} />
+            <LineChart.XAxis dataKey="month" tickMargin={8} />
+            <LineChart.YAxis
+              tickFormatter={(v: number) =>
+                v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+              }
+              width={30}
+            />
+            <LineChart.Line
+              dataKey="organic"
+              dot={false}
+              name="Organic"
+              stroke="var(--chart-3)"
+              strokeWidth={2}
+              type="monotone"
+            />
+            <LineChart.Line
+              dataKey="paidAds"
+              dot={false}
+              name="Paid"
+              stroke="var(--chart-1)"
+              strokeWidth={2}
+              type="monotone"
+            />
+            <LineChart.Tooltip content={<LineChart.TooltipContent />} />
+          </LineChart>
+        </Widget.Content>
+      </Widget>
+
+      {/* Bar chart spanning full width */}
+      <Widget className="md:col-span-2">
+        <Widget.Header>
+          <Widget.Title>Monthly Sales</Widget.Title>
+          <Widget.Description>Units sold — Jan to Dec 2025</Widget.Description>
+        </Widget.Header>
+        <Widget.Content>
+          <BarChart data={salesData} height={180}>
+            <BarChart.Grid vertical={false} />
+            <BarChart.XAxis dataKey="month" tickMargin={8} />
+            <BarChart.YAxis width={30} />
+            <BarChart.Bar
+              barSize={20}
+              dataKey="sales"
+              fill="var(--accent)"
+              radius={[24, 24, 24, 24]}
+            />
+            <BarChart.Tooltip
+              content={({ active, label, payload }) => {
+                if (!active || !payload?.length) return null
+
+                return (
+                  <ChartTooltip>
+                    <ChartTooltip.Header>{label}</ChartTooltip.Header>
+                    {payload.map(entry => (
+                      <ChartTooltip.Item key={String(entry.dataKey)}>
+                        <ChartTooltip.Indicator
+                          color={entry.color ?? entry.fill}
+                        />
+                        <ChartTooltip.Label>Sales</ChartTooltip.Label>
+                        <ChartTooltip.Value>
+                          {entry.value} units
+                        </ChartTooltip.Value>
+                      </ChartTooltip.Item>
+                    ))}
+                  </ChartTooltip>
+                )
+              }}
+            />
+          </BarChart>
+        </Widget.Content>
+      </Widget>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.widget` — Root container with `surface-secondary` background.
+- `.widget__header` — Header row with title and legend, spaced between.
+- `.widget__title` — Primary label text.
+- `.widget__description` — Secondary descriptive text.
+- `.widget__content` — Elevated inner area with `bg-surface` and subtle shadow.
+- `.widget__footer` — Optional bottom row.
+- `.widget__legend` — Inline legend container.
+- `.widget__legend-item` — Single legend entry (dot + label).
+- `.widget__legend-item-dot` — Color indicator dot.
+- `.widget__legend-item-label` — Legend text.
+
+## API Reference
+
+### Widget
+
+The root container. Renders the outer shell with a `surface-secondary` background.
+
+| Prop        | Type                      | Default | Description                                             |
+| ----------- | ------------------------- | ------- | ------------------------------------------------------- |
+| `className` | `string`                  | —       | Additional CSS classes.                                 |
+| `children`  | `ReactNode`               | —       | Widget content (Header, Content, Footer, etc.).         |
+| `render`    | `(props) => ReactElement` | —       | Custom render function for polymorphic element support. |
+
+Also supports all native `div` HTML attributes.
+
+### Widget.Header
+
+Header row with `justify-between` layout. Place the title on the left and legend or actions on the right.
+
+| Prop        | Type        | Default | Description                                        |
+| ----------- | ----------- | ------- | -------------------------------------------------- |
+| `className` | `string`    | —       | Additional CSS classes.                            |
+| `children`  | `ReactNode` | —       | Header content (Title, Legend, Description, etc.). |
+
+### Widget.Title
+
+Primary label text rendered as a `<span>`.
+
+| Prop        | Type        | Default | Description             |
+| ----------- | ----------- | ------- | ----------------------- |
+| `className` | `string`    | —       | Additional CSS classes. |
+| `children`  | `ReactNode` | —       | Title text.             |
+
+### Widget.Description
+
+Secondary descriptive text rendered as a `<span>`.
+
+| Prop        | Type        | Default | Description             |
+| ----------- | ----------- | ------- | ----------------------- |
+| `className` | `string`    | —       | Additional CSS classes. |
+| `children`  | `ReactNode` | —       | Description text.       |
+
+### Widget.Content
+
+The elevated inner area with `bg-surface` background and subtle shadow. This is where charts, tables, or KPIs go.
+
+| Prop        | Type        | Default | Description                                                                               |
+| ----------- | ----------- | ------- | ----------------------------------------------------------------------------------------- |
+| `className` | `string`    | —       | Additional CSS classes. Use `p-0` to remove padding for edge-to-edge content like tables. |
+| `children`  | `ReactNode` | —       | Main content.                                                                             |
+
+### Widget.Footer
+
+Optional bottom row for actions or metadata.
+
+| Prop        | Type        | Default | Description             |
+| ----------- | ----------- | ------- | ----------------------- |
+| `className` | `string`    | —       | Additional CSS classes. |
+| `children`  | `ReactNode` | —       | Footer content.         |
+
+### Widget.Legend
+
+Inline legend container. Typically placed inside Widget.Header.
+
+| Prop        | Type        | Default | Description             |
+| ----------- | ----------- | ------- | ----------------------- |
+| `className` | `string`    | —       | Additional CSS classes. |
+| `children`  | `ReactNode` | —       | LegendItem children.    |
+
+### Widget.LegendItem
+
+A single legend entry with a color dot and label.
+
+| Prop        | Type        | Default | Description                                                     |
+| ----------- | ----------- | ------- | --------------------------------------------------------------- |
+| `color`     | `string`    | —       | **Required.** CSS color for the dot (e.g., `"var(--chart-3)"`). |
+| `className` | `string`    | —       | Additional CSS classes.                                         |
+| `children`  | `ReactNode` | —       | Label text.                                                     |

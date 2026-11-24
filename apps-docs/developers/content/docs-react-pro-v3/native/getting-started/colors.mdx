@@ -1,0 +1,118 @@
+---
+title: 'Colors'
+description: 'Color palette and theming system for HeroUI Native'
+sourceUrl: https://heroui.pro/docs/native/getting-started/colors
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components use the exact same color system and design tokens as [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) — semantic CSS variables in the `oklch` color space, automatic light/dark theme switching, and foreground/background pairing. No additional color configuration is needed for Pro components.
+
+<Callout type="info">
+  Read the full [Colors guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/colors) to learn
+  about the color system, semantic variables, default theme values, customizing
+  and adding colors, the `useThemeColor` hook, and best practices.
+</Callout>
+
+Pro components use the same semantic color variables as OSS — `--accent`, `--danger`, `--surface`, and all other tokens apply consistently across both:
+
+```tsx
+import { Button, Label } from 'heroui-native'
+import { DatePicker } from 'heroui-native-pro'
+import { View } from 'react-native'
+
+;<View className="bg-background flex-1 p-4">
+  <DatePicker>
+    <Label className="text-foreground">Event date</Label>
+    <DatePicker.Select>
+      <DatePicker.Trigger />
+    </DatePicker.Select>
+  </DatePicker>
+
+  <Button variant="primary" className="bg-accent mt-4">
+    <Button.Label className="text-accent-foreground">Submit</Button.Label>
+  </Button>
+</View>
+```
+
+## Chart Colors (Pro)
+
+HeroUI Native Pro adds a chart color palette for use with chart components. These are defined in `heroui-native-pro/styles` and automatically derive from your theme's accent color:
+
+```css
+@theme inline static {
+  --color-chart-1: color-mix(in oklab, var(--accent) 60%, black);
+  --color-chart-2: color-mix(in oklab, var(--accent) 80%, black);
+  --color-chart-3: var(--accent);
+  --color-chart-4: color-mix(in oklab, var(--accent) 80%, white);
+  --color-chart-5: color-mix(in oklab, var(--accent) 60%, white);
+}
+```
+
+The palette is centered on your accent (`--color-chart-3`) and fans out from darkest (`--color-chart-1`) to lightest (`--color-chart-5`), giving multi-series charts balanced contrast on either side of your brand color.
+
+### Customizing Chart Colors
+
+Override these variables in your `global.css` to use a custom chart palette:
+
+```css title="global.css"
+@theme inline static {
+  --color-chart-1: oklch(0.35 0.18 220);
+  --color-chart-2: oklch(0.45 0.18 220);
+  --color-chart-3: oklch(0.55 0.18 220);
+  --color-chart-4: oklch(0.7 0.15 220);
+  --color-chart-5: oklch(0.85 0.12 220);
+}
+```
+
+<Callout type="info">
+  **Want to create your own theme?** [Open Design
+  Systems](https://heroui.pro/ds) and follow the [Design Systems
+  guide](/docs/ui/react-pro-v3/native/getting-started/design-systems) to
+  customize colors, preview your theme, and export Native CSS.
+</Callout>
+
+## useThemeColorPro Hook
+
+The `useThemeColorPro` hook is the Pro counterpart to OSS's [`useThemeColor`](https://heroui.com/docs/native/getting-started/colors#usethemecolor-hook) — it resolves Pro-specific theme variables (currently the chart palette) to their runtime string values, and updates automatically when the theme switches between light and dark.
+
+**Single Color Selection:**
+
+Pass a single color name to get back a resolved color string:
+
+```tsx
+import { useThemeColorPro } from 'heroui-native-pro'
+
+const chart1 = useThemeColorPro('chart-1')
+
+;<View style={{ backgroundColor: chart1 }} />
+```
+
+**Multiple Colors Selection:**
+
+You can also select multiple colors at once, which is useful when you need to work with related color values together — for example, assigning one color per series in a chart:
+
+```tsx
+import { useThemeColorPro } from 'heroui-native-pro'
+
+const [chart1, chart2, chart3, chart4, chart5] = useThemeColorPro([
+  'chart-1',
+  'chart-2',
+  'chart-3',
+  'chart-4',
+  'chart-5'
+])
+
+;<View style={{ backgroundColor: chart1 }}>
+  <Text style={{ color: chart5 }}>Series label</Text>
+</View>
+```
+
+This batched form improves performance when working with multiple color values and makes it easier to manage complex charting and theming scenarios where several colors need to be selected and applied together.

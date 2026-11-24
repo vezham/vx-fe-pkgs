@@ -1,0 +1,902 @@
+---
+title: 'Chat Source'
+description: 'Citation chips and grouped source lists for AI responses.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-source
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatSource` to cite a URL or uploaded document inline with an assistant answer.
+
+<ComponentPreview name="pro-chat-source-default">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatSource, ChatSources } from '@vezham/react-pro-v3'
+
+function getFaviconUrl(href: string): string {
+  return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(href)}&sz=64`
+}
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Here is an answer backed by a single web source.
+      </ChatMessage.Content>
+      <ChatSource
+        description="HeroUI Pro ships presentation-only AI chat compounds for React."
+        faviconUrl={getFaviconUrl('https://heroui.com')}
+        href="https://heroui.com"
+        title="HeroUI Pro"
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Document() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Referenced an uploaded document.
+      </ChatMessage.Content>
+      <ChatSource sourceType="document" title="Q3-launch-brief.pdf" />
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            <ChatSource
+              faviconUrl={getFaviconUrl('https://heroui.com')}
+              href="https://heroui.com"
+              title="HeroUI"
+            />
+            <ChatSource
+              description="Tailwind Variants powers slot-based styling in Pro components."
+              faviconUrl={getFaviconUrl('https://tailwind-variants.org')}
+              href="https://tailwind-variants.org"
+              title="Tailwind Variants"
+            />
+            <ChatSource sourceType="document" title="design-system-audit.pdf" />
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        React&apos;s documentation has a clear explanation of component
+        composition and state-driven rendering. The source chip below uses
+        custom trigger content with a fetched favicon.
+      </ChatMessage.Content>
+      <ChatSource enablePreview href="https://react.dev">
+        <ChatSource.Trigger>
+          <ChatSource.Icon faviconUrl={getFaviconUrl('https://react.dev')} />
+          <ChatSource.Title>React docs</ChatSource.Title>
+        </ChatSource.Trigger>
+        <ChatSource.Preview>
+          <div className="flex max-w-72 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ChatSource.Icon
+                faviconUrl={getFaviconUrl('https://react.dev')}
+              />
+              <span className="text-foreground text-sm font-medium">
+                react.dev
+              </span>
+            </div>
+            <p className="text-muted text-sm">
+              Official React documentation for learning modern React patterns.
+            </p>
+          </div>
+        </ChatSource.Preview>
+      </ChatSource>
+    </AssistantMessage>
+  )
+}
+
+export function StackedFavicons() {
+  const sources = [
+    { href: 'https://www.reuters.com', label: 'Reuters' },
+    { href: 'https://nypost.com', label: 'New York Post' },
+    { href: 'https://www.foxsports.com', label: 'Fox Sports' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>
+          <span className="inline-flex -space-x-1.5">
+            {sources.map(source => (
+              <img
+                key={source.href}
+                alt=""
+                className="border-background size-5 rounded-full border object-cover"
+                src={getFaviconUrl(source.href)}
+              />
+            ))}
+          </span>
+          <span>Sources</span>
+        </ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            {sources.map(source => (
+              <ChatSource
+                key={source.href}
+                faviconUrl={getFaviconUrl(source.href)}
+                href={source.href}
+                title={source.label}
+              />
+            ))}
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Document
+
+Set `sourceType="document"` for uploaded or local files.
+
+<ComponentPreview name="pro-chat-source-document">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatSource, ChatSources } from '@vezham/react-pro-v3'
+
+function getFaviconUrl(href: string): string {
+  return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(href)}&sz=64`
+}
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Here is an answer backed by a single web source.
+      </ChatMessage.Content>
+      <ChatSource
+        description="HeroUI Pro ships presentation-only AI chat compounds for React."
+        faviconUrl={getFaviconUrl('https://heroui.com')}
+        href="https://heroui.com"
+        title="HeroUI Pro"
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Document() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Referenced an uploaded document.
+      </ChatMessage.Content>
+      <ChatSource sourceType="document" title="Q3-launch-brief.pdf" />
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            <ChatSource
+              faviconUrl={getFaviconUrl('https://heroui.com')}
+              href="https://heroui.com"
+              title="HeroUI"
+            />
+            <ChatSource
+              description="Tailwind Variants powers slot-based styling in Pro components."
+              faviconUrl={getFaviconUrl('https://tailwind-variants.org')}
+              href="https://tailwind-variants.org"
+              title="Tailwind Variants"
+            />
+            <ChatSource sourceType="document" title="design-system-audit.pdf" />
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        React&apos;s documentation has a clear explanation of component
+        composition and state-driven rendering. The source chip below uses
+        custom trigger content with a fetched favicon.
+      </ChatMessage.Content>
+      <ChatSource enablePreview href="https://react.dev">
+        <ChatSource.Trigger>
+          <ChatSource.Icon faviconUrl={getFaviconUrl('https://react.dev')} />
+          <ChatSource.Title>React docs</ChatSource.Title>
+        </ChatSource.Trigger>
+        <ChatSource.Preview>
+          <div className="flex max-w-72 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ChatSource.Icon
+                faviconUrl={getFaviconUrl('https://react.dev')}
+              />
+              <span className="text-foreground text-sm font-medium">
+                react.dev
+              </span>
+            </div>
+            <p className="text-muted text-sm">
+              Official React documentation for learning modern React patterns.
+            </p>
+          </div>
+        </ChatSource.Preview>
+      </ChatSource>
+    </AssistantMessage>
+  )
+}
+
+export function StackedFavicons() {
+  const sources = [
+    { href: 'https://www.reuters.com', label: 'Reuters' },
+    { href: 'https://nypost.com', label: 'New York Post' },
+    { href: 'https://www.foxsports.com', label: 'Fox Sports' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>
+          <span className="inline-flex -space-x-1.5">
+            {sources.map(source => (
+              <img
+                key={source.href}
+                alt=""
+                className="border-background size-5 rounded-full border object-cover"
+                src={getFaviconUrl(source.href)}
+              />
+            ))}
+          </span>
+          <span>Sources</span>
+        </ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            {sources.map(source => (
+              <ChatSource
+                key={source.href}
+                faviconUrl={getFaviconUrl(source.href)}
+                href={source.href}
+                title={source.label}
+              />
+            ))}
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Grouped
+
+Use `ChatSources` to group multiple citations behind a collapsible trigger.
+
+<ComponentPreview name="pro-chat-source-grouped">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatSource, ChatSources } from '@vezham/react-pro-v3'
+
+function getFaviconUrl(href: string): string {
+  return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(href)}&sz=64`
+}
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Here is an answer backed by a single web source.
+      </ChatMessage.Content>
+      <ChatSource
+        description="HeroUI Pro ships presentation-only AI chat compounds for React."
+        faviconUrl={getFaviconUrl('https://heroui.com')}
+        href="https://heroui.com"
+        title="HeroUI Pro"
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Document() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Referenced an uploaded document.
+      </ChatMessage.Content>
+      <ChatSource sourceType="document" title="Q3-launch-brief.pdf" />
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            <ChatSource
+              faviconUrl={getFaviconUrl('https://heroui.com')}
+              href="https://heroui.com"
+              title="HeroUI"
+            />
+            <ChatSource
+              description="Tailwind Variants powers slot-based styling in Pro components."
+              faviconUrl={getFaviconUrl('https://tailwind-variants.org')}
+              href="https://tailwind-variants.org"
+              title="Tailwind Variants"
+            />
+            <ChatSource sourceType="document" title="design-system-audit.pdf" />
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        React&apos;s documentation has a clear explanation of component
+        composition and state-driven rendering. The source chip below uses
+        custom trigger content with a fetched favicon.
+      </ChatMessage.Content>
+      <ChatSource enablePreview href="https://react.dev">
+        <ChatSource.Trigger>
+          <ChatSource.Icon faviconUrl={getFaviconUrl('https://react.dev')} />
+          <ChatSource.Title>React docs</ChatSource.Title>
+        </ChatSource.Trigger>
+        <ChatSource.Preview>
+          <div className="flex max-w-72 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ChatSource.Icon
+                faviconUrl={getFaviconUrl('https://react.dev')}
+              />
+              <span className="text-foreground text-sm font-medium">
+                react.dev
+              </span>
+            </div>
+            <p className="text-muted text-sm">
+              Official React documentation for learning modern React patterns.
+            </p>
+          </div>
+        </ChatSource.Preview>
+      </ChatSource>
+    </AssistantMessage>
+  )
+}
+
+export function StackedFavicons() {
+  const sources = [
+    { href: 'https://www.reuters.com', label: 'Reuters' },
+    { href: 'https://nypost.com', label: 'New York Post' },
+    { href: 'https://www.foxsports.com', label: 'Fox Sports' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>
+          <span className="inline-flex -space-x-1.5">
+            {sources.map(source => (
+              <img
+                key={source.href}
+                alt=""
+                className="border-background size-5 rounded-full border object-cover"
+                src={getFaviconUrl(source.href)}
+              />
+            ))}
+          </span>
+          <span>Sources</span>
+        </ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            {sources.map(source => (
+              <ChatSource
+                key={source.href}
+                faviconUrl={getFaviconUrl(source.href)}
+                href={source.href}
+                title={source.label}
+              />
+            ))}
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Stacked Favicons
+
+For a compact source button, render stacked favicon avatars in the `ChatSources.Trigger`.
+
+<ComponentPreview name="pro-chat-source-stacked-favicons">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatSource, ChatSources } from '@vezham/react-pro-v3'
+
+function getFaviconUrl(href: string): string {
+  return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(href)}&sz=64`
+}
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Here is an answer backed by a single web source.
+      </ChatMessage.Content>
+      <ChatSource
+        description="HeroUI Pro ships presentation-only AI chat compounds for React."
+        faviconUrl={getFaviconUrl('https://heroui.com')}
+        href="https://heroui.com"
+        title="HeroUI Pro"
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Document() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Referenced an uploaded document.
+      </ChatMessage.Content>
+      <ChatSource sourceType="document" title="Q3-launch-brief.pdf" />
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            <ChatSource
+              faviconUrl={getFaviconUrl('https://heroui.com')}
+              href="https://heroui.com"
+              title="HeroUI"
+            />
+            <ChatSource
+              description="Tailwind Variants powers slot-based styling in Pro components."
+              faviconUrl={getFaviconUrl('https://tailwind-variants.org')}
+              href="https://tailwind-variants.org"
+              title="Tailwind Variants"
+            />
+            <ChatSource sourceType="document" title="design-system-audit.pdf" />
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        React&apos;s documentation has a clear explanation of component
+        composition and state-driven rendering. The source chip below uses
+        custom trigger content with a fetched favicon.
+      </ChatMessage.Content>
+      <ChatSource enablePreview href="https://react.dev">
+        <ChatSource.Trigger>
+          <ChatSource.Icon faviconUrl={getFaviconUrl('https://react.dev')} />
+          <ChatSource.Title>React docs</ChatSource.Title>
+        </ChatSource.Trigger>
+        <ChatSource.Preview>
+          <div className="flex max-w-72 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ChatSource.Icon
+                faviconUrl={getFaviconUrl('https://react.dev')}
+              />
+              <span className="text-foreground text-sm font-medium">
+                react.dev
+              </span>
+            </div>
+            <p className="text-muted text-sm">
+              Official React documentation for learning modern React patterns.
+            </p>
+          </div>
+        </ChatSource.Preview>
+      </ChatSource>
+    </AssistantMessage>
+  )
+}
+
+export function StackedFavicons() {
+  const sources = [
+    { href: 'https://www.reuters.com', label: 'Reuters' },
+    { href: 'https://nypost.com', label: 'New York Post' },
+    { href: 'https://www.foxsports.com', label: 'Fox Sports' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>
+          <span className="inline-flex -space-x-1.5">
+            {sources.map(source => (
+              <img
+                key={source.href}
+                alt=""
+                className="border-background size-5 rounded-full border object-cover"
+                src={getFaviconUrl(source.href)}
+              />
+            ))}
+          </span>
+          <span>Sources</span>
+        </ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            {sources.map(source => (
+              <ChatSource
+                key={source.href}
+                faviconUrl={getFaviconUrl(source.href)}
+                href={source.href}
+                title={source.label}
+              />
+            ))}
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Composable
+
+Use compound parts when you need custom trigger content.
+
+<ComponentPreview name="pro-chat-source-composable">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatSource, ChatSources } from '@vezham/react-pro-v3'
+
+function getFaviconUrl(href: string): string {
+  return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(href)}&sz=64`
+}
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Here is an answer backed by a single web source.
+      </ChatMessage.Content>
+      <ChatSource
+        description="HeroUI Pro ships presentation-only AI chat compounds for React."
+        faviconUrl={getFaviconUrl('https://heroui.com')}
+        href="https://heroui.com"
+        title="HeroUI Pro"
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Document() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Referenced an uploaded document.
+      </ChatMessage.Content>
+      <ChatSource sourceType="document" title="Q3-launch-brief.pdf" />
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            <ChatSource
+              faviconUrl={getFaviconUrl('https://heroui.com')}
+              href="https://heroui.com"
+              title="HeroUI"
+            />
+            <ChatSource
+              description="Tailwind Variants powers slot-based styling in Pro components."
+              faviconUrl={getFaviconUrl('https://tailwind-variants.org')}
+              href="https://tailwind-variants.org"
+              title="Tailwind Variants"
+            />
+            <ChatSource sourceType="document" title="design-system-audit.pdf" />
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        React&apos;s documentation has a clear explanation of component
+        composition and state-driven rendering. The source chip below uses
+        custom trigger content with a fetched favicon.
+      </ChatMessage.Content>
+      <ChatSource enablePreview href="https://react.dev">
+        <ChatSource.Trigger>
+          <ChatSource.Icon faviconUrl={getFaviconUrl('https://react.dev')} />
+          <ChatSource.Title>React docs</ChatSource.Title>
+        </ChatSource.Trigger>
+        <ChatSource.Preview>
+          <div className="flex max-w-72 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ChatSource.Icon
+                faviconUrl={getFaviconUrl('https://react.dev')}
+              />
+              <span className="text-foreground text-sm font-medium">
+                react.dev
+              </span>
+            </div>
+            <p className="text-muted text-sm">
+              Official React documentation for learning modern React patterns.
+            </p>
+          </div>
+        </ChatSource.Preview>
+      </ChatSource>
+    </AssistantMessage>
+  )
+}
+
+export function StackedFavicons() {
+  const sources = [
+    { href: 'https://www.reuters.com', label: 'Reuters' },
+    { href: 'https://nypost.com', label: 'New York Post' },
+    { href: 'https://www.foxsports.com', label: 'Fox Sports' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Answer synthesized from multiple sources.
+      </ChatMessage.Content>
+      <ChatSources defaultExpanded={false}>
+        <ChatSources.Trigger>
+          <span className="inline-flex -space-x-1.5">
+            {sources.map(source => (
+              <img
+                key={source.href}
+                alt=""
+                className="border-background size-5 rounded-full border object-cover"
+                src={getFaviconUrl(source.href)}
+              />
+            ))}
+          </span>
+          <span>Sources</span>
+        </ChatSources.Trigger>
+        <ChatSources.Content>
+          <ChatSources.List>
+            {sources.map(source => (
+              <ChatSource
+                key={source.href}
+                faviconUrl={getFaviconUrl(source.href)}
+                href={source.href}
+                title={source.label}
+              />
+            ))}
+          </ChatSources.List>
+        </ChatSources.Content>
+      </ChatSources>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import {ChatSource, ChatSources} from "@vezham/react-pro-v3";
+
+<ChatSource
+  faviconUrl="https://www.google.com/s2/favicons?domain_url=https://heroui.com&sz=64"
+  href="https://heroui.com"
+  title="HeroUI"
+/>
+
+<ChatSources defaultExpanded={false}>
+  <ChatSources.Trigger>3 sources</ChatSources.Trigger>
+  <ChatSources.Content>
+    <ChatSources.List>
+      <ChatSource href="https://heroui.com" title="HeroUI" />
+    </ChatSources.List>
+  </ChatSources.Content>
+</ChatSources>
+```
+
+## CSS Classes
+
+- `.chat-source` - Source root
+- `.chat-source__trigger` - Trigger wrapper
+- `.chat-source__trigger-link` - Link or document pill
+- `.chat-source__icon` - Favicon image or custom icon
+- `.chat-source__icon-fallback` - Initial fallback for URL sources
+- `.chat-source__document-icon` - Document source icon
+- `.chat-source__preview` - Hover preview popover
+- `.chat-sources` - Grouped source disclosure
+- `.chat-sources__trigger` - Group trigger
+- `.chat-sources__list` - Expanded source list
+
+## API Reference
+
+### ChatSource
+
+| Prop            | Type                  | Default                 | Description                                                                |
+| --------------- | --------------------- | ----------------------- | -------------------------------------------------------------------------- |
+| `href`          | `string`              | -                       | URL source link                                                            |
+| `title`         | `string`              | domain                  | Display title                                                              |
+| `description`   | `string`              | -                       | Enables and populates the hover preview                                    |
+| `enablePreview` | `boolean`             | auto                    | Force-enable custom preview content or disable the automatic hover preview |
+| `faviconUrl`    | `string`              | -                       | Favicon image shown in trigger and preview                                 |
+| `sourceType`    | `'url' \| 'document'` | inferred                | Source type                                                                |
+| `children`      | `ReactNode`           | default trigger/preview | Custom source composition                                                  |
+
+### ChatSource.Trigger
+
+Renders the source pill trigger. Extends native anchor props for URL sources.
+
+### ChatSource.Icon
+
+Renders a custom icon or favicon.
+
+| Prop         | Type        | Default          | Description         |
+| ------------ | ----------- | ---------------- | ------------------- |
+| `faviconUrl` | `string`    | -                | Favicon image URL   |
+| `children`   | `ReactNode` | fallback initial | Custom icon element |
+
+### ChatSource.Title
+
+Renders the source title.
+
+### ChatSource.Preview
+
+Renders the hover preview content for URL sources with title or description. If you provide a
+custom preview without root `title` or `description`, set `enablePreview` on `ChatSource` so the
+required hover-card wrapper is mounted.
+
+### ChatSources
+
+Grouped source disclosure. Extends HeroUI `Disclosure` props.
+
+### ChatSources.Trigger
+
+Renders the grouped source trigger.
+
+### ChatSources.Content
+
+Renders the expanded grouped source content.
+
+### ChatSources.List
+
+Renders the flex-wrapped source list.

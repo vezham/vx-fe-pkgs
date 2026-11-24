@@ -1,0 +1,605 @@
+---
+title: 'Cell Select'
+description: 'A compact select input styled as a settings cell, ideal for preference panels and configuration forms.'
+sourceUrl: https://heroui.pro/docs/react/components/cell-select
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-cell-select-default">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Default() {
+  const [theme, setTheme] = useState<Key | null>('default')
+
+  return (
+    <div className="w-[252px]">
+      <CellSelect
+        aria-label="Theme"
+        value={theme}
+        onChange={v => setTheme(v as Key | null)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Theme</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            <ListBox.Item id="default" textValue="Default">
+              Default
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dark" textValue="Dark">
+              Dark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="system" textValue="System">
+              System
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the CellSelect component and access all parts using dot notation.
+
+```tsx
+import { CellSelect } from '@vezham/react-pro-v3'
+
+;<CellSelect>
+  <CellSelect.Label />
+  <CellSelect.Indicator />
+  <CellSelect.Trigger />
+  <CellSelect.Value />
+  <CellSelect.Popover />
+</CellSelect>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-cell-select-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+const themes = [
+  { id: 'default', name: 'Default' },
+  { id: 'dark', name: 'Dark' },
+  { id: 'system', name: 'System' }
+]
+
+export function Controlled() {
+  const [theme, setTheme] = useState<Key | null>('default')
+
+  const selectedTheme = themes.find(t => t.id === theme)
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellSelect
+        aria-label="Theme"
+        value={theme}
+        onChange={v => setTheme(v as Key | null)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Theme</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            {themes.map(t => (
+              <ListBox.Item key={t.id} id={t.id} textValue={t.name}>
+                {t.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+      <p className="text-muted px-1 text-sm">
+        Selected: {selectedTheme?.name ?? 'None'}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Value
+
+<ComponentPreview name="pro-cell-select-custom-value">
+
+```tsx
+'use client'
+
+import { FaceSmile, Globe, Palette } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+const iconSets = [
+  { icon: <FaceSmile />, id: 'gravity', name: 'Gravity' },
+  { icon: <Palette />, id: 'heroicons', name: 'Heroicons' },
+  { icon: <Globe />, id: 'lucide', name: 'Lucide' }
+]
+
+export function CustomValue() {
+  const [iconSet, setIconSet] = useState<Key | null>('gravity')
+
+  return (
+    <div className="w-[252px]">
+      <CellSelect
+        aria-label="Icon set"
+        value={iconSet}
+        onChange={v => setIconSet(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Icons</CellSelect.Label>
+          <CellSelect.Value>
+            {({ defaultChildren, isPlaceholder, state }: any) => {
+              if (isPlaceholder || state.selectedItems.length === 0) {
+                return defaultChildren
+              }
+
+              const selected = iconSets.find(
+                s => s.id === state.selectedItems[0]?.key
+              )
+
+              if (!selected) return defaultChildren
+
+              return (
+                <span className="flex items-center justify-end gap-1.5 text-end">
+                  {selected.name}
+                  <span className="text-muted">{selected.icon}</span>
+                </span>
+              )
+            }}
+          </CellSelect.Value>
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            {iconSets.map(set => (
+              <ListBox.Item key={set.id} id={set.id} textValue={set.name}>
+                {set.icon}
+                {set.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-cell-select-disabled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Disabled() {
+  const [theme, setTheme] = useState<Key | null>('default')
+
+  return (
+    <div className="w-[252px]">
+      <CellSelect
+        isDisabled
+        aria-label="Theme"
+        value={theme}
+        onChange={v => setTheme(v as Key | null)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Theme</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            <ListBox.Item id="default" textValue="Default">
+              Default
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dark" textValue="Dark">
+              Dark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="system" textValue="System">
+              System
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Font Family
+
+<ComponentPreview name="pro-cell-select-font-family">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+const fonts = [
+  { id: 'inter', name: 'Inter' },
+  { id: 'roboto', name: 'Roboto' },
+  { id: 'system', name: 'System' },
+  { id: 'georgia', name: 'Georgia' }
+]
+
+export function FontFamily() {
+  const [heading, setHeading] = useState<Key | null>('inter')
+  const [body, setBody] = useState<Key | null>('inter')
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <span className="text-muted text-sm">Font Family</span>
+      <CellSelect
+        aria-label="Heading font"
+        value={heading}
+        onChange={v => setHeading(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Heading</CellSelect.Label>
+          <CellSelect.Value>
+            {({ defaultChildren, isPlaceholder, state }: any) => {
+              if (isPlaceholder || state.selectedItems.length === 0)
+                return defaultChildren
+
+              const selected = fonts.find(
+                f => f.id === state.selectedItems[0]?.key
+              )
+
+              if (!selected) return defaultChildren
+
+              return (
+                <span className="flex items-center justify-end gap-1.5 text-end">
+                  {selected.name}
+                  <span className="text-foreground text-sm font-medium">
+                    Ag
+                  </span>
+                </span>
+              )
+            }}
+          </CellSelect.Value>
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            {fonts.map(font => (
+              <ListBox.Item key={font.id} id={font.id} textValue={font.name}>
+                {font.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+
+      <CellSelect
+        aria-label="Body font"
+        value={body}
+        variant="secondary"
+        onChange={v => setBody(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Body</CellSelect.Label>
+          <CellSelect.Value>
+            {({ defaultChildren, isPlaceholder, state }: any) => {
+              if (isPlaceholder || state.selectedItems.length === 0)
+                return defaultChildren
+
+              const selected = fonts.find(
+                f => f.id === state.selectedItems[0]?.key
+              )
+
+              if (!selected) return defaultChildren
+
+              return (
+                <span className="flex items-center justify-end gap-1.5 text-end">
+                  {selected.name}
+                  <span className="text-foreground text-sm font-medium">
+                    Ag
+                  </span>
+                </span>
+              )
+            }}
+          </CellSelect.Value>
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            {fonts.map(font => (
+              <ListBox.Item key={font.id} id={font.id} textValue={font.name}>
+                {font.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Settings Group
+
+<ComponentPreview name="pro-cell-select-settings-group">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function SettingsGroup() {
+  const [theme, setTheme] = useState<Key | null>('default')
+  const [language, setLanguage] = useState<Key | null>('en')
+  const [fontSize, setFontSize] = useState<Key | null>('md')
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellSelect aria-label="Theme" value={theme} onChange={v => setTheme(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Theme</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            <ListBox.Item id="default" textValue="Default">
+              Default
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dark" textValue="Dark">
+              Dark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="system" textValue="System">
+              System
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+
+      <CellSelect
+        aria-label="Language"
+        value={language}
+        onChange={v => setLanguage(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Language</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            <ListBox.Item id="en" textValue="English">
+              English
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="es" textValue="Spanish">
+              Spanish
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="fr" textValue="French">
+              French
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+
+      <CellSelect
+        aria-label="Font size"
+        value={fontSize}
+        onChange={v => setFontSize(v)}>
+        <CellSelect.Trigger>
+          <CellSelect.Label>Font size</CellSelect.Label>
+          <CellSelect.Value />
+          <CellSelect.Indicator />
+        </CellSelect.Trigger>
+        <CellSelect.Popover>
+          <ListBox>
+            <ListBox.Item id="sm" textValue="Small">
+              Small
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="md" textValue="Medium">
+              Medium
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="lg" textValue="Large">
+              Large
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </CellSelect.Popover>
+      </CellSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-cell-select-variants">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Variants() {
+  const variants = ['default', 'secondary'] as const
+
+  return (
+    <div className="flex w-[252px] flex-col gap-3">
+      {variants.map(variant => {
+        const [theme, setTheme] = useState<Key | null>('default')
+
+        return (
+          <div key={variant} className="flex flex-col gap-1">
+            <span className="text-muted text-xs">{variant}</span>
+            <CellSelect
+              aria-label="Theme"
+              value={theme}
+              variant={variant}
+              onChange={v => setTheme(v as Key | null)}>
+              <CellSelect.Trigger>
+                <CellSelect.Label>Theme</CellSelect.Label>
+                <CellSelect.Value />
+                <CellSelect.Indicator />
+              </CellSelect.Trigger>
+              <CellSelect.Popover>
+                <ListBox>
+                  <ListBox.Item id="default" textValue="Default">
+                    Default
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                  <ListBox.Item id="dark" textValue="Dark">
+                    Dark
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                  <ListBox.Item id="system" textValue="System">
+                    System
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                </ListBox>
+              </CellSelect.Popover>
+            </CellSelect>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.cell-select` - Root wrapper
+
+### Element Classes
+
+- `.cell-select__trigger` - The visible cell row (wraps Select.Trigger)
+- `.cell-select__trigger--default` - Default variant trigger styling
+- `.cell-select__trigger--secondary` - Secondary variant trigger styling
+- `.cell-select__label` - Leading text label
+- `.cell-select__value` - Selected value display
+- `.cell-select__indicator` - Chevron icon
+- `.cell-select__popover` - Dropdown panel
+
+## API Reference
+
+### CellSelect
+
+The root component. Wraps HeroUI [Select](https://heroui.com/docs/react/components/select) with cell-style layout.
+
+| Prop      | Type                       | Default     | Description          |
+| --------- | -------------------------- | ----------- | -------------------- |
+| `variant` | `'default' \| 'secondary'` | `'default'` | Visual style variant |
+
+Also supports all [HeroUI Select](https://heroui.com/docs/react/components/select) props except `variant`.
+
+### CellSelect.Trigger
+
+The visible cell row containing label, value, and indicator.
+
+Also supports all HeroUI `Select.Trigger` props.
+
+### CellSelect.Label
+
+Leading text label rendered as a `span`.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Label text  |
+
+Also supports all native `span` HTML attributes.
+
+### CellSelect.Value
+
+Display of the currently selected value.
+
+Also supports all HeroUI `Select.Value` props.
+
+### CellSelect.Indicator
+
+Chevron icon. Defaults to a `ChevronsExpandVertical` icon when no children are provided.
+
+| Prop       | Type        | Default | Description           |
+| ---------- | ----------- | ------- | --------------------- |
+| `children` | `ReactNode` | -       | Custom indicator icon |
+
+Also supports all HeroUI `Select.Indicator` props.
+
+### CellSelect.Popover
+
+Dropdown panel for selection options.
+
+| Prop        | Type        | Default        | Description                               |
+| ----------- | ----------- | -------------- | ----------------------------------------- |
+| `placement` | `Placement` | `'bottom end'` | Popover placement relative to the trigger |
+
+Also supports all HeroUI `Select.Popover` props.

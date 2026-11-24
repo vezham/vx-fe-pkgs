@@ -1,0 +1,58 @@
+---
+title: 'Theming'
+description: "Customize HeroUI Native's design system with CSS variables and global styles"
+sourceUrl: https://heroui.pro/docs/native/getting-started/theming
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components use the exact same theming system as [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) — CSS variables via [Uniwind](https://uniwind.dev/), automatic light/dark switching, custom themes, custom colors, and custom fonts. No additional theming configuration is needed for Pro components.
+
+To build a theme visually, [open Design Systems](https://heroui.pro/dashboard/pro/ds). Follow the [Design Systems guide](/docs/ui/react-pro-v3/native/getting-started/design-systems) to preview supported tokens and export Native CSS for your app.
+
+<Callout type="info">
+  Read the full [Theming guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/theming) to learn
+  about color overrides, creating custom themes, adding custom colors, custom
+  fonts, the variables reference, and calculated theme utilities.
+</Callout>
+
+Any theme customization you make in your `global.css` applies to both OSS and Pro components equally:
+
+```css
+/* global.css — applies to all OSS and Pro components */
+@layer theme {
+  @variant light {
+    --accent: oklch(0.65 0.25 270);
+  }
+
+  @variant dark {
+    --accent: oklch(0.65 0.25 270);
+  }
+}
+```
+
+```tsx
+import { Stepper } from 'heroui-native-pro';
+import { Button } from 'heroui-native';
+
+<Stepper>
+  <Stepper.Step>
+    <Stepper.Rail />
+    <Stepper.Content>
+      <Stepper.Title>Account</Stepper.Title>
+    </Stepper.Content>
+  </Stepper.Step>
+</Stepper>
+
+<Button variant="primary">
+  <Button.Label>Submit</Button.Label>
+</Button>
+
+```

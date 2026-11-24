@@ -1,0 +1,15 @@
+{
+  "title": "Getting Started",
+  "root": true,
+  "pages": [
+    "---Overview---",
+    "index",
+    "installation",
+    "---Handbook---",
+    "colors",
+    "theming",
+    "styling",
+    "animation",
+    "composition"
+  ]
+}

@@ -1,0 +1,932 @@
+---
+title: 'Chat Tool'
+description: 'Collapsible tool-call cards for inputs, outputs, errors, approvals, and grouped tool activity.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-tool
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatTool` to show tool calls emitted by an agent or assistant.
+
+<ComponentPreview name="pro-chat-tool-default">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Streaming
+
+Use streaming state while tool input is still being generated.
+
+<ComponentPreview name="pro-chat-tool-streaming">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Error
+
+Use error state for failed tool calls.
+
+<ComponentPreview name="pro-chat-tool-default-error">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Approval
+
+Use approval state when a tool requires user confirmation.
+
+<ComponentPreview name="pro-chat-tool-approval">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Grouped
+
+Use `ChatToolGroup` to group consecutive tool calls.
+
+<ComponentPreview name="pro-chat-tool-grouped">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Composable
+
+Tool cards expose slots for custom trigger and content layouts.
+
+<ComponentPreview name="pro-chat-tool-composable">
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+import type { ToolPartState } from '@vezham/react-pro-v3/chat-tool'
+import { ChatTool, ChatToolGroup } from '@vezham/react-pro-v3/chat-tool'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Completed tool call with JSON args and result.
+      </ChatMessage.Content>
+      <ChatTool
+        argsText='{"city":"Paris"}'
+        defaultExpanded={false}
+        output={{ summary: '18°C, partly cloudy' }}
+        state="output-available"
+        toolName="getWeather"
+        triggerPrefix="Used tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Streaming() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"query":"HeroUI Pro'
+        state="input-streaming"
+        toolName="searchDocs"
+        triggerPrefix="Running tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function ErrorState() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        argsText='{"url":"https://example.com"}'
+        errorText="Request timed out after 30s"
+        state="output-error"
+        toolName="fetchPage"
+        triggerPrefix="Failed tool: "
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Approval() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded
+        approveLabel="Approve"
+        argsText='{"to":"team@acme.com","subject":"Launch update"}'
+        rejectLabel="Reject"
+        state="requires-action"
+        toolName="sendEmail"
+        triggerPrefix="Approval needed: "
+        onApprove={() => undefined}
+        onReject={() => undefined}
+      />
+    </AssistantMessage>
+  )
+}
+
+export function Composable() {
+  return (
+    <AssistantMessage>
+      <ChatTool
+        defaultExpanded={false}
+        state="output-available"
+        toolName="getWeather">
+        <ChatTool.Trigger>
+          <ChatTool.StatusIcon />
+          Used tool: <strong>getWeather</strong>
+        </ChatTool.Trigger>
+        <ChatTool.Content>
+          <ChatTool.Args input={{ city: 'Paris' }} label="Parameters" />
+          <ChatTool.Result
+            label="Result"
+            value={{ summary: '18°C, partly cloudy' }}
+          />
+        </ChatTool.Content>
+      </ChatTool>
+    </AssistantMessage>
+  )
+}
+
+export function Grouped() {
+  const tools: Array<{ state: ToolPartState; toolName: string }> = [
+    { state: 'output-available', toolName: 'searchDocs' },
+    { state: 'output-available', toolName: 'fetchPage' }
+  ]
+
+  return (
+    <AssistantMessage>
+      <ChatToolGroup defaultExpanded={false}>
+        <ChatToolGroup.Trigger>2 tool calls</ChatToolGroup.Trigger>
+        <ChatToolGroup.Content>
+          {tools.map(tool => (
+            <ChatTool
+              key={tool.toolName}
+              defaultExpanded={false}
+              state={tool.state}
+              toolName={tool.toolName}
+              triggerPrefix="Used tool: "
+            />
+          ))}
+        </ChatToolGroup.Content>
+      </ChatToolGroup>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+<Callout type="info">
+  `ChatTool` is a subpath-only import (`@vezham/react-pro-v3/chat-tool`) because
+  it renders a `CodeBlock` and depends on the optional `shiki` peer. It is not
+  exported from the package root, so SSR apps that don't use it never need
+  `shiki` installed.
+</Callout>
+
+```tsx
+import {ChatTool, ChatToolGroup} from "@vezham/react-pro-v3/chat-tool";
+
+<ChatTool
+  input={{query: "HeroUI Pro"}}
+  output={{matches: 3}}
+  state="output-available"
+  toolName="searchDocs"
+  triggerPrefix="Used tool: "
+/>
+
+<ChatTool state="output-available" toolName="searchDocs">
+  <ChatTool.Trigger>
+    <ChatTool.StatusIcon />
+    Used tool: <strong>searchDocs</strong>
+  </ChatTool.Trigger>
+  <ChatTool.Content>
+    <ChatTool.Args input={{query: "HeroUI Pro"}} label="Input" />
+    <ChatTool.Result label="Result" value={{matches: 3}} />
+  </ChatTool.Content>
+</ChatTool>
+```
+
+## CSS Classes
+
+- `.chat-tool` - Tool card root
+- `.chat-tool__trigger` - Collapsible trigger
+- `.chat-tool__content` - Disclosure content panel
+- `.chat-tool__args` - Tool input content
+- `.chat-tool__result` - Tool output content
+- `.chat-tool__error` - Tool error content
+- `.chat-tool-group` - Grouped tool root
+
+## API Reference
+
+### ChatTool
+
+| Prop              | Type                                                                                                  | Default | Description                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------- |
+| `toolName`        | `string`                                                                                              | -       | Tool display name                                                 |
+| `state`           | `'input-streaming' \| 'input-available' \| 'output-available' \| 'output-error' \| 'requires-action'` | -       | Tool state                                                        |
+| `triggerPrefix`   | `ReactNode`                                                                                           | -       | Optional label rendered before `toolName` in preset mode          |
+| `input`           | `unknown`                                                                                             | -       | Tool input rendered as JSON in preset mode                        |
+| `output`          | `unknown`                                                                                             | -       | Tool output rendered as JSON in preset mode                       |
+| `argsText`        | `string`                                                                                              | -       | Preformatted tool input text, useful while streaming partial JSON |
+| `errorText`       | `string`                                                                                              | -       | Error details rendered for `output-error` state                   |
+| `onApprove`       | `() => void`                                                                                          | -       | Called by the preset approval action in `requires-action` state   |
+| `onReject`        | `() => void`                                                                                          | -       | Called by the preset rejection action in `requires-action` state  |
+| `defaultExpanded` | `boolean`                                                                                             | -       | Open by default                                                   |
+| `isExpanded`      | `boolean`                                                                                             | -       | Controlled expanded state                                         |
+
+### ChatTool.Trigger
+
+Renders the collapsible tool trigger.
+
+### ChatTool.Content
+
+Renders the expanded tool body.
+
+### ChatTool.Args, Result, Error, Approval
+
+Semantic slots for tool input, output, error details, and approval controls.
+
+### ChatToolGroup
+
+Groups multiple `ChatTool` items. Extends HeroUI `Disclosure` props.

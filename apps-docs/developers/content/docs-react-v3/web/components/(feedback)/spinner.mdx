@@ -1,0 +1,221 @@
+---
+title: Spinner
+description: A loading indicator component to show pending states
+links:
+  source: spinner/spinner.tsx
+  styles: spinner.css
+  storybook: Components/Feedback/Spinner
+  figma: true
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { Spinner } from '@heroui/react'
+```
+
+<ComponentPreview
+  name="spinner-basic">
+
+```tsx
+import { Spinner } from '@vezham/react-v3'
+
+export function SpinnerBasic() {
+  return (
+    <div className="flex items-center gap-4">
+      <Spinner />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Examples
+
+### Colors
+
+<ComponentPreview
+  name="spinner-colors">
+
+```tsx
+import { Spinner } from '@vezham/react-v3'
+
+export function SpinnerColors() {
+  return (
+    <div className="flex items-center gap-8">
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="current" />
+        <span className="text-muted text-xs">Current</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="accent" />
+        <span className="text-muted text-xs">Accent</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="success" />
+        <span className="text-muted text-xs">Success</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="warning" />
+        <span className="text-muted text-xs">Warning</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner color="danger" />
+        <span className="text-muted text-xs">Danger</span>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Sizes
+
+<ComponentPreview
+  name="spinner-sizes">
+
+```tsx
+import { Spinner } from '@vezham/react-v3'
+
+export function SpinnerSizes() {
+  return (
+    <div className="flex items-center gap-8">
+      <div className="flex flex-col items-center gap-2">
+        <Spinner size="sm" />
+        <span className="text-muted text-xs">Small</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner size="md" />
+        <span className="text-muted text-xs">Medium</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner size="lg" />
+        <span className="text-muted text-xs">Large</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner size="xl" />
+        <span className="text-muted text-xs">Extra Large</span>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Speed
+
+Apply an animation utility to change how fast a single spinner rotates. Pair it with
+`motion-reduce:animate-none` so it stays still for users who prefer reduced motion.
+
+<ComponentPreview
+  name="spinner-speed">
+
+```tsx
+import { Spinner } from '@vezham/react-v3'
+
+export function SpinnerSpeed() {
+  return (
+    <div className="flex items-center gap-8">
+      <div className="flex flex-col items-center gap-2">
+        <Spinner className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+        <span className="text-muted text-xs">Slow</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner />
+        <span className="text-muted text-xs">Default</span>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Spinner className="animate-[spin_0.4s_linear_infinite] motion-reduce:animate-none" />
+        <span className="text-muted text-xs">Fast</span>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="spinner-custom-styles">
+
+```tsx
+import { Spinner } from '@vezham/react-v3'
+
+export function CustomStyles() {
+  return (
+    <div className="border-border bg-surface flex items-center gap-4 rounded-xl border px-5 py-4">
+      <Spinner className="text-accent" size="sm" />
+      <Spinner className="text-muted" size="md" />
+      <Spinner className="text-success" size="lg" />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+To customize the Spinner component classes, you can use the `@layer components` directive.
+[Learn more](https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes).
+
+```css
+@layer components {
+  .spinner {
+    @apply animate-spin;
+  }
+
+  .spinner--accent {
+    color: var(--accent);
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+The Spinner component uses these CSS classes ([View source styles](https://github.com/heroui-inc/heroui/blob/v3/packages/styles/components/spinner.css)):
+
+#### Base & Size Classes [!toc]
+
+- `.spinner` - Base spinner styles with default size
+- `.spinner--sm` - Small size variant
+- `.spinner--md` - Medium size variant (default)
+- `.spinner--lg` - Large size variant
+- `.spinner--xl` - Extra large size variant
+
+#### Color Classes [!toc]
+
+- `.spinner--current` - Inherits current text color
+- `.spinner--accent` - Accent color variant
+- `.spinner--danger` - Danger color variant
+- `.spinner--success` - Success color variant
+- `.spinner--warning` - Warning color variant
+
+## API Reference
+
+### Spinner
+
+| Prop        | Type                                                          | Default    | Description                  |
+| ----------- | ------------------------------------------------------------- | ---------- | ---------------------------- |
+| `size`      | `"sm" \| "md" \| "lg" \| "xl"`                                | `"md"`     | Size of the spinner          |
+| `color`     | `"current" \| "accent" \| "success" \| "warning" \| "danger"` | `"accent"` | Color variant of the spinner |
+| `className` | `string`                                                      | -          | Additional CSS classes       |
+
+## Related Components
+
+<RelatedComponents component="spinner" />

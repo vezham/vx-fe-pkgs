@@ -1,0 +1,64 @@
+---
+title: 'Composition'
+description: 'Build flexible React Native UI with HeroUI Pro compound components, asChild, and custom variants.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/composition
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native uses the same composition patterns as [HeroUI Native OSS](https://heroui.com/native/getting-started) — compound components with dot notation, the `asChild` prop for polymorphic rendering, and custom variants via `tailwind-variants`.
+
+<Callout type="info">
+  Read the full [Composition guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/composition) to
+  learn about compound components, the `asChild` prop, custom components, and
+  custom variants.
+</Callout>
+
+Pro components use the same compound component pattern with dot notation:
+
+```tsx
+import { Stepper } from 'heroui-native-pro'
+
+;<Stepper>
+  <Stepper.Step>
+    <Stepper.Rail>
+      <Stepper.Indicator>
+        <Stepper.IndicatorCheck />
+        <Stepper.IndicatorNumber />
+      </Stepper.Indicator>
+      <Stepper.Separator>
+        <Stepper.SeparatorTrack />
+        <Stepper.SeparatorFill />
+      </Stepper.Separator>
+    </Stepper.Rail>
+    <Stepper.Content>
+      <Stepper.Title>Account</Stepper.Title>
+      <Stepper.Description>Create your account</Stepper.Description>
+    </Stepper.Content>
+  </Stepper.Step>
+</Stepper>
+```
+
+And the same `asChild` prop for polymorphic rendering:
+
+```tsx
+import { Button } from 'heroui-native'
+import { DatePicker } from 'heroui-native-pro'
+
+;<DatePicker>
+  <DatePicker.Select>
+    <DatePicker.Trigger asChild>
+      <Button variant="tertiary">Pick a date</Button>
+    </DatePicker.Trigger>
+  </DatePicker.Select>
+</DatePicker>
+```
+
+See each component's documentation for the full compound component anatomy.

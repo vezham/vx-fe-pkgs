@@ -1,0 +1,454 @@
+---
+title: 'Empty State'
+description: 'A React empty-state component with icon, title, description, and action for guiding web users.'
+sourceUrl: https://heroui.pro/docs/react/components/empty-state
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-empty-state-default">
+
+```tsx
+'use client'
+
+import { FolderOpen } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Media variant="icon">
+            <FolderOpen />
+          </EmptyState.Media>
+          <EmptyState.Title>No Projects Yet</EmptyState.Title>
+          <EmptyState.Description>
+            You haven&apos;t created any projects yet. Get started by creating
+            your first project.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content className="flex-row gap-2">
+          <Button>Create Project</Button>
+          <Button variant="outline">Import Project</Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the EmptyState component and access all parts using dot notation.
+
+```tsx
+import { EmptyState } from '@vezham/react-pro-v3'
+
+;<EmptyState>
+  <EmptyState.Media />
+  <EmptyState.Header>
+    <EmptyState.Title />
+    <EmptyState.Description />
+  </EmptyState.Header>
+  <EmptyState.Content />
+</EmptyState>
+```
+
+## Minimal
+
+<ComponentPreview name="pro-empty-state-minimal">
+
+```tsx
+'use client'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+
+export function Minimal() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Title>Nothing here yet</EmptyState.Title>
+          <EmptyState.Description>
+            Content will appear here once it becomes available.
+          </EmptyState.Description>
+        </EmptyState.Header>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Outline
+
+<ComponentPreview name="pro-empty-state-outline">
+
+```tsx
+'use client'
+
+import { Cloud } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Outline() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState className="border-border rounded-2xl border border-dashed">
+        <EmptyState.Header>
+          <EmptyState.Media variant="icon">
+            <Cloud />
+          </EmptyState.Media>
+          <EmptyState.Title>Cloud Storage Empty</EmptyState.Title>
+          <EmptyState.Description>
+            Upload files to your cloud storage to access them anywhere.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button size="sm" variant="outline">
+            Upload Files
+          </Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-empty-state-sizes">
+
+```tsx
+'use client'
+
+import { FolderOpen } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Sizes() {
+  return (
+    <div className="flex flex-wrap items-start gap-6">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col gap-2">
+          <span className="text-muted text-center text-xs">{size}</span>
+          <div className="border-border w-[300px] rounded-2xl border border-dashed">
+            <EmptyState size={size}>
+              <EmptyState.Header>
+                <EmptyState.Media variant="icon">
+                  <FolderOpen />
+                </EmptyState.Media>
+                <EmptyState.Title>No Projects Yet</EmptyState.Title>
+                <EmptyState.Description>
+                  You haven&apos;t created any projects yet. Get started by
+                  creating your first project.
+                </EmptyState.Description>
+              </EmptyState.Header>
+              <EmptyState.Content className="flex-row gap-2">
+                <Button size={size}>Create Project</Button>
+                <Button size={size} variant="outline">
+                  Import Project
+                </Button>
+              </EmptyState.Content>
+            </EmptyState>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Full Height
+
+<ComponentPreview name="pro-empty-state-full-height">
+
+```tsx
+'use client'
+
+import { Person } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function FullHeight() {
+  return (
+    <div className="border-border flex h-[400px] w-[500px] items-center justify-center rounded-2xl border border-dashed">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Media variant="icon">
+            <Person />
+          </EmptyState.Media>
+          <EmptyState.Title>No Results Found</EmptyState.Title>
+          <EmptyState.Description className="max-w-xs text-pretty">
+            We couldn&apos;t find anything matching your search. Try adjusting
+            your filters.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button size="sm" variant="outline">
+            Clear Filters
+          </Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Avatar
+
+<ComponentPreview name="pro-empty-state-with-avatar">
+
+```tsx
+'use client'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Avatar, Badge, Button } from '@vezham/react-v3'
+
+export function WithAvatar() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Media>
+            <Badge.Anchor>
+              <Avatar className="size-12">
+                <Avatar.Image
+                  alt="John Doe"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+                />
+                <Avatar.Fallback>JD</Avatar.Fallback>
+              </Avatar>
+              <Badge
+                className="right-1 bottom-0.5 size-3 min-h-3 min-w-3"
+                color="danger"
+                placement="bottom-right"
+                size="sm"
+              />
+            </Badge.Anchor>
+          </EmptyState.Media>
+          <EmptyState.Title>User Offline</EmptyState.Title>
+          <EmptyState.Description>
+            This user is currently offline. You can leave a message to notify
+            them or try again later.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button size="md" variant="secondary">
+            Leave Message
+          </Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Avatar Group
+
+<ComponentPreview name="pro-empty-state-with-avatar-group">
+
+```tsx
+'use client'
+
+import { Plus } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Avatar, Button } from '@vezham/react-v3'
+
+export function WithAvatarGroup() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Media>
+            <div className="flex -space-x-2">
+              <Avatar className="ring-background ring-2">
+                <Avatar.Image
+                  alt="John Doe"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+                />
+                <Avatar.Fallback>JD</Avatar.Fallback>
+              </Avatar>
+              <Avatar className="ring-background ring-2">
+                <Avatar.Image
+                  alt="Kate Wilson"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg"
+                />
+                <Avatar.Fallback>KW</Avatar.Fallback>
+              </Avatar>
+              <Avatar className="ring-background ring-2">
+                <Avatar.Image
+                  alt="Emily Chen"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>EC</Avatar.Fallback>
+              </Avatar>
+            </div>
+          </EmptyState.Media>
+          <EmptyState.Title>No Team Members</EmptyState.Title>
+          <EmptyState.Description>
+            Invite your team to collaborate on this project.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button size="sm">
+            <Plus />
+            Invite Members
+          </Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Background
+
+<ComponentPreview name="pro-empty-state-with-background">
+
+```tsx
+'use client'
+
+import { Bell } from '@gravity-ui/icons'
+
+import { EmptyState } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithBackground() {
+  return (
+    <div className="w-[420px]">
+      <EmptyState className="bg-surface-secondary rounded-2xl">
+        <EmptyState.Header>
+          <EmptyState.Media
+            className="bg-surface-tertiary border"
+            variant="icon">
+            <Bell />
+          </EmptyState.Media>
+          <EmptyState.Title>No Notifications</EmptyState.Title>
+          <EmptyState.Description className="max-w-xs text-pretty">
+            You&apos;re all caught up. New notifications will appear here.
+          </EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button variant="outline">Refresh</Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.empty-state` - Base centered column layout
+- `.empty-state--sm` - Small size (less padding and gap)
+- `.empty-state--md` - Medium size (default)
+- `.empty-state--lg` - Large size (more padding and gap)
+
+### Element Classes
+
+- `.empty-state__header` - Groups media, title, and description
+- `.empty-state__media` - Icon or avatar container
+- `.empty-state__title` - Primary heading text
+- `.empty-state__description` - Secondary descriptive text
+- `.empty-state__content` - Action area for buttons, inputs, or links
+
+### Data Attributes
+
+- `[data-variant="icon"]` on `.empty-state__media` - Adds circular muted background for icon display
+- `[data-variant="default"]` on `.empty-state__media` - Default media styling (no background)
+
+## API Reference
+
+### EmptyState
+
+The root component. Renders a centered container for empty state content.
+
+| Prop        | Type                   | Default | Description                                                  |
+| ----------- | ---------------------- | ------- | ------------------------------------------------------------ |
+| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`  | Size variant controlling padding and spacing                 |
+| `children`  | `ReactNode`            | -       | Empty state content                                          |
+| `className` | `string`               | -       | Additional CSS class                                         |
+| `render`    | `DOMRenderFunction`    | -       | Custom render function to override the default `div` element |
+
+Also supports all native `div` HTML attributes.
+
+### EmptyState.Header
+
+Groups the media, title, and description elements.
+
+| Prop       | Type        | Default | Description    |
+| ---------- | ----------- | ------- | -------------- |
+| `children` | `ReactNode` | -       | Header content |
+
+Also supports all native `div` HTML attributes.
+
+### EmptyState.Media
+
+Container for icons, avatars, or images.
+
+| Prop       | Type                  | Default     | Description                               |
+| ---------- | --------------------- | ----------- | ----------------------------------------- |
+| `variant`  | `'default' \| 'icon'` | `'default'` | `"icon"` adds a circular muted background |
+| `children` | `ReactNode`           | -           | Media content                             |
+
+Also supports all native `div` HTML attributes.
+
+### EmptyState.Title
+
+Primary heading rendered as an `h3`.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Title text  |
+
+Also supports all native `h3` HTML attributes.
+
+### EmptyState.Description
+
+Secondary descriptive text rendered as a `p`.
+
+| Prop       | Type        | Default | Description      |
+| ---------- | ----------- | ------- | ---------------- |
+| `children` | `ReactNode` | -       | Description text |
+
+Also supports all native `p` HTML attributes.
+
+### EmptyState.Content
+
+Action area for buttons, links, or other interactive elements.
+
+| Prop       | Type        | Default | Description    |
+| ---------- | ----------- | ------- | -------------- |
+| `children` | `ReactNode` | -       | Action content |
+
+Also supports all native `div` HTML attributes.

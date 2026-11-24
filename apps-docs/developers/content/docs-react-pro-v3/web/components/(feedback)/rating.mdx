@@ -1,0 +1,549 @@
+---
+title: 'Rating'
+description: 'A React star rating input with fractional read-only values, custom icons, sizes, and selection.'
+sourceUrl: https://heroui.pro/docs/react/components/rating
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-rating-default">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <Rating aria-label="Rating" defaultValue={3}>
+      <Rating.Item value={1} />
+      <Rating.Item value={2} />
+      <Rating.Item value={3} />
+      <Rating.Item value={4} />
+      <Rating.Item value={5} />
+    </Rating>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Rating component and access all parts using dot notation.
+
+```tsx
+import { Rating } from '@vezham/react-pro-v3'
+
+;<Rating>
+  <Rating.Item />
+</Rating>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-rating-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function Controlled() {
+  const [value, setValue] = useState(3)
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Rating aria-label="Rating" value={value} onValueChange={setValue}>
+        <Rating.Item value={1} />
+        <Rating.Item value={2} />
+        <Rating.Item value={3} />
+        <Rating.Item value={4} />
+        <Rating.Item value={5} />
+      </Rating>
+      <span className="text-muted text-sm">
+        {value} {value === 1 ? 'star' : 'stars'}
+      </span>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Color
+
+<ComponentPreview name="pro-rating-custom-color">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function CustomColor() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Accent</span>
+        <Rating
+          aria-label="Rating accent"
+          defaultValue={4}
+          style={
+            {
+              '--rating-active-color': 'var(--color-accent)'
+            } as React.CSSProperties
+          }>
+          <Rating.Item value={1} />
+          <Rating.Item value={2} />
+          <Rating.Item value={3} />
+          <Rating.Item value={4} />
+          <Rating.Item value={5} />
+        </Rating>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Danger</span>
+        <Rating
+          aria-label="Rating danger"
+          defaultValue={4}
+          style={
+            {
+              '--rating-active-color': 'var(--color-danger)'
+            } as React.CSSProperties
+          }>
+          <Rating.Item value={1} />
+          <Rating.Item value={2} />
+          <Rating.Item value={3} />
+          <Rating.Item value={4} />
+          <Rating.Item value={5} />
+        </Rating>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-muted text-xs">Success</span>
+        <Rating
+          aria-label="Rating success"
+          defaultValue={4}
+          style={
+            {
+              '--rating-active-color': 'var(--color-success)'
+            } as React.CSSProperties
+          }>
+          <Rating.Item value={1} />
+          <Rating.Item value={2} />
+          <Rating.Item value={3} />
+          <Rating.Item value={4} />
+          <Rating.Item value={5} />
+        </Rating>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Icon Heart
+
+<ComponentPreview name="pro-rating-custom-icon-heart">
+
+```tsx
+'use client'
+
+import HeartFill from '@gravity-ui/icons/HeartFill'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function CustomIconHeart() {
+  return (
+    <Rating aria-label="Favorites" defaultValue={3} icon={<HeartFill />}>
+      <Rating.Item value={1} />
+      <Rating.Item value={2} />
+      <Rating.Item value={3} />
+      <Rating.Item value={4} />
+      <Rating.Item value={5} />
+    </Rating>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Icon Per Item
+
+<ComponentPreview name="pro-rating-custom-icon-per-item">
+
+```tsx
+'use client'
+
+import HeartFill from '@gravity-ui/icons/HeartFill'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function CustomIconPerItem() {
+  return (
+    <Rating
+      aria-label="Favorites"
+      defaultValue={3}
+      style={
+        {
+          '--rating-active-color': 'var(--color-danger)'
+        } as React.CSSProperties
+      }>
+      <Rating.Item value={1}>
+        <HeartFill />
+      </Rating.Item>
+      <Rating.Item value={2}>
+        <HeartFill />
+      </Rating.Item>
+      <Rating.Item value={3}>
+        <HeartFill />
+      </Rating.Item>
+      <Rating.Item value={4}>
+        <HeartFill />
+      </Rating.Item>
+      <Rating.Item value={5}>
+        <HeartFill />
+      </Rating.Item>
+    </Rating>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-rating-disabled">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function Disabled() {
+  return (
+    <Rating isDisabled aria-label="Rating" defaultValue={3}>
+      <Rating.Item value={1} />
+      <Rating.Item value={2} />
+      <Rating.Item value={3} />
+      <Rating.Item value={4} />
+      <Rating.Item value={5} />
+    </Rating>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Product Review
+
+<ComponentPreview name="pro-rating-product-review">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function ProductReview() {
+  return (
+    <div className="flex w-[300px] flex-col gap-4">
+      {[
+        { name: 'Quality', rating: 4.5 },
+        { name: 'Value for money', rating: 3.7 },
+        { name: 'Design', rating: 5 },
+        { name: 'Durability', rating: 2.3 }
+      ].map(item => (
+        <div key={item.name} className="flex items-center justify-between">
+          <span className="text-foreground text-sm">{item.name}</span>
+          <div className="flex items-center gap-2">
+            <Rating
+              isReadOnly
+              aria-label={`${item.name}: ${item.rating} stars`}
+              size="sm"
+              value={item.rating}>
+              <Rating.Item value={1} />
+              <Rating.Item value={2} />
+              <Rating.Item value={3} />
+              <Rating.Item value={4} />
+              <Rating.Item value={5} />
+            </Rating>
+            <span className="text-muted w-7 text-right text-xs">
+              {item.rating}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Read Only
+
+<ComponentPreview name="pro-rating-read-only">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function ReadOnly() {
+  return (
+    <div className="flex flex-col gap-4">
+      {[1.5, 2.3, 3.7, 4.2, 4.8].map(val => (
+        <div key={val} className="flex items-center gap-3">
+          <Rating isReadOnly aria-label={`${val} out of 5 stars`} value={val}>
+            <Rating.Item value={1} />
+            <Rating.Item value={2} />
+            <Rating.Item value={3} />
+            <Rating.Item value={4} />
+            <Rating.Item value={5} />
+          </Rating>
+          <span className="text-muted text-sm">{val}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Read Only Fractional
+
+<ComponentPreview name="pro-rating-read-only-fractional">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function ReadOnlyFractional() {
+  return (
+    <div className="flex flex-col gap-4">
+      {[1.5, 2.3, 3.7, 4.2, 4.8].map(val => (
+        <div key={val} className="flex items-center gap-3">
+          <Rating isReadOnly aria-label={`${val} out of 5 stars`} value={val}>
+            <Rating.Item value={1} />
+            <Rating.Item value={2} />
+            <Rating.Item value={3} />
+            <Rating.Item value={4} />
+            <Rating.Item value={5} />
+          </Rating>
+          <span className="text-muted text-sm">{val}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Render Function
+
+<ComponentPreview name="pro-rating-render-function">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Rating, RatingStarIcon } from '@vezham/react-pro-v3'
+
+const StarOutlineIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    aria-hidden="true"
+    fill="currentColor"
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}>
+    <path
+      clipRule="evenodd"
+      d="m9.194 5l.351.873l.94.064l3.197.217l-2.46 2.055l-.722.603l.23.914l.782 3.108l-2.714-1.704L8 10.629l-.798.5l-2.714 1.705l.782-3.108l.23-.914l-.723-.603l-2.46-2.055l3.198-.217l.94-.064l.35-.874L8 2.025zm-7.723-.292l3.943-.268L6.886.773C7.29-.231 8.71-.231 9.114.773l1.472 3.667l3.943.268c1.08.073 1.518 1.424.688 2.118L12.185 9.36l.964 3.832c.264 1.05-.886 1.884-1.802 1.31L8 12.4l-3.347 2.101c-.916.575-2.066-.26-1.802-1.309l.964-3.832L.783 6.826c-.83-.694-.391-2.045.688-2.118"
+      fillRule="evenodd"
+    />
+  </svg>
+)
+
+export function RenderFunction() {
+  const [value, setValue] = useState(0)
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Rating aria-label="Rating" value={value} onValueChange={setValue}>
+        {[1, 2, 3, 4, 5].map(v => (
+          <Rating.Item key={v} value={v}>
+            {({ isActive }) => (
+              <span
+                style={{
+                  color: isActive
+                    ? 'var(--color-warning)'
+                    : 'var(--color-muted)',
+                  display: 'flex',
+                  height: 20,
+                  width: 20
+                }}>
+                {isActive ? <RatingStarIcon /> : <StarOutlineIcon />}
+              </span>
+            )}
+          </Rating.Item>
+        ))}
+      </Rating>
+      <span className="text-muted text-sm">
+        {value === 0
+          ? 'No rating'
+          : `${value} ${value === 1 ? 'star' : 'stars'}`}
+      </span>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-rating-sizes">
+
+```tsx
+'use client'
+
+import { Rating } from '@vezham/react-pro-v3'
+
+export function Sizes() {
+  return (
+    <div className="flex items-center gap-8">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex flex-col items-center gap-2">
+          <span className="text-muted text-xs">{size}</span>
+          <Rating aria-label={`Rating ${size}`} defaultValue={3} size={size}>
+            <Rating.Item value={1} />
+            <Rating.Item value={2} />
+            <Rating.Item value={3} />
+            <Rating.Item value={4} />
+            <Rating.Item value={5} />
+          </Rating>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Label
+
+<ComponentPreview name="pro-rating-with-label">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Rating } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function WithLabel() {
+  const [value, setValue] = useState(0)
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label>How would you rate this product?</Label>
+      <Rating
+        aria-label="Product rating"
+        value={value}
+        onValueChange={setValue}>
+        <Rating.Item value={1} />
+        <Rating.Item value={2} />
+        <Rating.Item value={3} />
+        <Rating.Item value={4} />
+        <Rating.Item value={5} />
+      </Rating>
+      {value > 0 && (
+        <span className="text-muted text-xs">
+          You selected {value} {value === 1 ? 'star' : 'stars'}
+        </span>
+      )}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.rating` - Base rating group container
+- `.rating--sm` - Small size (no gap, smaller icons)
+- `.rating--md` - Medium size (1px gap, default)
+- `.rating--lg` - Large size (2px gap, larger icons)
+
+### Element Classes
+
+- `.rating__item` - Individual rating option
+- `.rating__item--sm` / `.rating__item--md` / `.rating__item--lg` - Item size variants
+- `.rating__icon` - Icon wrapper (star, heart, etc.)
+- `.rating__icon-partial` - Overlay for fractional read-only display
+
+### Interactive States
+
+- **Active**: `[data-active="true"]` on `.rating__item` (icon turns active color)
+- **Read-only**: `[data-readonly="true"]` on `.rating__item` (default cursor, no press scale)
+- **Focus visible**: `[data-focus-visible="true"]` on `.rating` or `.rating__item` (focus ring)
+- **Pressed**: `:active` or `[data-pressed="true"]` on `.rating__item` (scale down to 0.8)
+- **Disabled**: `[data-disabled="true"]` on `.rating` or `:disabled` / `[aria-disabled="true"]` on `.rating__item` (reduced opacity)
+
+### CSS Variables
+
+- `--rating-active-color` - Color for active/selected stars (default: `var(--color-warning)`)
+- `--rating-inactive-color` - Color for inactive stars (default: `var(--color-surface-tertiary)`)
+- `--rating-partial` - Width of the partial overlay for fractional display (set via inline style)
+
+## API Reference
+
+### Rating
+
+The root component. Wraps RAC [RadioGroup](https://react-spectrum.adobe.com/react-aria/RadioGroup.html) in horizontal orientation.
+
+| Prop            | Type                      | Default | Description                                  |
+| --------------- | ------------------------- | ------- | -------------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'`    | `'md'`  | Size variant                                 |
+| `value`         | `number`                  | -       | The current rating value (controlled)        |
+| `defaultValue`  | `number`                  | -       | The initial rating value (uncontrolled)      |
+| `onValueChange` | `(value: number) => void` | -       | Handler called when the rating value changes |
+| `icon`          | `ReactNode`               | -       | Custom icon element for all rating items     |
+
+Also supports all RAC [RadioGroup](https://react-spectrum.adobe.com/react-aria/RadioGroup.html) props except `defaultValue`, `onChange`, `orientation`, and `value`.
+
+### Rating.Item
+
+An individual rating option. Wraps RAC [Radio](https://react-spectrum.adobe.com/react-aria/Radio.html).
+
+| Prop       | Type                                                         | Default | Description                                   |
+| ---------- | ------------------------------------------------------------ | ------- | --------------------------------------------- |
+| `value`    | `number`                                                     | -       | **Required.** The numeric value for this item |
+| `children` | `ReactNode \| ((props: RatingItemRenderProps) => ReactNode)` | -       | Custom content or render function             |
+
+Also supports all RAC [Radio](https://react-spectrum.adobe.com/react-aria/Radio.html) props except `children` and `value`.
+
+### RatingItemRenderProps
+
+When using the render prop pattern on `Rating.Item`:
+
+| Property         | Type      | Description                                                   |
+| ---------------- | --------- | ------------------------------------------------------------- |
+| `isActive`       | `boolean` | Whether this item is at or below the current rating           |
+| `isPartial`      | `boolean` | Whether this item shows a partial fill (read-only fractional) |
+| `partialPercent` | `number`  | The fill percentage for partial display (0-100)               |

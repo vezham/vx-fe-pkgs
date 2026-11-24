@@ -1,0 +1,246 @@
+---
+title: 'Installation'
+description: 'Set up HeroUI Native Pro in your project'
+sourceUrl: https://heroui.pro/docs/native/getting-started/installation
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+## Requirements
+
+- Bare [React Native](https://reactnative.dev/) or [Expo](https://expo.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/) via [Uniwind](https://uniwind.dev/)
+- [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) (`heroui-native`)
+
+<Callout type="info">
+  If you haven't set up HeroUI Native OSS yet, follow the [HeroUI Native Quick
+  Start](https://heroui.com/docs/native/getting-started/quick-start) first.
+</Callout>
+
+## Login
+
+Run the HeroUI Pro CLI and log in with your GitHub account:
+
+<Tabs items={["npx", "bunx", "pnpm"]}>
+  <Tab value="npx">
+    ```bash
+    npx heroui-pro@latest login
+    ```
+  </Tab>
+
+<Tab value="bunx">```bash bunx heroui-pro@latest login ```</Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm dlx heroui-pro@latest login
+    ```
+  </Tab>
+</Tabs>
+
+A browser tab will open automatically. Sign in with your GitHub account, authorize the application, and wait for the terminal to confirm:
+
+```
+Logged in as @your-username
+
+```
+
+## Install
+
+Once logged in, run:
+
+<Tabs items={["npx", "bunx", "pnpm"]}>
+  <Tab value="npx">
+    ```bash
+    npx heroui-pro@latest install
+    ```
+  </Tab>
+
+<Tab value="bunx">```bash bunx heroui-pro@latest install ```</Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm dlx heroui-pro@latest install
+    ```
+  </Tab>
+</Tabs>
+
+The CLI handles everything automatically:
+
+1. **Adds `heroui-native-pro`** to your project (if not already present)
+2. **Downloads Pro components** from the CDN using your license
+3. **Detects missing peer dependencies** (like `@internationalized/date` for date components) and installs them
+4. **Configures your package manager** — for pnpm and bun, offers to allowlist the postinstall script so future installs work seamlessly
+
+After installation completes you'll see:
+
+```
+└  ✓ HeroUI React Native Pro v1.0.0-beta.1 installed successfully.
+
+```
+
+<Callout type="info">
+  You can also use the **interactive menu** by running `npx heroui-pro` with no
+  arguments. It provides a guided flow for login, installation, and account
+  management.
+</Callout>
+
+## Configure global.css
+
+Add the HeroUI Native Pro source path to your `global.css` file so Tailwind can scan Pro component classes:
+
+```css title="global.css"
+@import 'tailwindcss';
+@import 'uniwind';
+
+/* [!code highlight] */
+@import 'heroui-native/styles';
+@import 'heroui-native-pro/styles';
+
+@source './node_modules/heroui-native/lib';
+/* [!code highlight] */
+@source './node_modules/heroui-native-pro/lib';
+```
+
+<Callout type="warning">
+  The `@source` path is relative to your `global.css` file. Adjust accordingly
+  if your CSS file is not at the project root (e.g.,
+  `../node_modules/heroui-native-pro/lib` if `global.css` is in `app/`).
+</Callout>
+
+## Use a Pro Component
+
+```tsx
+import { Stepper } from 'heroui-native-pro'
+import { View } from 'react-native'
+
+export default function MyComponent() {
+  return (
+    <View className="bg-background flex-1 justify-center p-4">
+      <Stepper>
+        <Stepper.Step>
+          <Stepper.Rail />
+          <Stepper.Content>
+            <Stepper.Title>Account</Stepper.Title>
+            <Stepper.Description>Create your account</Stepper.Description>
+          </Stepper.Content>
+        </Stepper.Step>
+        <Stepper.Step>
+          <Stepper.Rail />
+          <Stepper.Content>
+            <Stepper.Title>Profile</Stepper.Title>
+            <Stepper.Description>Set up your profile</Stepper.Description>
+          </Stepper.Content>
+        </Stepper.Step>
+      </Stepper>
+    </View>
+  )
+}
+```
+
+## CLI Reference
+
+| Command                        | Description                                            |
+| ------------------------------ | ------------------------------------------------------ |
+| `heroui-pro login`             | Log in with GitHub                                     |
+| `heroui-pro install`           | Install Pro packages, peer deps, and configure your PM |
+| `heroui-pro install --yes`     | Non-interactive install (auto-accept all prompts)      |
+| `heroui-pro install --dry-run` | Preview what would be installed without executing      |
+| `heroui-pro status`            | Show login and installed package info                  |
+| `heroui-pro logout`            | Sign out                                               |
+
+## CI/CD
+
+For automated environments (GitHub Actions, Vercel, Netlify, EAS, etc.), use a **CI/CD token** instead of interactive login. Get your token from the [dashboard](https://heroui.pro/dashboard).
+
+Set the `HEROUI_AUTH_TOKEN` environment variable in your CI pipeline:
+
+<Tabs items={["GitHub Actions", "EAS / Expo", "General"]}>
+  <Tab value="GitHub Actions">
+    Add `HEROUI_AUTH_TOKEN` as a [repository secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions), then reference it in your workflow:
+
+    ```yaml title=".github/workflows/build.yml"
+    env:
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+    ```
+
+  </Tab>
+
+  <Tab value="EAS / Expo">
+    Add `HEROUI_AUTH_TOKEN` as an [EAS secret](https://docs.expo.dev/build-reference/variables/):
+
+    ```bash
+    eas env:create --name HEROUI_AUTH_TOKEN --value your-cicd-token --scope project --visibility secret
+    ```
+
+  </Tab>
+
+  <Tab value="General">
+    ```bash
+    export HEROUI_AUTH_TOKEN=your-cicd-token
+    npm install
+    ```
+  </Tab>
+</Tabs>
+
+When `HEROUI_AUTH_TOKEN` is set, the postinstall script automatically authenticates and downloads Pro artifacts — no interactive login needed. This works with all package managers.
+
+<Callout type="warning">
+  Use your **CI/CD token** for pipelines, not your personal token. CI/CD tokens
+  are scoped to your license and can be rotated independently from the
+  [dashboard](https://heroui.pro/dashboard).
+</Callout>
+
+<Callout type="info">
+  Each install that cannot reuse a cached package counts against the daily CDN
+  download limit. Cache the package manager store and `node_modules` so
+  unchanged builds do not download HeroUI Native again. See [CI
+  caching](/docs/ui/react-pro-v3/native/getting-started/ci-caching).
+</Callout>
+
+## Verify Installation
+
+After installation, verify everything is working:
+
+1. Check that your app starts without errors
+2. Try importing and using a Pro component like `Stepper` or `DatePicker`
+3. Run the CLI to check your status:
+
+```bash
+npx heroui-pro status
+
+```
+
+## Troubleshooting
+
+**Installation fails with permission errors**
+
+Try running the CLI with elevated permissions or check that your package manager has write access to `node_modules`.
+
+**pnpm or bun: postinstall didn't run**
+
+The CLI handles this automatically — `heroui-pro install` downloads artifacts directly and offers to configure your `package.json` so future installs work natively. If you prefer to configure it manually:
+
+- **bun**: add `"trustedDependencies": ["heroui-pro", "heroui-native-pro"]` to `package.json`
+- **pnpm**: add `"pnpm": { "onlyBuiltDependencies": ["heroui-pro", "heroui-native-pro"] }` to `package.json`
+
+**Yarn Berry (PnP) not supported**
+
+HeroUI Pro requires `node_modules`. If using Yarn Berry, add `nodeLinker: node-modules` to your `.yarnrc.yml`.
+
+**Authentication expired**
+
+Run `npx heroui-pro login` to re-authenticate. Sessions are valid for 180 days.
+
+Still having issues? Contact [support@heroui.pro](mailto:support@heroui.pro) or reach out via live chat at [heroui.pro/dashboard](https://heroui.pro/dashboard).
+
+## What's Next?
+
+- [Browse Components](../components) — See all available Pro components
+- [Provider](./provider) — Configure the HeroUI Native provider for your app
+- [Agent Skills](./agent-skills) — Set up AI tools for HeroUI Native Pro development

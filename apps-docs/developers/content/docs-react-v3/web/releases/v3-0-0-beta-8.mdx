@@ -1,0 +1,916 @@
+---
+title: v3.0.0-beta.8
+description: 3 new components (Badge, Pagination, Table), DateField improvements, and key API/style fixes.
+github:
+  pull: 6270
+---
+
+import {
+  Callout,
+  ComponentPreview,
+  DocsImage,
+  PRContributors,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+<div className="mb-6 flex items-center gap-3">
+  <span className="text-muted text-sm">March 2, 2026</span>
+</div>
+
+This release adds three new components: [Badge](https://heroui.com/docs/components/badge), [Pagination](https://heroui.com/docs/components/pagination), and [Table](https://heroui.com/docs/components/table), plus new `InputContainer` composition APIs for [DateField](https://heroui.com/docs/components/date-field) and [TimeField](https://heroui.com/docs/components/time-field).
+
+⚠️ **Breaking changes**: TextField CSS classes were renamed from `.text-field` to `.textfield`.
+
+<DocsImage
+  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/versions/beta-8-light@2x.jpg"
+  darkSrc="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/versions/beta-8-dark@2x.jpg"
+  alt="HeroUI v3 Beta 8"
+  href="https://heroui.com/docs/changelog/v3-0-0-beta-8"
+/>
+
+## Installation
+
+Update to the latest version:
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash npm i @heroui/styles@beta @heroui/react@beta ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash pnpm add @heroui/styles@beta @heroui/react@beta ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash yarn add @heroui/styles@beta @heroui/react@beta ```
+  </Tab>
+  <Tab value="bun">
+    ```bash bun add @heroui/styles@beta @heroui/react@beta ```
+  </Tab>
+</Tabs>
+
+<Callout type="info">
+  **Using AI assistants?** Simply prompt "Hey Cursor, update HeroUI to the
+  latest version" and your AI assistant will automatically compare versions and
+  apply the necessary changes. Learn more about the [HeroUI MCP
+  Server](https://heroui.com/docs/ui-for-agents/mcp-server).
+</Callout>
+
+## What's New
+
+### New Components
+
+- **[Badge](#badge)**: Compact status + count indicator with color, variant, placement, and size options. ([Docs](https://heroui.com/docs/components/badge))
+- **[Pagination](#pagination)**: Compound pagination primitives with summary, ellipsis, and previous/next controls. ([Docs](https://heroui.com/docs/components/pagination))
+- **[Table](#table)**: Data table primitives with sorting, selection, resizing, async loading, and footer composition. ([Docs](https://heroui.com/docs/components/table))
+
+### Badge
+
+New badge primitives for counters, labels, and anchored overlays with `Badge.Anchor` and `Badge.Label`.
+
+<ComponentPreview
+  name="badge-basic">
+
+```tsx
+import { Avatar, Badge } from '@vezham/react-v3'
+
+const GREEN_AVATAR_URL =
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg'
+const ORANGE_AVATAR_URL =
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg'
+const BLUE_AVATAR_URL =
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg'
+
+export function BadgeBasic() {
+  return (
+    <div className="flex items-center gap-6">
+      <Badge.Anchor>
+        <Avatar>
+          <Avatar.Image src={GREEN_AVATAR_URL} />
+          <Avatar.Fallback>JD</Avatar.Fallback>
+        </Avatar>
+        <Badge color="danger" size="sm">
+          5
+        </Badge>
+      </Badge.Anchor>
+
+      <Badge.Anchor>
+        <Avatar>
+          <Avatar.Image src={ORANGE_AVATAR_URL} />
+          <Avatar.Fallback>AB</Avatar.Fallback>
+        </Avatar>
+        <Badge color="accent" size="sm">
+          New
+        </Badge>
+      </Badge.Anchor>
+
+      <Badge.Anchor>
+        <Avatar>
+          <Avatar.Image src={BLUE_AVATAR_URL} />
+          <Avatar.Fallback>CD</Avatar.Fallback>
+        </Avatar>
+        <Badge color="success" placement="bottom-right" size="sm" />
+      </Badge.Anchor>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Pagination
+
+New navigation component built with composable parts (`Root`, `Content`, `Item`, `Link`, `Previous`, `Next`, `Summary`, `Ellipsis`).
+
+<ComponentPreview
+  name="pagination-with-ellipsis">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Pagination } from '@vezham/react-v3'
+
+export function PaginationWithEllipsis() {
+  const [page, setPage] = useState(1)
+  const totalPages = 12
+
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = []
+
+    pages.push(1)
+
+    if (page > 3) {
+      pages.push('ellipsis')
+    }
+
+    const start = Math.max(2, page - 1)
+    const end = Math.min(totalPages - 1, page + 1)
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+
+    if (page < totalPages - 2) {
+      pages.push('ellipsis')
+    }
+
+    pages.push(totalPages)
+
+    return pages
+  }
+
+  return (
+    <div className="w-full max-w-2xs overflow-x-auto sm:max-w-full">
+      <Pagination className="justify-center">
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.Previous
+              isDisabled={page === 1}
+              onPress={() => setPage(p => p - 1)}>
+              <Pagination.PreviousIcon />
+              <span>Previous</span>
+            </Pagination.Previous>
+          </Pagination.Item>
+          {getPageNumbers().map((p, i) =>
+            p === 'ellipsis' ? (
+              <Pagination.Item key={`ellipsis-${i}`}>
+                <Pagination.Ellipsis />
+              </Pagination.Item>
+            ) : (
+              <Pagination.Item key={p}>
+                <Pagination.Link
+                  isActive={p === page}
+                  onPress={() => setPage(p)}>
+                  {p}
+                </Pagination.Link>
+              </Pagination.Item>
+            )
+          )}
+          <Pagination.Item>
+            <Pagination.Next
+              isDisabled={page === totalPages}
+              onPress={() => setPage(p => p + 1)}>
+              <span>Next</span>
+              <Pagination.NextIcon />
+            </Pagination.Next>
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Table
+
+Compound data table on React Aria with sortable columns, row selection, custom cells, load-more sentinel rows, and resizable columns.
+
+<ComponentPreview
+  name="table-basic">
+
+```tsx
+import { Table } from '@vezham/react-v3'
+
+export function Basic() {
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Team members" className="min-w-[600px]">
+          <Table.Header>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
+            <Table.Column>Email</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Kate Moore</Table.Cell>
+              <Table.Cell>CEO</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+              <Table.Cell>kate@acme.com</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>John Smith</Table.Cell>
+              <Table.Cell>CTO</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+              <Table.Cell>john@acme.com</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Sara Johnson</Table.Cell>
+              <Table.Cell>CMO</Table.Cell>
+              <Table.Cell>On Leave</Table.Cell>
+              <Table.Cell>sara@acme.com</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Michael Brown</Table.Cell>
+              <Table.Cell>CFO</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+              <Table.Cell>michael@acme.com</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Custom Cells:**
+
+<ComponentPreview
+  name="table-custom-cells">
+
+```tsx
+'use client'
+
+import { Icon } from '@iconify/react'
+import { useMemo, useState } from 'react'
+
+import type { Selection, SortDescriptor } from '@vezham/react-v3'
+import { Avatar, Button, Checkbox, Chip, Table } from '@vezham/react-v3'
+
+interface User {
+  id: number
+  name: string
+  image_url: string
+  role: string
+  status: 'Active' | 'Inactive' | 'On Leave'
+  email: string
+}
+
+const statusColorMap: Record<string, 'success' | 'danger' | 'warning'> = {
+  Active: 'success',
+  Inactive: 'danger',
+  'On Leave': 'warning'
+}
+
+const users: User[] = [
+  {
+    email: 'kate@acme.com',
+    id: 4586932,
+    image_url:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+    name: 'Kate Moore',
+    role: 'Chief Executive Officer',
+    status: 'Active'
+  },
+  {
+    email: 'john@acme.com',
+    id: 5273849,
+    image_url:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    name: 'John Smith',
+    role: 'Chief Technology Officer',
+    status: 'Active'
+  },
+  {
+    email: 'sara@acme.com',
+    id: 7492836,
+    image_url:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    name: 'Sara Johnson',
+    role: 'Chief Marketing Officer',
+    status: 'On Leave'
+  },
+  {
+    email: 'michael@acme.com',
+    id: 8293746,
+    image_url:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+    name: 'Michael Brown',
+    role: 'Chief Financial Officer',
+    status: 'Active'
+  },
+  {
+    email: 'emily@acme.com',
+    id: 1234567,
+    image_url:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+    name: 'Emily Davis',
+    role: 'Product Manager',
+    status: 'Inactive'
+  }
+]
+
+export function CustomCells() {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'name',
+    direction: 'ascending'
+  })
+
+  const sortedUsers = useMemo(() => {
+    return [...users].sort((a, b) => {
+      const col = sortDescriptor.column as keyof User
+      const first = String(a[col])
+      const second = String(b[col])
+      let cmp = first.localeCompare(second)
+
+      if (sortDescriptor.direction === 'descending') {
+        cmp *= -1
+      }
+
+      return cmp
+    })
+  }, [sortDescriptor])
+
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Table with custom cells"
+          className="min-w-[800px]"
+          selectedKeys={selectedKeys}
+          selectionMode="multiple"
+          sortDescriptor={sortDescriptor}
+          onSelectionChange={setSelectedKeys}
+          onSortChange={setSortDescriptor}>
+          <Table.Header>
+            <Table.Column className="pe-0">
+              <Checkbox aria-label="Select all" slot="selection">
+                <Checkbox.Content>
+                  <Checkbox.Control>
+                    <Checkbox.Indicator />
+                  </Checkbox.Control>
+                </Checkbox.Content>
+              </Checkbox>
+            </Table.Column>
+            <Table.Column
+              allowsSorting
+              isRowHeader
+              className="after:hidden"
+              id="id">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Worker ID
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="name">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Member
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="role">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Role
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column allowsSorting id="status">
+              {({ sortDirection }) => (
+                <Table.SortableColumnHeader sortDirection={sortDirection}>
+                  Status
+                </Table.SortableColumnHeader>
+              )}
+            </Table.Column>
+            <Table.Column className="text-end">Actions</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            {sortedUsers.map(user => (
+              <Table.Row key={user.id} id={user.id}>
+                <Table.Cell className="pe-0">
+                  <Checkbox
+                    aria-label={`Select ${user.name}`}
+                    slot="selection"
+                    variant="secondary">
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                    </Checkbox.Content>
+                  </Checkbox>
+                </Table.Cell>
+                <Table.Cell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    #{user.id.toString()}{' '}
+                    <Button
+                      isIconOnly
+                      aria-label={`Copy ID #${user.id}`}
+                      size="sm"
+                      variant="ghost">
+                      <Icon
+                        className="text-muted size-4"
+                        icon="gravity-ui:copy"
+                      />
+                    </Button>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
+                  <div className="flex items-center gap-3">
+                    <Avatar size="sm">
+                      <Avatar.Image src={user.image_url} />
+                      <Avatar.Fallback>
+                        {user.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')}
+                      </Avatar.Fallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="text-xs">{user.name}</span>
+                      <span className="text-muted text-xs">{user.email}</span>
+                    </div>
+                  </div>
+                </Table.Cell>
+                <Table.Cell className="min-w-52">{user.role}</Table.Cell>
+                <Table.Cell className="min-w-25">
+                  <Chip
+                    color={statusColorMap[user.status]}
+                    size="sm"
+                    variant="soft">
+                    {user.status}
+                  </Chip>
+                </Table.Cell>
+                <Table.Cell>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      isIconOnly
+                      aria-label={`View ${user.name}`}
+                      size="sm"
+                      variant="tertiary">
+                      <Icon className="size-4" icon="gravity-ui:eye" />
+                    </Button>
+                    <Button
+                      isIconOnly
+                      aria-label={`Edit ${user.name}`}
+                      size="sm"
+                      variant="tertiary">
+                      <Icon className="size-4" icon="gravity-ui:pencil" />
+                    </Button>
+                    <Button
+                      isIconOnly
+                      aria-label={`Delete ${user.name}`}
+                      size="sm"
+                      variant="danger-soft">
+                      <Icon className="size-4" icon="gravity-ui:trash-bin" />
+                    </Button>
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Pagination:**
+
+<ComponentPreview
+  name="table-pagination">
+
+```tsx
+'use client'
+
+import { useMemo, useState } from 'react'
+
+import { Pagination, Table } from '@vezham/react-v3'
+
+const columns = [
+  { id: 'name', name: 'Name' },
+  { id: 'role', name: 'Role' },
+  { id: 'status', name: 'Status' },
+  { id: 'email', name: 'Email' }
+]
+
+const users = [
+  {
+    email: 'kate@acme.com',
+    id: 1,
+    name: 'Kate Moore',
+    role: 'CEO',
+    status: 'Active'
+  },
+  {
+    email: 'john@acme.com',
+    id: 2,
+    name: 'John Smith',
+    role: 'CTO',
+    status: 'Active'
+  },
+  {
+    email: 'sara@acme.com',
+    id: 3,
+    name: 'Sara Johnson',
+    role: 'CMO',
+    status: 'On Leave'
+  },
+  {
+    email: 'michael@acme.com',
+    id: 4,
+    name: 'Michael Brown',
+    role: 'CFO',
+    status: 'Active'
+  },
+  {
+    email: 'emily@acme.com',
+    id: 5,
+    name: 'Emily Davis',
+    role: 'Product Manager',
+    status: 'Inactive'
+  },
+  {
+    email: 'davis@acme.com',
+    id: 6,
+    name: 'Davis Wilson',
+    role: 'Lead Designer',
+    status: 'Active'
+  },
+  {
+    email: 'olivia@acme.com',
+    id: 7,
+    name: 'Olivia Martinez',
+    role: 'Frontend Engineer',
+    status: 'Active'
+  },
+  {
+    email: 'james@acme.com',
+    id: 8,
+    name: 'James Taylor',
+    role: 'Backend Engineer',
+    status: 'Active'
+  }
+]
+
+const ROWS_PER_PAGE = 4
+
+export function PaginationDemo() {
+  const [page, setPage] = useState(1)
+  const totalPages = Math.ceil(users.length / ROWS_PER_PAGE)
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+  const paginatedItems = useMemo(() => {
+    const start = (page - 1) * ROWS_PER_PAGE
+
+    return users.slice(start, start + ROWS_PER_PAGE)
+  }, [page])
+
+  const start = (page - 1) * ROWS_PER_PAGE + 1
+  const end = Math.min(page * ROWS_PER_PAGE, users.length)
+
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Table with pagination"
+          className="min-w-[600px]">
+          <Table.Header columns={columns}>
+            {column => (
+              <Table.Column isRowHeader={column.id === 'name'}>
+                {column.name}
+              </Table.Column>
+            )}
+          </Table.Header>
+          <Table.Body items={paginatedItems}>
+            {user => (
+              <Table.Row>
+                <Table.Collection items={columns}>
+                  {column => (
+                    <Table.Cell>
+                      {user[column.id as keyof typeof user]}
+                    </Table.Cell>
+                  )}
+                </Table.Collection>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+      <Table.Footer>
+        <Pagination size="sm">
+          <Pagination.Summary>
+            {start} to {end} of {users.length} results
+          </Pagination.Summary>
+          <Pagination.Content>
+            <Pagination.Item>
+              <Pagination.Previous
+                isDisabled={page === 1}
+                onPress={() => setPage(p => Math.max(1, p - 1))}>
+                <Pagination.PreviousIcon />
+                Prev
+              </Pagination.Previous>
+            </Pagination.Item>
+            {pages.map(p => (
+              <Pagination.Item key={p}>
+                <Pagination.Link
+                  isActive={p === page}
+                  onPress={() => setPage(p)}>
+                  {p}
+                </Pagination.Link>
+              </Pagination.Item>
+            ))}
+            <Pagination.Item>
+              <Pagination.Next
+                isDisabled={page === totalPages}
+                onPress={() => setPage(p => Math.min(totalPages, p + 1))}>
+                Next
+                <Pagination.NextIcon />
+              </Pagination.Next>
+            </Pagination.Item>
+          </Pagination.Content>
+        </Pagination>
+      </Table.Footer>
+    </Table>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Empty State:**
+
+<ComponentPreview
+  name="table-empty-state">
+
+```tsx
+'use client'
+
+import { Icon } from '@iconify/react'
+
+import { EmptyState, Table } from '@vezham/react-v3'
+
+export function EmptyStateDemo() {
+  return (
+    <Table className="min-h-[200px]">
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Empty table"
+          className="h-full min-w-[600px]">
+          <Table.Header>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
+            <Table.Column>Email</Table.Column>
+          </Table.Header>
+          <Table.Body
+            renderEmptyState={() => (
+              <EmptyState className="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
+                <Icon className="text-muted size-6" icon="gravity-ui:tray" />
+                <span className="text-muted text-sm">No results found</span>
+              </EmptyState>
+            )}>
+            {[]}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Component + API Improvements
+
+### DateField and TimeField Enhancements
+
+`DateField` and `TimeField` now expose `InputContainer` to wrap input segments between prefix and suffix content.
+
+**Before:**
+
+```tsx
+<DateField.Group>
+  <DateField.Prefix>...</DateField.Prefix>
+  <DateField.Input>
+    {segment => <DateField.Segment segment={segment} />}
+  </DateField.Input>
+  <DateField.Suffix>...</DateField.Suffix>
+</DateField.Group>
+```
+
+**After:**
+
+```tsx
+<DateField.Group>
+  <DateField.Prefix>...</DateField.Prefix>
+  <DateField.InputContainer>
+    <DateField.Input>
+      {segment => <DateField.Segment segment={segment} />}
+    </DateField.Input>
+  </DateField.InputContainer>
+  <DateField.Suffix>...</DateField.Suffix>
+</DateField.Group>
+```
+
+<ComponentPreview
+  name="release-date-range-picker-input-container">
+
+```tsx
+'use client'
+
+import { getLocalTimeZone, parseZonedDateTime } from '@internationalized/date'
+
+import type { TimeValue } from '@vezham/react-v3'
+import {
+  DateField,
+  DateRangePicker,
+  Label,
+  RangeCalendar,
+  TimeField
+} from '@vezham/react-v3'
+
+export function InputContainer() {
+  const localTimeZone = getLocalTimeZone()
+
+  const defaultValue = {
+    end: parseZonedDateTime(`2026-02-10T18:45:00[${localTimeZone}]`),
+    start: parseZonedDateTime(`2026-02-03T08:45:00[${localTimeZone}]`)
+  }
+
+  return (
+    <DateRangePicker
+      shouldForceLeadingZeros
+      className="w-full max-w-2xs min-w-80"
+      defaultValue={defaultValue}
+      granularity="second"
+      hourCycle={12}>
+      {({ state }) => (
+        <>
+          <Label>Date range</Label>
+          <DateField.Group>
+            <DateField.InputContainer>
+              <DateField.Input slot="start">
+                {segment => <DateField.Segment segment={segment} />}
+              </DateField.Input>
+              <DateRangePicker.RangeSeparator />
+              <DateField.Input slot="end">
+                {segment => <DateField.Segment segment={segment} />}
+              </DateField.Input>
+            </DateField.InputContainer>
+            <DateField.Suffix>
+              <DateRangePicker.Trigger>
+                <DateRangePicker.TriggerIndicator />
+              </DateRangePicker.Trigger>
+            </DateField.Suffix>
+          </DateField.Group>
+          <DateRangePicker.Popover className="flex w-full flex-col gap-3">
+            <RangeCalendar aria-label="Trip dates">
+              <RangeCalendar.Header>
+                <RangeCalendar.YearPickerTrigger>
+                  <RangeCalendar.YearPickerTriggerHeading />
+                  <RangeCalendar.YearPickerTriggerIndicator />
+                </RangeCalendar.YearPickerTrigger>
+                <RangeCalendar.NavButton slot="previous" />
+                <RangeCalendar.NavButton slot="next" />
+              </RangeCalendar.Header>
+              <RangeCalendar.Grid>
+                <RangeCalendar.GridHeader>
+                  {day => (
+                    <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+                  )}
+                </RangeCalendar.GridHeader>
+                <RangeCalendar.GridBody>
+                  {date => <RangeCalendar.Cell date={date} />}
+                </RangeCalendar.GridBody>
+              </RangeCalendar.Grid>
+              <RangeCalendar.YearPickerGrid>
+                <RangeCalendar.YearPickerGridBody>
+                  {({ year }) => <RangeCalendar.YearPickerCell year={year} />}
+                </RangeCalendar.YearPickerGridBody>
+              </RangeCalendar.YearPickerGrid>
+            </RangeCalendar>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <Label>Start Time</Label>
+                <TimeField
+                  shouldForceLeadingZeros
+                  aria-label="Start Time"
+                  granularity="second"
+                  hourCycle={12}
+                  value={state.timeRange?.start ?? null}
+                  onChange={v =>
+                    state.setTimeRange({
+                      end: state.timeRange?.end as TimeValue,
+                      start: v as TimeValue
+                    })
+                  }>
+                  <TimeField.Group variant="secondary">
+                    <TimeField.Input>
+                      {segment => <TimeField.Segment segment={segment} />}
+                    </TimeField.Input>
+                  </TimeField.Group>
+                </TimeField>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label>End Time</Label>
+                <TimeField
+                  shouldForceLeadingZeros
+                  aria-label="End Time"
+                  granularity="second"
+                  hourCycle={12}
+                  value={state.timeRange?.end ?? null}
+                  onChange={v =>
+                    state.setTimeRange({
+                      end: v as TimeValue,
+                      start: state.timeRange?.start as TimeValue
+                    })
+                  }>
+                  <TimeField.Group variant="secondary">
+                    <TimeField.Input>
+                      {segment => <TimeField.Segment segment={segment} />}
+                    </TimeField.Input>
+                  </TimeField.Group>
+                </TimeField>
+              </div>
+            </div>
+          </DateRangePicker.Popover>
+        </>
+      )}
+    </DateRangePicker>
+  )
+}
+```
+
+</ComponentPreview>
+
+## ⚠️ Breaking Changes
+
+### TextField Class + Path Renames
+
+TextField style naming was normalized to avoid conflicts with Tailwind's `text-*` utility prefix.
+
+| Component                | Old Class Name            | New Class Name           | Notes                  |
+| ------------------------ | ------------------------- | ------------------------ | ---------------------- |
+| **TextField Root**       | `.text-field`             | `.textfield`             | Root class renamed     |
+| **TextField Full Width** | `.text-field--full-width` | `.textfield--full-width` | Modifier class renamed |
+
+Additional renames in the same change:
+
+- Style file: `text-field.css` -> `textfield.css`
+- Styles export path: `@heroui/styles/src/components/text-field` -> `@heroui/styles/src/components/textfield`
+
+## Style Fixes
+
+- **RangeCalendar**: Added rounded corners to calendar cells for range selection visuals ([#6270](https://github.com/heroui-inc/heroui/pull/6270))
+
+## Bug Fixes
+
+- Added required-state red asterisk behavior for **DatePicker** and **DateRangePicker** by propagating `data-required` from `isRequired` ([#6270](https://github.com/heroui-inc/heroui/pull/6270))
+- Fixed missing invalid trigger styling in **Autocomplete** and **Select** by scoping invalid styles to root state ([#6270](https://github.com/heroui-inc/heroui/pull/6270))
+- Updated TextField docs/demo references to the new `textfield-*` demo keys and source/style paths ([#6270](https://github.com/heroui-inc/heroui/pull/6270))
+
+## Links
+
+- [Component Documentation](https://heroui.com/docs/components)
+- [Design System - Figma Kit V3](https://www.figma.com/community/file/1546526812159103429/heroui-figma-kit-v3)
+- [GitHub Repository](https://github.com/heroui-inc/heroui)
+- [GitHub PR #6270](https://github.com/heroui-inc/heroui/pull/6270)
+
+## Contributors
+
+Thanks to everyone who contributed to this release!
+
+<PRContributors />

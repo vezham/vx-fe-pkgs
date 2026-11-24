@@ -1,0 +1,220 @@
+---
+title: 'Licensing'
+description: 'HeroUI Pro Native licensing: perpetual access, optional renewals, team seats, personal tokens, and v2 upgrades.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/licensing
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro uses a simple license model: you make a one-time purchase, get one year of updates, and keep access to the version you already paid for even if you never renew.
+
+## How It Works
+
+- **One-time purchase** — HeroUI Pro is not a mandatory subscription.
+- **1 year of updates included** — Your license includes an Updates Window with access to new components, fixes, templates, and features released during that period.
+- **Renewal is optional** — If you want another year of updates, you can renew. If you do not renew, you keep using the latest version you were entitled to.
+
+## What "Perpetual" Means
+
+Perpetual access means your HeroUI Pro license does not expire in the usual SaaS sense.
+
+If your Updates Window ends and you choose not to renew:
+
+- You keep access to all components, templates, and features released before your license expired
+- Your existing projects can continue using that version
+- You are not locked out of your previous purchase
+- You simply stop receiving new releases after that point
+
+## What Renewal Gives You
+
+Renewing extends your Updates Window for another year.
+
+That means you keep receiving:
+
+- New components and templates
+- Feature updates
+- Bug fixes and improvements
+- New releases across the products included in your plan
+
+If you skip renewal, nothing breaks. You just stay on the latest eligible version from your last active Updates Window.
+
+## Team Licenses
+
+Team licenses are built for companies that want centralized billing, member management, and shared access under one plan.
+
+Team plans are seat-based. Owners and Members use one seat each; Billing users do not use a seat.
+
+Here is the current team flow:
+
+1. Purchase a Team plan.
+2. Go to [Members](https://heroui.pro/dashboard/pro/members).
+3. Create your team.
+4. Invite people as Members or Billing users.
+5. Members accept and link a GitHub account; Billing users only need to sign in and accept.
+
+After a Member invitation is accepted, HeroUI Pro creates the individual license keys for the products included in your team plan automatically. It also creates that Member's Personal Token automatically. Billing users receive financial access only.
+
+### Team Roles
+
+| Role    | Uses a seat | Product access                                                  | Team management                                     | Billing management                                                  |
+| ------- | ----------- | --------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| Owner   | Yes         | Yes                                                             | Full access, including roles and ownership transfer | Yes                                                                 |
+| Member  | Yes         | Yes, including personal package keys and a Personal Token       | Read-only roster                                    | No                                                                  |
+| Billing | No          | No product access, package keys, Personal Token, or CI/CD Token | Read-only roster                                    | Plans, seats, payments, invoices, renewals, and AI credit purchases |
+
+### Team Owners
+
+Team owners can:
+
+- Create and rename the team
+- Invite members by email
+- Remove members or cancel pending invitations
+- Add more seats from Billing when all seats are in use
+- View usage data for active license keys
+- Change people between Member and Billing
+- Transfer ownership to an accepted teammate and remain as either a Member or Billing user
+
+Ownership controls team administration and is separate from the original purchase record. Transferring ownership does not move or duplicate Stripe charges, orders, or the commercial license record.
+
+### Team Members
+
+Invited members receive an email with an invitation link. To activate access, they need to:
+
+- Sign in to HeroUI Pro
+- Link a GitHub account in their account settings
+- Return to the invite link and accept the invitation
+
+GitHub is still required to provision the per-platform package license keys. Once the invitation is accepted, HeroUI Pro creates the member's Personal Token automatically as well.
+
+### Billing Users
+
+Billing users can manage the plan, seat count, payment methods, invoices and receipts, renewal, and AI credit purchases. They can also view the team roster. They do not use a seat and cannot access Pro products, themes, downloads, package keys, Personal Tokens, CI/CD Tokens, or team-wide product usage.
+
+### Usage and Visibility
+
+Team owners can open [Usage](https://heroui.pro/dashboard/pro/usage) to monitor download activity across active license keys and local AI usage buckets.
+
+The usage page currently lets owners:
+
+- See total downloads for a selected license
+- Change the date range
+- Switch between active license keys, including member-assigned keys, Personal Tokens, and the CI/CD Token
+
+When team members use their own Personal Token for MCPs, Skills, and installs, owners get practical per-member attribution. Team members do not get access to the team-wide usage page.
+
+## Personal Token
+
+HeroUI Pro includes a Personal Token for every licensed user.
+
+This token is for human local workflows such as:
+
+- MCP server setups in editors like Cursor, Claude Code, VS Code, Windsurf, and Zed
+- HeroUI Pro Skills installs
+- Other local AI or developer-tooling flows that should be attributed to a specific user
+
+See [MCP Server](/docs/ui/react-pro-v3/native/getting-started/mcp-server) and [Agent Skills](/docs/ui/react-pro-v3/native/getting-started/agent-skills) for setup instructions.
+
+### How It Is Created
+
+- For Individual license owners and team Owners, the Personal Token is created automatically when access becomes active
+- For invited team members, the Personal Token is created automatically when they accept the invitation
+- Every Owner and Member gets their own Personal Token; Billing users do not
+
+### Where to Find It
+
+You can view your Personal Token in:
+
+- [Overview](https://heroui.pro/dashboard)
+- [Tokens](https://heroui.pro/dashboard/pro/tokens)
+
+This token is only visible to the licensed user it belongs to. Team owners cannot view a team member's Personal Token secret, and team members cannot view someone else's token.
+
+### Why It Matters
+
+- Personal Token usage is attributed to the specific licensed user
+- It is the correct default for local MCP and Skills usage
+- Team members should use this token for normal local AI workflows
+
+## CI/CD Token
+
+HeroUI Pro also includes a CI/CD Token for automated installs and deployment pipelines.
+
+Unlike the Personal Token, the CI/CD Token is designed for non-interactive environments. It lets your pipeline authenticate without signing in with GitHub on every run.
+
+### How It Is Created
+
+- The CI/CD token is created automatically for active licenses
+- It is intended for CI providers like GitHub Actions, Vercel, Railway, and similar deployment systems
+- It works without an interactive GitHub login
+- Plan access still applies: React requires a Web or Super plan, and React Native requires a Mobile or Super plan
+- CI downloads reset at 00:00 UTC. Individual licenses allow 1,000 package downloads per day. Team Web allows 5,000, and Team Super allows 10,000. Enterprise licenses with unlimited downloads are not capped. Cache installs so CI does not download the package on every run. See [CI caching](/docs/ui/react-pro-v3/native/getting-started/ci-caching).
+
+### Where to Find It
+
+If you are the license owner, you can view your CI/CD Token in:
+
+- [Overview](https://heroui.pro/dashboard)
+- [Tokens](https://heroui.pro/dashboard/pro/tokens)
+
+If you are an invited team member, you will not be able to view or reset the CI/CD Token. Only the license owner or team owner can access it.
+
+### Environment Variable
+
+Use `HEROUI_AUTH_TOKEN` as the secret that your CI system exposes to the step that installs HeroUI Pro.
+
+```yaml title=".github/workflows/deploy.yml"
+env:
+  HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+```
+
+Keep the token server-side only. Do not expose it to client-side code or public logs.
+
+### Scope
+
+The CI/CD Token is for non-interactive automation: package installs in pipelines, and headless MCP clients such as a PR-review bot.
+
+The [MCP server](/docs/ui/react-pro-v3/native/getting-started/mcp-server) accepts it through the `x-heroui-cicd-token` header. Because the token belongs to the license rather than to a person, MCP usage is attributed to the license instead of an individual teammate.
+
+### Security Best Practices
+
+- Store the token in your CI provider's encrypted secrets
+- Never commit it to your repository
+- Never expose it in browser code, preview builds, or public environment variables
+- Rotate it from the Tokens page immediately if you think it was leaked
+- After rotating, update every pipeline that used the old token
+
+### Usage Tracking
+
+CI/CD downloads appear in the same usage reporting as your other license keys. Owners can inspect CI/CD usage from [Usage](https://heroui.pro/dashboard/pro/usage) by selecting the CI/CD key from the license picker.
+
+## Personal vs CI/CD
+
+| Token          | Who can view/reset it            | Use it for                                    | Env var                 | Attribution        |
+| -------------- | -------------------------------- | --------------------------------------------- | ----------------------- | ------------------ |
+| Personal Token | The licensed user only           | Local MCP, Skills, and install flows          | `HEROUI_PERSONAL_TOKEN` | Per-user           |
+| CI/CD Token    | License owner or team owner only | CI/CD pipelines, headless MCP, and automation | `HEROUI_AUTH_TOKEN`     | Shared team bucket |
+
+## Which Token Should I Use?
+
+- Use the Personal Token for any local editor, MCP, or Skills setup
+- Use the CI/CD Token for non-interactive environments like GitHub Actions, Vercel, or Railway, including MCP clients that run there
+
+## For HeroUI Pro v2 Customers
+
+HeroUI Pro v2 and the current HeroUI Pro are separate products. Your v2 license keeps its perpetual v2 access, but it does not unlock the current Pro product.
+
+The original v2 plan owner is eligible for loyalty pricing on the current HeroUI Pro. Sign in at checkout with the exact email address used for the v2 purchase; the discount is applied automatically on the Stripe checkout page. Invited v2 teammates and accounts using another email are not eligible for the owner's discount.
+
+If you need your old dashboard or downloads, go to [HeroUI Pro v2](https://v2.heroui.pro).
+
+If the original owner email is not recognized, contact [support@heroui.pro](mailto:support@heroui.pro) and include the original purchase receipt.
+
+## Legal Terms
+
+This page is the plain-English version. For the exact legal definitions of **Perpetual**, **Renewal**, and **Updates Window**, see the [HeroUI Pro Terms and Conditions](https://heroui.pro/terms).

@@ -1,0 +1,35 @@
+---
+title: 'Animation'
+description: 'Add smooth animations and transitions to HeroUI Pro components'
+sourceUrl: https://heroui.pro/docs/react/getting-started/animation
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro components follow the exact same animation patterns as [HeroUI OSS](https://heroui.com) — built-in CSS transitions via data attributes, custom CSS animations, and JavaScript libraries like [Motion](https://motion.dev/) (prev. Framer Motion) all work the same way.
+
+<Callout type="info">
+  Read the full [Animation guide on
+  heroui.com](https://heroui.com/docs/react/getting-started/animation) to learn
+  about data-attribute-driven animations, Motion integration, reduced motion
+  support, and performance best practices.
+</Callout>
+
+Pro components use the same data attributes for animation states:
+
+```css
+/* Works on both OSS and Pro components */
+.sheet__content[data-entering] {
+  animation: slide-up 200ms ease-out;
+}
+
+.command__container[data-exiting] {
+  animation: fade-out 150ms ease-in;
+}
+```
+
+See each component's documentation for the specific data attributes and CSS classes available for animation.

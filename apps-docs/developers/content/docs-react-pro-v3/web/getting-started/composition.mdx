@@ -1,0 +1,42 @@
+---
+title: 'Composition'
+description: 'Build flexible React UI with HeroUI Pro compound components, render props, and framework-agnostic styles.'
+sourceUrl: https://heroui.pro/docs/react/getting-started/composition
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro components follow the exact same composition patterns as [HeroUI OSS](https://heroui.com) — compound components with dot notation, the `render` prop for custom elements, and framework-agnostic styles via `@heroui/styles`.
+
+<Callout type="info">
+  Read the full [Composition guide on
+  heroui.com](https://heroui.com/docs/react/getting-started/composition) to
+  learn about compound components, polymorphic rendering, the `render` prop, and
+  framework-agnostic styling.
+</Callout>
+
+Pro components use the same compound component pattern:
+
+```tsx
+import { Sidebar } from '@vezham/react-pro-v3'
+
+;<Sidebar.Provider>
+  <Sidebar>
+    <Sidebar.Header>Workspace</Sidebar.Header>
+    <Sidebar.Content>
+      <Sidebar.Menu aria-label="Navigation">
+        <Sidebar.MenuItem id="home" href="/">
+          Home
+        </Sidebar.MenuItem>
+      </Sidebar.Menu>
+    </Sidebar.Content>
+    <Sidebar.Footer>Account</Sidebar.Footer>
+  </Sidebar>
+</Sidebar.Provider>
+```
+
+See each component's documentation for its supported composition props and full compound component anatomy.

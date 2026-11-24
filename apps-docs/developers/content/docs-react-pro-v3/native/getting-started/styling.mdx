@@ -1,0 +1,41 @@
+---
+title: 'Styling'
+description: 'Style HeroUI Native components with Tailwind or StyleSheet API'
+sourceUrl: https://heroui.pro/docs/native/getting-started/styling
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components use the exact same styling system as [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) — `className` with Tailwind CSS utilities via [Uniwind](https://uniwind.dev/), the `style` prop, render props, `tailwind-variants` for custom variants, exported `classNames` objects, the `cn` utility, and `useThemeColor`. No additional styling setup is needed for Pro components.
+
+<Callout type="info">
+  Read the full [Styling guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/styling) to learn
+  about styling principles, basic styling, render props, wrapper components,
+  component classNames, responsive design, the `cn` utility, and the
+  `useThemeColor` hook.
+</Callout>
+
+Pro components accept the same `className` and `style` props as OSS components:
+
+```tsx
+import { Stepper } from 'heroui-native-pro'
+
+;<Stepper className="px-4">
+  <Stepper.Step>
+    <Stepper.Rail />
+    <Stepper.Content>
+      <Stepper.Title className="text-lg font-semibold">Account</Stepper.Title>
+      <Stepper.Description className="text-muted">
+        Create your account
+      </Stepper.Description>
+    </Stepper.Content>
+  </Stepper.Step>
+</Stepper>
+```

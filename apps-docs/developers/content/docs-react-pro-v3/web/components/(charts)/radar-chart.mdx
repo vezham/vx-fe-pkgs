@@ -1,0 +1,435 @@
+---
+title: 'Radar Chart'
+description: 'A React radar chart for comparing multivariate web data with fill, dots, and multiple series.'
+sourceUrl: https://heroui.pro/docs/react/components/radar-chart
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-radar-chart-default">
+
+```tsx
+'use client'
+
+import { ChartTooltip } from '@vezham/react-pro-v3'
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { Card } from '@vezham/react-v3'
+
+const skillsData = [
+  { category: 'Design', score: 86 },
+  { category: 'Frontend', score: 92 },
+  { category: 'Backend', score: 74 },
+  { category: 'DevOps', score: 65 },
+  { category: 'Testing', score: 78 },
+  { category: 'Leadership', score: 70 }
+]
+
+export function Default() {
+  return (
+    <Card className="w-[420px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Skill Assessment</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center">
+        <RadarChart data={skillsData} height={280}>
+          <RadarChart.Grid />
+          <RadarChart.AngleAxis dataKey="category" />
+          <RadarChart.Radar
+            dataKey="score"
+            dot={{ fill: 'var(--chart-3)', r: 3, strokeWidth: 0 }}
+            fill="var(--chart-3)"
+            fillOpacity={0.15}
+            name="Score"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+          />
+          <RadarChart.Tooltip
+            content={({ active, payload }) => {
+              if (!active || !payload?.length) return null
+              const category = payload[0]?.payload?.category as
+                string | undefined
+
+              return (
+                <ChartTooltip>
+                  {category ? (
+                    <ChartTooltip.Header>{category}</ChartTooltip.Header>
+                  ) : null}
+                  {payload.map(entry => (
+                    <ChartTooltip.Item key={String(entry.dataKey)}>
+                      <ChartTooltip.Indicator
+                        color={entry.color ?? entry.stroke ?? entry.fill}
+                      />
+                      <ChartTooltip.Label>{entry.name}</ChartTooltip.Label>
+                      <ChartTooltip.Value>{entry.value}</ChartTooltip.Value>
+                    </ChartTooltip.Item>
+                  ))}
+                </ChartTooltip>
+              )
+            }}
+          />
+        </RadarChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the RadarChart component and access all parts using dot notation.
+
+<Callout type="info">
+  `RadarChart` is a subpath-only import (`@vezham/react-pro-v3/radar-chart`)
+  because it depends on the optional `recharts` peer. It is not exported from
+  the package root, so SSR apps that don't use it never need `recharts`
+  installed.
+</Callout>
+
+```tsx
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+
+;<RadarChart>
+  <RadarChart.Grid />
+  <RadarChart.AngleAxis />
+  <RadarChart.RadiusAxis />
+  <RadarChart.Radar />
+  <RadarChart.Tooltip />
+</RadarChart>
+```
+
+## Comparison
+
+<ComponentPreview name="pro-radar-chart-comparison">
+
+```tsx
+'use client'
+
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { Card } from '@vezham/react-v3'
+
+const comparisonData = [
+  { category: 'Speed', teamA: 85, teamB: 70 },
+  { category: 'Reliability', teamA: 78, teamB: 88 },
+  { category: 'Security', teamA: 90, teamB: 75 },
+  { category: 'UX', teamA: 72, teamB: 82 },
+  { category: 'Performance', teamA: 88, teamB: 68 },
+  { category: 'Scalability', teamA: 65, teamB: 80 }
+]
+
+export function Comparison() {
+  return (
+    <Card className="w-[460px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Platform Comparison</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-3)' }}
+            />
+            <span className="text-muted text-xs">Team A</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Team B</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center">
+        <RadarChart data={comparisonData} height={300}>
+          <RadarChart.Grid />
+          <RadarChart.AngleAxis dataKey="category" />
+          <RadarChart.Radar
+            dataKey="teamA"
+            dot={{ fill: 'var(--chart-3)', r: 3, strokeWidth: 0 }}
+            fill="var(--chart-3)"
+            fillOpacity={0.15}
+            name="Team A"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+          />
+          <RadarChart.Radar
+            dataKey="teamB"
+            dot={{ fill: 'var(--chart-1)', r: 3, strokeWidth: 0 }}
+            fill="var(--chart-1)"
+            fillOpacity={0.15}
+            name="Team B"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+          />
+          <RadarChart.Tooltip content={<RadarChart.TooltipContent />} />
+        </RadarChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dots Only
+
+<ComponentPreview name="pro-radar-chart-dots-only">
+
+```tsx
+'use client'
+
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { Card } from '@vezham/react-v3'
+
+const skillsData = [
+  { category: 'Design', score: 86 },
+  { category: 'Frontend', score: 92 },
+  { category: 'Backend', score: 74 },
+  { category: 'DevOps', score: 65 },
+  { category: 'Testing', score: 78 },
+  { category: 'Leadership', score: 70 }
+]
+
+export function DotsOnly() {
+  return (
+    <Card className="w-[420px] rounded-2xl">
+      <Card.Header>
+        <Card.Title className="text-base">Performance Metrics</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center">
+        <RadarChart data={skillsData} height={280}>
+          <RadarChart.Grid />
+          <RadarChart.AngleAxis dataKey="category" />
+          <RadarChart.Radar
+            dataKey="score"
+            dot={{ fill: 'var(--chart-3)', r: 4, strokeWidth: 0 }}
+            fill="none"
+            name="Score"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+          />
+          <RadarChart.Tooltip content={<RadarChart.TooltipContent />} />
+        </RadarChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multi Series
+
+<ComponentPreview name="pro-radar-chart-multi-series">
+
+```tsx
+'use client'
+
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { Card } from '@vezham/react-v3'
+
+const metricsData = [
+  { category: 'Jan', desktop: 65, mobile: 50, tablet: 40 },
+  { category: 'Feb', desktop: 72, mobile: 58, tablet: 45 },
+  { category: 'Mar', desktop: 80, mobile: 65, tablet: 52 },
+  { category: 'Apr', desktop: 78, mobile: 70, tablet: 48 },
+  { category: 'May', desktop: 85, mobile: 60, tablet: 55 },
+  { category: 'Jun', desktop: 90, mobile: 75, tablet: 60 }
+]
+
+export function MultiSeries() {
+  return (
+    <Card className="w-[480px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Device Usage</Card.Title>
+        <div className="flex items-center gap-3">
+          {[
+            { color: 'var(--chart-4)', label: 'Desktop' },
+            { color: 'var(--chart-3)', label: 'Mobile' },
+            { color: 'var(--chart-1)', label: 'Tablet' }
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span
+                className="size-3 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="text-muted text-xs">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center">
+        <RadarChart data={metricsData} height={300}>
+          <RadarChart.Grid />
+          <RadarChart.AngleAxis dataKey="category" />
+          <RadarChart.Radar
+            dataKey="desktop"
+            dot={false}
+            fill="var(--chart-4)"
+            fillOpacity={0.1}
+            name="Desktop"
+            stroke="var(--chart-4)"
+            strokeWidth={2}
+          />
+          <RadarChart.Radar
+            dataKey="mobile"
+            dot={false}
+            fill="var(--chart-3)"
+            fillOpacity={0.1}
+            name="Mobile"
+            stroke="var(--chart-3)"
+            strokeWidth={2}
+          />
+          <RadarChart.Radar
+            dataKey="tablet"
+            dot={false}
+            fill="var(--chart-1)"
+            fillOpacity={0.1}
+            name="Tablet"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+          />
+          <RadarChart.Tooltip content={<RadarChart.TooltipContent />} />
+        </RadarChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Radius Axis
+
+<ComponentPreview name="pro-radar-chart-with-radius-axis">
+
+```tsx
+'use client'
+
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { Card } from '@vezham/react-v3'
+
+const comparisonData = [
+  { category: 'Speed', teamA: 85, teamB: 70 },
+  { category: 'Reliability', teamA: 78, teamB: 88 },
+  { category: 'Security', teamA: 90, teamB: 75 },
+  { category: 'UX', teamA: 72, teamB: 82 },
+  { category: 'Performance', teamA: 88, teamB: 68 },
+  { category: 'Scalability', teamA: 65, teamB: 80 }
+]
+
+export function WithRadiusAxis() {
+  return (
+    <Card className="w-[460px] rounded-2xl">
+      <Card.Header className="flex-row items-center justify-between">
+        <Card.Title className="text-base">Sprint Velocity</Card.Title>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-4)' }}
+            />
+            <span className="text-muted text-xs">Current</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="size-3 rounded-full"
+              style={{ backgroundColor: 'var(--chart-1)' }}
+            />
+            <span className="text-muted text-xs">Target</span>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Content className="flex flex-col items-center">
+        <RadarChart data={comparisonData} height={300}>
+          <RadarChart.Grid />
+          <RadarChart.AngleAxis dataKey="category" />
+          <RadarChart.RadiusAxis angle={90} domain={[0, 100]} />
+          <RadarChart.Radar
+            dataKey="teamA"
+            dot={{ fill: 'var(--chart-4)', r: 3, strokeWidth: 0 }}
+            fill="var(--chart-4)"
+            fillOpacity={0.15}
+            name="Current"
+            stroke="var(--chart-4)"
+            strokeWidth={2}
+          />
+          <RadarChart.Radar
+            dataKey="teamB"
+            dot={{ fill: 'var(--chart-1)', r: 3, strokeWidth: 0 }}
+            fill="var(--chart-1)"
+            fillOpacity={0.15}
+            name="Target"
+            stroke="var(--chart-1)"
+            strokeWidth={2}
+          />
+          <RadarChart.Tooltip content={<RadarChart.TooltipContent />} />
+        </RadarChart>
+      </Card.Content>
+    </Card>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.radar-chart` — Root container wrapping `ResponsiveContainer` and the Recharts chart.
+
+### Recharts Theming
+
+The following CSS rules target Recharts internal class names to apply HeroUI design tokens automatically:
+
+- `.radar-chart .recharts-polar-angle-axis-tick-value` — Angle axis tick labels. 11px muted text.
+- `.radar-chart .recharts-polar-radius-axis-tick-value` — Radius axis tick labels. 10px muted text.
+- `.radar-chart .recharts-polar-grid-concentric-polygon` / `.recharts-polar-grid-concentric-circle` — Concentric grid shapes. Muted stroke at 0.2 opacity.
+- `.radar-chart .recharts-polar-grid-angle line` — Angle grid lines. Muted stroke at 0.2 opacity.
+- `.radar-chart .recharts-tooltip-cursor` — Tooltip cursor. Hidden for radar charts.
+
+## API Reference
+
+### RadarChart
+
+The root wrapper. Renders a `ResponsiveContainer` + Recharts `RadarChart` with HeroUI CSS theming applied automatically.
+
+| Prop       | Type                                 | Default  | Description                                                                  |
+| ---------- | ------------------------------------ | -------- | ---------------------------------------------------------------------------- |
+| `data`     | `Record<string, number \| string>[]` | —        | Chart data — array of objects with a category key and numeric series fields. |
+| `height`   | `number`                             | `300`    | Chart height in pixels.                                                      |
+| `width`    | ``number \| `${number}%` ``          | `"100%"` | Chart width in pixels or percentage string.                                  |
+| `children` | `ReactNode`                          | —        | Recharts child components (`RadarChart.Radar`, `RadarChart.Grid`, etc.).     |
+
+Also supports all native `div` HTML attributes.
+
+### RadarChart.Radar
+
+Re-exported Recharts `Radar` component. Follows the [Recharts Radar API](https://recharts.github.io/en-US/api/Radar/).
+
+### RadarChart.Grid
+
+Re-exported Recharts `PolarGrid` component. Follows the [Recharts PolarGrid API](https://recharts.github.io/en-US/api/PolarGrid/).
+
+### RadarChart.AngleAxis
+
+Re-exported Recharts `PolarAngleAxis` component. Follows the [Recharts PolarAngleAxis API](https://recharts.github.io/en-US/api/PolarAngleAxis/).
+
+### RadarChart.RadiusAxis
+
+Re-exported Recharts `PolarRadiusAxis` component. Follows the [Recharts PolarRadiusAxis API](https://recharts.github.io/en-US/api/PolarRadiusAxis/).
+
+### RadarChart.Tooltip
+
+Re-exported Recharts `Tooltip` component. Follows the [Recharts Tooltip API](https://recharts.github.io/en-US/api/Tooltip/). Use with `RadarChart.TooltipContent` for styled tooltips.
+
+### RadarChart.TooltipContent
+
+Pre-built tooltip renderer for Recharts. Pass as the `content` prop of `RadarChart.Tooltip`. See [ChartTooltip](https://heroui.pro/docs/react/components/chart-tooltip) for full props.

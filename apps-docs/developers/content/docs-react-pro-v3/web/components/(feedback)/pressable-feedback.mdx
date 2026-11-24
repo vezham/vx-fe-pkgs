@@ -1,0 +1,1380 @@
+---
+title: 'Pressable Feedback'
+description: 'A press interaction layer adding ripple, highlight, hold-to-confirm, and progress feedback effects to any element.'
+sourceUrl: https://heroui.pro/docs/react/components/pressable-feedback
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-pressable-feedback-default">
+
+```tsx
+'use client'
+
+import {
+  Ellipsis,
+  Envelope,
+  Gear,
+  Globe,
+  Plus,
+  TrashBin
+} from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Ripple />
+          Primary
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Ripple />
+          Secondary
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Ripple />
+          Tertiary
+        </Button>
+        <Button variant="outline">
+          <PressableFeedback.Ripple />
+          Outline
+        </Button>
+        <Button variant="ghost">
+          <PressableFeedback.Ripple />
+          Ghost
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Ripple />
+          Danger
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Ripple />
+          <Globe />
+          Search
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Ripple />
+          <Plus />
+          Add Member
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Ripple />
+          <Envelope />
+          Email
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Ripple />
+          <TrashBin />
+          Delete
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="tertiary">
+          <PressableFeedback.Ripple />
+          <Ellipsis />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.Ripple />
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="danger">
+          <PressableFeedback.Ripple />
+          <TrashBin />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the PressableFeedback component and access all parts using dot notation.
+
+```tsx
+import { PressableFeedback } from '@vezham/react-pro-v3'
+
+;<PressableFeedback>
+  <PressableFeedback.Highlight />
+  <PressableFeedback.Ripple />
+  <PressableFeedback.HoldConfirm />
+  <PressableFeedback.ProgressFeedback />
+</PressableFeedback>
+```
+
+## Comparison
+
+<ComponentPreview name="pro-pressable-feedback-comparison">
+
+```tsx
+'use client'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Comparison() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <span className="text-muted mb-2 block text-xs font-medium">
+          Ripple
+        </span>
+        <div className="flex flex-wrap gap-3">
+          <Button>
+            <PressableFeedback.Ripple />
+            Primary
+          </Button>
+          <Button variant="secondary">
+            <PressableFeedback.Ripple />
+            Secondary
+          </Button>
+          <Button variant="outline">
+            <PressableFeedback.Ripple />
+            Outline
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <span className="text-muted mb-2 block text-xs font-medium">
+          Highlight
+        </span>
+        <div className="flex flex-wrap gap-3">
+          <Button>
+            <PressableFeedback.Highlight />
+            Primary
+          </Button>
+          <Button variant="secondary">
+            <PressableFeedback.Highlight />
+            Secondary
+          </Button>
+          <Button variant="outline">
+            <PressableFeedback.Highlight />
+            Outline
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <span className="text-muted mb-2 block text-xs font-medium">
+          Hold Confirm
+        </span>
+        <div className="flex flex-wrap gap-3">
+          <Button>
+            <PressableFeedback.HoldConfirm className="bg-accent text-accent-foreground">
+              Primary
+            </PressableFeedback.HoldConfirm>
+            Primary
+          </Button>
+          <Button variant="secondary">
+            <PressableFeedback.HoldConfirm className="bg-accent-soft text-accent-soft-foreground">
+              Secondary
+            </PressableFeedback.HoldConfirm>
+            Secondary
+          </Button>
+          <Button variant="outline">
+            <PressableFeedback.HoldConfirm className="bg-danger text-danger-foreground">
+              Outline
+            </PressableFeedback.HoldConfirm>
+            Outline
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <span className="text-muted mb-2 block text-xs font-medium">
+          Progress Feedback
+        </span>
+        <div className="flex flex-wrap gap-3">
+          <Button>
+            <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+              Primary
+            </PressableFeedback.ProgressFeedback>
+            Primary
+          </Button>
+          <Button variant="secondary">
+            <PressableFeedback.ProgressFeedback className="bg-accent-soft text-accent-soft-foreground">
+              Secondary
+            </PressableFeedback.ProgressFeedback>
+            Secondary
+          </Button>
+          <Button variant="outline">
+            <PressableFeedback.ProgressFeedback className="bg-danger text-danger-foreground">
+              Outline
+            </PressableFeedback.ProgressFeedback>
+            Outline
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-pressable-feedback-disabled">
+
+```tsx
+'use client'
+
+import { Gear, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-3">
+        <Button isDisabled>
+          <PressableFeedback.Ripple />
+          Disabled Ripple
+        </Button>
+        <Button isDisabled variant="secondary">
+          <PressableFeedback.Ripple />
+          Secondary
+        </Button>
+        <Button isDisabled isIconOnly variant="tertiary">
+          <PressableFeedback.Ripple />
+          <Gear />
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button isDisabled>
+          <PressableFeedback.Highlight />
+          Disabled Highlight
+        </Button>
+        <Button isDisabled variant="secondary">
+          <PressableFeedback.Highlight />
+          Secondary
+        </Button>
+        <Button isDisabled isIconOnly variant="tertiary">
+          <PressableFeedback.Highlight />
+          <Gear />
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button isDisabled variant="danger-soft">
+          <PressableFeedback.HoldConfirm className="bg-danger text-danger-foreground">
+            <TrashBin />
+            Disabled Hold
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Disabled Hold
+        </Button>
+        <Button isDisabled variant="secondary">
+          <PressableFeedback.HoldConfirm className="bg-accent-soft text-accent-soft-foreground">
+            Secondary
+          </PressableFeedback.HoldConfirm>
+          Secondary
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button isDisabled variant="danger-soft">
+          <PressableFeedback.ProgressFeedback className="bg-danger text-danger-foreground">
+            <TrashBin />
+            Disabled Progress
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Disabled Progress
+        </Button>
+        <Button isDisabled variant="secondary">
+          <PressableFeedback.ProgressFeedback className="bg-accent-soft text-accent-soft-foreground">
+            Secondary
+          </PressableFeedback.ProgressFeedback>
+          Secondary
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Hold Confirm Callback
+
+<ComponentPreview name="pro-pressable-feedback-hold-confirm-callback">
+
+```tsx
+'use client'
+
+import { TrashBin } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function HoldConfirmCallback() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4">
+      <Button variant="danger-soft">
+        <PressableFeedback.HoldConfirm
+          className="bg-danger text-danger-foreground"
+          onComplete={() => setCount(c => c + 1)}>
+          <TrashBin />
+          Hold to Delete
+        </PressableFeedback.HoldConfirm>
+        <TrashBin />
+        Hold to Delete
+      </Button>
+      <p className="text-muted text-xs">
+        Count: <strong>{count}</strong>
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Hold Confirm Durations
+
+<ComponentPreview name="pro-pressable-feedback-hold-confirm-durations">
+
+```tsx
+'use client'
+
+import { TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function HoldConfirmDurations() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        Different hold durations: fast (800ms), default (2s), slow (4s).
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            duration={800}>
+            <TrashBin />
+            Fast (800ms)
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Fast (800ms)
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm className="bg-danger text-danger-foreground">
+            <TrashBin />
+            Default (2s)
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Default (2s)
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            duration={4000}>
+            <TrashBin />
+            Slow (4s)
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Slow (4s)
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Hold Confirm Sweep
+
+<ComponentPreview name="pro-pressable-feedback-hold-confirm-sweep">
+
+```tsx
+'use client'
+
+import { Gear, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function HoldConfirmSweep() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        The clip-path reveal can sweep in four directions: right, left, down,
+        up.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            sweep="right">
+            <TrashBin />
+            Sweep Right
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Sweep Right
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            sweep="left">
+            <TrashBin />
+            Sweep Left
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Sweep Left
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            sweep="down">
+            <TrashBin />
+            Sweep Down
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Sweep Down
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            sweep="up">
+            <TrashBin />
+            Sweep Up
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Sweep Up
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.HoldConfirm
+            className="bg-accent text-accent-foreground"
+            sweep="up">
+            <Gear />
+          </PressableFeedback.HoldConfirm>
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.HoldConfirm
+            className="bg-accent text-accent-foreground"
+            sweep="down">
+            <Gear />
+          </PressableFeedback.HoldConfirm>
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.HoldConfirm
+            className="bg-accent text-accent-foreground"
+            sweep="left">
+            <Gear />
+          </PressableFeedback.HoldConfirm>
+          <Gear />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Pressable Cards
+
+<ComponentPreview name="pro-pressable-feedback-pressable-cards">
+
+```tsx
+'use client'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Avatar, Button, Card } from '@vezham/react-v3'
+
+export function PressableCards() {
+  return (
+    <div className="grid w-[500px] grid-cols-12 gap-4">
+      <Card className="relative col-span-12 h-[220px] overflow-hidden">
+        <PressableFeedback.Ripple className="z-1" />
+        <img
+          alt="NEO Home Robot"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/neo1.jpeg"
+        />
+        <Card.Header className="z-10">
+          <Card.Title className="text-xs font-semibold tracking-wide text-black/70">
+            NEO
+          </Card.Title>
+          <Card.Description className="text-sm leading-5 font-medium text-black/50">
+            Home Robot
+          </Card.Description>
+        </Card.Header>
+        <Card.Footer className="z-10 mt-auto flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium text-black">Available soon</div>
+            <div className="text-xs text-black/60">Get notified</div>
+          </div>
+          <Button className="bg-white text-black" size="sm" variant="tertiary">
+            <PressableFeedback.Ripple />
+            Notify me
+          </Button>
+        </Card.Footer>
+      </Card>
+
+      <Card className="col-span-6 cursor-pointer gap-2 overflow-hidden">
+        <PressableFeedback.Ripple className="text-rose-200" />
+        <Card.Header>
+          <Avatar className="size-14 rounded-xl">
+            <Avatar.Image
+              alt="Indie Hackers"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/demo1.jpg"
+            />
+            <Avatar.Fallback>IH</Avatar.Fallback>
+          </Avatar>
+        </Card.Header>
+        <Card.Content className="mt-1">
+          <p className="text-sm leading-4 font-medium">Indie Hackers</p>
+          <p className="text-muted text-xs">148 members</p>
+        </Card.Content>
+        <Card.Footer className="flex items-center gap-2">
+          <Avatar className="size-4">
+            <Avatar.Image
+              alt="John"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg"
+            />
+            <Avatar.Fallback>J</Avatar.Fallback>
+          </Avatar>
+          <p className="text-muted text-xs">By John</p>
+        </Card.Footer>
+      </Card>
+
+      <Card className="col-span-6 cursor-pointer gap-2 overflow-hidden">
+        <PressableFeedback.Ripple className="text-sky-300" />
+        <Card.Header>
+          <Avatar className="size-14 rounded-xl">
+            <Avatar.Image
+              alt="AI Builders"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/demo2.jpg"
+            />
+            <Avatar.Fallback>AB</Avatar.Fallback>
+          </Avatar>
+        </Card.Header>
+        <Card.Content className="mt-1">
+          <p className="text-sm leading-4 font-medium">AI Builders</p>
+          <p className="text-muted text-xs">362 members</p>
+        </Card.Content>
+        <Card.Footer className="flex items-center gap-2">
+          <Avatar className="size-4">
+            <Avatar.Image
+              alt="Martha"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+            />
+            <Avatar.Fallback>M</Avatar.Fallback>
+          </Avatar>
+          <p className="text-muted text-xs">By Martha</p>
+        </Card.Footer>
+      </Card>
+
+      <Card
+        className="col-span-12 flex cursor-pointer flex-row gap-3 overflow-hidden p-2"
+        variant="transparent">
+        <PressableFeedback.Highlight />
+        <img
+          alt="Futuristic Robot"
+          className="aspect-square h-20 w-20 shrink-0 rounded-xl object-cover"
+          loading="lazy"
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg"
+        />
+        <div className="flex flex-1 flex-col justify-center gap-1">
+          <Card.Title className="text-sm">Bridging the Future</Card.Title>
+          <Card.Description className="text-xs">
+            Today, 6:30 PM
+          </Card.Description>
+        </div>
+      </Card>
+
+      <Card
+        className="col-span-12 flex cursor-pointer flex-row gap-3 overflow-hidden p-2"
+        variant="transparent">
+        <PressableFeedback.Highlight />
+        <img
+          alt="Avocado Hackathon"
+          className="aspect-square h-20 w-20 shrink-0 rounded-xl object-cover"
+          loading="lazy"
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg"
+        />
+        <div className="flex flex-1 flex-col justify-center gap-1">
+          <Card.Title className="text-sm">Avocado Hackathon</Card.Title>
+          <Card.Description className="text-xs">Wed, 4:30 PM</Card.Description>
+        </div>
+      </Card>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Progress Feedback Callback
+
+<ComponentPreview name="pro-pressable-feedback-progress-feedback-callback">
+
+```tsx
+'use client'
+
+import { LocationArrowFill } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function ProgressFeedbackCallback() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4">
+      <Button variant="secondary">
+        <PressableFeedback.ProgressFeedback
+          className="bg-accent text-accent-foreground"
+          onComplete={() => setCount(c => c + 1)}>
+          <LocationArrowFill />
+          Send
+        </PressableFeedback.ProgressFeedback>
+        <LocationArrowFill />
+        Send
+      </Button>
+      <p className="text-muted text-xs">
+        Count: <strong>{count}</strong>
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Progress Feedback Durations
+
+<ComponentPreview name="pro-pressable-feedback-progress-feedback-durations">
+
+```tsx
+'use client'
+
+import { TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function ProgressFeedbackDurations() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        Different progress durations: fast (800ms), default (2s), slow (4s).
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            duration={800}>
+            <TrashBin />
+            Fast (800ms)
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Fast (800ms)
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+            <TrashBin />
+            Default (2s)
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Default (2s)
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            duration={4000}>
+            <TrashBin />
+            Slow (4s)
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Slow (4s)
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Progress Feedback No Reset
+
+<ComponentPreview name="pro-pressable-feedback-progress-feedback-no-reset">
+
+```tsx
+'use client'
+
+import { Gear, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function ProgressFeedbackNoReset() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        With autoReset=false, the overlay stays revealed after progress
+        completes.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="danger-soft">
+          <PressableFeedback.ProgressFeedback
+            autoReset={false}
+            className="bg-danger text-danger-foreground">
+            <TrashBin />
+            Account Deleted
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Delete Account
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            autoReset={false}
+            className="bg-accent text-accent-foreground">
+            <Gear />
+            Settings Applied
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+          Apply Settings
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Progress Feedback Sweep
+
+<ComponentPreview name="pro-pressable-feedback-progress-feedback-sweep">
+
+```tsx
+'use client'
+
+import { Gear, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function ProgressFeedbackSweep() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        The clip-path reveal can sweep in four directions: right, left, down,
+        up.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="right">
+            <TrashBin />
+            Sweep Right
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Sweep Right
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="left">
+            <TrashBin />
+            Sweep Left
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Sweep Left
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="down">
+            <TrashBin />
+            Sweep Down
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Sweep Down
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="up">
+            <TrashBin />
+            Sweep Up
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+          Sweep Up
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="up">
+            <Gear />
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="down">
+            <Gear />
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.ProgressFeedback
+            className="bg-accent text-accent-foreground"
+            sweep="left">
+            <Gear />
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Standalone Highlight
+
+<ComponentPreview name="pro-pressable-feedback-standalone-highlight">
+
+```tsx
+'use client'
+
+import { ChevronRight, Person } from '@gravity-ui/icons'
+
+import { ItemCard, PressableFeedback } from '@vezham/react-pro-v3'
+
+export function StandaloneHighlight() {
+  return (
+    <div className="w-[500px]">
+      <ItemCard<'button'>
+        className="relative w-full cursor-pointer overflow-hidden"
+        render={props => <button type="button" {...props} />}>
+        <PressableFeedback.Highlight />
+        <ItemCard.Icon>
+          <Person />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Profile</ItemCard.Title>
+          <ItemCard.Description>
+            Update your personal information
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Standalone Ripple
+
+<ComponentPreview name="pro-pressable-feedback-standalone-ripple">
+
+```tsx
+'use client'
+
+import { ChevronRight, Person } from '@gravity-ui/icons'
+
+import { ItemCard, PressableFeedback } from '@vezham/react-pro-v3'
+
+export function StandaloneRipple() {
+  return (
+    <div className="w-[500px]">
+      <ItemCard<'button'>
+        className="relative w-full cursor-pointer overflow-hidden"
+        render={props => <button type="button" {...props} />}>
+        <PressableFeedback.Ripple />
+        <ItemCard.Icon>
+          <Person />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Profile</ItemCard.Title>
+          <ItemCard.Description>
+            Update your personal information
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Highlight
+
+<ComponentPreview name="pro-pressable-feedback-with-highlight">
+
+```tsx
+'use client'
+
+import {
+  Ellipsis,
+  Envelope,
+  Gear,
+  Globe,
+  Plus,
+  TrashBin
+} from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithHighlight() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Highlight />
+          Primary
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Highlight />
+          Secondary
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Highlight />
+          Tertiary
+        </Button>
+        <Button variant="outline">
+          <PressableFeedback.Highlight />
+          Outline
+        </Button>
+        <Button variant="ghost">
+          <PressableFeedback.Highlight />
+          Ghost
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Highlight />
+          Danger
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Highlight />
+          <Globe />
+          Search
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Highlight />
+          <Plus />
+          Add Member
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Highlight />
+          <Envelope />
+          Email
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Highlight />
+          <TrashBin />
+          Delete
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="tertiary">
+          <PressableFeedback.Highlight />
+          <Ellipsis />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.Highlight />
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="danger">
+          <PressableFeedback.Highlight />
+          <TrashBin />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Hold Confirm
+
+<ComponentPreview name="pro-pressable-feedback-with-hold-confirm">
+
+```tsx
+'use client'
+
+import { Gear, Plus, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithHoldConfirm() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        Press and hold buttons to see the clip-path reveal.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="danger-soft">
+          <PressableFeedback.HoldConfirm className="bg-danger text-danger-foreground">
+            <TrashBin />
+            Hold to Delete
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+          Hold to Delete
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.HoldConfirm className="bg-accent-soft text-accent-soft-foreground">
+            <Gear />
+            Hold to Apply
+          </PressableFeedback.HoldConfirm>
+          <Gear />
+          Hold to Apply
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.HoldConfirm className="bg-accent text-accent-foreground">
+            <Plus />
+            Added!
+          </PressableFeedback.HoldConfirm>
+          <Plus />
+          Hold to Add
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="danger-soft">
+          <PressableFeedback.HoldConfirm
+            className="bg-danger text-danger-foreground"
+            sweep="up">
+            <TrashBin />
+          </PressableFeedback.HoldConfirm>
+          <TrashBin />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.HoldConfirm className="bg-accent text-accent-foreground">
+            <Gear />
+          </PressableFeedback.HoldConfirm>
+          <Gear />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Progress Feedback
+
+<ComponentPreview name="pro-pressable-feedback-with-progress-feedback">
+
+```tsx
+'use client'
+
+import { Gear, Plus, ShoppingCart, TrashBin } from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithProgressFeedback() {
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-muted text-xs">
+        Click once — the overlay sweeps in automatically.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+            Buying!
+          </PressableFeedback.ProgressFeedback>
+          <ShoppingCart />
+          Buy Now
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+            <Gear />
+            Applied!
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+          Apply Settings
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+            <Plus />
+            Added!
+          </PressableFeedback.ProgressFeedback>
+          <Plus />
+          Add Item
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="danger-soft">
+          <PressableFeedback.ProgressFeedback
+            className="bg-danger text-danger-foreground"
+            sweep="up">
+            <TrashBin />
+          </PressableFeedback.ProgressFeedback>
+          <TrashBin />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.ProgressFeedback className="bg-accent text-accent-foreground">
+            <Gear />
+          </PressableFeedback.ProgressFeedback>
+          <Gear />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Ripple
+
+<ComponentPreview name="pro-pressable-feedback-with-ripple">
+
+```tsx
+'use client'
+
+import {
+  Ellipsis,
+  Envelope,
+  Gear,
+  Globe,
+  Plus,
+  TrashBin
+} from '@gravity-ui/icons'
+
+import { PressableFeedback } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithRipple() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Ripple />
+          Primary
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Ripple />
+          Secondary
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Ripple />
+          Tertiary
+        </Button>
+        <Button variant="outline">
+          <PressableFeedback.Ripple />
+          Outline
+        </Button>
+        <Button variant="ghost">
+          <PressableFeedback.Ripple />
+          Ghost
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Ripple />
+          Danger
+        </Button>
+        <Button variant="danger-soft">
+          <PressableFeedback.Ripple />
+          Danger Soft
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Button>
+          <PressableFeedback.Ripple />
+          <Globe />
+          Search
+        </Button>
+        <Button variant="secondary">
+          <PressableFeedback.Ripple />
+          <Plus />
+          Add Member
+        </Button>
+        <Button variant="tertiary">
+          <PressableFeedback.Ripple />
+          <Envelope />
+          Email
+        </Button>
+        <Button variant="danger">
+          <PressableFeedback.Ripple />
+          <TrashBin />
+          Delete
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Button isIconOnly variant="tertiary">
+          <PressableFeedback.Ripple />
+          <Ellipsis />
+        </Button>
+        <Button isIconOnly variant="secondary">
+          <PressableFeedback.Ripple />
+          <Gear />
+        </Button>
+        <Button isIconOnly variant="danger">
+          <PressableFeedback.Ripple />
+          <TrashBin />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.pressable-feedback` - Base pressable container with relative positioning and overflow hidden
+
+### Element Classes
+
+- `.pressable-feedback__highlight` - Opacity-based press overlay
+- `.pressable-feedback__ripple` - M3-style radial ripple container
+- `.pressable-feedback__ripple-surface` - Ripple animation surface with `::before` (hover) and `::after` (press) pseudo-elements
+- `.pressable-feedback__hold-confirm` - Clip-path hold-to-reveal overlay
+- `.pressable-feedback__progress-feedback` - Clip-path click-to-progress overlay
+
+### Interactive States
+
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on `.pressable-feedback` (focus ring)
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` on `.pressable-feedback` (reduced opacity, no pointer events)
+- **Hover**: `:hover` or `[data-hovered="true"]` on parent activates `.pressable-feedback__highlight` opacity
+- **Pressed**: `:active` or `[data-pressed="true"]` on parent activates highlight pressed opacity
+
+### Data Attributes
+
+- `[data-sweep="right|left|down|up"]` on hold-confirm and progress-feedback - Clip-path sweep direction
+- `[data-holding="true"]` on `.pressable-feedback__hold-confirm` - Currently being held
+- `[data-complete="true"]` on hold-confirm/progress-feedback - Action completed
+- `[data-progressing="true"]` on `.pressable-feedback__progress-feedback` - Progress is active
+
+### CSS Variables
+
+- `--pressable-feedback-highlight-color` - Highlight overlay color (default: `currentColor`)
+- `--pressable-feedback-highlight-opacity` - Hover opacity (default: `0.08`)
+- `--pressable-feedback-highlight-pressed-opacity` - Pressed opacity (default: `0.12`)
+- `--pressable-feedback-ripple-color` - Ripple color (default: `currentColor`)
+- `--pressable-feedback-ripple-hover-opacity` - Ripple hover opacity (default: `0.08`)
+- `--pressable-feedback-ripple-pressed-opacity` - Ripple pressed opacity (default: `0.12`)
+- `--pressable-feedback-hold-confirm-duration` - Hold duration (default: `2000ms`)
+- `--pressable-feedback-hold-confirm-release-duration` - Release snap-back duration (default: `200ms`)
+- `--pressable-feedback-progress-feedback-duration` - Progress duration (default: `2000ms`)
+- `--pressable-feedback-progress-feedback-release-duration` - Reset snap-back duration (default: `300ms`)
+
+## API Reference
+
+### PressableFeedback
+
+The root pressable container. Renders a `button` element by default.
+
+| Prop         | Type                | Default | Description                                                     |
+| ------------ | ------------------- | ------- | --------------------------------------------------------------- |
+| `isDisabled` | `boolean`           | `false` | Whether the pressable is disabled                               |
+| `children`   | `ReactNode`         | -       | Feedback layers and content                                     |
+| `className`  | `string`            | -       | Additional CSS class                                            |
+| `render`     | `DOMRenderFunction` | -       | Custom render function to override the default `button` element |
+
+Also supports all native `button` HTML attributes.
+
+### PressableFeedback.Highlight
+
+Opacity-based hover/press overlay. No additional props beyond standard `div` attributes.
+
+### PressableFeedback.Ripple
+
+M3-style radial ripple effect.
+
+| Prop                   | Type            | Default | Description                                  |
+| ---------------------- | --------------- | ------- | -------------------------------------------- |
+| `duration`             | `number`        | `150`   | Duration in ms for the ripple grow animation |
+| `hoverOpacity`         | `number`        | `0.08`  | Opacity of the hover state                   |
+| `pressedOpacity`       | `number`        | `0.12`  | Opacity of the pressed state                 |
+| `minimumPressDuration` | `number`        | `225`   | Minimum press duration in ms                 |
+| `isDisabled`           | `boolean`       | -       | Whether the ripple is disabled               |
+| `className`            | `string`        | -       | Additional CSS class                         |
+| `style`                | `CSSProperties` | -       | Additional inline styles                     |
+
+### PressableFeedback.HoldConfirm
+
+Clip-path hold-to-reveal overlay.
+
+| Prop              | Type                                  | Default   | Description                                           |
+| ----------------- | ------------------------------------- | --------- | ----------------------------------------------------- |
+| `duration`        | `number`                              | `2000`    | Hold duration in ms before the action is confirmed    |
+| `releaseDuration` | `number`                              | `200`     | Duration in ms for the snap-back animation on release |
+| `sweep`           | `'right' \| 'left' \| 'down' \| 'up'` | `'right'` | Which edge the clip-path reveal sweeps toward         |
+| `resetOnComplete` | `boolean`                             | `true`    | Whether to reset the overlay after the hold completes |
+| `isDisabled`      | `boolean`                             | -         | Whether the hold confirm is disabled                  |
+| `onComplete`      | `() => void`                          | -         | Fired when the hold reaches the full duration         |
+| `children`        | `ReactNode`                           | -         | Overlay content shown during the reveal               |
+| `className`       | `string`                              | -         | Additional CSS class                                  |
+
+### PressableFeedback.ProgressFeedback
+
+Clip-path click-to-progress overlay (auto, no hold required).
+
+| Prop              | Type                                  | Default   | Description                                            |
+| ----------------- | ------------------------------------- | --------- | ------------------------------------------------------ |
+| `duration`        | `number`                              | `2000`    | Progress duration in ms before the action is confirmed |
+| `releaseDuration` | `number`                              | `300`     | Duration in ms for the snap-back animation on reset    |
+| `sweep`           | `'right' \| 'left' \| 'down' \| 'up'` | `'right'` | Which edge the clip-path reveal sweeps toward          |
+| `autoReset`       | `boolean`                             | `true`    | Whether to automatically reset after completing        |
+| `resetDelay`      | `number`                              | `1500`    | Delay in ms before resetting after completion          |
+| `isDisabled`      | `boolean`                             | -         | Whether the progress feedback is disabled              |
+| `onComplete`      | `() => void`                          | -         | Fired when the progress reaches the full duration      |
+| `onReset`         | `() => void`                          | -         | Fired when the overlay resets back to idle             |
+| `children`        | `ReactNode`                           | -         | Overlay content shown during the reveal                |
+| `className`       | `string`                              | -         | Additional CSS class                                   |

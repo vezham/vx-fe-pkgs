@@ -1,0 +1,1940 @@
+---
+title: ComboBox
+description: A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query
+status: new
+links:
+  rac: ComboBox
+  source: combo-box/combo-box.tsx
+  styles: combo-box.css
+  storybook: Components/Pickers/ComboBox
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { ComboBox } from '@heroui/react'
+```
+
+<ComponentPreview
+  name="combo-box-default">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <ComboBox className="w-[256px]">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import {
+  ComboBox,
+  Description,
+  Header,
+  Input,
+  Label,
+  ListBox,
+  Separator
+} from '@heroui/react'
+
+export default () => (
+  <ComboBox>
+    <Label />
+    <ComboBox.InputGroup>
+      <Input />
+      <ComboBox.Trigger />
+    </ComboBox.InputGroup>
+    {/* Displays the selected values, primarily used for multiple selection */}
+    <ComboBox.Value />
+    <Description />
+    <ComboBox.Popover>
+      <ListBox>
+        <ListBox.Item>
+          <Label />
+          <Description />
+          <ListBox.ItemIndicator />
+        </ListBox.Item>
+        <ListBox.Section>
+          <Header />
+          <ListBox.Item>
+            <Label />
+          </ListBox.Item>
+        </ListBox.Section>
+      </ListBox>
+    </ComboBox.Popover>
+  </ComboBox>
+)
+```
+
+## Examples
+
+### Full Width
+
+<ComponentPreview
+  name="combo-box-full-width">
+
+```tsx
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function FullWidth() {
+  return (
+    <div className="w-[400px] space-y-4">
+      <ComboBox fullWidth>
+        <Label>Favorite Animal</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Search animals..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            <ListBox.Item id="aardvark" textValue="Aardvark">
+              Aardvark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="cat" textValue="Cat">
+              Cat
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dog" textValue="Dog">
+              Dog
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </ComboBox.Popover>
+      </ComboBox>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### With Description
+
+<ComponentPreview
+  name="combo-box-with-description">
+
+```tsx
+'use client'
+
+import { ComboBox, Description, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function WithDescription() {
+  return (
+    <ComboBox className="w-[256px]">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+      <Description>Search and select your favorite animal</Description>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Required
+
+<ComponentPreview
+  name="combo-box-required">
+
+```tsx
+'use client'
+
+import {
+  Button,
+  ComboBox,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  ListBox
+} from '@vezham/react-v3'
+
+export function Required() {
+  const onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: Record<string, string> = {}
+
+    formData.forEach((value, key) => {
+      data[key] = value.toString()
+    })
+
+    alert('Form submitted successfully!')
+  }
+
+  return (
+    <Form className="flex w-[256px] flex-col gap-4" onSubmit={onSubmit}>
+      <ComboBox isRequired className="w-full" name="animal">
+        <Label>Favorite Animal</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Search animals..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            <ListBox.Item id="aardvark" textValue="Aardvark">
+              Aardvark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="cat" textValue="Cat">
+              Cat
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dog" textValue="Dog">
+              Dog
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="kangaroo" textValue="Kangaroo">
+              Kangaroo
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="panda" textValue="Panda">
+              Panda
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="snake" textValue="Snake">
+              Snake
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </ComboBox.Popover>
+        <FieldError />
+      </ComboBox>
+      <Button type="submit">Submit</Button>
+    </Form>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Disabled
+
+<ComponentPreview
+  name="combo-box-disabled">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <ComboBox isDisabled className="w-[256px]" defaultSelectedKey="cat">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### With Disabled Options
+
+<ComponentPreview
+  name="combo-box-with-disabled-options">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function WithDisabledOptions() {
+  return (
+    <ComboBox className="w-[256px]" disabledKeys={['cat', 'kangaroo']}>
+      <Label>Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="bird" textValue="Bird">
+            Bird
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="elephant" textValue="Elephant">
+            Elephant
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="tiger" textValue="Tiger">
+            Tiger
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### With Sections
+
+<ComponentPreview
+  name="combo-box-with-sections">
+
+```tsx
+'use client'
+
+import {
+  ComboBox,
+  Header,
+  Input,
+  Label,
+  ListBox,
+  Separator
+} from '@vezham/react-v3'
+
+export function WithSections() {
+  return (
+    <ComboBox className="w-[256px]">
+      <Label>Country</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search countries..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Section>
+            <Header>North America</Header>
+            <ListBox.Item id="usa" textValue="United States">
+              United States
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="canada" textValue="Canada">
+              Canada
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="mexico" textValue="Mexico">
+              Mexico
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox.Section>
+          <Separator />
+          <ListBox.Section>
+            <Header>Europe</Header>
+            <ListBox.Item id="uk" textValue="United Kingdom">
+              United Kingdom
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="france" textValue="France">
+              France
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="germany" textValue="Germany">
+              Germany
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="spain" textValue="Spain">
+              Spain
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="italy" textValue="Italy">
+              Italy
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox.Section>
+          <Separator />
+          <ListBox.Section>
+            <Header>Asia</Header>
+            <ListBox.Item id="japan" textValue="Japan">
+              Japan
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="china" textValue="China">
+              China
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="india" textValue="India">
+              India
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="south-korea" textValue="South Korea">
+              South Korea
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox.Section>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Controlled
+
+<ComponentPreview
+  name="combo-box-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import type { Key } from '@vezham/react-v3'
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function Controlled() {
+  const animals = [
+    {
+      id: 'cat',
+      name: 'Cat'
+    },
+    {
+      id: 'dog',
+      name: 'Dog'
+    },
+    {
+      id: 'bird',
+      name: 'Bird'
+    },
+    {
+      id: 'fish',
+      name: 'Fish'
+    },
+    {
+      id: 'hamster',
+      name: 'Hamster'
+    }
+  ]
+
+  const [selectedKey, setSelectedKey] = useState<Key | null>('cat')
+
+  const selectedAnimal = animals.find(a => a.id === selectedKey)
+
+  return (
+    <div className="space-y-2">
+      <ComboBox
+        className="w-[256px]"
+        selectedKey={selectedKey}
+        onSelectionChange={key => setSelectedKey(key)}>
+        <Label>Animal (controlled)</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Search animals..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            {animals.map(animal => (
+              <ListBox.Item
+                key={animal.id}
+                id={animal.id}
+                textValue={animal.name}>
+                {animal.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </ComboBox.Popover>
+      </ComboBox>
+      <p className="text-muted text-sm">
+        Selected: {selectedAnimal?.name || 'None'}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Controlled Input Value
+
+<ComponentPreview
+  name="combo-box-controlled-input-value">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function ControlledInputValue() {
+  const [inputValue, setInputValue] = useState('')
+
+  return (
+    <div className="space-y-2">
+      <ComboBox
+        className="w-[256px]"
+        inputValue={inputValue}
+        onInputChange={setInputValue}>
+        <Label>Search (controlled input)</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Type to search..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            <ListBox.Item id="aardvark" textValue="Aardvark">
+              Aardvark
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="cat" textValue="Cat">
+              Cat
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="dog" textValue="Dog">
+              Dog
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="kangaroo" textValue="Kangaroo">
+              Kangaroo
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="panda" textValue="Panda">
+              Panda
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="snake" textValue="Snake">
+              Snake
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </ComboBox.Popover>
+      </ComboBox>
+      <p className="text-muted text-sm">
+        Input value: {inputValue || '(empty)'}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Asynchronous Loading
+
+<ComponentPreview
+  name="combo-box-asynchronous-loading">
+
+```tsx
+'use client'
+
+import { useAsyncList } from '@react-stately/data'
+
+import {
+  Collection,
+  ComboBox,
+  EmptyState,
+  Input,
+  Label,
+  ListBox,
+  ListBoxLoadMoreItem,
+  Spinner
+} from '@vezham/react-v3'
+
+interface Character {
+  name: string
+}
+
+export function AsynchronousLoading() {
+  const list = useAsyncList<Character>({
+    async load({ cursor, filterText, signal }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://')
+      }
+
+      const res = await fetch(
+        cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {
+          signal
+        }
+      )
+      const json = await res.json()
+
+      return {
+        cursor: json.next,
+        items: json.results
+      }
+    }
+  })
+
+  return (
+    <ComboBox
+      allowsEmptyCollection
+      className="w-[256px]"
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      <Label>Pick a Character</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Star Wars characters..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox renderEmptyState={() => <EmptyState />}>
+          <Collection items={list.items}>
+            {item => (
+              <ListBox.Item id={item.name} textValue={item.name}>
+                {item.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            )}
+          </Collection>
+          <ListBoxLoadMoreItem
+            isLoading={list.loadingState === 'loadingMore'}
+            onLoadMore={list.loadMore}>
+            <div className="flex items-center justify-center gap-2 py-2">
+              <Spinner size="sm" />
+              <span className="muted text-sm">Loading more...</span>
+            </div>
+          </ListBoxLoadMoreItem>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Default Selected Key
+
+<ComponentPreview
+  name="combo-box-default-selected-key">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function DefaultSelectedKey() {
+  return (
+    <ComboBox className="w-[256px]" defaultSelectedKey="cat">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Allows Custom Value
+
+<ComponentPreview
+  name="combo-box-allows-custom-value">
+
+```tsx
+'use client'
+
+import { ComboBox, Description, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function AllowsCustomValue() {
+  return (
+    <ComboBox allowsCustomValue className="w-[256px]">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search or type an animal..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+      <Description>
+        You can type any animal name, even if it's not in the list
+      </Description>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Custom Indicator
+
+<ComponentPreview
+  name="combo-box-custom-indicator">
+
+```tsx
+'use client'
+
+import { ChevronsExpandVertical } from '@gravity-ui/icons'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function CustomIndicator() {
+  return (
+    <ComboBox className="w-[256px]">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger>
+          <ChevronsExpandVertical className="size-3" />
+        </ComboBox.Trigger>
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Custom Value
+
+<ComponentPreview
+  name="combo-box-custom-value">
+
+```tsx
+'use client'
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  ComboBox,
+  Description,
+  Input,
+  Label,
+  ListBox
+} from '@vezham/react-v3'
+
+export function CustomValue() {
+  const users = [
+    {
+      avatarUrl:
+        'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+      email: 'bob@heroui.com',
+      fallback: 'B',
+      id: '1',
+      name: 'Bob'
+    },
+    {
+      avatarUrl:
+        'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+      email: 'fred@heroui.com',
+      fallback: 'F',
+      id: '2',
+      name: 'Fred'
+    },
+    {
+      avatarUrl:
+        'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+      email: 'martha@heroui.com',
+      fallback: 'M',
+      id: '3',
+      name: 'Martha'
+    },
+    {
+      avatarUrl:
+        'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+      email: 'john@heroui.com',
+      fallback: 'J',
+      id: '4',
+      name: 'John'
+    },
+    {
+      avatarUrl:
+        'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+      email: 'jane@heroui.com',
+      fallback: 'J',
+      id: '5',
+      name: 'Jane'
+    }
+  ]
+
+  return (
+    <ComboBox className="w-[256px]">
+      <Label>User</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search users..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          {users.map(user => (
+            <ListBox.Item key={user.id} id={user.id} textValue={user.name}>
+              <Avatar size="sm">
+                <AvatarImage src={user.avatarUrl} />
+                <AvatarFallback>{user.fallback}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <Label>{user.name}</Label>
+                <Description>{user.email}</Description>
+              </div>
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Custom Filtering
+
+<ComponentPreview
+  name="combo-box-custom-filtering">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function CustomFiltering() {
+  const animals = [
+    { id: 'cat', name: 'Cat' },
+    { id: 'dog', name: 'Dog' },
+    { id: 'bird', name: 'Bird' },
+    { id: 'fish', name: 'Fish' },
+    { id: 'hamster', name: 'Hamster' }
+  ]
+
+  return (
+    <ComboBox
+      className="w-[256px]"
+      defaultFilter={(text, inputValue) => {
+        if (!inputValue) return true
+
+        return text.toLowerCase().includes(inputValue.toLowerCase())
+      }}>
+      <Label>Animal (custom filter)</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          {animals.map(animal => (
+            <ListBox.Item
+              key={animal.id}
+              id={animal.id}
+              textValue={animal.name}>
+              {animal.name}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Render Function
+
+<ComponentPreview
+  name="combo-box-render-function">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function RenderFunction() {
+  return (
+    <ComboBox
+      className="w-[256px]"
+      render={props => <div {...props} data-custom="foo" />}>
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Menu Trigger
+
+Use the `menuTrigger` prop to control when the popover opens:
+
+- `focus` (default): popover opens when the user focuses the input
+- `input`: popover opens when the user edits the input text
+- `manual`: popover only opens when the user presses the trigger button or uses the arrow keys
+
+<ComponentPreview
+  name="combo-box-menu-trigger">
+
+```tsx
+'use client'
+
+import { ComboBox, Description, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function MenuTrigger() {
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm font-medium">Focus (default)</p>
+        <ComboBox className="w-[256px]" menuTrigger="focus">
+          <Label>Favorite Animal</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Search animals..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              <ListBox.Item id="aardvark" textValue="Aardvark">
+                Aardvark
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="cat" textValue="Cat">
+                Cat
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="dog" textValue="Dog">
+                Dog
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="kangaroo" textValue="Kangaroo">
+                Kangaroo
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="panda" textValue="Panda">
+                Panda
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="snake" textValue="Snake">
+                Snake
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            </ListBox>
+          </ComboBox.Popover>
+          <Description>Popover opens when the input is focused</Description>
+        </ComboBox>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm font-medium">Input</p>
+        <ComboBox className="w-[256px]" menuTrigger="input">
+          <Label>Favorite Animal</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Search animals..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              <ListBox.Item id="aardvark" textValue="Aardvark">
+                Aardvark
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="cat" textValue="Cat">
+                Cat
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="dog" textValue="Dog">
+                Dog
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="kangaroo" textValue="Kangaroo">
+                Kangaroo
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="panda" textValue="Panda">
+                Panda
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="snake" textValue="Snake">
+                Snake
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            </ListBox>
+          </ComboBox.Popover>
+          <Description>
+            Popover opens when the user edits the input text
+          </Description>
+        </ComboBox>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm font-medium">Manual</p>
+        <ComboBox className="w-[256px]" menuTrigger="manual">
+          <Label>Favorite Animal</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Search animals..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              <ListBox.Item id="aardvark" textValue="Aardvark">
+                Aardvark
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="cat" textValue="Cat">
+                Cat
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="dog" textValue="Dog">
+                Dog
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="kangaroo" textValue="Kangaroo">
+                Kangaroo
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="panda" textValue="Panda">
+                Panda
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="snake" textValue="Snake">
+                Snake
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            </ListBox>
+          </ComboBox.Popover>
+          <Description>
+            Popover only opens when the trigger button is pressed or arrow keys
+            are used
+          </Description>
+        </ComboBox>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Form Value
+
+Use the `formValue` prop to control whether the selected item's key or text is submitted in forms. `key` is the default. When `allowsCustomValue` is true, the text is always submitted.
+
+<ComponentPreview
+  name="combo-box-form-value">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import {
+  Button,
+  ComboBox,
+  Description,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  ListBox
+} from '@vezham/react-v3'
+
+const animals = [
+  { id: 'aardvark', name: 'Aardvark' },
+  { id: 'cat', name: 'Cat' },
+  { id: 'dog', name: 'Dog' },
+  { id: 'kangaroo', name: 'Kangaroo' },
+  { id: 'panda', name: 'Panda' },
+  { id: 'snake', name: 'Snake' }
+]
+
+export function FormValue() {
+  const [message, setMessage] = useState<string | null>(null)
+
+  return (
+    <Form
+      className="flex w-[256px] flex-col gap-4"
+      onSubmit={e => {
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+
+        setMessage(
+          `Key: ${formData.get('animal')}. Text: ${formData.get('animal-text')}.`
+        )
+      }}>
+      <ComboBox isRequired className="w-full" formValue="key" name="animal">
+        <Label>Animal</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Select an animal..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            {animals.map(animal => (
+              <ListBox.Item
+                key={animal.id}
+                id={animal.id}
+                textValue={animal.name}>
+                {animal.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </ComboBox.Popover>
+        <Description>Submits the selected key</Description>
+        <FieldError />
+      </ComboBox>
+      <ComboBox
+        isRequired
+        className="w-full"
+        formValue="text"
+        name="animal-text">
+        <Label>Animal (text)</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Select an animal..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            {animals.map(animal => (
+              <ListBox.Item
+                key={animal.id}
+                id={animal.id}
+                textValue={animal.name}>
+                {animal.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </ComboBox.Popover>
+        <Description>Submits the selected text</Description>
+        <FieldError />
+      </ComboBox>
+      <Button className="w-fit" type="submit">
+        Submit
+      </Button>
+      {!!message && <p className="text-muted text-sm">{message}</p>}
+    </Form>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Validation Behavior
+
+Use the `validationBehavior` prop to control how validation is displayed:
+
+- `native` (default): blocks form submission when the value is missing or invalid
+- `aria`: shows errors in realtime and does not block submission
+
+<ComponentPreview
+  name="combo-box-validation-behavior">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import {
+  Button,
+  ComboBox,
+  Description,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  ListBox
+} from '@vezham/react-v3'
+
+const animals = [
+  { id: 'aardvark', name: 'Aardvark' },
+  { id: 'cat', name: 'Cat' },
+  { id: 'dog', name: 'Dog' },
+  { id: 'kangaroo', name: 'Kangaroo' },
+  { id: 'panda', name: 'Panda' },
+  { id: 'snake', name: 'Snake' }
+]
+
+export function ValidationBehavior() {
+  const [nativeMessage, setNativeMessage] = useState<string | null>(null)
+  const [ariaMessage, setAriaMessage] = useState<string | null>(null)
+
+  return (
+    <div className="flex flex-col gap-8">
+      <Form
+        className="flex w-[256px] flex-col gap-4"
+        onSubmit={e => {
+          e.preventDefault()
+          setNativeMessage('Submitted with native validation.')
+        }}>
+        <ComboBox
+          isRequired
+          className="w-full"
+          name="animal"
+          validationBehavior="native">
+          <Label>Animal (native)</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Select an animal..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              {animals.map(animal => (
+                <ListBox.Item
+                  key={animal.id}
+                  id={animal.id}
+                  textValue={animal.name}>
+                  {animal.name}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </ComboBox.Popover>
+          <Description>Blocks submission when the value is missing</Description>
+          <FieldError />
+        </ComboBox>
+        <Button className="w-fit" type="submit">
+          Submit
+        </Button>
+        {!!nativeMessage && (
+          <p className="text-muted text-sm">{nativeMessage}</p>
+        )}
+      </Form>
+      <Form
+        className="flex w-[256px] flex-col gap-4"
+        onSubmit={e => {
+          e.preventDefault()
+          setAriaMessage('Submitted with ARIA validation.')
+        }}>
+        <ComboBox
+          isRequired
+          className="w-full"
+          name="animal-aria"
+          validationBehavior="aria">
+          <Label>Animal (ARIA)</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Select an animal..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              {animals.map(animal => (
+                <ListBox.Item
+                  key={animal.id}
+                  id={animal.id}
+                  textValue={animal.name}>
+                  {animal.name}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </ComboBox.Popover>
+          <Description>
+            Shows errors in realtime and does not block submission
+          </Description>
+          <FieldError />
+        </ComboBox>
+        <Button className="w-fit" type="submit">
+          Submit
+        </Button>
+        {!!ariaMessage && <p className="text-muted text-sm">{ariaMessage}</p>}
+      </Form>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Custom Validation
+
+Use the `validate` prop to return an error message when the value is invalid, or `true` when it is valid.
+
+<ComponentPreview
+  name="combo-box-custom-validation">
+
+```tsx
+'use client'
+
+import {
+  Button,
+  ComboBox,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  ListBox
+} from '@vezham/react-v3'
+
+const animals = [
+  { id: 'aardvark', name: 'Aardvark' },
+  { id: 'cat', name: 'Cat' },
+  { id: 'dog', name: 'Dog' },
+  { id: 'kangaroo', name: 'Kangaroo' },
+  { id: 'panda', name: 'Panda' },
+  { id: 'snake', name: 'Snake' }
+]
+
+export function CustomValidation() {
+  return (
+    <Form
+      className="flex w-[256px] flex-col gap-4"
+      onSubmit={e => {
+        e.preventDefault()
+        alert('Form submitted successfully!')
+      }}>
+      <ComboBox
+        isRequired
+        className="w-full"
+        name="animal"
+        validate={value => {
+          if (value.selectedKey == null) {
+            return 'Please select an animal'
+          }
+
+          if (value.selectedKey === 'snake') {
+            return 'Snakes are not allowed'
+          }
+
+          return true
+        }}>
+        <Label>Favorite Animal</Label>
+        <ComboBox.InputGroup>
+          <Input placeholder="Search animals..." />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover>
+          <ListBox>
+            {animals.map(animal => (
+              <ListBox.Item
+                key={animal.id}
+                id={animal.id}
+                textValue={animal.name}>
+                {animal.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </ComboBox.Popover>
+        <FieldError />
+      </ComboBox>
+      <Button className="w-fit" type="submit">
+        Submit
+      </Button>
+    </Form>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Read Only
+
+Use the `isReadOnly` prop to make the ComboBox read-only. The selected value can be focused, but it cannot be changed.
+
+<ComponentPreview
+  name="combo-box-read-only">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+const animals = [
+  { id: 'aardvark', name: 'Aardvark' },
+  { id: 'cat', name: 'Cat' },
+  { id: 'dog', name: 'Dog' },
+  { id: 'kangaroo', name: 'Kangaroo' },
+  { id: 'panda', name: 'Panda' },
+  { id: 'snake', name: 'Snake' }
+]
+
+export function ReadOnly() {
+  return (
+    <ComboBox isReadOnly className="w-[256px]" defaultSelectedKey="cat">
+      <Label>Favorite Animal</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          {animals.map(animal => (
+            <ListBox.Item
+              key={animal.id}
+              id={animal.id}
+              textValue={animal.name}>
+              {animal.name}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Multiple Selection
+
+Set `selectionMode="multiple"` to allow selecting more than one option. In multiple selection mode, use `ComboBox.Value` to display the selected items and pass `selectionMode="multiple"` to the inner `ListBox` as well. Selection is controlled with the `value` / `defaultValue` (`Key[]`) props and the `onChange` handler.
+
+<ComponentPreview
+  name="combo-box-multiple-selection">
+
+```tsx
+'use client'
+
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+export function MultipleSelection() {
+  return (
+    <ComboBox className="w-[256px]" selectionMode="multiple">
+      <Label>Favorite Animals</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder="Search animals..." />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Value placeholder="No animals selected" />
+      <ComboBox.Popover>
+        <ListBox selectionMode="multiple">
+          <ListBox.Item id="aardvark" textValue="Aardvark">
+            Aardvark
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="cat" textValue="Cat">
+            Cat
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="dog" textValue="Dog">
+            Dog
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="kangaroo" textValue="Kangaroo">
+            Kangaroo
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="panda" textValue="Panda">
+            Panda
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="snake" textValue="Snake">
+            Snake
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### In Surface
+
+When used inside a [Surface](/docs/ui/react-v3/web/components/surface) component, use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+
+<ComponentPreview
+  name="combo-box-on-surface">
+
+```tsx
+'use client'
+
+import {
+  Button,
+  ComboBox,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  ListBox,
+  Surface
+} from '@vezham/react-v3'
+
+export function OnSurface() {
+  const onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: Record<string, string> = {}
+
+    formData.forEach((value, key) => {
+      data[key] = value.toString()
+    })
+
+    alert('Form submitted successfully!')
+  }
+
+  return (
+    <Surface className="w-[320px] rounded-3xl p-6">
+      <Form className="flex w-full flex-col gap-4" onSubmit={onSubmit}>
+        <ComboBox
+          isRequired
+          className="w-full"
+          name="animal"
+          variant="secondary">
+          <Label>Favorite Animal</Label>
+          <ComboBox.InputGroup>
+            <Input placeholder="Search animals..." />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover>
+            <ListBox>
+              <ListBox.Item id="aardvark" textValue="Aardvark">
+                Aardvark
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="cat" textValue="Cat">
+                Cat
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="dog" textValue="Dog">
+                Dog
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="kangaroo" textValue="Kangaroo">
+                Kangaroo
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="panda" textValue="Panda">
+                Panda
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+              <ListBox.Item id="snake" textValue="Snake">
+                Snake
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            </ListBox>
+          </ComboBox.Popover>
+          <FieldError />
+        </ComboBox>
+        <Button type="submit">Submit</Button>
+      </Form>
+    </Surface>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="combo-box-custom-styles">
+
+```tsx
+import { ComboBox, Input, Label, ListBox } from '@vezham/react-v3'
+
+const itemClass =
+  'rounded-lg data-[focused=true]:bg-muted/70 data-[selected=true]:font-medium data-[selected=true]:text-foreground'
+
+export function CustomStyles() {
+  return (
+    <ComboBox className="w-64 gap-1.5">
+      <Label className="font-medium text-neutral-800 dark:text-neutral-100">
+        Framework
+      </Label>
+      <ComboBox.InputGroup className="border-border/80 bg-surface rounded-xl border shadow-sm ring-1 ring-black/5 transition-[box-shadow,border-color] focus-within:ring-2 focus-within:ring-neutral-400/25 dark:ring-white/10 dark:focus-within:ring-neutral-500/30">
+        <Input placeholder="Search..." />
+        <ComboBox.Trigger className="text-muted" />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover className="border-border/80 bg-surface rounded-xl border p-1 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
+        <ListBox>
+          <ListBox.Item className={itemClass} id="react" textValue="React">
+            React
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item className={itemClass} id="vue" textValue="Vue">
+            Vue
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item className={itemClass} id="svelte" textValue="Svelte">
+            Svelte
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+To customize the ComboBox component classes, you can use the `@layer components` directive.
+[Learn more](https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes).
+
+```css
+@layer components {
+  .combo-box {
+    @apply flex flex-col gap-1;
+  }
+
+  .combo-box__input-group {
+    @apply relative inline-flex items-center;
+  }
+
+  .combo-box__trigger {
+    @apply text-muted absolute right-0;
+  }
+
+  .combo-box__popover {
+    @apply border-border bg-surface rounded-lg border p-2;
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+The ComboBox component uses these CSS classes ([View source styles](https://github.com/heroui-inc/heroui/blob/v3/packages/styles/components/combo-box.css)):
+
+#### Base Classes [!toc]
+
+- `.combo-box` - Base ComboBox container
+- `.combo-box__input-group` - Container for the input and trigger button
+- `.combo-box__value` - The selected value display (used in multiple selection)
+- `.combo-box__trigger` - The button that triggers the popover
+- `.combo-box__popover` - The popover container
+
+#### State Classes [!toc]
+
+- `.combo-box[data-invalid="true"]` - Invalid state
+- `.combo-box[data-disabled="true"]` - Disabled ComboBox state
+- `.combo-box__trigger[data-focus-visible="true"]` - Focused trigger state
+- `.combo-box__trigger[data-disabled="true"]` - Disabled trigger state
+- `.combo-box__trigger[data-open="true"]` - Open trigger state
+
+### Interactive States
+
+The component supports both CSS pseudo-classes and data attributes for flexibility:
+
+- **Hover**: `:hover` or `[data-hovered="true"]` on trigger
+- **Focus**: `:focus-visible` or `[data-focus-visible="true"]` on trigger
+- **Disabled**: `:disabled` or `[data-disabled="true"]` on ComboBox
+- **Open**: `[data-open="true"]` on trigger
+
+## API Reference
+
+### ComboBox
+
+| Prop                    | Type                                                                               | Default     | Description                                                                                                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `inputValue`            | `string`                                                                           | -           | Current input value (controlled)                                                                                                                                                                                                         |
+| `defaultInputValue`     | `string`                                                                           | -           | Default input value (uncontrolled)                                                                                                                                                                                                       |
+| `onInputChange`         | `(value: string) => void`                                                          | -           | Handler called when the input value changes                                                                                                                                                                                              |
+| `selectionMode`         | `"single" \| "multiple"`                                                           | `"single"`  | Whether single or multiple selection is enabled                                                                                                                                                                                          |
+| `selectedKey`           | `Key \| null`                                                                      | -           | Current selected key (controlled, single selection)                                                                                                                                                                                      |
+| `defaultSelectedKey`    | `Key \| null`                                                                      | -           | Default selected key (uncontrolled, single selection)                                                                                                                                                                                    |
+| `onSelectionChange`     | `(key: Key \| null) => void`                                                       | -           | Handler called when the selection changes (single selection)                                                                                                                                                                             |
+| `value`                 | `Key \| null \| Key[]`                                                             | -           | The currently selected keys (controlled). `Key[]` when `selectionMode="multiple"`                                                                                                                                                        |
+| `defaultValue`          | `Key \| null \| Key[]`                                                             | -           | The initial selected keys (uncontrolled). `Key[]` when `selectionMode="multiple"`                                                                                                                                                        |
+| `onChange`              | `(value: Key \| null \| Key[]) => void`                                            | -           | Handler called when the selection changes                                                                                                                                                                                                |
+| `items`                 | `Iterable<T>`                                                                      | -           | The items to display in the listbox                                                                                                                                                                                                      |
+| `disabledKeys`          | `Iterable<Key>`                                                                    | -           | Keys of disabled items                                                                                                                                                                                                                   |
+| `defaultFilter`         | `(text: string, inputValue: string) => boolean`                                    | -           | Custom filter function for filtering items                                                                                                                                                                                               |
+| `isDisabled`            | `boolean`                                                                          | -           | Whether the ComboBox is disabled                                                                                                                                                                                                         |
+| `isReadOnly`            | `boolean`                                                                          | -           | Whether the input can be selected but not changed by the user                                                                                                                                                                            |
+| `isRequired`            | `boolean`                                                                          | -           | Whether user input is required                                                                                                                                                                                                           |
+| `isInvalid`             | `boolean`                                                                          | -           | Whether the ComboBox value is invalid                                                                                                                                                                                                    |
+| `validate`              | `(value: ComboBoxValidationValue) => ValidationError \| true \| null \| undefined` | -           | A function that returns an error message if a given value is invalid. Validation errors are displayed to the user when the form is submitted if `validationBehavior="native"`. For realtime validation, use the `isInvalid` prop instead |
+| `validationBehavior`    | `"native" \| "aria"`                                                               | `"native"`  | Whether to use native HTML form validation to prevent form submission when the value is missing or invalid, or mark the field as required or invalid via ARIA                                                                            |
+| `name`                  | `string`                                                                           | -           | The name of the input, used when submitting an HTML form                                                                                                                                                                                 |
+| `form`                  | `string`                                                                           | -           | The id of a `<form>` element to associate the input with                                                                                                                                                                                 |
+| `formValue`             | `"text" \| "key"`                                                                  | `"key"`     | Whether the text or key of the selected item is submitted as part of an HTML form. When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted                                                       |
+| `autoComplete`          | `string`                                                                           | -           | Describes the type of autocomplete functionality                                                                                                                                                                                         |
+| `autoFocus`             | `boolean`                                                                          | -           | Whether the element should receive focus on render                                                                                                                                                                                       |
+| `allowsCustomValue`     | `boolean`                                                                          | -           | Whether the ComboBox allows custom values not in the list                                                                                                                                                                                |
+| `allowsEmptyCollection` | `boolean`                                                                          | -           | Whether the ComboBox allows an empty collection                                                                                                                                                                                          |
+| `menuTrigger`           | `"focus" \| "input" \| "manual"`                                                   | `"focus"`   | The interaction required to display the ComboBox menu                                                                                                                                                                                    |
+| `shouldFocusWrap`       | `boolean`                                                                          | -           | Whether keyboard navigation is circular                                                                                                                                                                                                  |
+| `fullWidth`             | `boolean`                                                                          | `false`     | Whether the ComboBox should take full width of its container                                                                                                                                                                             |
+| `variant`               | `"primary" \| "secondary"`                                                         | `"primary"` | Visual variant of the component. `primary` is the default style with shadow. `secondary` is a lower emphasis variant without shadow, suitable for use in surfaces.                                                                       |
+| `className`             | `string`                                                                           | -           | Additional CSS classes                                                                                                                                                                                                                   |
+| `children`              | `ReactNode \| RenderFunction`                                                      | -           | ComboBox content or render function                                                                                                                                                                                                      |
+| `render`                | `DOMRenderFunction<keyof React.JSX.IntrinsicElements, ComboBoxRenderProps>`        | -           | Overrides the default DOM element with a custom render function.                                                                                                                                                                         |
+
+### ComboBox.InputGroup
+
+| Prop        | Type        | Default | Description            |
+| ----------- | ----------- | ------- | ---------------------- |
+| `className` | `string`    | -       | Additional CSS classes |
+| `children`  | `ReactNode` | -       | InputGroup content     |
+
+### ComboBox.Value
+
+Renders the selected values of a ComboBox, or a placeholder if no value is selected. By default the selected items are rendered as a comma separated list. Use the render function to customize this (for example, to display tags).
+
+| Prop          | Type                                                           | Default | Description                                    |
+| ------------- | -------------------------------------------------------------- | ------- | ---------------------------------------------- |
+| `placeholder` | `ReactNode`                                                    | -       | A value to display when no items are selected  |
+| `className`   | `string \| (values: ComboBoxValueRenderProps) => string`       | -       | Additional CSS classes                         |
+| `children`    | `ReactNode \| (values: ComboBoxValueRenderProps) => ReactNode` | -       | Custom render function for the selected values |
+
+### ComboBox.Trigger
+
+| Prop        | Type        | Default | Description            |
+| ----------- | ----------- | ------- | ---------------------- |
+| `className` | `string`    | -       | Additional CSS classes |
+| `children`  | `ReactNode` | -       | Custom trigger content |
+
+### ComboBox.Popover
+
+| Prop        | Type                                                                                                                                                                                                                                                                                                                     | Default    | Description                                      |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------ |
+| `placement` | `"bottom" \| "bottom left" \| "bottom right" \| "bottom start" \| "bottom end" \| "top" \| "top left" \| "top right" \| "top start" \| "top end" \| "left" \| "left top" \| "left bottom" \| "start" \| "start top" \| "start bottom" \| "right" \| "right top" \| "right bottom" \| "end" \| "end top" \| "end bottom"` | `"bottom"` | Placement of the popover relative to the trigger |
+| `className` | `string`                                                                                                                                                                                                                                                                                                                 | -          | Additional CSS classes                           |
+| `children`  | `ReactNode`                                                                                                                                                                                                                                                                                                              | -          | Content children                                 |
+
+### Render Props
+
+When using render functions with ComboBox, these values are provided:
+
+| Prop           | Type            | Description                 |
+| -------------- | --------------- | --------------------------- |
+| `state`        | `ComboBoxState` | The state of the ComboBox   |
+| `inputValue`   | `string`        | The current input value     |
+| `selectedKey`  | `Key \| null`   | The currently selected key  |
+| `selectedItem` | `Node \| null`  | The currently selected item |
+
+## Accessibility
+
+The ComboBox component implements the ARIA comboBox pattern and provides:
+
+- Full keyboard navigation support
+- Screen reader announcements for selection changes and input changes
+- Proper focus management
+- Support for disabled states
+- Typeahead search functionality
+- HTML form integration
+- Support for custom values
+
+For more information, see the [React Aria ComboBox documentation](https://react-spectrum.adobe.com/react-aria/ComboBox.html).
+
+## Related Components
+
+<RelatedComponents component="combo-box" />

@@ -1,0 +1,306 @@
+---
+title: 'Chat Message Actions'
+description: 'Inline action buttons for assistant and user messages.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-message-actions
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatMessageActions` for copy, retry, rating, share, or custom message actions.
+
+<ComponentPreview name="pro-chat-message-actions-default">
+
+```tsx
+'use client'
+
+import { Copy, ThumbsUp } from '@gravity-ui/icons'
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatMessageActions } from '@vezham/react-pro-v3'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Assistant responses can expose quick actions beneath the message body.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response"
+        />
+        <ChatMessageActions.ThumbsDown
+          aria-label="Bad response"
+          tooltip="Bad response"
+        />
+        <ChatMessageActions.Regenerate
+          aria-label="Regenerate"
+          tooltip="Regenerate"
+        />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function Minimal() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Minimal action set for compact layouts.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function CustomIcons() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Swap preset icons via the Icon subcomponents.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy">
+          <ChatMessageActions.CopyIcon>
+            <Copy className="text-accent size-4" />
+          </ChatMessageActions.CopyIcon>
+        </ChatMessageActions.Copy>
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response">
+          <ChatMessageActions.ThumbsUpIcon>
+            <ThumbsUp className="text-success size-4" />
+          </ChatMessageActions.ThumbsUpIcon>
+        </ChatMessageActions.ThumbsUp>
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Minimal
+
+Use a smaller action set when only one or two actions are needed.
+
+<ComponentPreview name="pro-chat-message-actions-minimal">
+
+```tsx
+'use client'
+
+import { Copy, ThumbsUp } from '@gravity-ui/icons'
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatMessageActions } from '@vezham/react-pro-v3'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Assistant responses can expose quick actions beneath the message body.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response"
+        />
+        <ChatMessageActions.ThumbsDown
+          aria-label="Bad response"
+          tooltip="Bad response"
+        />
+        <ChatMessageActions.Regenerate
+          aria-label="Regenerate"
+          tooltip="Regenerate"
+        />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function Minimal() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Minimal action set for compact layouts.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function CustomIcons() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Swap preset icons via the Icon subcomponents.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy">
+          <ChatMessageActions.CopyIcon>
+            <Copy className="text-accent size-4" />
+          </ChatMessageActions.CopyIcon>
+        </ChatMessageActions.Copy>
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response">
+          <ChatMessageActions.ThumbsUpIcon>
+            <ThumbsUp className="text-success size-4" />
+          </ChatMessageActions.ThumbsUpIcon>
+        </ChatMessageActions.ThumbsUp>
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Icons
+
+Actions are composable, so you can bring your own icon set.
+
+<ComponentPreview name="pro-chat-message-actions-custom-icons">
+
+```tsx
+'use client'
+
+import { Copy, ThumbsUp } from '@gravity-ui/icons'
+import type { ReactNode } from 'react'
+
+import { ChatMessage, ChatMessageActions } from '@vezham/react-pro-v3'
+
+function AssistantMessage({ children }: { children: ReactNode }) {
+  return (
+    <ChatMessage.Assistant>
+      <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+      <ChatMessage.Body>{children}</ChatMessage.Body>
+    </ChatMessage.Assistant>
+  )
+}
+
+export function Default() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Assistant responses can expose quick actions beneath the message body.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response"
+        />
+        <ChatMessageActions.ThumbsDown
+          aria-label="Bad response"
+          tooltip="Bad response"
+        />
+        <ChatMessageActions.Regenerate
+          aria-label="Regenerate"
+          tooltip="Regenerate"
+        />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function Minimal() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Minimal action set for compact layouts.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+        <ChatMessageActions.Menu aria-label="More actions" tooltip="More" />
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+
+export function CustomIcons() {
+  return (
+    <AssistantMessage>
+      <ChatMessage.Content>
+        Swap preset icons via the Icon subcomponents.
+      </ChatMessage.Content>
+      <ChatMessageActions>
+        <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy">
+          <ChatMessageActions.CopyIcon>
+            <Copy className="text-accent size-4" />
+          </ChatMessageActions.CopyIcon>
+        </ChatMessageActions.Copy>
+        <ChatMessageActions.ThumbsUp
+          aria-label="Good response"
+          tooltip="Good response">
+          <ChatMessageActions.ThumbsUpIcon>
+            <ThumbsUp className="text-success size-4" />
+          </ChatMessageActions.ThumbsUpIcon>
+        </ChatMessageActions.ThumbsUp>
+      </ChatMessageActions>
+    </AssistantMessage>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { ChatMessageActions } from '@vezham/react-pro-v3'
+
+;<ChatMessageActions>
+  <ChatMessageActions.Action aria-label="Copy">...</ChatMessageActions.Action>
+  <ChatMessageActions.Action aria-label="Like">...</ChatMessageActions.Action>
+</ChatMessageActions>
+```
+
+## CSS Classes
+
+- `.chat-message-actions` - Root action row
+- `.chat-message-actions__action` - Individual icon button
+
+## API Reference
+
+### ChatMessageActions
+
+Root action group. Supports native `div` props.
+
+### ChatMessageActions.Action
+
+Individual action button. Extends HeroUI `Button` props.

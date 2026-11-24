@@ -1,0 +1,484 @@
+---
+title: 'Action Bar'
+description: 'A floating toolbar for contextual actions — bulk selection, editing controls, or any set of actions that appear in response to user interaction.'
+sourceUrl: https://heroui.pro/docs/react/components/action-bar
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+The `ActionBar` component is a floating pill-shaped toolbar that animates in/out based on the `isOpen` prop. It uses a **Prefix / Content / Suffix** structure.
+
+Combine with [ListView](https://heroui.pro/docs/react/components/list-view) for bulk selection rows.
+
+<ComponentPreview name="pro-action-bar-default">
+
+```tsx
+'use client'
+
+import {
+  Archive,
+  ArrowDownToLine,
+  Pencil,
+  TrashBin,
+  Xmark
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+import type { Selection } from 'react-aria-components/GridList'
+
+import { ActionBar, ListView } from '@vezham/react-pro-v3'
+import { Button, Chip, Separator, Tooltip } from '@vezham/react-v3'
+
+const items = [
+  { id: 1, label: 'Project proposal.pdf' },
+  { id: 2, label: 'Q4 financial report.xlsx' },
+  { id: 3, label: 'Brand guidelines.fig' },
+  { id: 4, label: 'Team photo.jpg' },
+  { id: 5, label: 'Meeting notes.md' },
+  { id: 6, label: 'API documentation.pdf' }
+]
+
+export function Default() {
+  const [selected, setSelected] = useState<Selection>(new Set())
+
+  const selectionCount =
+    selected === 'all' ? items.length : (selected as Set<number>).size
+
+  return (
+    <div className="w-full max-w-lg p-4">
+      <ListView
+        aria-label="Files"
+        items={items}
+        selectedKeys={selected}
+        selectionMode="multiple"
+        variant="primary"
+        onSelectionChange={setSelected}>
+        {item => (
+          <ListView.Item id={item.id} textValue={item.label}>
+            <ListView.ItemContent>
+              <ListView.Title>{item.label}</ListView.Title>
+            </ListView.ItemContent>
+          </ListView.Item>
+        )}
+      </ListView>
+
+      <ActionBar isOpen={selectionCount > 0}>
+        <ActionBar.Prefix>
+          <Chip className="shrink-0 tabular-nums" size="sm">
+            {selectionCount}
+          </Chip>
+        </ActionBar.Prefix>
+        <Separator />
+        <ActionBar.Content>
+          <Button aria-label="Edit" size="sm" variant="ghost">
+            <Pencil />
+            <span className="action-bar__label">Edit</span>
+          </Button>
+          <Button aria-label="Export" size="sm" variant="ghost">
+            <ArrowDownToLine />
+            <span className="action-bar__label">Export</span>
+          </Button>
+          <Button aria-label="Archive" size="sm" variant="ghost">
+            <Archive />
+            <span className="action-bar__label">Archive</span>
+          </Button>
+          <Separator orientation="vertical" />
+          <Button
+            aria-label="Delete"
+            className="text-danger bg-danger/10"
+            size="sm"
+            variant="ghost">
+            <TrashBin />
+            <span className="action-bar__label">Delete</span>
+          </Button>
+        </ActionBar.Content>
+        <Separator />
+        <ActionBar.Suffix>
+          <Tooltip>
+            <Button
+              isIconOnly
+              aria-label="Clear selection"
+              size="sm"
+              variant="ghost"
+              onPress={() => setSelected(new Set())}>
+              <Xmark />
+            </Button>
+            <Tooltip.Content>Clear selection</Tooltip.Content>
+          </Tooltip>
+        </ActionBar.Suffix>
+      </ActionBar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Data Grid
+
+Combine with [DataGrid](https://heroui.pro/docs/react/components/data-grid) for bulk selection workflows. The ActionBar appears when rows are selected and provides contextual actions like edit, export, archive, or delete.
+
+<ComponentPreview name="pro-action-bar-with-data-grid">
+
+```tsx
+'use client'
+
+import {
+  Archive,
+  ArrowDownToLine,
+  CircleFill,
+  Pencil,
+  TrashBin,
+  Xmark
+} from '@gravity-ui/icons'
+import { useCallback, useState } from 'react'
+import type { Selection } from 'react-aria-components/GridList'
+
+import type { DataGridColumn } from '@vezham/react-pro-v3'
+import { ActionBar, DataGrid } from '@vezham/react-pro-v3'
+import { Avatar, Button, Chip, Separator, Tooltip } from '@vezham/react-v3'
+
+type Status = 'Active' | 'Inactive' | 'Pending'
+
+interface Employee {
+  id: number
+  name: string
+  email: string
+  avatar: string
+  department: string
+  status: Status
+  joinDate: string
+}
+
+const statusColorMap: Record<Status, 'success' | 'danger' | 'warning'> = {
+  Active: 'success',
+  Inactive: 'danger',
+  Pending: 'warning'
+}
+
+const departments = [
+  'Engineering',
+  'Design',
+  'Marketing',
+  'Sales',
+  'Support',
+  'Product'
+]
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000
+
+  return x - Math.floor(x)
+}
+
+const names = [
+  'Elena Rodriguez',
+  'Marcus Chen',
+  'Priya Patel',
+  "James O'Brien",
+  'Yuki Tanaka',
+  'Amara Okafor',
+  'Luca Bianchi',
+  'Sofia Andersson'
+]
+
+const statuses: Status[] = ['Active', 'Inactive', 'Pending']
+
+const initialEmployees: Employee[] = Array.from({ length: 8 }, (_, i) => {
+  const r = (s: number) => seededRandom(i * 7 + s)
+  const name = names[i]!
+  const month = (i % 12) + 1
+  const day = Math.floor(r(4) * 28) + 1
+
+  return {
+    avatar: `https://img.heroui.chat/image/avatar?w=200&h=200&u=${i + 20}`,
+    department: departments[Math.floor(r(2) * departments.length)]!,
+    email: `${name.toLowerCase().replace(/['\s]+/g, '.')}@company.com`,
+    id: i + 1,
+    joinDate: `2024-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+    name,
+    status: statuses[Math.floor(r(3) * statuses.length)]!
+  }
+})
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
+
+export function WithDataGrid() {
+  const [employees, setEmployees] = useState(initialEmployees)
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
+
+  const selectionCount =
+    selectedKeys === 'all'
+      ? employees.length
+      : (selectedKeys as Set<string | number>).size
+
+  const selectedIds =
+    selectedKeys === 'all'
+      ? new Set(employees.map(e => e.id))
+      : (selectedKeys as Set<number>)
+
+  const handleDelete = useCallback(() => {
+    setEmployees(prev => prev.filter(e => !selectedIds.has(e.id)))
+    setSelectedKeys(new Set())
+  }, [selectedIds])
+
+  const handleExport = useCallback(() => {
+    const selected = employees.filter(e => selectedIds.has(e.id))
+    const csv = [
+      'Name,Email,Department,Status,Join Date',
+      ...selected.map(
+        e => `${e.name},${e.email},${e.department},${e.status},${e.joinDate}`
+      )
+    ].join('\n')
+
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+
+    a.href = url
+    a.download = 'employees.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [employees, selectedIds])
+
+  const columns: DataGridColumn<Employee>[] = [
+    {
+      accessorKey: 'name',
+      allowsSorting: true,
+      cell: item => (
+        <div className="flex items-center gap-3">
+          <Avatar size="sm">
+            <Avatar.Image alt={item.name} src={item.avatar} />
+            <Avatar.Fallback>
+              {item.name
+                .split(' ')
+                .map(n => n[0])
+                .join('')}
+            </Avatar.Fallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">{item.name}</span>
+            <span className="text-muted text-xs">{item.email}</span>
+          </div>
+        </div>
+      ),
+      header: 'Employee',
+      id: 'name',
+      isRowHeader: true,
+      minWidth: 240
+    },
+    {
+      accessorKey: 'department',
+      allowsSorting: true,
+      header: 'Department',
+      id: 'department'
+    },
+    {
+      accessorKey: 'status',
+      allowsSorting: true,
+      cell: item => (
+        <Chip color={statusColorMap[item.status]} size="sm" variant="soft">
+          <CircleFill width={6} />
+          <Chip.Label>{item.status}</Chip.Label>
+        </Chip>
+      ),
+      header: 'Status',
+      id: 'status'
+    },
+    {
+      accessorKey: 'joinDate',
+      allowsSorting: true,
+      cell: item => (
+        <span className="text-muted text-sm tabular-nums">
+          {formatDate(item.joinDate)}
+        </span>
+      ),
+      header: 'Joined',
+      id: 'joinDate'
+    }
+  ]
+
+  return (
+    <div className="w-full max-w-4xl">
+      <DataGrid
+        showSelectionCheckboxes
+        aria-label="Employees"
+        columns={columns}
+        data={employees}
+        defaultSortDescriptor={{ column: 'name', direction: 'ascending' }}
+        getRowId={item => item.id}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={setSelectedKeys}
+      />
+
+      <ActionBar aria-label="Bulk actions" isOpen={selectionCount > 0}>
+        <ActionBar.Prefix>
+          <Chip className="shrink-0 tabular-nums" size="sm">
+            {selectionCount}
+          </Chip>
+        </ActionBar.Prefix>
+        <Separator />
+        <ActionBar.Content>
+          <Button aria-label="Edit" size="sm" variant="ghost">
+            <Pencil />
+            <span className="action-bar__label">Edit</span>
+          </Button>
+          <Button
+            aria-label="Export"
+            size="sm"
+            variant="ghost"
+            onPress={handleExport}>
+            <ArrowDownToLine />
+            <span className="action-bar__label">Export</span>
+          </Button>
+          <Button aria-label="Archive" size="sm" variant="ghost">
+            <Archive />
+            <span className="action-bar__label">Archive</span>
+          </Button>
+          <Button
+            aria-label="Delete"
+            className="text-danger bg-danger/10"
+            size="sm"
+            variant="ghost"
+            onPress={handleDelete}>
+            <TrashBin />
+            <span className="action-bar__label">Delete</span>
+          </Button>
+        </ActionBar.Content>
+        <Separator />
+        <ActionBar.Suffix>
+          <Tooltip>
+            <Button
+              isIconOnly
+              aria-label="Clear selection"
+              size="sm"
+              variant="ghost"
+              onPress={() => setSelectedKeys(new Set())}>
+              <Xmark />
+            </Button>
+            <Tooltip.Content>Clear selection</Tooltip.Content>
+          </Tooltip>
+        </ActionBar.Suffix>
+      </ActionBar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { ActionBar } from '@vezham/react-pro-v3'
+import { Button, Chip, Separator, Tooltip } from '@vezham/react-v3'
+
+;<ActionBar isOpen={hasSelection}>
+  <ActionBar.Prefix>
+    <Chip size="sm">{count}</Chip>
+  </ActionBar.Prefix>
+  <Separator />
+  <ActionBar.Content>
+    <Button size="sm" variant="ghost">
+      Edit
+    </Button>
+    <Button size="sm" variant="ghost">
+      Export
+    </Button>
+  </ActionBar.Content>
+  <Separator />
+  <ActionBar.Suffix>
+    <Tooltip>
+      <Button
+        isIconOnly
+        aria-label="Clear"
+        size="sm"
+        variant="ghost"
+        onPress={onClear}>
+        <Xmark />
+      </Button>
+      <Tooltip.Content>Clear selection</Tooltip.Content>
+    </Tooltip>
+  </ActionBar.Suffix>
+</ActionBar>
+```
+
+All three sections (`Prefix`, `Content`, `Suffix`) are optional. Use `Separator` from `@vezham/react-v3` between sections as needed.
+
+## Responsive Labels
+
+Use the `action-bar__label` CSS class on any text you want hidden on mobile. Below the `sm` breakpoint (640px), elements with this class become `sr-only` — buttons collapse to icon-only while remaining accessible.
+
+```tsx
+<Button aria-label="Edit" size="sm" variant="ghost">
+  <Pencil />
+  <span className="action-bar__label">Edit</span>
+</Button>
+```
+
+## CSS Classes
+
+### Base Classes
+
+- `.action-bar` — Outer positioning wrapper. Fixed to viewport bottom-center with `pointer-events: none`.
+- `.action-bar__wrapper` — The visible pill surface. Restores `pointer-events: auto`, applies shadow.
+
+### Element Classes
+
+- `.action-bar__prefix` — Leading section (badges, counts).
+- `.action-bar__content` — Middle section for main actions.
+- `.action-bar__suffix` — Trailing section (dismiss button).
+- `.action-bar__label` — Text that collapses to `sr-only` below 640px.
+
+## API Reference
+
+### ActionBar
+
+The root component. Extends `ToolbarProps` from `@vezham/react-v3`.
+
+| Prop          | Type                         | Default        | Description                                                                    |
+| ------------- | ---------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| `isOpen`      | `boolean`                    | —              | Controls visibility with animated enter/exit. Required.                        |
+| `aria-label`  | `string`                     | `"Actions"`    | Accessible label for the toolbar.                                              |
+| `isAttached`  | `boolean`                    | `true`         | Whether the toolbar has a surface background with full rounding.               |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | The orientation of the toolbar.                                                |
+| `className`   | `string`                     | —              | Additional CSS classes applied to the toolbar wrapper.                         |
+| `children`    | `ReactNode`                  | —              | Content — typically `Prefix`, `Content`, `Suffix`, and `Separator` components. |
+
+### ActionBar.Prefix
+
+Leading section container.
+
+| Prop        | Type        | Default | Description                                               |
+| ----------- | ----------- | ------- | --------------------------------------------------------- |
+| `children`  | `ReactNode` | —       | Content for the leading section (badges, counts, labels). |
+| `className` | `string`    | —       | Additional CSS classes.                                   |
+
+### ActionBar.Content
+
+Middle section container for main actions.
+
+| Prop        | Type        | Default | Description                     |
+| ----------- | ----------- | ------- | ------------------------------- |
+| `children`  | `ReactNode` | —       | Action buttons, dropdowns, etc. |
+| `className` | `string`    | —       | Additional CSS classes.         |
+
+### ActionBar.Suffix
+
+Trailing section container.
+
+| Prop        | Type        | Default | Description                        |
+| ----------- | ----------- | ------- | ---------------------------------- |
+| `children`  | `ReactNode` | —       | Dismiss button, secondary actions. |
+| `className` | `string`    | —       | Additional CSS classes.            |

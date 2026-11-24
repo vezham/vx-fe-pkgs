@@ -1,0 +1,124 @@
+---
+title: Raw SVG
+description: Copy, embed, and export icons, illustrations, and logos without a framework.
+logo: svg
+---
+
+Use SVG files directly in HTML, CSS, or design tools. You do not need an icon package or the CDN runtime script to display an SVG file.
+
+## Download an asset
+
+Open an [icon](/docs/assets/icons), [illustration](/docs/assets/illustrations), or [logo](/docs/assets/logos) and choose an export:
+
+| Action           | Result                                                                                               |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| **Copy SVG**     | Copies the complete SVG markup.                                                                      |
+| **Download SVG** | Saves the vector file.                                                                               |
+| **PNG / WebP**   | Renders the artwork inside a square canvas at the selected export size, preserving its aspect ratio. |
+| **Open SVG**     | Opens the original illustration or selected logo variant from the CDN.                               |
+
+For icons, choose a weight and colors before copying or downloading. Export size sets the SVG's width and height and the PNG/WebP canvas dimensions. **Preview size** only changes the on-page preview and embed examples.
+
+Illustrations and logos keep their SVG file's dimensions when downloaded. Export size controls their PNG/WebP canvas. The preview background and grid are never included in exports; transparent areas stay transparent unless the artwork itself contains a background.
+
+### Original icon archive
+
+[Download the SVG archive (.zip)](/icon-catalog/vezham-icons.zip) for a bulk collection of icon files grouped by weight.
+
+This archive is a separate snapshot from the browser's pinned `@vezham/icons@1.0.7` runtime. Available icons and weights can differ. Use an icon's detail page to export the version shown in its preview.
+
+## Use an SVG as an image
+
+Save a downloaded SVG as `public/assets/home.svg` in an app that serves its `public` folder at the site root, then reference it:
+
+```html
+<img src="/assets/home.svg" width="24" height="24" alt="Home" />
+```
+
+You can also use a pinned icon URL directly without loading a script:
+
+```html
+<img
+  src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/icons/home.svg"
+  width="24"
+  height="24"
+  alt="Home" />
+```
+
+Use `alt=""` when the image is decorative or repeats a nearby label. For other frameworks and asset URLs, copy the HTML, React, or Vue example from the asset's detail page.
+
+## Inline SVG and CSS colors
+
+Inline SVG can inherit text color when its paths use `fill="currentColor"` or `stroke="currentColor"`. This complete example uses the archive's outline Minus icon:
+
+```html
+<button type="button" class="decrease" aria-label="Decrease value">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="vx-icon"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    focusable="false">
+    <path
+      d="M4 12.75C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25L20 11.25C20.4142 11.25 20.75 11.5858 20.75 12C20.75 12.4142 20.4142 12.75 20 12.75L4 12.75Z"
+      fill="currentColor" />
+  </svg>
+</button>
+```
+
+```css
+.decrease {
+  color: #6c5ce7;
+  transition: color 0.2s;
+}
+
+.decrease:hover {
+  color: #5a4bd1;
+}
+
+.vx-icon {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+```
+
+SVGs copied or downloaded from the icon browser contain your selected colors as explicit paint values. To make one inherit CSS color, replace the relevant paint values with `currentColor`. For duotone icons, preserve separate primary and secondary paints when you want two distinct colors.
+
+An SVG loaded through `<img>` or a CSS background does **not** inherit the surrounding page's `color`. Use inline SVG for that behavior, or export the colors you need. Preserve the original paths and `viewBox`; an outline icon may use filled geometry rather than strokes.
+
+## CSS background
+
+After saving an illustration as `public/assets/astronaut.svg`, use a base class for layout and a modifier for its image:
+
+```html
+<span
+  class="vx-illustration vx-illustration--astronaut"
+  aria-hidden="true"></span>
+```
+
+```css
+.vx-illustration {
+  display: inline-block;
+  width: 8rem;
+  height: 8rem;
+  background: center / contain no-repeat;
+}
+
+.vx-illustration--astronaut {
+  background-image: url('/assets/astronaut.svg');
+}
+```
+
+Background images have no alternative text. Use an `<img>` with suitable `alt` text when the artwork conveys information.
+
+## Illustration colors and logo variants
+
+Illustration palette edits appear in the preview, **SVG** source tab, clipboard, and SVG/PNG/WebP downloads. **Reset colors** restores the original palette. **Open SVG** always opens the original CDN artwork.
+
+When you customize an illustration, its embed examples reference a local file such as `./astronaut.svg`. Download the edited SVG and place it at that path, or update the example to your own hosted URL. The original CDN URL does not contain your edits.
+
+For logos, choose an available variant before copying or downloading. **Open SVG** and the embed examples use that selected variant. White logo variants use a dark preview background for visibility; that background is not added to the exported logo.

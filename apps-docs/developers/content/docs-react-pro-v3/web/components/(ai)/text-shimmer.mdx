@@ -1,0 +1,75 @@
+---
+title: 'Text Shimmer'
+description: 'Animated shimmer text for streaming, thinking, and loading labels.'
+sourceUrl: https://heroui.pro/docs/react/components/text-shimmer
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `TextShimmer` for short labels that indicate active generation or background work.
+
+<ComponentPreview name="pro-text-shimmer-default">
+
+```tsx
+'use client'
+
+import { TextShimmer } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="flex flex-col gap-4 text-sm">
+      <TextShimmer>Thinking...</TextShimmer>
+      <TextShimmer>Generating response...</TextShimmer>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Color
+
+The shimmer uses `currentColor`, so you can pass text color utilities such as `text-muted` and keep the animation visible.
+The text renders at 45% alpha and the sweeping highlight at full strength.
+
+```tsx
+<TextShimmer className="text-muted">Thinking...</TextShimmer>
+```
+
+## Anatomy
+
+```tsx
+import { TextShimmer } from '@vezham/react-pro-v3'
+
+;<TextShimmer>Thinking...</TextShimmer>
+```
+
+## Performance
+
+The highlight is GPU-composited: an inert copy of the text masks a gradient that animates with
+`translate` only, so no `background-position` repaint happens per frame. Set `--spread` to change how
+wide the highlight falloff is.
+
+Under `prefers-reduced-motion: reduce` the animated layer is removed and the text renders solid.
+
+## CSS Classes
+
+- `.text-shimmer` - Root element
+- `.text-shimmer__text` - Readable text layer
+- `.text-shimmer__highlight` - Inert copy that masks the animated highlight to the glyphs
+
+## API Reference
+
+### TextShimmer
+
+| Prop        | Type        | Default | Description                                                 |
+| ----------- | ----------- | ------- | ----------------------------------------------------------- |
+| `children`  | `ReactNode` | -       | Text content                                                |
+| `className` | `string`    | -       | Additional classes, including color and text size utilities |
+
+Also supports render props from HeroUI `dom.span`.

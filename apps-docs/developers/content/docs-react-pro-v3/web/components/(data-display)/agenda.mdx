@@ -1,0 +1,830 @@
+---
+title: 'Agenda'
+description: 'A composable calendar component with day, week, and month views for displaying and managing events with drag interactions.'
+sourceUrl: https://heroui.pro/docs/react/components/agenda
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+<Callout type="info">
+  The live example targets the installed 1.0.0-beta.10 package and uses
+  `visibleDays` and `slotDuration`. Swipe navigation, time-zone overrides, and
+  declined event status in the upstream reference require a newer package.
+</Callout>
+
+## Usage
+
+<ComponentPreview name="pro-agenda-default">
+
+```tsx
+'use client'
+
+import { CalendarDateTime } from '@internationalized/date'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import type { AgendaEventType } from '@vezham/react-pro-v3'
+import { Agenda, useAgenda } from '@vezham/react-pro-v3'
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mql = window.matchMedia(query)
+    const listener = (e: MediaQueryListEvent | MediaQueryList) =>
+      setMatches(e.matches)
+
+    listener(mql)
+    mql.addEventListener('change', listener)
+
+    return () => mql.removeEventListener('change', listener)
+  }, [query])
+
+  return matches
+}
+
+function dt(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute = 0
+) {
+  // `day` can run past either end of the month, so it's added rather than set.
+  return new CalendarDateTime(year, month, 1, hour, minute).add({
+    days: day - 1
+  })
+}
+
+function generateEvents(): AgendaEventType[] {
+  const now = new Date()
+  const y = now.getFullYear()
+  const m = now.getMonth() + 1
+  const d = now.getDate()
+
+  return [
+    {
+      color: '#10b981',
+      end: dt(y, m, d + 2, 23, 59),
+      id: 'allday-1',
+      isAllDay: true,
+      start: dt(y, m, d, 0),
+      title: 'Company Holiday'
+    },
+    {
+      color: '#3b82f6',
+      end: dt(y, m, d, 23, 59),
+      id: 'allday-2',
+      isAllDay: true,
+      start: dt(y, m, d, 0),
+      title: 'Team Offsite'
+    },
+    {
+      end: dt(y, m, d, 9, 30),
+      id: '1',
+      start: dt(y, m, d, 9, 0),
+      title: 'Team Standup'
+    },
+    {
+      color: '#d946ef',
+      end: dt(y, m, d, 13, 0),
+      id: '2',
+      start: dt(y, m, d, 12, 0),
+      title: 'Lunch'
+    },
+    {
+      color: '#3b82f6',
+      end: dt(y, m, d, 15, 30),
+      id: '3',
+      start: dt(y, m, d, 14, 0),
+      title: 'Design Review'
+    },
+    {
+      color: '#10b981',
+      end: dt(y, m, d, 16, 30),
+      id: '4',
+      start: dt(y, m, d, 16, 0),
+      title: '1:1 with Manager'
+    },
+    {
+      color: '#f59e0b',
+      end: dt(y, m, d, 10, 0),
+      id: '5',
+      start: dt(y, m, d, 9, 0),
+      title: 'Product Sync'
+    },
+    {
+      color: '#8b5cf6',
+      end: dt(y, m, d, 10, 15),
+      id: '6',
+      start: dt(y, m, d, 9, 15),
+      title: 'Eng Huddle'
+    },
+    {
+      color: '#ef4444',
+      end: dt(y, m, d, 15, 30),
+      id: '7',
+      start: dt(y, m, d, 14, 30),
+      title: 'Client Call'
+    },
+    {
+      color: '#06b6d4',
+      end: dt(y, m, d, 14, 20),
+      id: '8',
+      start: dt(y, m, d, 14, 0),
+      title: 'Quick Check-in'
+    },
+    {
+      color: '#84cc16',
+      end: dt(y, m, d, 15, 0),
+      id: '9',
+      start: dt(y, m, d, 14, 40),
+      title: 'Wrap-up Notes'
+    },
+    {
+      color: '#f59e0b',
+      end: dt(y, m, d - 1, 11, 30),
+      id: '10',
+      start: dt(y, m, d - 1, 10, 0),
+      title: 'Sprint Planning'
+    },
+    {
+      color: '#8b5cf6',
+      end: dt(y, m, d + 3, 16, 0),
+      id: '11',
+      start: dt(y, m, d + 3, 15, 0),
+      title: 'Retro'
+    },
+    {
+      color: '#ef4444',
+      end: dt(y, m, d + 9, 16, 30),
+      id: '12',
+      start: dt(y, m, d + 9, 16, 0),
+      title: '1:1 with Manager'
+    },
+    {
+      color: '#10b981',
+      end: dt(y, m, d + 13, 23, 59),
+      id: '13',
+      isAllDay: true,
+      start: dt(y, m, d + 13, 0),
+      title: 'Holiday'
+    },
+    {
+      color: '#10b981',
+      end: dt(y, m, d + 2, 12, 0),
+      id: '14',
+      start: dt(y, m, d + 2, 11, 0),
+      title: 'Code Review'
+    },
+    {
+      color: '#3b82f6',
+      end: dt(y, m, d + 8, 10, 30),
+      id: '15',
+      start: dt(y, m, d + 8, 9, 0),
+      title: 'Board Meeting'
+    },
+    {
+      color: '#3b82f6',
+      end: dt(y, m, d, 11, 15),
+      id: '16',
+      start: dt(y, m, d, 10, 15),
+      status: 'unconfirmed' as const,
+      title: 'Planning'
+    },
+    {
+      color: '#6b7280',
+      end: dt(y, m, d + 1, 10, 0),
+      id: '17',
+      isReadOnly: true,
+      start: dt(y, m, d + 1, 9, 0),
+      title: 'Company All-Hands'
+    },
+    {
+      color: '#f59e0b',
+      end: dt(y, m, d + 1, 14, 0),
+      id: '18',
+      start: dt(y, m, d + 1, 13, 0),
+      status: 'unconfirmed' as const,
+      title: 'Vendor Demo'
+    }
+  ]
+}
+
+let nextId = 100
+
+const EVENT_COLORS = [
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#d946ef',
+  '#8b5cf6',
+  '#ef4444',
+  '#06b6d4'
+]
+
+export function Default() {
+  const initialEvents = useMemo(() => generateEvents(), [])
+  const [events, setEvents] = useState<AgendaEventType[]>(initialEvents)
+  const isMobile = useMediaQuery('(max-width: 639px)')
+
+  const handleCreate = useCallback(
+    (newEvent: { start: CalendarDateTime; end: CalendarDateTime }) => {
+      const id = String(nextId++)
+      const color = EVENT_COLORS[nextId % EVENT_COLORS.length]
+
+      setEvents(prev => [
+        ...prev,
+        {
+          color,
+          end: newEvent.end,
+          id,
+          start: newEvent.start,
+          title: 'New Event'
+        }
+      ])
+    },
+    []
+  )
+
+  const handleMove = useCallback(
+    (id: string, start: CalendarDateTime, end: CalendarDateTime) => {
+      setEvents(prev => prev.map(e => (e.id === id ? { ...e, end, start } : e)))
+    },
+    []
+  )
+
+  const handleResize = useCallback(
+    (id: string, start: CalendarDateTime, end: CalendarDateTime) => {
+      setEvents(prev => prev.map(e => (e.id === id ? { ...e, end, start } : e)))
+    },
+    []
+  )
+
+  const handleDelete = useCallback((id: string) => {
+    setEvents(prev => prev.filter(e => e.id !== id))
+  }, [])
+
+  const agenda = useAgenda({
+    defaultView: 'week',
+    events,
+    onEventCreate: isMobile ? undefined : handleCreate,
+    onEventDelete: handleDelete,
+    onEventMove: isMobile ? undefined : handleMove,
+    onEventResize: isMobile ? undefined : handleResize,
+    slotDuration: 15,
+    weekDays: isMobile ? 3 : 7
+  })
+
+  return (
+    <div
+      // className="border-border overflow-hidden rounded-2xl border"
+      style={{ height: 600, width: '100%' }}>
+      <Agenda {...agenda}>
+        <Agenda.Header>
+          <Agenda.Heading />
+          <Agenda.ViewSelector />
+          <Agenda.Navigation>
+            <Agenda.NavButton slot="previous" />
+            <Agenda.TodayButton />
+            <Agenda.NavButton slot="next" />
+          </Agenda.Navigation>
+        </Agenda.Header>
+        <Agenda.Body>
+          {agenda.view !== 'month' ? (
+            <>
+              <Agenda.WeekHeader />
+              <Agenda.AllDaySection>
+                <Agenda.AllDayLabel>all-day</Agenda.AllDayLabel>
+                {agenda.allDayLayout.map(item => (
+                  <Agenda.AllDayEvent
+                    key={item.event.id}
+                    colSpan={item.colSpan}
+                    colStart={item.colStart}
+                    event={item.event}
+                    row={item.row}
+                  />
+                ))}
+              </Agenda.AllDaySection>
+              <Agenda.TimeGrid>
+                <Agenda.CurrentTimeIndicator />
+                <>
+                  {agenda.visibleDays.map(day => (
+                    <Agenda.DayColumn key={day.toString()} date={day}>
+                      {agenda.getEventsForDay(day).map(event => (
+                        <Agenda.Event key={event.id} event={event} />
+                      ))}
+                    </Agenda.DayColumn>
+                  ))}
+                </>
+              </Agenda.TimeGrid>
+            </>
+          ) : (
+            <Agenda.MonthGrid>
+              {agenda.visibleWeeks.map((week, i) => {
+                const rowLayout = agenda.getMonthRowLayout(week)
+
+                return (
+                  <Agenda.MonthRow
+                    key={i}
+                    spanningRowCount={rowLayout.rowCount}>
+                    {rowLayout.items.map(item => (
+                      <Agenda.MonthSpanningEvent
+                        key={item.event.id}
+                        colSpan={item.colSpan}
+                        colStart={item.colStart}
+                        event={item.event}
+                        row={item.row}
+                      />
+                    ))}
+                    {week.map((day, colIdx) => (
+                      <Agenda.MonthCell
+                        key={day.toString()}
+                        date={day}
+                        maxEvents={isMobile ? 1 : 2}
+                        spanningRowCount={
+                          rowLayout.rowCountPerCol[colIdx] ?? 0
+                        }>
+                        {agenda.getPerCellEvents(day, week).map(event => (
+                          <Agenda.MonthEvent key={event.id} event={event} />
+                        ))}
+                      </Agenda.MonthCell>
+                    ))}
+                  </Agenda.MonthRow>
+                )
+              })}
+            </Agenda.MonthGrid>
+          )}
+        </Agenda.Body>
+      </Agenda>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Agenda component and the `useAgenda` hook. Access all subcomponents using dot notation.
+
+```tsx
+import {Agenda, useAgenda} from "@vezham/react-pro-v3";
+
+const agenda = useAgenda({
+  events: [...],
+  defaultView: "week",
+});
+
+<Agenda {...agenda}>
+  <Agenda.Header>
+    <Agenda.Heading />
+    <Agenda.ViewSelector />
+    <Agenda.Navigation>
+      <Agenda.NavButton slot="previous" />
+      <Agenda.TodayButton />
+      <Agenda.NavButton slot="next" />
+    </Agenda.Navigation>
+  </Agenda.Header>
+  <Agenda.Body>
+    {/* Day / Week view */}
+    <Agenda.WeekHeader />
+    <Agenda.AllDaySection>
+      <Agenda.AllDayLabel>all-day</Agenda.AllDayLabel>
+      {agenda.allDayLayout.map((item) => (
+        <Agenda.AllDayEvent key={item.event.id} event={item.event} colStart={item.colStart} colSpan={item.colSpan} row={item.row} />
+      ))}
+    </Agenda.AllDaySection>
+    <Agenda.TimeGrid>
+      <Agenda.CurrentTimeIndicator />
+      <>
+        {agenda.visibleDays.map((day) => (
+          <Agenda.DayColumn key={day.toString()} date={day}>
+            {agenda.getEventsForDay(day).map((event) => (
+              <Agenda.Event key={event.id} event={event} />
+            ))}
+          </Agenda.DayColumn>
+        ))}
+      </>
+    </Agenda.TimeGrid>
+
+    {/* Month view */}
+    <Agenda.MonthGrid>
+      {agenda.visibleWeeks.map((week, i) => {
+        const rowLayout = agenda.getMonthRowLayout(week);
+        return (
+          <Agenda.MonthRow key={i} spanningRowCount={rowLayout.rowCount}>
+            {rowLayout.items.map((item) => (
+              <Agenda.MonthSpanningEvent key={item.event.id} event={item.event} colStart={item.colStart} colSpan={item.colSpan} row={item.row} />
+            ))}
+            {week.map((day, colIdx) => (
+              <Agenda.MonthCell key={day.toString()} date={day} spanningRowCount={rowLayout.rowCountPerCol[colIdx] ?? 0}>
+                {agenda.getPerCellEvents(day, week).map((event) => (
+                  <Agenda.MonthEvent key={event.id} event={event} />
+                ))}
+              </Agenda.MonthCell>
+            ))}
+          </Agenda.MonthRow>
+        );
+      })}
+    </Agenda.MonthGrid>
+  </Agenda.Body>
+</Agenda>
+```
+
+## Views
+
+The Agenda supports three views controlled via the `ViewSelector` or programmatically through `setView`:
+
+- **Day** — single day with full time grid
+- **Week** — 7-day (or custom count) view with shared time grid
+- **Month** — calendar grid with spanning multi-day events
+
+### Swipe Through Days
+
+Set `allowsSwipe` to slide through the days with a horizontal swipe in Day and Week views, on a trackpad or with a finger. The days follow the swipe and snap to the nearest day when it ends, so a week can start on any day. A trackpad's momentum carries them further, and so does a flick: it goes on to the next day at least. The previous, next, and Today buttons slide to their new days too.
+
+```tsx
+const agenda = useAgenda({ events, allowsSwipe: true })
+
+;<Agenda.TimeGrid>
+  <Agenda.CurrentTimeIndicator />
+  <>
+    {agenda.visibleDays.map(day => (
+      <Agenda.DayColumn key={day.toString()} date={day}>
+        {/* events */}
+      </Agenda.DayColumn>
+    ))}
+  </>
+</Agenda.TimeGrid>
+```
+
+The swipe draws days past each side of the screen: a week on each side in Week view and three days in Day view. Render `renderedDays` instead of `visibleDays` in `Agenda.DayColumns`. `Agenda.WeekHeader` and `Agenda.AllDaySection` handle this on their own. `visibleDays` stays the days on screen, which suits range labels and data fetching. Vertical scrolling still moves the hours, and the days stay put while an event is dragged, resized, or created. A finger swipe starts on the days, not the hour labels. The days' tracks set `touch-action: pan-y pinch-zoom`, so sideways finger moves go to the swipe while the browser keeps scrolling the hours and zooming the page.
+
+### Time Zone, Week Start, and Clock
+
+```tsx
+const agenda = useAgenda({
+  events,
+  timeZone: 'America/New_York',
+  firstDayOfWeek: 'mon',
+  hourCycle: 24
+})
+```
+
+- `timeZone` sets today, the current time indicator, past events, and event time labels. It defaults to the local time zone. Event times are wall-clock times in this zone.
+- `firstDayOfWeek` starts Week and Month views on a given day (`"sun"` to `"sat"`) instead of the locale's.
+- `hourCycle` shows hour labels and event times on a 12- or 24-hour clock instead of the locale's.
+
+## Events
+
+Events are defined as an array of `AgendaEvent` objects:
+
+```tsx
+interface AgendaEvent {
+  id: string
+  title: string
+  start: CalendarDateTime
+  end: CalendarDateTime
+  color?: string
+  isAllDay?: boolean
+  isReadOnly?: boolean
+  status?: 'confirmed' | 'unconfirmed' | 'declined'
+}
+```
+
+### Unconfirmed Events
+
+Set `status: "unconfirmed"` to render an event with a dashed border on the Agenda's background, indicating a tentative or pending event.
+
+### Declined Events
+
+Set `status: "declined"` to keep an event on the calendar with an outline, muted text, and a struck-through title.
+
+### Past Events
+
+Events that ended before the current time get `data-past` and fade toward `--agenda-surface`, unless selected. Set `--agenda-past-fade` to change how far they fade, or to `0%` to turn it off.
+
+### Back-to-Back Events
+
+Each timed event stops `--agenda-event-gap` short of its end, so one that starts as another ends doesn't touch it. Events shorter than `snapMinutes`, including zero-length ones, are laid out for the time they're drawn, beside any event that starts with them.
+
+### Event Fills
+
+Event fills are mixed onto `--agenda-surface`, so hour lines, weekend shading, and other events never show through them. It defaults to `var(--color-background)`; set it to the color behind the Agenda when that differs, such as a card's.
+
+### Short Events
+
+Events too short for two lines get `data-short` and show their title and start time on one line. Narrow events, such as overlapping ones, hide their time.
+
+### Events Past Midnight
+
+A timed event that ends on a later day is drawn on its start day and stops at midnight.
+
+### Read-Only Events
+
+Set `isReadOnly: true` to prevent an event from being moved or resized. The event can still be selected but drag interactions are disabled and the resize handle is hidden.
+
+## Drag Interactions
+
+All drag interactions work out of the box when callbacks are provided:
+
+- **Drag to create** — click and drag on an empty time slot to create a new event
+- **Drag to move** — drag an event to a different time or day
+- **Drag to resize** — drag the bottom edge of an event to change its duration
+- **Cross-day move** — drag an event horizontally to move it to a different day
+
+On mobile, drag interactions (create, move, resize) are disabled by default. The consumer controls this by passing `undefined` for the drag callbacks when on a small screen.
+
+### Snapping
+
+Creating, moving, and resizing snap to `snapMinutes` (default `5`). A drag to create snaps its start down and its end up. A click creates an event of `defaultEventDuration` minutes (default `60`) in the slot it lands in.
+
+```tsx
+const agenda = useAgenda({ events, slotDuration: 15, defaultEventDuration: 30 })
+```
+
+### Event Callbacks
+
+```tsx
+const agenda = useAgenda({
+  events,
+  onEventCreate: event => {
+    /* { start, end } */
+  },
+  onEventMove: (id, start, end) => {
+    /* moved */
+  },
+  onEventResize: (id, start, end) => {
+    /* resized */
+  },
+  onEventDelete: id => {
+    /* deleted via Delete/Backspace key */
+  },
+  onEventSelect: id => {
+    /* selected */
+  }
+})
+```
+
+## All-Day Events
+
+All-day events appear in a collapsible section above the time grid. Multi-day all-day events span across day columns.
+
+The section includes an expand/collapse toggle beside the hour labels. `Agenda.AllDayLabel` renders inside the toggle, so clicking the label also collapses the section. When collapsed, event counts are shown per day (e.g. "2 events"). Customize the collapsed label with the `collapsedLabel` prop on `Agenda.AllDaySection`.
+
+All-day events are packed into rows earliest first, then longest first.
+
+## Month View Features
+
+### Spanning Events
+
+Multi-day all-day events render as bars spanning across the month grid row. Use `getMonthRowLayout(week)` to compute layout positions and `getPerCellEvents(day, week)` for per-cell events.
+
+### Event Overflow
+
+`Agenda.MonthCell` limits visible events via the `maxEvents` prop (default: 2). Overflow shows a "N more" link that navigates to the day view. Customize the label with the `moreLabel` prop.
+
+### Date Navigation
+
+Clicking a date number in the month grid navigates to that date in day view. The first day of each month shows the month name (e.g. "May 1").
+
+## Weekend Highlighting
+
+Saturday and Sunday columns automatically receive a subtle gray background (`data-weekend` attribute) in all views.
+
+## Current Time Indicator
+
+A live indicator shows the current time in the time grid:
+
+- Displays a time label badge (e.g. "10:30 AM") in the time column
+- In week view, a faded line spans all columns with an active highlight on today's column, which slides with the column on a swipe
+- Nearby hour labels auto-hide to avoid overlap
+- Updates every minute
+
+## CSS Classes
+
+### Base
+
+- `.agenda` — Root container. Sets CSS custom properties for sizing.
+
+### CSS Variables
+
+- `--agenda-slot-height` — Height of each hour slot (default: `60px`).
+- `--agenda-time-column-width` — Width of the time labels column (default: `58px`).
+- `--agenda-current-time-color` — Color of the current time indicator (default: `var(--color-danger)`).
+- `--agenda-event-radius` — Border radius of event cards (default: `var(--radius-md)`).
+- `--agenda-event-gap` — Space left under each timed event, so back-to-back events don't touch (default: `2px`).
+- `--agenda-surface` — The color behind the Agenda, which event fills and the past fade are mixed onto (default: `var(--color-background)`).
+- `--agenda-past-fade` — How far past events fade toward `--agenda-surface` (default: `40%`).
+
+### Header
+
+- `.agenda__header` — Flex container for heading, view selector, and navigation.
+- `.agenda__heading` — Month/year title text.
+- `.agenda__navigation` — Wrapper for nav buttons and today button.
+- `.agenda__nav-button` — Override hook for navigation arrow buttons (uses HeroUI Button).
+- `.agenda__today-button` — Override hook for the Today button (uses HeroUI Button).
+- `.agenda__view-selector` — Override hook for the view selector (uses HeroUI Segment).
+
+### Day/Week View
+
+- `.agenda__week-header` — Row of day headers above the time grid.
+- `.agenda__day-header` — Individual day header with name and date.
+- `.agenda__time-grid` — Scrollable time grid container.
+- `.agenda__time-labels` — Sticky column of hour labels.
+- `.agenda__time-label` — Individual hour label.
+- `.agenda__day-columns` — Clips the day columns to the days on screen.
+- `.agenda__day-column` — Column for a single day's events.
+- `.agenda__time-slot` — Individual hour slot row.
+- `.agenda__days` — Clips a row (day headers, all-day events, current time) to the days on screen.
+- `.agenda__days-track` — Holds a row's rendered days. With `allowsSwipe`, it is wider than the screen, moves with the swipe, and sets `touch-action: pan-y pinch-zoom`.
+
+### Events
+
+- `.agenda__event` — Positioned event card in the time grid.
+- `.agenda__event-title` — Event title text.
+- `.agenda__event-time` — Event time range text.
+- `.agenda__resize-handle` — Bottom resize handle with hover indicator.
+
+### All-Day Section
+
+- `.agenda__all-day-section` — Row of all-day events.
+- `.agenda__all-day-gutter` — Holds the toggle beside the hour labels.
+- `.agenda__all-day-grid` — Grid of all-day events, one column per rendered day.
+- `.agenda__all-day-toggle` — Expand/collapse button with the chevron and label.
+- `.agenda__all-day-label` — "all-day" label text.
+- `.agenda__all-day-event` — All-day event bar.
+- `.agenda__all-day-summary` — Collapsed event count per day.
+
+### Month View
+
+- `.agenda__month-grid` — Month grid container.
+- `.agenda__month-weekday-header` — Sticky weekday names row.
+- `.agenda__month-row` — Week row in the month grid.
+- `.agenda__month-cell` — Individual day cell.
+- `.agenda__month-cell-date` — Date number button (navigates to day view).
+- `.agenda__month-cell-more` — "N more" overflow link.
+- `.agenda__month-event` — Per-cell event in month view.
+- `.agenda__month-spanning-event` — Multi-day event bar spanning across cells.
+
+### Interactive States
+
+- `[data-dragging]` — Applied during drag interactions.
+- `[data-resizing]` — Applied during resize.
+- `[data-selected="true"]` — Applied to selected events.
+- `[data-status="unconfirmed"]` — Dashed border style for tentative events.
+- `[data-status="declined"]` — Outlined, struck-through style for declined events.
+- `[data-past]` — Applied to events that have ended.
+- `[data-short]` — Applied to timed events too short for two lines.
+- `[data-readonly]` — Applied to read-only events.
+- `[data-weekend]` — Applied to weekend columns and cells.
+- `[data-today]` — Applied to today's date elements.
+- `[data-drop-target]` — Applied to the target cell during drag.
+
+### Previews
+
+- `.agenda__create-preview` — Dashed preview rectangle during drag-to-create.
+- `.agenda__drop-preview` — Outlined preview at the target position during drag-to-move.
+
+## API Reference
+
+### useAgenda
+
+The main hook for managing agenda state. Returns all data and methods needed by the component.
+
+| Option                 | Type                                                          | Default  | Description                                                                              |
+| ---------------------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `events`               | `AgendaEvent[]`                                               | —        | Array of events to display. Required.                                                    |
+| `defaultView`          | `"day" \| "week" \| "month"`                                  | `"week"` | Initial view.                                                                            |
+| `view`                 | `"day" \| "week" \| "month"`                                  | —        | Controlled view state.                                                                   |
+| `onViewChange`         | `(view: AgendaView) => void`                                  | —        | Called when the view changes.                                                            |
+| `defaultDate`          | `CalendarDate`                                                | today    | Initial focused date.                                                                    |
+| `date`                 | `CalendarDate`                                                | —        | Controlled date state.                                                                   |
+| `onDateChange`         | `(date: CalendarDate) => void`                                | —        | Called when the date changes.                                                            |
+| `startHour`            | `number`                                                      | `0`      | First visible hour in the time grid.                                                     |
+| `endHour`              | `number`                                                      | `24`     | Last visible hour in the time grid.                                                      |
+| `slotDuration`         | `number`                                                      | `60`     | Duration of each time slot in minutes.                                                   |
+| `onEventCreate`        | `(event: {start, end}) => void`                               | —        | Called when dragging to create a new event.                                              |
+| `onEventDelete`        | `(id: string) => void`                                        | —        | Called when Delete/Backspace is pressed on a selected event.                             |
+| `onEventMove`          | `(id, start, end) => void`                                    | —        | Called when an event is dragged to a new position.                                       |
+| `onEventResize`        | `(id, start, end) => void`                                    | —        | Called when an event is resized.                                                         |
+| `onEventSelect`        | `(id: string \| null) => void`                                | —        | Called when an event is selected or deselected.                                          |
+| `selectedEventId`      | `string \| null`                                              | —        | Controlled selected event state.                                                         |
+| `weekDays`             | `number`                                                      | `7`      | Days in Week view. Fewer than 7 are centered on the date.                                |
+| `allowsSwipe`          | `boolean`                                                     | `false`  | Slides through the days with a horizontal trackpad or touch swipe in Day and Week views. |
+| `timeZone`             | `string`                                                      | local    | Time zone for today, the current time, and event times.                                  |
+| `firstDayOfWeek`       | `"sun" \| "mon" \| "tue" \| "wed" \| "thu" \| "fri" \| "sat"` | locale   | First day of the week in Week and Month views.                                           |
+| `hourCycle`            | `12 \| 24`                                                    | locale   | Clock for hour labels and event times.                                                   |
+| `snapMinutes`          | `number`                                                      | `5`      | Minutes that creating, moving, and resizing snap to.                                     |
+| `defaultEventDuration` | `number`                                                      | `60`     | Length in minutes of an event created with a click.                                      |
+
+Besides the state above, `useAgenda` returns `visibleDays` (the days on screen), `renderedDays` (`visibleDays` plus the days drawn past each side for `allowsSwipe`), and `setVisibleStart(day)`, which moves the days so `day` is the first one on screen.
+
+### Agenda
+
+Root component. Wraps children in context and Motion providers.
+
+Also supports all HTML `div` props.
+
+### Agenda.Header
+
+Container for heading, view selector, and navigation controls.
+
+Also supports all HTML `div` props.
+
+### Agenda.Heading
+
+Displays the current month and year (e.g. "May 2026").
+
+Also supports all HTML `h1` props.
+
+### Agenda.ViewSelector
+
+Segmented control for switching between day, week, and month views. Built on the HeroUI Segment component.
+
+| Prop   | Type                   | Default | Description                  |
+| ------ | ---------------------- | ------- | ---------------------------- |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"`  | Size of the segment control. |
+
+### Agenda.NavButton
+
+Navigation button for previous/next. Built on the HeroUI Button component.
+
+| Prop   | Type                   | Default | Description              |
+| ------ | ---------------------- | ------- | ------------------------ |
+| `slot` | `"previous" \| "next"` | —       | Direction of navigation. |
+
+### Agenda.TodayButton
+
+Button to navigate to today's date. Built on the HeroUI Button component.
+
+### Agenda.AllDaySection
+
+Collapsible section for all-day events with a CSS grid layout for spanning events.
+
+| Prop             | Type                        | Default      | Description                              |
+| ---------------- | --------------------------- | ------------ | ---------------------------------------- |
+| `collapsedLabel` | `(count: number) => string` | `"N events"` | Custom label for collapsed event counts. |
+
+### Agenda.AllDayEvent
+
+An all-day event bar positioned in the grid.
+
+| Prop       | Type          | Default | Description                        |
+| ---------- | ------------- | ------- | ---------------------------------- |
+| `event`    | `AgendaEvent` | —       | The event data. Required.          |
+| `colStart` | `number`      | —       | Grid column start index (0-based). |
+| `colSpan`  | `number`      | —       | Number of columns to span.         |
+| `row`      | `number`      | —       | Row index for stacking.            |
+
+### Agenda.DayColumns
+
+Clips the time grid's day columns to the days on screen and holds them on the track a swipe slides. Without children, it renders a column with its events for each of `renderedDays`.
+
+Also supports all HTML `div` props.
+
+### Agenda.Event
+
+A timed event card positioned absolutely in a day column. Supports drag-to-move and drag-to-resize.
+
+| Prop    | Type          | Default | Description               |
+| ------- | ------------- | ------- | ------------------------- |
+| `event` | `AgendaEvent` | —       | The event data. Required. |
+
+Also supports HTML `div` props and `ref`, such as `data-*`, `aria-*`, and `onContextMenu`.
+
+### Agenda.MonthCell
+
+A day cell in the month grid. Limits visible events and shows overflow.
+
+| Prop               | Type                        | Default    | Description                                       |
+| ------------------ | --------------------------- | ---------- | ------------------------------------------------- |
+| `date`             | `CalendarDate`              | —          | The date for this cell. Required.                 |
+| `maxEvents`        | `number`                    | `2`        | Maximum number of events to show before overflow. |
+| `moreLabel`        | `(count: number) => string` | `"N more"` | Custom label for the overflow link.               |
+| `spanningRowCount` | `number`                    | `0`        | Number of spanning event rows above this cell.    |
+
+### Agenda.MonthSpanningEvent
+
+A multi-day event bar in the month grid, positioned absolutely across cells.
+
+| Prop       | Type          | Default | Description                      |
+| ---------- | ------------- | ------- | -------------------------------- |
+| `event`    | `AgendaEvent` | —       | The event data. Required.        |
+| `colStart` | `number`      | —       | Column start index (0-based).    |
+| `colSpan`  | `number`      | —       | Number of columns to span.       |
+| `row`      | `number`      | —       | Row index for vertical stacking. |
+
+### Agenda.MonthEvent
+
+A per-cell event in the month grid. Supports drag-to-move across cells.
+
+| Prop    | Type          | Default | Description               |
+| ------- | ------------- | ------- | ------------------------- |
+| `event` | `AgendaEvent` | —       | The event data. Required. |
+
+Also supports HTML `div` props and `ref`.

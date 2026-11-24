@@ -1,0 +1,217 @@
+/* vx-bot/INFO: Imported HeroUI demo utilities; see README.md and LICENSE. */
+/* stylelint-disable at-rule-prelude-no-invalid, alpha-value-notation, color-function-alias-notation, color-no-hex, declaration-property-unit-allowed-list, length-zero-no-unit, nesting-selector-no-missing-scoping-root, property-no-vendor-prefix, rule-empty-line-before, unit-allowed-list -- preserve upstream Tailwind utilities and browser compatibility declarations */
+@keyframes shine {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+@keyframes custom-fade-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px) saturate(0%);
+    background-color: transparent;
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px) saturate(180%);
+    background-color: var(--color-backdrop);
+  }
+}
+
+@keyframes custom-fade-out {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
+@utility animate-shine {
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 10%,
+      rgba(255, 255, 255, 0.3) 45%,
+      rgba(255, 255, 255, 0.1) 55%,
+      transparent 90%
+    );
+    animation: shine 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  [data-theme='dark'] &::after,
+  .dark &::after {
+    background: linear-gradient(
+      120deg,
+      transparent 10%,
+      rgba(255, 255, 255, 0.1) 45%,
+      rgba(255, 255, 255, 0.04) 55%,
+      transparent 90%
+    );
+  }
+}
+
+@utility gradient-border {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    padding: var(--gradient-border-width, 1px);
+    background: var(--gradient-border);
+    pointer-events: none;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+}
+
+@layer components {
+  .range-calendar--custom-demo .range-calendar__cell {
+    @apply rounded-none;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell
+    .range-calendar__cell-button {
+    @apply rounded-none;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selected='true']:not(
+      [data-outside-month='true']
+    ) {
+    @apply bg-muted/50 rounded-none;
+  }
+
+  .dark
+    .range-calendar--custom-demo
+    .range-calendar__cell[data-selected='true']:not(
+      [data-outside-month='true']
+    ) {
+    @apply bg-muted/35;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selected='true']:is(td:first-child > *) {
+    @apply rounded-ss-none rounded-es-none;
+
+    &[data-selection-start='true'] {
+      @apply rounded-ss-none rounded-es-none;
+    }
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selected='true']:is(td:last-child > *) {
+    @apply rounded-se-none rounded-ee-none;
+
+    &[data-selection-end='true'] {
+      @apply rounded-se-none rounded-ee-none;
+    }
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__grid-body
+    td:has(> .range-calendar__cell[data-outside-month='true'])
+    + td
+    > .range-calendar__cell[data-selected='true'] {
+    @apply rounded-ss-none rounded-es-none;
+
+    &[data-selection-start='true'] {
+      @apply rounded-ss-none rounded-es-none;
+    }
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__grid-body
+    td:has(> .range-calendar__cell[data-selected='true']):has(
+      + td > .range-calendar__cell[data-outside-month='true']
+    )
+    > .range-calendar__cell[data-selected='true'] {
+    @apply rounded-se-none rounded-ee-none;
+
+    &[data-selection-end='true'] {
+      @apply rounded-se-none rounded-ee-none;
+    }
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-start='true']:not(
+      [data-outside-month='true']
+    ) {
+    @apply rounded-none;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-end='true']:not(
+      [data-outside-month='true']
+    ) {
+    @apply rounded-none;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selected='true']
+    .range-calendar__cell-button {
+    @apply rounded-none;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-start='true']:not(
+      [data-outside-month='true']
+    )
+    .range-calendar__cell-button,
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-end='true']:not(
+      [data-outside-month='true']
+    )
+    .range-calendar__cell-button {
+    @apply bg-foreground text-background;
+  }
+
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-start='true'][data-pressed='true']:not(
+      [data-outside-month='true']
+    )
+    .range-calendar__cell-button,
+  .range-calendar--custom-demo
+    .range-calendar__cell[data-selection-end='true'][data-pressed='true']:not(
+      [data-outside-month='true']
+    )
+    .range-calendar__cell-button {
+    @apply bg-foreground/90;
+  }
+
+  @media (hover: hover) {
+    .range-calendar--custom-demo
+      .range-calendar__cell[data-hovered='true']:not([data-selected='true'])
+      .range-calendar__cell-button,
+    .range-calendar--custom-demo
+      .range-calendar__cell:hover:not([data-selected='true'])
+      .range-calendar__cell-button {
+      @apply bg-muted/70 rounded-none;
+    }
+  }
+}
+/* stylelint-enable at-rule-prelude-no-invalid, alpha-value-notation, color-function-alias-notation, color-no-hex, declaration-property-unit-allowed-list, length-zero-no-unit, nesting-selector-no-missing-scoping-root, property-no-vendor-prefix, rule-empty-line-before, unit-allowed-list */

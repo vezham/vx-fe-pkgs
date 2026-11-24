@@ -1,0 +1,607 @@
+---
+title: 'Native Select'
+description: 'A styled wrapper around the native HTML select element with label, description, and validation support.'
+sourceUrl: https://heroui.pro/docs/react/components/native-select
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-native-select-default">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="w-full max-w-[220px]">
+      <NativeSelect className="w-full">
+        <NativeSelect.Trigger>
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Option value="cancelled">Cancelled</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the NativeSelect component and access all parts using dot notation.
+
+```tsx
+import { NativeSelect } from '@vezham/react-pro-v3'
+
+;<NativeSelect>
+  <NativeSelect.Trigger>
+    <NativeSelect.Indicator />
+  </NativeSelect.Trigger>
+  <NativeSelect.OptGroup>
+    <NativeSelect.Option />
+  </NativeSelect.OptGroup>
+</NativeSelect>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-native-select-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+const states = [
+  { id: 'california', name: 'California' },
+  { id: 'texas', name: 'Texas' },
+  { id: 'florida', name: 'Florida' },
+  { id: 'new-york', name: 'New York' },
+  { id: 'illinois', name: 'Illinois' }
+]
+
+export function Controlled() {
+  const [value, setValue] = useState('california')
+
+  return (
+    <div className="w-[220px] space-y-2">
+      <NativeSelect fullWidth>
+        <Label>State (controlled)</Label>
+        <NativeSelect.Trigger
+          name="state"
+          value={value}
+          onChange={e => setValue(e.target.value)}>
+          <NativeSelect.Option value="">Select a state</NativeSelect.Option>
+          {states.map(state => (
+            <NativeSelect.Option key={state.id} value={state.id}>
+              {state.name}
+            </NativeSelect.Option>
+          ))}
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+      <p className="text-muted text-sm">
+        Selected: {states.find(s => s.id === value)?.name || 'None'}
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Indicator
+
+<ComponentPreview name="pro-native-select-custom-indicator">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function CustomIndicator() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect fullWidth>
+        <Label>Priority</Label>
+        <NativeSelect.Trigger name="priority">
+          <NativeSelect.Option value="">Select priority</NativeSelect.Option>
+          <NativeSelect.Option value="low">Low</NativeSelect.Option>
+          <NativeSelect.Option value="medium">Medium</NativeSelect.Option>
+          <NativeSelect.Option value="high">High</NativeSelect.Option>
+          <NativeSelect.Option value="critical">Critical</NativeSelect.Option>
+          <NativeSelect.Indicator>
+            <svg
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="m7 15 5 5 5-5" />
+              <path d="m7 9 5-5 5 5" />
+            </svg>
+          </NativeSelect.Indicator>
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled Select
+
+<ComponentPreview name="pro-native-select-disabled-select">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function DisabledSelect() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect fullWidth>
+        <Label>Status</Label>
+        <NativeSelect.Trigger disabled defaultValue="done" name="status">
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Option value="cancelled">Cancelled</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Form Example
+
+<ComponentPreview name="pro-native-select-form-example">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Button, Description, Label } from '@vezham/react-v3'
+
+export function FormExample() {
+  const [submitted, setSubmitted] = useState<Record<string, string> | null>(
+    null
+  )
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: Record<string, string> = {}
+
+    formData.forEach((val, key) => {
+      data[key] = val.toString()
+    })
+    setSubmitted(data)
+  }
+
+  return (
+    <form className="flex w-[300px] flex-col gap-4" onSubmit={onSubmit}>
+      <NativeSelect fullWidth>
+        <Label>Country</Label>
+        <NativeSelect.Trigger required name="country">
+          <NativeSelect.Option value="">Select a country</NativeSelect.Option>
+          <NativeSelect.OptGroup label="North America">
+            <NativeSelect.Option value="us">United States</NativeSelect.Option>
+            <NativeSelect.Option value="ca">Canada</NativeSelect.Option>
+            <NativeSelect.Option value="mx">Mexico</NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.OptGroup label="Europe">
+            <NativeSelect.Option value="uk">United Kingdom</NativeSelect.Option>
+            <NativeSelect.Option value="fr">France</NativeSelect.Option>
+            <NativeSelect.Option value="de">Germany</NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.OptGroup label="Asia">
+            <NativeSelect.Option value="jp">Japan</NativeSelect.Option>
+            <NativeSelect.Option value="kr">South Korea</NativeSelect.Option>
+            <NativeSelect.Option value="in">India</NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+
+      <NativeSelect fullWidth>
+        <Label>Role</Label>
+        <NativeSelect.Trigger required name="role">
+          <NativeSelect.Option value="">Select a role</NativeSelect.Option>
+          <NativeSelect.Option value="admin">Admin</NativeSelect.Option>
+          <NativeSelect.Option value="editor">Editor</NativeSelect.Option>
+          <NativeSelect.Option value="viewer">Viewer</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+        <Description>Choose the user&apos;s permission level</Description>
+      </NativeSelect>
+
+      <Button size="lg" type="submit">
+        Submit
+      </Button>
+
+      {!!submitted && (
+        <pre className="text-muted bg-surface rounded-lg p-3 text-xs">
+          {JSON.stringify(submitted, null, 2)}
+        </pre>
+      )}
+    </form>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Full Width
+
+<ComponentPreview name="pro-native-select-full-width">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function FullWidth() {
+  return (
+    <div className="w-[400px] space-y-4">
+      <NativeSelect fullWidth>
+        <Label>Status</Label>
+        <NativeSelect.Trigger name="status">
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Invalid State
+
+<ComponentPreview name="pro-native-select-invalid-state">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { FieldError, Label } from '@vezham/react-v3'
+
+export function InvalidState() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect aria-invalid="true" className="w-full" data-invalid="true">
+        <Label>Status</Label>
+        <NativeSelect.Trigger aria-invalid="true" name="status">
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Option value="cancelled">Cancelled</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+        <FieldError>Please select a status</FieldError>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-native-select-variants">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+
+export function Variants() {
+  return (
+    <div className="flex flex-wrap items-start gap-6">
+      {(['primary', 'secondary'] as const).map(variant => (
+        <div key={variant} className="flex w-[220px] flex-col gap-2">
+          <span className="text-muted text-xs">{variant}</span>
+          <NativeSelect className="w-full" variant={variant}>
+            <NativeSelect.Trigger>
+              <NativeSelect.Option value="">Select status</NativeSelect.Option>
+              <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+              <NativeSelect.Option value="in-progress">
+                In Progress
+              </NativeSelect.Option>
+              <NativeSelect.Option value="done">Done</NativeSelect.Option>
+              <NativeSelect.Option value="cancelled">
+                Cancelled
+              </NativeSelect.Option>
+              <NativeSelect.Indicator />
+            </NativeSelect.Trigger>
+          </NativeSelect>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Description
+
+<ComponentPreview name="pro-native-select-with-description">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+export function WithDescription() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect fullWidth>
+        <Label>Status</Label>
+        <NativeSelect.Trigger name="status">
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Option value="cancelled">Cancelled</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+        <Description>Choose the current task status</Description>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Disabled Options
+
+<ComponentPreview name="pro-native-select-with-disabled-options">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Label } from '@vezham/react-v3'
+
+export function WithDisabledOptions() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect fullWidth>
+        <Label>Animal</Label>
+        <NativeSelect.Trigger name="animal">
+          <NativeSelect.Option value="">Select an animal</NativeSelect.Option>
+          <NativeSelect.Option value="dog">Dog</NativeSelect.Option>
+          <NativeSelect.Option disabled value="cat">
+            Cat (unavailable)
+          </NativeSelect.Option>
+          <NativeSelect.Option value="bird">Bird</NativeSelect.Option>
+          <NativeSelect.Option disabled value="kangaroo">
+            Kangaroo (unavailable)
+          </NativeSelect.Option>
+          <NativeSelect.Option value="elephant">Elephant</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Groups
+
+<ComponentPreview name="pro-native-select-with-groups">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+
+export function WithGroups() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect>
+        <NativeSelect.Trigger>
+          <NativeSelect.Option value="">Select department</NativeSelect.Option>
+          <NativeSelect.OptGroup label="Engineering">
+            <NativeSelect.Option value="frontend">Frontend</NativeSelect.Option>
+            <NativeSelect.Option value="backend">Backend</NativeSelect.Option>
+            <NativeSelect.Option value="devops">DevOps</NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.OptGroup label="Sales">
+            <NativeSelect.Option value="sales-rep">
+              Sales Rep
+            </NativeSelect.Option>
+            <NativeSelect.Option value="account-manager">
+              Account Manager
+            </NativeSelect.Option>
+            <NativeSelect.Option value="sales-director">
+              Sales Director
+            </NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.OptGroup label="Operations">
+            <NativeSelect.Option value="support">
+              Customer Support
+            </NativeSelect.Option>
+            <NativeSelect.Option value="product-manager">
+              Product Manager
+            </NativeSelect.Option>
+            <NativeSelect.Option value="ops-manager">
+              Operations Manager
+            </NativeSelect.Option>
+          </NativeSelect.OptGroup>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Label
+
+<ComponentPreview name="pro-native-select-with-label">
+
+```tsx
+'use client'
+
+import { NativeSelect } from '@vezham/react-pro-v3'
+import { Description, Label } from '@vezham/react-v3'
+
+export function WithLabel() {
+  return (
+    <div className="w-[220px]">
+      <NativeSelect fullWidth>
+        <Label>Status</Label>
+        <NativeSelect.Trigger name="status">
+          <NativeSelect.Option value="">Select status</NativeSelect.Option>
+          <NativeSelect.Option value="todo">Todo</NativeSelect.Option>
+          <NativeSelect.Option value="in-progress">
+            In Progress
+          </NativeSelect.Option>
+          <NativeSelect.Option value="done">Done</NativeSelect.Option>
+          <NativeSelect.Option value="cancelled">Cancelled</NativeSelect.Option>
+          <NativeSelect.Indicator />
+        </NativeSelect.Trigger>
+        <Description>Choose the current task status</Description>
+      </NativeSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.native-select` - Base outer wrapper (label + trigger + description)
+- `.native-select__trigger` - Positioned wrapper containing the select and indicator
+- `.native-select__select` - The native `select` element with field styling
+- `.native-select__indicator` - Chevron icon positioned inside the trigger
+
+### Variant Classes
+
+- `.native-select--secondary` - Secondary variant with default background and no shadow
+
+### Modifier Classes
+
+- `.native-select--full-width` - Makes the wrapper full-width
+- `.native-select__trigger--full-width` - Makes the trigger full-width
+
+### Interactive States
+
+- **Hover**: `:hover` or `[data-hovered="true"]` on `.native-select__select` (background and border change)
+- **Focus**: `:focus` on `.native-select__select` (border and background change)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on `.native-select__select` (focus ring)
+- **Invalid**: `[data-invalid="true"]` or `[aria-invalid="true"]` on `.native-select` (error styling)
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` on `.native-select__select` (reduced opacity, no pointer events)
+
+## API Reference
+
+### NativeSelect
+
+The root component. Wraps the trigger, label, and description.
+
+| Prop        | Type                       | Default     | Description                                              |
+| ----------- | -------------------------- | ----------- | -------------------------------------------------------- |
+| `variant`   | `'primary' \| 'secondary'` | `'primary'` | Visual style variant                                     |
+| `fullWidth` | `boolean`                  | `false`     | Whether the select takes the full width of its container |
+| `children`  | `ReactNode`                | -           | Trigger, label, and description elements                 |
+
+Also supports all native `div` HTML attributes.
+
+### NativeSelect.Trigger
+
+Wrapper containing the native `select` element and the indicator.
+
+| Prop               | Type        | Default | Description                                          |
+| ------------------ | ----------- | ------- | ---------------------------------------------------- |
+| `className`        | `string`    | -       | Additional CSS class applied to the `select` element |
+| `wrapperClassName` | `string`    | -       | Additional CSS class applied to the wrapper `div`    |
+| `children`         | `ReactNode` | -       | Option, OptGroup, and Indicator elements             |
+
+Also supports all native `select` HTML attributes (`value`, `onChange`, `disabled`, etc.).
+
+### NativeSelect.Indicator
+
+Chevron icon inside the trigger. Renders a default down-chevron SVG when no children are provided.
+
+| Prop       | Type        | Default | Description           |
+| ---------- | ----------- | ------- | --------------------- |
+| `children` | `ReactNode` | -       | Custom indicator icon |
+
+Also supports all native `span` HTML attributes.
+
+### NativeSelect.Option
+
+A native `option` element.
+
+| Prop       | Type        | Default | Description       |
+| ---------- | ----------- | ------- | ----------------- |
+| `children` | `ReactNode` | -       | Option label text |
+
+Also supports all native `option` HTML attributes (`value`, `disabled`, etc.).
+
+### NativeSelect.OptGroup
+
+A native `optgroup` element for grouping options.
+
+| Prop       | Type        | Default | Description     |
+| ---------- | ----------- | ------- | --------------- |
+| `children` | `ReactNode` | -       | Option elements |
+
+Also supports all native `optgroup` HTML attributes (`label`, `disabled`, etc.).

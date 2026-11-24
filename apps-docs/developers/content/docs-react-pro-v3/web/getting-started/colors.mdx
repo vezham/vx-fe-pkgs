@@ -1,0 +1,67 @@
+---
+title: 'Colors'
+description: 'Pro-specific color variables that extend the HeroUI color system'
+sourceUrl: https://heroui.pro/docs/react/getting-started/colors
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro uses the same color system as [HeroUI OSS](https://heroui.com) — CSS variables in `oklch`, semantic naming with foreground pairs, and automatic light/dark switching.
+
+<Callout type="info">
+  Read the full [Colors guide on
+  heroui.com](https://heroui.com/docs/react/getting-started/colors) to
+  understand the base color palette, semantic tokens, and how to customize them.
+</Callout>
+
+## Chart Colors (Pro)
+
+HeroUI Pro adds a chart color palette for use with chart components ([AreaChart](https://heroui.pro/docs/react/components/area-chart), [BarChart](https://heroui.pro/docs/react/components/bar-chart), [LineChart](https://heroui.pro/docs/react/components/line-chart), [PieChart](https://heroui.pro/docs/react/components/pie-chart), [RadarChart](https://heroui.pro/docs/react/components/radar-chart), [RadialChart](https://heroui.pro/docs/react/components/radial-chart)). These are defined in `@vezham/react-pro-v3/css` and automatically derive from your theme's accent color:
+
+```css
+:root {
+  --chart-1: oklch(from var(--accent) calc(l - 0.24) c h);
+  --chart-2: oklch(from var(--accent) calc(l - 0.12) c h);
+  --chart-3: var(--accent);
+  --chart-4: oklch(from var(--accent) calc(l + 0.12) c h);
+  --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
+}
+```
+
+The palette is centered on your accent (`--chart-3`) and fans out from darkest (`--chart-1`) to lightest (`--chart-5`), giving multi-series charts balanced contrast on either side of your brand color.
+
+### Customizing Chart Colors
+
+Override these variables in your theme CSS to use a custom chart palette:
+
+```css
+.root,
+.light,
+[data-theme='light'] {
+  --chart-1: oklch(0.35 0.18 220);
+  --chart-2: oklch(0.45 0.18 220);
+  --chart-3: oklch(0.55 0.18 220);
+  --chart-4: oklch(0.7 0.15 220);
+  --chart-5: oklch(0.85 0.12 220);
+}
+
+.dark,
+[data-theme='dark'] {
+  --chart-1: oklch(0.35 0.18 220);
+  --chart-2: oklch(0.45 0.18 220);
+  --chart-3: oklch(0.55 0.18 220);
+  --chart-4: oklch(0.7 0.15 220);
+  --chart-5: oklch(0.85 0.12 220);
+}
+```
+
+<Callout type="info">
+  **Want to create your own theme?** [Design
+  Systems](https://heroui.pro/dashboard/pro/ds) lets you visually customize
+  colors (including chart colors), radius, fonts, and more — then export the
+  CSS.
+</Callout>

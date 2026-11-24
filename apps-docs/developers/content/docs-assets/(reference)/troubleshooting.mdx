@@ -1,0 +1,81 @@
+---
+title: 'Troubleshooting'
+---
+
+Common issues and their solutions. If you don't find your answer here, open an issue on the [Vezham GitHub Issues tracker](https://github.com/vezham-oss/reicon/issues).
+
+---
+
+## 1. Icons are not rendering (CDN)
+
+Make sure the CDN script is loaded before any `<vx-icon>` elements. Place the script tag in your `<head>` or before your markup.
+
+```html
+<!-- ✅ Place in <head> -->
+<script src="https://cdn.jsdelivr.net/npm/@vezham/icons@1.0.7/dist/cdn/vezham-icons.js"></script>
+```
+
+---
+
+## 2. Wrong icon weight showing
+
+The `weight` prop uses lowercase values across packages and the CDN. Use `"outline"`, `"filled"`, `"duotone-outline"`, or `"duotone-filled"`.
+
+```jsx
+// React / Vue / Svelte / React Native
+<Star weight="filled" />
+<Star weight="duotone-filled" />
+
+// CDN
+<vx-icon icon="star" weight="filled"></vx-icon>
+```
+
+---
+
+## 3. TypeScript can't find icon names
+
+Make sure you're importing from the correct package depending on your environment (e.g. `"vezham"` for vanilla JS or `"@vezham/icons-react"` for React). Both packages ship with full type definitions. If autocomplete isn't working, restart your TypeScript server.
+
+```typescript
+// ✅ For React projects
+import { Home } from '@vezham/icons-react';
+
+// ✅ For vanilla JS projects
+import { Home } from '@vezham/icons';
+```
+
+---
+
+## 4. Bundle size is too large
+
+Avoid wildcard or star imports — they pull in every icon and defeat tree-shaking.
+
+```javascript
+// ❌ Pulls in everything
+import * as Icons from '@vezham/icons';
+
+// ✅ Tree-shakeable
+import { Home, Bell } from '@vezham/icons';
+
+// ✅ Smallest possible
+import Home from 'vezham/icons/Home';
+```
+
+---
+
+## 5. Icon color not changing
+
+Icons use `currentColor` by default. If you set a `color` prop, it overrides inheritance. Check that no parent CSS is overriding the color. For Tailwind, use `text-*` utilities on the icon's `className`.
+
+```jsx
+// Color via prop
+<Heart color="#ef4444" />
+
+// Color via Tailwind
+<Heart className="text-red-500" />
+
+// Color via parent inheritance
+<div style={{ color: "#ef4444" }}>
+  <Heart />  {/* inherits red */}
+</div>
+```

@@ -1,0 +1,1489 @@
+---
+title: 'Drop Zone'
+description: 'A drag-and-drop file upload area with file type filtering, size limits, and file list preview.'
+sourceUrl: https://heroui.pro/docs/react/components/drop-zone
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-drop-zone-default">
+
+```tsx
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+interface UploadFile {
+  id: string
+  name: string
+  size: number
+  status: 'uploading' | 'complete' | 'failed'
+  progress: number
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    json: 'orange',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    ts: 'blue',
+    tsx: 'blue',
+    txt: 'gray',
+    xlsx: 'green',
+    zip: 'orange'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+export function Default() {
+  const [files, setFiles] = useState<UploadFile[]>([])
+  const timersRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
+    new Map()
+  )
+
+  useEffect(() => {
+    files.forEach(file => {
+      if (file.status === 'uploading' && !timersRef.current.has(file.id)) {
+        const fileId = file.id
+        const timer = setInterval(() => {
+          setFiles(prev =>
+            prev.map(f => {
+              if (f.id !== fileId || f.status !== 'uploading') return f
+              const next = Math.min(
+                f.progress + Math.floor(Math.random() * 12) + 3,
+                100
+              )
+
+              if (next >= 100) {
+                const t = timersRef.current.get(fileId)
+
+                if (t) clearInterval(t)
+                timersRef.current.delete(fileId)
+
+                return { ...f, progress: 100, status: 'complete' as const }
+              }
+
+              return { ...f, progress: next }
+            })
+          )
+        }, 350)
+
+        timersRef.current.set(fileId, timer)
+      }
+    })
+  }, [files])
+
+  useEffect(() => {
+    const ref = timersRef.current
+
+    return () => {
+      ref.forEach(timer => clearInterval(timer))
+      ref.clear()
+    }
+  }, [])
+
+  const handleSelect = useCallback((fileList: FileList) => {
+    const newFiles: UploadFile[] = Array.from(fileList).map((f, i) => ({
+      id: `${Date.now()}-${i}`,
+      name: f.name,
+      progress: 0,
+      size: f.size,
+      status: 'uploading' as const
+    }))
+
+    setFiles(prev => [...newFiles, ...prev])
+  }, [])
+
+  const handleDrop = useCallback(
+    async (e: {
+      items: Array<{ kind: string; getFile?: () => Promise<File> }>
+    }) => {
+      const dropped: File[] = []
+
+      for (const item of e.items) {
+        if (item.kind === 'file' && item.getFile) {
+          dropped.push(await item.getFile())
+        }
+      }
+
+      const newFiles: UploadFile[] = dropped.map((f, i) => ({
+        id: `${Date.now()}-${i}`,
+        name: f.name,
+        progress: 0,
+        size: f.size,
+        status: 'uploading' as const
+      }))
+
+      setFiles(prev => [...newFiles, ...prev])
+    },
+    []
+  )
+
+  const handleRemove = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+    const timer = timersRef.current.get(id)
+
+    if (timer) {
+      clearInterval(timer)
+      timersRef.current.delete(id)
+    }
+  }, [])
+
+  return (
+    <DropZone className="w-[420px]">
+      <DropZone.Area onDrop={handleDrop as any}>
+        <DropZone.Icon />
+        <DropZone.Label>Drag files here or click to browse</DropZone.Label>
+        <DropZone.Description>
+          Supports JPEG, PNG, PDF, and MP4 up to 50 MB.
+        </DropZone.Description>
+        <DropZone.Trigger>Select File</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input onSelect={handleSelect} />
+
+      {files.length > 0 && (
+        <DropZone.FileList>
+          {files.map(file => {
+            const ext = getExtension(file.name).toUpperCase()
+
+            return (
+              <DropZone.FileItem key={file.id} status={file.status}>
+                <DropZone.FileFormatIcon
+                  color={getFormatColor(ext.toLowerCase())}
+                  format={ext}
+                />
+                <DropZone.FileInfo>
+                  <DropZone.FileName>{file.name}</DropZone.FileName>
+                  <DropZone.FileMeta>
+                    {formatFileSize(file.size)}
+                    {file.status === 'uploading' && ` | ${file.progress}%`}
+                    {file.status === 'complete' && (
+                      <span className="text-success"> | 100%</span>
+                    )}
+                  </DropZone.FileMeta>
+                  {file.status === 'uploading' && (
+                    <DropZone.FileProgress value={file.progress}>
+                      <DropZone.FileProgressTrack>
+                        <DropZone.FileProgressFill />
+                      </DropZone.FileProgressTrack>
+                    </DropZone.FileProgress>
+                  )}
+                </DropZone.FileInfo>
+                <DropZone.FileRemoveTrigger
+                  aria-label={`Remove ${file.name}`}
+                  onPress={() => handleRemove(file.id)}
+                />
+              </DropZone.FileItem>
+            )
+          })}
+        </DropZone.FileList>
+      )}
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the DropZone component and access all parts using dot notation.
+
+```tsx
+import { DropZone } from '@vezham/react-pro-v3'
+
+;<DropZone>
+  <DropZone.Area>
+    <DropZone.Icon />
+    <DropZone.Label>Drag files here or click to browse</DropZone.Label>
+    <DropZone.Description>
+      PDF, DOCX, PNG, or JPG up to 10 MB.
+    </DropZone.Description>
+    <DropZone.Trigger>Select files</DropZone.Trigger>
+  </DropZone.Area>
+  <DropZone.Input />
+  <DropZone.FileList>
+    <DropZone.FileItem>
+      <DropZone.FileFormatIcon />
+      <DropZone.FileInfo>
+        <DropZone.FileName>Proposal.pdf</DropZone.FileName>
+        <DropZone.FileMeta>2.4 MB</DropZone.FileMeta>
+      </DropZone.FileInfo>
+      <DropZone.FileProgress>
+        <DropZone.FileProgressTrack>
+          <DropZone.FileProgressFill />
+        </DropZone.FileProgressTrack>
+      </DropZone.FileProgress>
+      <DropZone.FileRetryTrigger />
+      <DropZone.FileRemoveTrigger />
+    </DropZone.FileItem>
+  </DropZone.FileList>
+</DropZone>
+```
+
+## With File List
+
+<ComponentPreview name="pro-drop-zone-with-file-list">
+
+```tsx
+'use client'
+
+import {
+  CircleCheckFill,
+  CircleXmarkFill,
+  CloudArrowUpIn
+} from '@gravity-ui/icons'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { DropZone } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+interface UploadFile {
+  id: string
+  name: string
+  size: number
+  status: 'uploading' | 'complete' | 'failed'
+  progress: number
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    json: 'orange',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    ts: 'blue',
+    tsx: 'blue',
+    txt: 'gray',
+    xlsx: 'green',
+    zip: 'orange'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+function addFilesToState(
+  incoming: File[],
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>
+) {
+  const newFiles: UploadFile[] = incoming.map((f, i) => ({
+    id: `${Date.now()}-${i}`,
+    name: f.name,
+    progress: 0,
+    size: f.size,
+    status: 'uploading' as const
+  }))
+
+  setFiles(prev => [...newFiles, ...prev])
+}
+
+export function WithFileList() {
+  const [files, setFiles] = useState<UploadFile[]>([
+    {
+      id: '1',
+      name: 'Annual report 2025.pdf',
+      progress: 100,
+      size: 2306867,
+      status: 'complete'
+    },
+    {
+      id: '2',
+      name: 'Hero banner.png',
+      progress: 42,
+      size: 491520,
+      status: 'uploading'
+    },
+    {
+      id: '3',
+      name: 'Onboarding flow.mp4',
+      progress: 18,
+      size: 8388608,
+      status: 'failed'
+    }
+  ])
+
+  const timersRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
+    new Map()
+  )
+
+  useEffect(() => {
+    files.forEach(file => {
+      if (file.status === 'uploading' && !timersRef.current.has(file.id)) {
+        const fileId = file.id
+        const timer = setInterval(() => {
+          setFiles(prev =>
+            prev.map(f => {
+              if (f.id !== fileId || f.status !== 'uploading') return f
+              const next = Math.min(
+                f.progress + Math.floor(Math.random() * 12) + 3,
+                100
+              )
+
+              if (next >= 100) {
+                const t = timersRef.current.get(fileId)
+
+                if (t) clearInterval(t)
+                timersRef.current.delete(fileId)
+
+                return { ...f, progress: 100, status: 'complete' as const }
+              }
+
+              return { ...f, progress: next }
+            })
+          )
+        }, 350)
+
+        timersRef.current.set(fileId, timer)
+      }
+    })
+  }, [files])
+
+  useEffect(() => {
+    const ref = timersRef.current
+
+    return () => {
+      ref.forEach(timer => clearInterval(timer))
+      ref.clear()
+    }
+  }, [])
+
+  const handleRemove = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+    const timer = timersRef.current.get(id)
+
+    if (timer) {
+      clearInterval(timer)
+      timersRef.current.delete(id)
+    }
+  }, [])
+
+  const handleRetry = useCallback((id: string) => {
+    setFiles(prev =>
+      prev.map(f =>
+        f.id === id ? { ...f, progress: 0, status: 'uploading' as const } : f
+      )
+    )
+  }, [])
+
+  const handleSelect = useCallback(
+    (fileList: FileList) => addFilesToState(Array.from(fileList), setFiles),
+    []
+  )
+
+  const handleDrop = useCallback(
+    async (e: {
+      items: Array<{ kind: string; getFile?: () => Promise<File> }>
+    }) => {
+      const dropped: File[] = []
+
+      for (const item of e.items) {
+        if (item.kind === 'file' && item.getFile) {
+          dropped.push(await item.getFile())
+        }
+      }
+      addFilesToState(dropped, setFiles)
+    },
+    []
+  )
+
+  return (
+    <DropZone className="w-[480px]">
+      <DropZone.Area onDrop={handleDrop as any}>
+        <DropZone.Icon>
+          <CloudArrowUpIn />
+        </DropZone.Icon>
+        <DropZone.Label>Upload project assets</DropZone.Label>
+        <DropZone.Description>
+          Documents, images, or videos up to 10 MB each.
+        </DropZone.Description>
+        <DropZone.Trigger>Add Files</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input multiple onSelect={handleSelect} />
+
+      {files.length > 0 && (
+        <DropZone.FileList>
+          {files.map(file => {
+            const ext = getExtension(file.name).toUpperCase()
+
+            return (
+              <DropZone.FileItem key={file.id} status={file.status}>
+                <DropZone.FileFormatIcon
+                  color={getFormatColor(ext.toLowerCase())}
+                  format={ext}
+                />
+                <DropZone.FileInfo>
+                  <DropZone.FileName>{file.name}</DropZone.FileName>
+                  <DropZone.FileMeta>
+                    {formatFileSize(file.size)}
+                    {file.status === 'uploading' && ' | Uploading...'}
+                    {file.status === 'complete' && (
+                      <div className="flex items-center gap-1">
+                        {' | '}
+                        <CircleCheckFill className="text-success inline size-3" />{' '}
+                        Complete
+                      </div>
+                    )}
+                    {file.status === 'failed' && (
+                      <div className="flex items-center gap-1">
+                        {' | '}
+                        <CircleXmarkFill className="text-danger inline size-3" />{' '}
+                        <span className="text-danger">Failed</span>
+                      </div>
+                    )}
+                  </DropZone.FileMeta>
+                  {(file.status === 'uploading' ||
+                    file.status === 'complete') && (
+                    <DropZone.FileProgress value={file.progress}>
+                      <DropZone.FileProgressTrack>
+                        <DropZone.FileProgressFill />
+                      </DropZone.FileProgressTrack>
+                    </DropZone.FileProgress>
+                  )}
+                  {file.status === 'failed' && (
+                    <Button
+                      className="mt-2 -ml-1"
+                      size="sm"
+                      variant="danger-soft"
+                      onPress={() => handleRetry(file.id)}>
+                      Try again
+                    </Button>
+                  )}
+                </DropZone.FileInfo>
+                <DropZone.FileRemoveTrigger
+                  aria-label={`Remove ${file.name}`}
+                  onPress={() => handleRemove(file.id)}
+                />
+              </DropZone.FileItem>
+            )
+          })}
+        </DropZone.FileList>
+      )}
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Compact File List
+
+<ComponentPreview name="pro-drop-zone-compact-file-list">
+
+```tsx
+'use client'
+
+import { CircleCheckFill, CloudArrowUpIn } from '@gravity-ui/icons'
+import { useEffect, useState } from 'react'
+
+import { DropZone } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    txt: 'gray',
+    xlsx: 'green'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+const initialFiles = [
+  {
+    id: '1',
+    name: 'Logo dark.svg',
+    progress: 100,
+    size: 24576,
+    status: 'complete' as const
+  },
+  {
+    id: '2',
+    name: 'Meeting notes.docx',
+    progress: 68,
+    size: 358400,
+    status: 'uploading' as const
+  },
+  {
+    id: '3',
+    name: 'Demo recording.mp4',
+    progress: 0,
+    size: 5242880,
+    status: 'failed' as const
+  }
+]
+
+export function CompactFileList() {
+  const [files, setFiles] = useState(initialFiles)
+
+  useEffect(() => {
+    if (files.length > 0) return
+    const timer = setTimeout(() => setFiles(initialFiles), 600)
+
+    return () => clearTimeout(timer)
+  }, [files.length])
+
+  const handleRemove = (id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+  }
+
+  return (
+    <DropZone className="w-[480px]">
+      <DropZone.FileList>
+        {files.map(file => {
+          const ext = getExtension(file.name).toUpperCase()
+
+          return (
+            <DropZone.FileItem key={file.id} status={file.status}>
+              <DropZone.FileFormatIcon
+                color={getFormatColor(ext.toLowerCase())}
+                format={ext}
+              />
+              <DropZone.FileInfo>
+                <DropZone.FileName>{file.name}</DropZone.FileName>
+                <DropZone.FileMeta>
+                  {formatFileSize(file.size)}
+                  {file.status === 'uploading' && (
+                    <>
+                      {' | '}
+                      <CloudArrowUpIn className="inline size-3 align-[-1px]" />{' '}
+                      {file.progress}%
+                    </>
+                  )}
+                  {file.status === 'complete' && (
+                    <>
+                      {' | '}
+                      <CircleCheckFill className="text-success inline size-3 align-[-1px]" />{' '}
+                      100%
+                    </>
+                  )}
+                </DropZone.FileMeta>
+                {file.status === 'failed' && (
+                  <>
+                    <DropZone.FileMeta>
+                      Something went wrong, please retry
+                    </DropZone.FileMeta>
+                    <Button
+                      className="mt-2 -ml-1"
+                      size="sm"
+                      variant="danger-soft">
+                      Try again
+                    </Button>
+                  </>
+                )}
+              </DropZone.FileInfo>
+              <DropZone.FileRemoveTrigger
+                aria-label={`Remove ${file.name}`}
+                onPress={() => handleRemove(file.id)}
+              />
+            </DropZone.FileItem>
+          )
+        })}
+      </DropZone.FileList>
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-drop-zone-disabled">
+
+```tsx
+'use client'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+export function Disabled() {
+  return (
+    <DropZone className="w-[420px]">
+      <DropZone.Area isDisabled>
+        <DropZone.Icon />
+        <DropZone.Label>File upload unavailable</DropZone.Label>
+        <DropZone.Description>
+          Uploads are temporarily disabled.
+        </DropZone.Description>
+        <DropZone.Trigger isDisabled>Select File</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input />
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Image Only
+
+<ComponentPreview name="pro-drop-zone-image-only">
+
+```tsx
+'use client'
+
+import { Picture } from '@gravity-ui/icons'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+export function ImageOnly() {
+  return (
+    <DropZone className="w-[420px]">
+      <DropZone.Area
+        getDropOperation={types =>
+          [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'image/svg+xml'
+          ].some(t => types.has(t))
+            ? 'copy'
+            : 'cancel'
+        }>
+        <DropZone.Icon>
+          <Picture />
+        </DropZone.Icon>
+        <DropZone.Label>Drop your images here</DropZone.Label>
+        <DropZone.Description>
+          Accepts PNG, JPG, GIF, WebP, and SVG.
+        </DropZone.Description>
+        <DropZone.Trigger>Select Images</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input accept="image/*" />
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Max Size Limit
+
+<ComponentPreview name="pro-drop-zone-max-size-limit">
+
+```tsx
+'use client'
+
+import { useCallback, useState } from 'react'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+interface UploadFile {
+  id: string
+  name: string
+  size: number
+  status: 'uploading' | 'complete' | 'failed'
+  progress: number
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    json: 'orange',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    txt: 'gray',
+    xlsx: 'green',
+    zip: 'orange'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+const MAX_SIZE = 5 * 1024 * 1024
+
+export function MaxSizeLimit() {
+  const [files, setFiles] = useState<UploadFile[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  const addFiles = useCallback((incoming: File[]) => {
+    setError(null)
+    const accepted: UploadFile[] = []
+    const rejected: string[] = []
+
+    for (const f of incoming) {
+      if (f.size > MAX_SIZE) {
+        rejected.push(f.name)
+      } else {
+        accepted.push({
+          id: `${Date.now()}-${accepted.length}`,
+          name: f.name,
+          progress: 100,
+          size: f.size,
+          status: 'complete'
+        })
+      }
+    }
+
+    if (rejected.length > 0) {
+      setError(`Rejected (over 5 MB): ${rejected.join(', ')}`)
+    }
+    if (accepted.length > 0) {
+      setFiles(prev => [...prev, ...accepted])
+    }
+  }, [])
+
+  const handleSelect = useCallback(
+    (fileList: FileList) => addFiles(Array.from(fileList)),
+    [addFiles]
+  )
+
+  const handleDrop = useCallback(
+    async (e: {
+      items: Array<{ kind: string; getFile?: () => Promise<File> }>
+    }) => {
+      const dropped: File[] = []
+
+      for (const item of e.items) {
+        if (item.kind === 'file' && item.getFile) {
+          dropped.push(await item.getFile())
+        }
+      }
+      addFiles(dropped)
+    },
+    [addFiles]
+  )
+
+  const handleRemove = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+  }, [])
+
+  return (
+    <DropZone className="w-[420px]">
+      <DropZone.Area onDrop={handleDrop as any}>
+        <DropZone.Icon />
+        <DropZone.Label>Attach files (5 MB limit per file)</DropZone.Label>
+        <DropZone.Description>
+          Any file type accepted. Files over 5 MB will be rejected.
+        </DropZone.Description>
+        <DropZone.Trigger>Select Files</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input multiple onSelect={handleSelect} />
+
+      {!!error && <p className="text-danger m-0 text-[13px]">{error}</p>}
+
+      {files.length > 0 && (
+        <DropZone.FileList>
+          {files.map(file => {
+            const ext = getExtension(file.name).toUpperCase()
+
+            return (
+              <DropZone.FileItem key={file.id} status={file.status}>
+                <DropZone.FileFormatIcon
+                  color={getFormatColor(ext.toLowerCase())}
+                  format={ext}
+                />
+                <DropZone.FileInfo>
+                  <DropZone.FileName>{file.name}</DropZone.FileName>
+                  <DropZone.FileMeta>
+                    {formatFileSize(file.size)}
+                  </DropZone.FileMeta>
+                </DropZone.FileInfo>
+                <DropZone.FileRemoveTrigger
+                  aria-label={`Remove ${file.name}`}
+                  onPress={() => handleRemove(file.id)}
+                />
+              </DropZone.FileItem>
+            )
+          })}
+        </DropZone.FileList>
+      )}
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multiple Files
+
+<ComponentPreview name="pro-drop-zone-multiple-files">
+
+```tsx
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+interface UploadFile {
+  id: string
+  name: string
+  size: number
+  status: 'uploading' | 'complete' | 'failed'
+  progress: number
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    json: 'orange',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    txt: 'gray',
+    xlsx: 'green',
+    zip: 'orange'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+export function MultipleFiles() {
+  const [files, setFiles] = useState<UploadFile[]>([])
+  const timersRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
+    new Map()
+  )
+
+  useEffect(() => {
+    files.forEach(file => {
+      if (file.status === 'uploading' && !timersRef.current.has(file.id)) {
+        const fileId = file.id
+        const timer = setInterval(() => {
+          setFiles(prev =>
+            prev.map(f => {
+              if (f.id !== fileId || f.status !== 'uploading') return f
+              const next = Math.min(
+                f.progress + Math.floor(Math.random() * 12) + 3,
+                100
+              )
+
+              if (next >= 100) {
+                const t = timersRef.current.get(fileId)
+
+                if (t) clearInterval(t)
+                timersRef.current.delete(fileId)
+
+                return { ...f, progress: 100, status: 'complete' as const }
+              }
+
+              return { ...f, progress: next }
+            })
+          )
+        }, 350)
+
+        timersRef.current.set(fileId, timer)
+      }
+    })
+  }, [files])
+
+  useEffect(() => {
+    const ref = timersRef.current
+
+    return () => {
+      ref.forEach(timer => clearInterval(timer))
+      ref.clear()
+    }
+  }, [])
+
+  const handleSelect = useCallback((fileList: FileList) => {
+    const newFiles: UploadFile[] = Array.from(fileList).map((f, i) => ({
+      id: `${Date.now()}-${i}`,
+      name: f.name,
+      progress: 0,
+      size: f.size,
+      status: 'uploading' as const
+    }))
+
+    setFiles(prev => [...newFiles, ...prev])
+  }, [])
+
+  const handleRemove = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+    const timer = timersRef.current.get(id)
+
+    if (timer) {
+      clearInterval(timer)
+      timersRef.current.delete(id)
+    }
+  }, [])
+
+  return (
+    <DropZone className="w-[480px]">
+      <DropZone.Area>
+        <DropZone.Icon />
+        <DropZone.Label>Add multiple attachments</DropZone.Label>
+        <DropZone.Description>
+          All formats welcome, 50 MB max per file.
+        </DropZone.Description>
+        <DropZone.Trigger>Choose Files</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input multiple onSelect={handleSelect} />
+
+      {files.length > 0 && (
+        <DropZone.FileList>
+          {files.map(file => {
+            const ext = getExtension(file.name).toUpperCase()
+
+            return (
+              <DropZone.FileItem key={file.id} status={file.status}>
+                <DropZone.FileFormatIcon
+                  color={getFormatColor(ext.toLowerCase())}
+                  format={ext}
+                />
+                <DropZone.FileInfo>
+                  <DropZone.FileName>{file.name}</DropZone.FileName>
+                  <DropZone.FileMeta>
+                    {formatFileSize(file.size)}
+                    {file.status === 'uploading' && ` | ${file.progress}%`}
+                    {file.status === 'complete' && ' | 100%'}
+                  </DropZone.FileMeta>
+                  {file.status === 'uploading' && (
+                    <DropZone.FileProgress value={file.progress}>
+                      <DropZone.FileProgressTrack>
+                        <DropZone.FileProgressFill />
+                      </DropZone.FileProgressTrack>
+                    </DropZone.FileProgress>
+                  )}
+                </DropZone.FileInfo>
+                <DropZone.FileRemoveTrigger
+                  aria-label={`Remove ${file.name}`}
+                  onPress={() => handleRemove(file.id)}
+                />
+              </DropZone.FileItem>
+            )
+          })}
+        </DropZone.FileList>
+      )}
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Icon
+
+<ComponentPreview name="pro-drop-zone-custom-icon">
+
+```tsx
+'use client'
+
+import { Picture } from '@gravity-ui/icons'
+
+import { DropZone } from '@vezham/react-pro-v3'
+
+export function CustomIcon() {
+  return (
+    <DropZone className="w-[420px]">
+      <DropZone.Area>
+        <DropZone.Icon>
+          <Picture />
+        </DropZone.Icon>
+        <DropZone.Label>Set your profile photo</DropZone.Label>
+        <DropZone.Description>
+          PNG or JPG under 2 MB. Best at 400 x 400 px.
+        </DropZone.Description>
+        <DropZone.Trigger>Pick Image</DropZone.Trigger>
+      </DropZone.Area>
+      <DropZone.Input accept="image/png,image/jpeg" />
+    </DropZone>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Triggers
+
+<ComponentPreview name="pro-drop-zone-custom-triggers">
+
+```tsx
+'use client'
+
+import { ArrowUpFromLine, Paperclip } from '@gravity-ui/icons'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { DropZone, useDropZonePickerContext } from '@vezham/react-pro-v3'
+import { Button, Link } from '@vezham/react-v3'
+
+interface UploadFile {
+  id: string
+  name: string
+  size: number
+  status: 'uploading' | 'complete' | 'failed'
+  progress: number
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getExtension(name: string): string {
+  const dot = name.lastIndexOf('.')
+
+  return dot > 0 ? name.slice(dot + 1) : ''
+}
+
+type FileFormatColor = 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red'
+
+function getFormatColor(ext: string): FileFormatColor {
+  const map: Record<string, FileFormatColor> = {
+    csv: 'green',
+    doc: 'blue',
+    docx: 'blue',
+    fig: 'purple',
+    jpeg: 'blue',
+    jpg: 'blue',
+    json: 'orange',
+    mp4: 'purple',
+    pdf: 'red',
+    png: 'green',
+    svg: 'green',
+    txt: 'gray',
+    xlsx: 'green',
+    zip: 'orange'
+  }
+
+  return map[ext.toLowerCase()] ?? 'gray'
+}
+
+function PrimaryUploadButton() {
+  const { openFilePicker } = useDropZonePickerContext()
+
+  return (
+    <Button className="mt-2" variant="primary" onPress={openFilePicker}>
+      <ArrowUpFromLine /> Upload Files
+    </Button>
+  )
+}
+
+function LinkTrigger() {
+  const { openFilePicker } = useDropZonePickerContext()
+
+  return (
+    <Link className="mt-1 cursor-pointer text-sm" onPress={openFilePicker}>
+      Browse from your device
+    </Link>
+  )
+}
+
+function SecondarySmallButton() {
+  const { openFilePicker } = useDropZonePickerContext()
+
+  return (
+    <Button
+      className="mt-2"
+      size="sm"
+      variant="secondary"
+      onPress={openFilePicker}>
+      Choose Spreadsheet
+    </Button>
+  )
+}
+
+function addFilesToState(
+  incoming: File[],
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>
+) {
+  const newFiles: UploadFile[] = incoming.map((f, i) => ({
+    id: `${Date.now()}-${i}`,
+    name: f.name,
+    progress: 0,
+    size: f.size,
+    status: 'uploading' as const
+  }))
+
+  setFiles(prev => [...newFiles, ...prev])
+}
+
+export function CustomTriggers() {
+  const [files, setFiles] = useState<UploadFile[]>([])
+  const timersRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
+    new Map()
+  )
+
+  useEffect(() => {
+    files.forEach(file => {
+      if (file.status === 'uploading' && !timersRef.current.has(file.id)) {
+        const fileId = file.id
+        const timer = setInterval(() => {
+          setFiles(prev =>
+            prev.map(f => {
+              if (f.id !== fileId || f.status !== 'uploading') return f
+              const next = Math.min(
+                f.progress + Math.floor(Math.random() * 12) + 3,
+                100
+              )
+
+              if (next >= 100) {
+                const t = timersRef.current.get(fileId)
+
+                if (t) clearInterval(t)
+                timersRef.current.delete(fileId)
+
+                return { ...f, progress: 100, status: 'complete' as const }
+              }
+
+              return { ...f, progress: next }
+            })
+          )
+        }, 350)
+
+        timersRef.current.set(fileId, timer)
+      }
+    })
+  }, [files])
+
+  useEffect(() => {
+    const ref = timersRef.current
+
+    return () => {
+      ref.forEach(timer => clearInterval(timer))
+      ref.clear()
+    }
+  }, [])
+
+  const handleSelect = useCallback(
+    (fileList: FileList) => addFilesToState(Array.from(fileList), setFiles),
+    []
+  )
+
+  const handleRemove = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+    const timer = timersRef.current.get(id)
+
+    if (timer) {
+      clearInterval(timer)
+      timersRef.current.delete(id)
+    }
+  }, [])
+
+  return (
+    <div className="flex w-[480px] flex-col gap-8">
+      <DropZone>
+        <DropZone.Area>
+          <DropZone.Icon />
+          <DropZone.Label>Drag files here to get started</DropZone.Label>
+          <DropZone.Description>
+            PDF, DOCX, or TXT up to 25 MB.
+          </DropZone.Description>
+          <PrimaryUploadButton />
+        </DropZone.Area>
+        <DropZone.Input multiple onSelect={handleSelect} />
+
+        {files.length > 0 && (
+          <DropZone.FileList>
+            {files.map(file => {
+              const ext = getExtension(file.name).toUpperCase()
+
+              return (
+                <DropZone.FileItem key={file.id} status={file.status}>
+                  <DropZone.FileFormatIcon
+                    color={getFormatColor(ext.toLowerCase())}
+                    format={ext}
+                  />
+                  <DropZone.FileInfo>
+                    <DropZone.FileName>{file.name}</DropZone.FileName>
+                    <DropZone.FileMeta>
+                      {formatFileSize(file.size)}
+                      {file.status === 'uploading' && ` | ${file.progress}%`}
+                      {file.status === 'complete' && (
+                        <span className="text-success"> | Done</span>
+                      )}
+                    </DropZone.FileMeta>
+                    {file.status === 'uploading' && (
+                      <DropZone.FileProgress value={file.progress}>
+                        <DropZone.FileProgressTrack>
+                          <DropZone.FileProgressFill />
+                        </DropZone.FileProgressTrack>
+                      </DropZone.FileProgress>
+                    )}
+                  </DropZone.FileInfo>
+                  <DropZone.FileRemoveTrigger
+                    aria-label={`Remove ${file.name}`}
+                    onPress={() => handleRemove(file.id)}
+                  />
+                </DropZone.FileItem>
+              )
+            })}
+          </DropZone.FileList>
+        )}
+      </DropZone>
+
+      <DropZone>
+        <DropZone.Area>
+          <DropZone.Icon>
+            <Paperclip />
+          </DropZone.Icon>
+          <DropZone.Label>Attach supporting documents</DropZone.Label>
+          <DropZone.Description>Any format, 10 MB limit.</DropZone.Description>
+          <LinkTrigger />
+        </DropZone.Area>
+        <DropZone.Input onSelect={handleSelect} />
+      </DropZone>
+
+      <DropZone>
+        <DropZone.Area>
+          <DropZone.Icon />
+          <DropZone.Label>Import spreadsheet data</DropZone.Label>
+          <DropZone.Description>CSV or XLSX files only.</DropZone.Description>
+          <SecondarySmallButton />
+        </DropZone.Area>
+        <DropZone.Input accept=".csv,.xlsx" onSelect={handleSelect} />
+      </DropZone>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.drop-zone` - Root wrapper
+
+### Element Classes
+
+- `.drop-zone__area` - The droppable area (RAC DropZone)
+- `.drop-zone__icon` - Upload icon container
+- `.drop-zone__label` - Primary label text
+- `.drop-zone__description` - Secondary description text
+- `.drop-zone__trigger` - Browse button
+- `.drop-zone__input` - Hidden file input
+- `.drop-zone__file-list` - File list container with animation
+- `.drop-zone__file-item` - Individual file entry
+- `.drop-zone__file-format-icon` - File type SVG icon with colored badge
+- `.drop-zone__file-info` - File name and metadata container
+- `.drop-zone__file-name` - File name text
+- `.drop-zone__file-meta` - File size/status metadata
+- `.drop-zone__file-progress` - Upload progress bar
+- `.drop-zone__file-retry-trigger` - Retry button for failed uploads
+- `.drop-zone__file-remove-trigger` - Remove/close button
+
+### Interactive States
+
+- **Drop target**: `[data-drop-target="true"]` on `.drop-zone__area` (accent border and background)
+- **Focus visible**: `[data-focus-visible="true"]` on `.drop-zone__area` (focus ring)
+- **Disabled**: `[data-disabled="true"]` on `.drop-zone__area` (reduced opacity)
+- **File status**: `[data-status="uploading|complete|failed"]` on `.drop-zone__file-item`
+
+## API Reference
+
+### DropZone
+
+The root wrapper component. Provides file picker context.
+
+| Prop        | Type                | Default | Description                                                  |
+| ----------- | ------------------- | ------- | ------------------------------------------------------------ |
+| `children`  | `ReactNode`         | -       | Area, FileList, and other sub-components                     |
+| `className` | `string`            | -       | Additional CSS class                                         |
+| `render`    | `DOMRenderFunction` | -       | Custom render function to override the default `div` element |
+
+Also supports all native `div` HTML attributes.
+
+### DropZone.Area
+
+The droppable area. Wraps RAC [DropZone](https://react-spectrum.adobe.com/react-aria/DropZone.html).
+
+Also supports all RAC [DropZone](https://react-spectrum.adobe.com/react-aria/DropZone.html) props (`onDrop`, `getDropOperation`, `isDisabled`, etc.).
+
+### DropZone.Icon
+
+Upload icon container. Renders a default cloud upload icon when no children are provided.
+
+### DropZone.Label
+
+Primary label text. Wraps RAC [Text](https://react-spectrum.adobe.com/react-aria/Text.html) with `slot="label"`.
+
+### DropZone.Description
+
+Secondary description text.
+
+### DropZone.Input
+
+Hidden file input for the browse trigger.
+
+| Prop       | Type                        | Default | Description                                        |
+| ---------- | --------------------------- | ------- | -------------------------------------------------- |
+| `accept`   | `string`                    | -       | Accepted file types (e.g. `"image/*,.pdf"`)        |
+| `multiple` | `boolean`                   | -       | Whether multiple files can be selected             |
+| `onSelect` | `(files: FileList) => void` | -       | Called when files are selected via the file picker |
+
+### DropZone.Trigger
+
+Browse button that opens the file picker. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html). Provide visible button text, for example `<DropZone.Trigger>Select files</DropZone.Trigger>`. When no children are provided, it renders `Select files`.
+
+### DropZone.FileList
+
+Animated file list container using Motion `AnimatePresence`.
+
+### DropZone.FileItem
+
+Individual file entry with Motion layout animations.
+
+| Prop     | Type                                    | Default | Description                     |
+| -------- | --------------------------------------- | ------- | ------------------------------- |
+| `status` | `'uploading' \| 'complete' \| 'failed'` | -       | Upload status of this file item |
+
+### DropZone.FileFormatIcon
+
+File type SVG icon with a colored format badge.
+
+| Prop     | Type     | Default  | Description                               |
+| -------- | -------- | -------- | ----------------------------------------- |
+| `format` | `string` | -        | File format label (e.g. `"PDF"`, `"JPG"`) |
+| `color`  | `string` | `'gray'` | Badge color                               |
+
+### DropZone.FileInfo
+
+Container for file name and metadata.
+
+### DropZone.FileName
+
+File name text display.
+
+### DropZone.FileMeta
+
+File size/status metadata text.
+
+### DropZone.FileProgress
+
+Upload progress bar. Wraps HeroUI [ProgressBar](https://heroui.com/docs/react/components/progress).
+
+| Prop   | Type     | Default | Description       |
+| ------ | -------- | ------- | ----------------- |
+| `size` | `string` | `'sm'`  | Progress bar size |
+
+Also supports all HeroUI ProgressBar props.
+
+### DropZone.FileProgressTrack
+
+Progress bar track. Wraps HeroUI `ProgressBar.Track`.
+
+### DropZone.FileProgressFill
+
+Progress bar fill. Wraps HeroUI `ProgressBar.Fill`.
+
+### DropZone.FileRetryTrigger
+
+Retry button for failed uploads. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html).
+
+### DropZone.FileRemoveTrigger
+
+Remove/close button. Wraps RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html).

@@ -1,0 +1,4797 @@
+---
+title: 'Rich Text Editor'
+description: 'A composable Tiptap editor with toolbar controls, selection bubble menu, JSON value updates, and character count support.'
+sourceUrl: https://heroui.pro/docs/react/components/rich-text-editor
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-rich-text-editor-default">
+
+```tsx
+'use client'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+import { BubbleToolbar, DefaultToolbar } from './default-toolbar'
+import { featureOverview } from './documents'
+
+export function Default() {
+  return (
+    <RichTextEditor className="w-[760px]" defaultValue={featureOverview}>
+      <RichTextEditor.Shell>
+        <DefaultToolbar />
+        <RichTextEditor.Content />
+        <BubbleToolbar />
+        <RichTextEditor.Footer>
+          <span>JSON-first editor state</span>
+          <RichTextEditor.CharacterCount showWords />
+        </RichTextEditor.Footer>
+      </RichTextEditor.Shell>
+    </RichTextEditor>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/default-toolbar.tsx
+
+```tsx
+'use client'
+import {
+  ArrowRotateLeft,
+  ArrowRotateRight,
+  Bold,
+  BroomMotion,
+  Code,
+  CurlyBrackets,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link as LinkIcon,
+  ListOl,
+  ListUl,
+  QuoteOpen,
+  Strikethrough,
+  TrashBin,
+  Underline
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+const iconClassName = 'size-4'
+
+function LinkControls() {
+  return (
+    <RichTextEditor.LinkPopover>
+      <RichTextEditor.LinkPopover.Trigger tooltip="Link">
+        <LinkIcon className={iconClassName} />
+      </RichTextEditor.LinkPopover.Trigger>
+      <RichTextEditor.LinkPopover.Content>
+        <RichTextEditor.LinkPopover.Input />
+        <RichTextEditor.LinkPopover.Actions>
+          <RichTextEditor.LinkPopover.UnsetButton />
+          <RichTextEditor.LinkPopover.ApplyButton />
+        </RichTextEditor.LinkPopover.Actions>
+      </RichTextEditor.LinkPopover.Content>
+    </RichTextEditor.LinkPopover>
+  )
+}
+
+export function DefaultToolbar() {
+  return (
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup aria-label="History">
+        <RichTextEditor.ActionButton action="undo" tooltip="Undo">
+          <ArrowRotateLeft className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton action="redo" tooltip="Redo">
+          <ArrowRotateRight className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Text style">
+        <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+          <Bold className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+          <Italic className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+          <Underline className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+          <Strikethrough className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="code" tooltip="Inline code">
+          <Code className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Blocks">
+        <RichTextEditor.ToggleButton command="heading-1" tooltip="Heading 1">
+          <Heading1 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-2" tooltip="Heading 2">
+          <Heading2 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-3" tooltip="Heading 3">
+          <Heading3 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="blockquote" tooltip="Blockquote">
+          <QuoteOpen className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="codeBlock" tooltip="Code block">
+          <CurlyBrackets className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Lists and links">
+        <RichTextEditor.ToggleButton
+          command="bulletList"
+          tooltip="Bulleted list">
+          <ListUl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton
+          command="orderedList"
+          tooltip="Numbered list">
+          <ListOl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <LinkControls />
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Clear">
+        <RichTextEditor.ActionButton
+          action="clearFormatting"
+          tooltip="Clear formatting">
+          <BroomMotion className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton
+          action="clearContent"
+          tooltip="Clear content">
+          <TrashBin className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+  )
+}
+
+export function BubbleToolbar() {
+  return (
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+        <Bold className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+        <Italic className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+        <Underline className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+        <Strikethrough className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <LinkControls />
+    </RichTextEditor.BubbleMenu>
+  )
+}
+```
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+## Secondary
+
+Use `variant="secondary"` when the editor sits on a Surface, Modal, Sheet, or Drawer.
+
+<ComponentPreview name="pro-rich-text-editor-secondary">
+
+```tsx
+'use client'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+import { Surface } from '@vezham/react-v3'
+
+import { BubbleToolbar, DefaultToolbar } from './default-toolbar'
+import { featureOverview } from './documents'
+
+export function Secondary() {
+  return (
+    <Surface className="w-[760px] rounded-3xl p-4">
+      <RichTextEditor
+        className="w-full"
+        defaultValue={featureOverview}
+        variant="secondary">
+        <RichTextEditor.Shell>
+          <DefaultToolbar />
+          <RichTextEditor.Content />
+          <BubbleToolbar />
+          <RichTextEditor.Footer>
+            <span>Secondary surface for overlays</span>
+            <RichTextEditor.CharacterCount showWords />
+          </RichTextEditor.Footer>
+        </RichTextEditor.Shell>
+      </RichTextEditor>
+    </Surface>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the RichTextEditor component and arrange its parts with dot notation.
+
+<Callout type="info">
+  `RichTextEditor` is a subpath-only import
+  (`@vezham/react-pro-v3/rich-text-editor`) because it depends on the optional
+  `@tiptap/*` peers. It is not exported from the package root, so SSR apps that
+  don't use it never need Tiptap installed.
+</Callout>
+
+```tsx
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+;<RichTextEditor defaultValue={documentJson} onValueChange={setDocumentJson}>
+  <RichTextEditor.Shell>
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup>
+        <RichTextEditor.ToggleButton command="bold" />
+        <RichTextEditor.ToggleButton command="italic" />
+        <RichTextEditor.LinkPopover>
+          <RichTextEditor.LinkPopover.Trigger />
+          <RichTextEditor.LinkPopover.Content>
+            <RichTextEditor.LinkPopover.Input />
+            <RichTextEditor.LinkPopover.Actions>
+              <RichTextEditor.LinkPopover.UnsetButton />
+              <RichTextEditor.LinkPopover.ApplyButton />
+            </RichTextEditor.LinkPopover.Actions>
+          </RichTextEditor.LinkPopover.Content>
+        </RichTextEditor.LinkPopover>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+    <RichTextEditor.Content />
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" />
+    </RichTextEditor.BubbleMenu>
+    <RichTextEditor.Footer>
+      <RichTextEditor.CharacterCount />
+    </RichTextEditor.Footer>
+  </RichTextEditor.Shell>
+</RichTextEditor>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-rich-text-editor-controlled">
+
+```tsx
+'use client'
+import type { JSONContent } from '@tiptap/core'
+import type {} from '@tiptap/starter-kit'
+import { useMemo, useState } from 'react'
+
+import type { RichTextEditorValueChangeDetails } from '@vezham/react-pro-v3/rich-text-editor'
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+import { Button } from '@vezham/react-v3'
+
+import { BubbleToolbar, DefaultToolbar } from './default-toolbar'
+import { controlledDocument, releaseNotes } from './documents'
+
+export function Controlled() {
+  const [value, setValue] = useState<JSONContent>(controlledDocument)
+  const [details, setDetails] = useState<Pick<
+    RichTextEditorValueChangeDetails,
+    'characterCount' | 'isEmpty' | 'wordCount'
+  > | null>(null)
+  const preview = useMemo(() => JSON.stringify(value, null, 2), [value])
+
+  return (
+    <div className="flex w-full max-w-[760px] flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => setValue(controlledDocument)}>
+          Load Guide
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => setValue(releaseNotes)}>
+          Load Notes
+        </Button>
+        {details ? (
+          <span className="text-muted text-xs sm:ml-auto">
+            {details.characterCount} chars, {details.wordCount} words
+          </span>
+        ) : null}
+      </div>
+
+      <RichTextEditor
+        value={value}
+        onValueChange={(nextValue, nextDetails) => {
+          setValue(nextValue)
+          setDetails({
+            characterCount: nextDetails.characterCount,
+            isEmpty: nextDetails.isEmpty,
+            wordCount: nextDetails.wordCount
+          })
+        }}>
+        <RichTextEditor.Shell>
+          <DefaultToolbar />
+          <RichTextEditor.Content />
+          <BubbleToolbar />
+          <RichTextEditor.Footer>
+            <span>
+              {details?.isEmpty ? 'Empty document' : 'Controlled JSON value'}
+            </span>
+            <RichTextEditor.CharacterCount showWords />
+          </RichTextEditor.Footer>
+        </RichTextEditor.Shell>
+      </RichTextEditor>
+
+      <pre className="bg-default text-muted max-h-[220px] overflow-auto rounded-2xl p-3 text-xs break-words whitespace-pre-wrap">
+        {preview}
+      </pre>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/default-toolbar.tsx
+
+```tsx
+'use client'
+import {
+  ArrowRotateLeft,
+  ArrowRotateRight,
+  Bold,
+  BroomMotion,
+  Code,
+  CurlyBrackets,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link as LinkIcon,
+  ListOl,
+  ListUl,
+  QuoteOpen,
+  Strikethrough,
+  TrashBin,
+  Underline
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+const iconClassName = 'size-4'
+
+function LinkControls() {
+  return (
+    <RichTextEditor.LinkPopover>
+      <RichTextEditor.LinkPopover.Trigger tooltip="Link">
+        <LinkIcon className={iconClassName} />
+      </RichTextEditor.LinkPopover.Trigger>
+      <RichTextEditor.LinkPopover.Content>
+        <RichTextEditor.LinkPopover.Input />
+        <RichTextEditor.LinkPopover.Actions>
+          <RichTextEditor.LinkPopover.UnsetButton />
+          <RichTextEditor.LinkPopover.ApplyButton />
+        </RichTextEditor.LinkPopover.Actions>
+      </RichTextEditor.LinkPopover.Content>
+    </RichTextEditor.LinkPopover>
+  )
+}
+
+export function DefaultToolbar() {
+  return (
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup aria-label="History">
+        <RichTextEditor.ActionButton action="undo" tooltip="Undo">
+          <ArrowRotateLeft className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton action="redo" tooltip="Redo">
+          <ArrowRotateRight className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Text style">
+        <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+          <Bold className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+          <Italic className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+          <Underline className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+          <Strikethrough className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="code" tooltip="Inline code">
+          <Code className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Blocks">
+        <RichTextEditor.ToggleButton command="heading-1" tooltip="Heading 1">
+          <Heading1 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-2" tooltip="Heading 2">
+          <Heading2 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-3" tooltip="Heading 3">
+          <Heading3 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="blockquote" tooltip="Blockquote">
+          <QuoteOpen className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="codeBlock" tooltip="Code block">
+          <CurlyBrackets className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Lists and links">
+        <RichTextEditor.ToggleButton
+          command="bulletList"
+          tooltip="Bulleted list">
+          <ListUl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton
+          command="orderedList"
+          tooltip="Numbered list">
+          <ListOl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <LinkControls />
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Clear">
+        <RichTextEditor.ActionButton
+          action="clearFormatting"
+          tooltip="Clear formatting">
+          <BroomMotion className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton
+          action="clearContent"
+          tooltip="Clear content">
+          <TrashBin className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+  )
+}
+
+export function BubbleToolbar() {
+  return (
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+        <Bold className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+        <Italic className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+        <Underline className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+        <Strikethrough className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <LinkControls />
+    </RichTextEditor.BubbleMenu>
+  )
+}
+```
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+## Character Count
+
+<ComponentPreview name="pro-rich-text-editor-character-count">
+
+```tsx
+'use client'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+import { BubbleToolbar, DefaultToolbar } from './default-toolbar'
+import { characterLimitGuide } from './documents'
+
+export function CharacterCount() {
+  return (
+    <RichTextEditor
+      className="w-[680px]"
+      defaultValue={characterLimitGuide}
+      maxLength={240}>
+      <RichTextEditor.Shell>
+        <DefaultToolbar />
+        <RichTextEditor.Content />
+        <BubbleToolbar />
+        <RichTextEditor.Footer>
+          <span>240 character limit</span>
+          <RichTextEditor.CharacterCount showWords />
+        </RichTextEditor.Footer>
+      </RichTextEditor.Shell>
+    </RichTextEditor>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/default-toolbar.tsx
+
+```tsx
+'use client'
+import {
+  ArrowRotateLeft,
+  ArrowRotateRight,
+  Bold,
+  BroomMotion,
+  Code,
+  CurlyBrackets,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link as LinkIcon,
+  ListOl,
+  ListUl,
+  QuoteOpen,
+  Strikethrough,
+  TrashBin,
+  Underline
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+const iconClassName = 'size-4'
+
+function LinkControls() {
+  return (
+    <RichTextEditor.LinkPopover>
+      <RichTextEditor.LinkPopover.Trigger tooltip="Link">
+        <LinkIcon className={iconClassName} />
+      </RichTextEditor.LinkPopover.Trigger>
+      <RichTextEditor.LinkPopover.Content>
+        <RichTextEditor.LinkPopover.Input />
+        <RichTextEditor.LinkPopover.Actions>
+          <RichTextEditor.LinkPopover.UnsetButton />
+          <RichTextEditor.LinkPopover.ApplyButton />
+        </RichTextEditor.LinkPopover.Actions>
+      </RichTextEditor.LinkPopover.Content>
+    </RichTextEditor.LinkPopover>
+  )
+}
+
+export function DefaultToolbar() {
+  return (
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup aria-label="History">
+        <RichTextEditor.ActionButton action="undo" tooltip="Undo">
+          <ArrowRotateLeft className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton action="redo" tooltip="Redo">
+          <ArrowRotateRight className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Text style">
+        <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+          <Bold className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+          <Italic className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+          <Underline className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+          <Strikethrough className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="code" tooltip="Inline code">
+          <Code className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Blocks">
+        <RichTextEditor.ToggleButton command="heading-1" tooltip="Heading 1">
+          <Heading1 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-2" tooltip="Heading 2">
+          <Heading2 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-3" tooltip="Heading 3">
+          <Heading3 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="blockquote" tooltip="Blockquote">
+          <QuoteOpen className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="codeBlock" tooltip="Code block">
+          <CurlyBrackets className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Lists and links">
+        <RichTextEditor.ToggleButton
+          command="bulletList"
+          tooltip="Bulleted list">
+          <ListUl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton
+          command="orderedList"
+          tooltip="Numbered list">
+          <ListOl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <LinkControls />
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Clear">
+        <RichTextEditor.ActionButton
+          action="clearFormatting"
+          tooltip="Clear formatting">
+          <BroomMotion className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton
+          action="clearContent"
+          tooltip="Clear content">
+          <TrashBin className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+  )
+}
+
+export function BubbleToolbar() {
+  return (
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+        <Bold className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+        <Italic className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+        <Underline className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+        <Strikethrough className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <LinkControls />
+    </RichTextEditor.BubbleMenu>
+  )
+}
+```
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+## Placeholder
+
+<ComponentPreview name="pro-rich-text-editor-placeholder">
+
+```tsx
+'use client'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+import { BubbleToolbar, DefaultToolbar } from './default-toolbar'
+
+export function Placeholder() {
+  return (
+    <RichTextEditor
+      className="w-[680px]"
+      placeholder="Start a component note: describe the editor, type **bold**, then select text for the bubble menu...">
+      <RichTextEditor.Shell>
+        <DefaultToolbar />
+        <RichTextEditor.Content />
+        <BubbleToolbar />
+        <RichTextEditor.Footer>
+          <span>Empty state</span>
+          <RichTextEditor.CharacterCount showWords />
+        </RichTextEditor.Footer>
+      </RichTextEditor.Shell>
+    </RichTextEditor>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/default-toolbar.tsx
+
+```tsx
+'use client'
+import {
+  ArrowRotateLeft,
+  ArrowRotateRight,
+  Bold,
+  BroomMotion,
+  Code,
+  CurlyBrackets,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link as LinkIcon,
+  ListOl,
+  ListUl,
+  QuoteOpen,
+  Strikethrough,
+  TrashBin,
+  Underline
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+const iconClassName = 'size-4'
+
+function LinkControls() {
+  return (
+    <RichTextEditor.LinkPopover>
+      <RichTextEditor.LinkPopover.Trigger tooltip="Link">
+        <LinkIcon className={iconClassName} />
+      </RichTextEditor.LinkPopover.Trigger>
+      <RichTextEditor.LinkPopover.Content>
+        <RichTextEditor.LinkPopover.Input />
+        <RichTextEditor.LinkPopover.Actions>
+          <RichTextEditor.LinkPopover.UnsetButton />
+          <RichTextEditor.LinkPopover.ApplyButton />
+        </RichTextEditor.LinkPopover.Actions>
+      </RichTextEditor.LinkPopover.Content>
+    </RichTextEditor.LinkPopover>
+  )
+}
+
+export function DefaultToolbar() {
+  return (
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup aria-label="History">
+        <RichTextEditor.ActionButton action="undo" tooltip="Undo">
+          <ArrowRotateLeft className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton action="redo" tooltip="Redo">
+          <ArrowRotateRight className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Text style">
+        <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+          <Bold className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+          <Italic className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+          <Underline className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+          <Strikethrough className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="code" tooltip="Inline code">
+          <Code className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Blocks">
+        <RichTextEditor.ToggleButton command="heading-1" tooltip="Heading 1">
+          <Heading1 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-2" tooltip="Heading 2">
+          <Heading2 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-3" tooltip="Heading 3">
+          <Heading3 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="blockquote" tooltip="Blockquote">
+          <QuoteOpen className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="codeBlock" tooltip="Code block">
+          <CurlyBrackets className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Lists and links">
+        <RichTextEditor.ToggleButton
+          command="bulletList"
+          tooltip="Bulleted list">
+          <ListUl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton
+          command="orderedList"
+          tooltip="Numbered list">
+          <ListOl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <LinkControls />
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Clear">
+        <RichTextEditor.ActionButton
+          action="clearFormatting"
+          tooltip="Clear formatting">
+          <BroomMotion className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton
+          action="clearContent"
+          tooltip="Clear content">
+          <TrashBin className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+  )
+}
+
+export function BubbleToolbar() {
+  return (
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+        <Bold className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+        <Italic className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+        <Underline className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+        <Strikethrough className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <LinkControls />
+    </RichTextEditor.BubbleMenu>
+  )
+}
+```
+
+## Disabled And Read Only
+
+<ComponentPreview name="pro-rich-text-editor-disabled">
+
+```tsx
+'use client'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+import { DefaultToolbar } from './default-toolbar'
+import { disabledGuide, readOnlyGuide } from './documents'
+
+export function Disabled() {
+  return (
+    <div className="grid w-full max-w-[860px] grid-cols-[repeat(auto-fit,minmax(min(100%,24rem),1fr))] gap-4">
+      <RichTextEditor isDisabled defaultValue={disabledGuide}>
+        <RichTextEditor.Shell>
+          <DefaultToolbar />
+          <RichTextEditor.Content />
+          <RichTextEditor.Footer>
+            <span>Disabled</span>
+            <RichTextEditor.CharacterCount />
+          </RichTextEditor.Footer>
+        </RichTextEditor.Shell>
+      </RichTextEditor>
+
+      <RichTextEditor isReadOnly defaultValue={readOnlyGuide}>
+        <RichTextEditor.Shell>
+          <DefaultToolbar />
+          <RichTextEditor.Content />
+          <RichTextEditor.Footer>
+            <span>Read only</span>
+            <RichTextEditor.CharacterCount />
+          </RichTextEditor.Footer>
+        </RichTextEditor.Shell>
+      </RichTextEditor>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/default-toolbar.tsx
+
+```tsx
+'use client'
+import {
+  ArrowRotateLeft,
+  ArrowRotateRight,
+  Bold,
+  BroomMotion,
+  Code,
+  CurlyBrackets,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link as LinkIcon,
+  ListOl,
+  ListUl,
+  QuoteOpen,
+  Strikethrough,
+  TrashBin,
+  Underline
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+const iconClassName = 'size-4'
+
+function LinkControls() {
+  return (
+    <RichTextEditor.LinkPopover>
+      <RichTextEditor.LinkPopover.Trigger tooltip="Link">
+        <LinkIcon className={iconClassName} />
+      </RichTextEditor.LinkPopover.Trigger>
+      <RichTextEditor.LinkPopover.Content>
+        <RichTextEditor.LinkPopover.Input />
+        <RichTextEditor.LinkPopover.Actions>
+          <RichTextEditor.LinkPopover.UnsetButton />
+          <RichTextEditor.LinkPopover.ApplyButton />
+        </RichTextEditor.LinkPopover.Actions>
+      </RichTextEditor.LinkPopover.Content>
+    </RichTextEditor.LinkPopover>
+  )
+}
+
+export function DefaultToolbar() {
+  return (
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.ToolbarGroup aria-label="History">
+        <RichTextEditor.ActionButton action="undo" tooltip="Undo">
+          <ArrowRotateLeft className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton action="redo" tooltip="Redo">
+          <ArrowRotateRight className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Text style">
+        <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+          <Bold className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+          <Italic className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+          <Underline className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+          <Strikethrough className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="code" tooltip="Inline code">
+          <Code className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Blocks">
+        <RichTextEditor.ToggleButton command="heading-1" tooltip="Heading 1">
+          <Heading1 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-2" tooltip="Heading 2">
+          <Heading2 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="heading-3" tooltip="Heading 3">
+          <Heading3 className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="blockquote" tooltip="Blockquote">
+          <QuoteOpen className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton command="codeBlock" tooltip="Code block">
+          <CurlyBrackets className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Lists and links">
+        <RichTextEditor.ToggleButton
+          command="bulletList"
+          tooltip="Bulleted list">
+          <ListUl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <RichTextEditor.ToggleButton
+          command="orderedList"
+          tooltip="Numbered list">
+          <ListOl className={iconClassName} />
+        </RichTextEditor.ToggleButton>
+        <LinkControls />
+      </RichTextEditor.ToolbarGroup>
+
+      <RichTextEditor.ToolbarSeparator />
+
+      <RichTextEditor.ToolbarGroup aria-label="Clear">
+        <RichTextEditor.ActionButton
+          action="clearFormatting"
+          tooltip="Clear formatting">
+          <BroomMotion className={iconClassName} />
+        </RichTextEditor.ActionButton>
+        <RichTextEditor.ActionButton
+          action="clearContent"
+          tooltip="Clear content">
+          <TrashBin className={iconClassName} />
+        </RichTextEditor.ActionButton>
+      </RichTextEditor.ToolbarGroup>
+    </RichTextEditor.Toolbar>
+  )
+}
+
+export function BubbleToolbar() {
+  return (
+    <RichTextEditor.BubbleMenu>
+      <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+        <Bold className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+        <Italic className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="underline" tooltip="Underline">
+        <Underline className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <RichTextEditor.ToggleButton command="strike" tooltip="Strikethrough">
+        <Strikethrough className={iconClassName} />
+      </RichTextEditor.ToggleButton>
+      <LinkControls />
+    </RichTextEditor.BubbleMenu>
+  )
+}
+```
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+## Custom Composition
+
+<ComponentPreview name="pro-rich-text-editor-custom-composition">
+
+```tsx
+'use client'
+import { Bold, Italic, Link as LinkIcon, ListUl } from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+import { compositionGuide } from './documents'
+
+export function CustomComposition() {
+  return (
+    <RichTextEditor className="w-[600px]" defaultValue={compositionGuide}>
+      <RichTextEditor.Shell>
+        <RichTextEditor.Content />
+        <RichTextEditor.Footer>
+          <RichTextEditor.Toolbar
+            aria-label="Compact editor toolbar"
+            className="min-h-0 border-0 p-0">
+            <RichTextEditor.ToolbarGroup>
+              <RichTextEditor.ToggleButton command="bold" tooltip="Bold">
+                <Bold className="size-4" />
+              </RichTextEditor.ToggleButton>
+              <RichTextEditor.ToggleButton command="italic" tooltip="Italic">
+                <Italic className="size-4" />
+              </RichTextEditor.ToggleButton>
+              <RichTextEditor.ToggleButton
+                command="bulletList"
+                tooltip="Bulleted list">
+                <ListUl className="size-4" />
+              </RichTextEditor.ToggleButton>
+              <RichTextEditor.LinkPopover>
+                <RichTextEditor.LinkPopover.Trigger>
+                  <LinkIcon className="size-4" />
+                </RichTextEditor.LinkPopover.Trigger>
+                <RichTextEditor.LinkPopover.Content>
+                  <RichTextEditor.LinkPopover.Input />
+                  <RichTextEditor.LinkPopover.Actions>
+                    <RichTextEditor.LinkPopover.UnsetButton />
+                    <RichTextEditor.LinkPopover.ApplyButton />
+                  </RichTextEditor.LinkPopover.Actions>
+                </RichTextEditor.LinkPopover.Content>
+              </RichTextEditor.LinkPopover>
+            </RichTextEditor.ToolbarGroup>
+          </RichTextEditor.Toolbar>
+          <RichTextEditor.CharacterCount />
+        </RichTextEditor.Footer>
+      </RichTextEditor.Shell>
+    </RichTextEditor>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+## Extensible Commands
+
+<ComponentPreview name="pro-rich-text-editor-extensible">
+
+```tsx
+'use client'
+import {
+  Calendar,
+  CirclePlus,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  ListOl,
+  ListUl,
+  Minus,
+  QuoteOpen,
+  Sparkles
+} from '@gravity-ui/icons'
+import type {} from '@tiptap/starter-kit'
+
+import type { RichTextEditorSuggestionItem } from '@vezham/react-pro-v3/rich-text-editor'
+import {
+  RichTextEditor,
+  filterRichTextEditorSuggestionItems
+} from '@vezham/react-pro-v3/rich-text-editor'
+
+import { extensionPlayground } from './documents'
+
+const iconClassName = 'size-4'
+
+const getSlashItems = ({
+  query
+}: {
+  query: string
+}): RichTextEditorSuggestionItem[] =>
+  filterRichTextEditorSuggestionItems(
+    [
+      {
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setNode('heading', { level: 1 })
+            .run()
+        },
+        description: 'Large section title',
+        icon: <Heading1 className={iconClassName} />,
+        keywords: ['title', 'h1'],
+        title: 'Heading 1'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setNode('heading', { level: 2 })
+            .run()
+        },
+        description: 'Medium section title',
+        icon: <Heading2 className={iconClassName} />,
+        keywords: ['subtitle', 'h2'],
+        title: 'Heading 2'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setNode('heading', { level: 3 })
+            .run()
+        },
+        description: 'Small section title',
+        icon: <Heading3 className={iconClassName} />,
+        keywords: ['subtitle', 'h3'],
+        title: 'Heading 3'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).toggleBulletList().run()
+        },
+        description: 'Simple bulleted list',
+        icon: <ListUl className={iconClassName} />,
+        keywords: ['list', 'bullet'],
+        title: 'Bulleted list'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).toggleOrderedList().run()
+        },
+        description: 'List with numbering',
+        icon: <ListOl className={iconClassName} />,
+        keywords: ['list', 'ordered', 'numbered'],
+        title: 'Numbered list'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).toggleBlockquote().run()
+        },
+        description: 'Capture a quote or callout',
+        icon: <QuoteOpen className={iconClassName} />,
+        keywords: ['quote', 'note'],
+        title: 'Blockquote'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).toggleCodeBlock().run()
+        },
+        description: 'Preformatted code snippet',
+        icon: <Code className={iconClassName} />,
+        keywords: ['code', 'snippet', 'pre'],
+        title: 'Code block'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).setHorizontalRule().run()
+        },
+        description: 'Visually separate sections',
+        icon: <Minus className={iconClassName} />,
+        keywords: ['divider', 'hr', 'rule', 'separator'],
+        title: 'Divider'
+      },
+      {
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .insertContent({
+              content: [
+                {
+                  content: [{ text: 'Action item: ', type: 'text' }],
+                  type: 'paragraph'
+                }
+              ],
+              type: 'blockquote'
+            })
+            .run()
+        },
+        description: 'Custom snippet from your own command',
+        icon: <Sparkles className={iconClassName} />,
+        keywords: ['todo', 'action', 'custom'],
+        title: 'Action callout'
+      }
+    ],
+    query
+  )
+
+function InsertDateButton() {
+  const formattedDate = new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  }).format(new Date())
+
+  return (
+    <RichTextEditor.CommandButton
+      aria-label="Insert date"
+      isDisabled={editor =>
+        !editor.can().chain().focus().insertContent(formattedDate).run()
+      }
+      tooltip="Insert date"
+      onCommand={editor => {
+        editor.chain().focus().insertContent(formattedDate).run()
+      }}>
+      <Calendar className={iconClassName} />
+    </RichTextEditor.CommandButton>
+  )
+}
+
+export function Extensible() {
+  return (
+    <RichTextEditor
+      className="w-[720px]"
+      defaultValue={extensionPlayground}
+      placeholder="Write notes...">
+      <RichTextEditor.Shell>
+        <RichTextEditor.Toolbar>
+          <RichTextEditor.ToolbarGroup aria-label="Custom commands">
+            <InsertDateButton />
+            <RichTextEditor.CommandButton
+              aria-label="Insert launch checklist"
+              tooltip="Insert checklist"
+              onCommand={editor => {
+                editor
+                  .chain()
+                  .focus()
+                  .insertContent([
+                    {
+                      content: [{ text: 'Preflight checklist', type: 'text' }],
+                      type: 'paragraph'
+                    },
+                    {
+                      content: [
+                        {
+                          content: [
+                            {
+                              content: [
+                                { text: 'Confirm owner', type: 'text' }
+                              ],
+                              type: 'paragraph'
+                            }
+                          ],
+                          type: 'listItem'
+                        }
+                      ],
+                      type: 'bulletList'
+                    }
+                  ])
+                  .run()
+              }}>
+              <Sparkles className={iconClassName} />
+            </RichTextEditor.CommandButton>
+          </RichTextEditor.ToolbarGroup>
+        </RichTextEditor.Toolbar>
+        <RichTextEditor.Content />
+        <RichTextEditor.FloatingMenu>
+          <RichTextEditor.CommandButton
+            aria-label="Add heading"
+            tooltip="Add heading"
+            onCommand={editor => {
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }}>
+            <CirclePlus className={iconClassName} />
+          </RichTextEditor.CommandButton>
+        </RichTextEditor.FloatingMenu>
+        <RichTextEditor.SuggestionMenu char="/" items={getSlashItems} />
+        <RichTextEditor.Footer>
+          <span>Extensible command surface</span>
+          <RichTextEditor.CharacterCount showWords />
+        </RichTextEditor.Footer>
+      </RichTextEditor.Shell>
+    </RichTextEditor>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/rich-text-editor/demos/documents.ts
+
+```tsx
+import type { JSONContent } from '@tiptap/core'
+
+export const featureOverview: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Features', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              marks: [{ type: 'italic' }],
+              text: 'A composable rich text editor with toolbar controls, contextual menus, JSON persistence, and common writing shortcuts.',
+              type: 'text'
+            },
+            { text: ' Try markdown ', type: 'text' },
+            { marks: [{ type: 'code' }], text: '**', type: 'text' },
+            { text: ' or keyboard shortcuts for common marks.', type: 'text' }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      content: [
+        { text: 'Select the phrase ', type: 'text' },
+        {
+          marks: [{ type: 'bold' }],
+          text: 'contextual selection actions',
+          type: 'text'
+        },
+        {
+          text: ' and use the bubble menu to apply bold, italic, underline, strike, or a link without leaving the document.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'What to try', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the toolbar to switch headings, lists, quotes, and code blocks.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Add a link to ', type: 'text' },
+                {
+                  marks: [
+                    { attrs: { href: 'https://tiptap.dev' }, type: 'link' }
+                  ],
+                  text: 'tiptap.dev',
+                  type: 'text'
+                },
+                {
+                  text: ' or remove formatting with the clear actions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'Notice how ', type: 'text' },
+                {
+                  marks: [{ type: 'code' }],
+                  text: 'onValueChange',
+                  type: 'text'
+                },
+                {
+                  text: ' can store JSON while still exposing HTML and text details.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          text: 'editor.chain().focus().toggleHeading({ level: 2 }).run()',
+          type: 'text'
+        }
+      ],
+      type: 'codeBlock'
+    }
+  ],
+  type: 'doc'
+}
+
+export const controlledDocument: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Controlled JSON value', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo keeps the editor document in React state. The buttons above replace the ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'value', type: 'text' },
+        {
+          text: ' prop, and the JSON preview below updates after every edit.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Edit this paragraph and watch the JSON mirror change.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                { text: 'The footer reads ', type: 'text' },
+                { marks: [{ type: 'bold' }], text: 'character', type: 'text' },
+                { text: ' and ', type: 'text' },
+                { marks: [{ type: 'italic' }], text: 'word', type: 'text' },
+                { text: ' counts from Tiptap storage.', type: 'text' }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Controlled mode should feel editable, not fragile: external updates only replace content when the incoming JSON differs.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const releaseNotes: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Loaded release note', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Switching documents should preserve the same toolbar, footer, and editor shell while replacing the serialized ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: 'JSONContent', type: 'text' },
+        { text: ' value.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      attrs: { start: 1 },
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Load the brief again.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [{ text: 'Make a local edit.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Confirm the preview reflects the new document tree.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'orderedList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const characterLimitGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Character count', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This editor has a 240 character limit. Keep typing to see the footer update in real time and flag when the document crosses the configured ceiling.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [{ text: 'Short notes stay green.', type: 'text' }],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const compositionGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Custom composition', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo moves a compact toolbar into the footer. The editor keeps the same Tiptap instance, but you decide where controls live.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Only bold, italic, list, and link controls are exposed here.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'The content area remains the same reusable slot.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Compound parts make layout a product decision instead of a component limitation.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    }
+  ],
+  type: 'doc'
+}
+
+export const disabledGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Disabled state', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Use disabled mode when the entire field is unavailable. Toolbar actions, editing, and link changes are all blocked.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for locked forms or pending permissions.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const readOnlyGuide: JSONContent = {
+  content: [
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Read-only review', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'Read-only mode keeps the same visual surface and selectable text while preventing document mutations.',
+          type: 'text'
+        }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Best for review screens, previews, and archived records.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    }
+  ],
+  type: 'doc'
+}
+
+export const extensionPlayground: JSONContent = {
+  content: [
+    {
+      attrs: { level: 2 },
+      content: [{ text: 'Extensible commands', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          text: 'This demo adds custom buttons, a floating insert menu, and a slash command menu. Type ',
+          type: 'text'
+        },
+        { marks: [{ type: 'code' }], text: '/', type: 'text' },
+        { text: ' to open the command list, then filter with ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'h', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'list', type: 'text' },
+        { text: ', ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'quote', type: 'text' },
+        { text: ', or ', type: 'text' },
+        { marks: [{ type: 'code' }], text: 'action', type: 'text' },
+        { text: '.', type: 'text' }
+      ],
+      type: 'paragraph'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              text: 'Each item runs your own Tiptap command; the component only supplies the accessible menu shell.',
+              type: 'text'
+            }
+          ],
+          type: 'paragraph'
+        }
+      ],
+      type: 'blockquote'
+    },
+    {
+      attrs: { level: 3 },
+      content: [{ text: 'Try it', type: 'text' }],
+      type: 'heading'
+    },
+    {
+      content: [
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: "Press the date button to insert today's date.",
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Use the sparkle button to insert a launch checklist.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        },
+        {
+          content: [
+            {
+              content: [
+                {
+                  text: 'Move to the empty line below to reveal the floating menu.',
+                  type: 'text'
+                }
+              ],
+              type: 'paragraph'
+            }
+          ],
+          type: 'listItem'
+        }
+      ],
+      type: 'bulletList'
+    },
+    {
+      type: 'paragraph'
+    }
+  ],
+  type: 'doc'
+}
+```
+
+Use `CommandButton`, `FloatingMenu`, `SuggestionMenu`, and the editor hooks to connect custom Tiptap commands without waiting for a new built-in prop.
+
+```tsx
+import {
+  RichTextEditor,
+  filterRichTextEditorSuggestionItems
+} from '@vezham/react-pro-v3/rich-text-editor'
+
+const slashItems = ({ query }) =>
+  filterRichTextEditorSuggestionItems(
+    [
+      {
+        title: 'Heading 1',
+        keywords: ['title', 'h1'],
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setNode('heading', { level: 1 })
+            .run()
+        }
+      }
+    ],
+    query
+  )
+
+;<RichTextEditor extensions={customExtensions}>
+  <RichTextEditor.Shell>
+    <RichTextEditor.Toolbar>
+      <RichTextEditor.CommandButton
+        aria-label="Insert date"
+        onCommand={editor =>
+          editor.chain().focus().insertContent('27 May 2026').run()
+        }
+      />
+    </RichTextEditor.Toolbar>
+    <RichTextEditor.Content />
+    <RichTextEditor.FloatingMenu>
+      <RichTextEditor.CommandButton
+        aria-label="Add heading"
+        onCommand={editor =>
+          editor.chain().focus().toggleHeading({ level: 2 }).run()
+        }
+      />
+    </RichTextEditor.FloatingMenu>
+    <RichTextEditor.SuggestionMenu char="/" items={slashItems} />
+  </RichTextEditor.Shell>
+</RichTextEditor>
+```
+
+## CSS Classes
+
+### Base Classes
+
+- `.rich-text-editor` - Root wrapper
+- `.rich-text-editor__shell` - Editor surface
+
+### Variant Classes
+
+- `.rich-text-editor__shell--primary` - Primary field fill for page backgrounds
+- `.rich-text-editor__shell--secondary` - Secondary fill (`--default`, no shadow) for overlay surfaces
+
+### Element Classes
+
+- `.rich-text-editor__toolbar` - Toolbar container
+- `.rich-text-editor__toolbar-group` - Toolbar group
+- `.rich-text-editor__toolbar-button` - Toolbar button slot
+- `.rich-text-editor__toolbar-separator` - Toolbar separator
+- `.rich-text-editor__content` - Tiptap content host
+- `.rich-text-editor__prosemirror` - ProseMirror editable element
+- `.rich-text-editor__bubble-menu` - Floating selection toolbar
+- `.rich-text-editor__bubble-menu-toolbar` - Toolbar inside the floating selection menu
+- `.rich-text-editor__floating-menu` - Floating empty-line toolbar
+- `.rich-text-editor__floating-menu-toolbar` - Toolbar inside the floating empty-line menu
+- `.rich-text-editor__suggestion-menu` - Triggered suggestion menu
+- `.rich-text-editor__suggestion-menu-list` - Scrollable suggestion list
+- `.rich-text-editor__suggestion-menu-item` - Suggestion menu item
+- `.rich-text-editor__suggestion-menu-empty` - Empty state shown when no items match
+- `.rich-text-editor__footer` - Footer row
+- `.rich-text-editor__character-count` - Character and word count
+- `.rich-text-editor__link-popover` - Link popover surface
+- `.rich-text-editor__link-input` - Link URL input
+
+### States
+
+- **Disabled**: `[data-disabled="true"]` on `.rich-text-editor`
+- **Read only**: `[data-readonly="true"]` on `.rich-text-editor`
+- **Variant**: `[data-variant]` on `.rich-text-editor`
+- **Over limit**: `[data-over-limit="true"]` on `.rich-text-editor__character-count`
+- **Active command**: `[data-active="true"]` on toolbar buttons
+- **Highlighted suggestion**: `[data-highlighted="true"]` on `.rich-text-editor__suggestion-menu-item` for the row targeted by arrow keys or hover
+
+## API Reference
+
+### RichTextEditor
+
+The root provider. It owns the Tiptap editor instance and emits JSON-first value updates.
+
+| Prop            | Type                       | Default              | Description                                                                      |
+| --------------- | -------------------------- | -------------------- | -------------------------------------------------------------------------------- |
+| `value`         | `JSONContent`              | -                    | Controlled Tiptap JSON document                                                  |
+| `defaultValue`  | `JSONContent`              | -                    | Initial uncontrolled JSON document                                               |
+| `onValueChange` | `(value, details) => void` | -                    | Called with JSON plus HTML, text, empty state, character count, and word count   |
+| `placeholder`   | `string`                   | `"Start writing..."` | Placeholder text for empty content                                               |
+| `maxLength`     | `number`                   | -                    | CharacterCount limit                                                             |
+| `isDisabled`    | `boolean`                  | `false`              | Disables editing and controls                                                    |
+| `isReadOnly`    | `boolean`                  | `false`              | Keeps content focusable but not editable                                         |
+| `extensions`    | `Extensions`               | -                    | Additional Tiptap extensions appended after defaults                             |
+| `editorOptions` | `Partial<EditorOptions>`   | -                    | Advanced Tiptap editor options                                                   |
+| `variant`       | `'primary' \| 'secondary'` | `'primary'`          | Surface styling variant. Use `secondary` inside Surface, Modal, Sheet, or Drawer |
+
+### RichTextEditor.ToggleButton
+
+Runs a formatting command and subscribes to active/disabled editor state.
+
+| Prop      | Type                                                                                                                                                                   | Description              |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `command` | `"bold" \| "italic" \| "underline" \| "strike" \| "code" \| "blockquote" \| "bulletList" \| "orderedList" \| "codeBlock" \| "heading-1" \| "heading-2" \| "heading-3"` | Formatting command       |
+| `tooltip` | `ReactNode`                                                                                                                                                            | Optional tooltip content |
+
+### RichTextEditor.ActionButton
+
+Runs editor actions.
+
+| Prop      | Type                                                      | Description              |
+| --------- | --------------------------------------------------------- | ------------------------ |
+| `action`  | `"undo" \| "redo" \| "clearFormatting" \| "clearContent"` | Editor action            |
+| `tooltip` | `ReactNode`                                               | Optional tooltip content |
+
+### RichTextEditor.CommandButton
+
+Runs any custom Tiptap command.
+
+| Prop         | Type                             | Description                                      |
+| ------------ | -------------------------------- | ------------------------------------------------ |
+| `onCommand`  | `(editor) => void \| boolean`    | Command to run with the current editor           |
+| `isActive`   | `boolean \| (editor) => boolean` | Active state used for styling and `aria-pressed` |
+| `isDisabled` | `boolean \| (editor) => boolean` | Command-specific disabled state                  |
+| `tooltip`    | `ReactNode`                      | Optional tooltip content                         |
+
+### RichTextEditor.LinkPopover
+
+Compound popover for applying and removing links through Tiptap link commands.
+
+Subcomponents: `Trigger`, `Content`, `Input`, `Actions`, `ApplyButton`, and `UnsetButton`.
+
+### RichTextEditor.Content
+
+Renders the Tiptap `EditorContent` for the current editor instance.
+
+### RichTextEditor.BubbleMenu
+
+Wraps Tiptap's React BubbleMenu and renders its children inside a HeroUI Toolbar. The default visibility shows the menu for non-empty text selections while the editor is focused.
+
+| Prop           | Type           | Default | Description                                       |
+| -------------- | -------------- | ------- | ------------------------------------------------- |
+| `toolbarProps` | `ToolbarProps` | -       | Props forwarded to the internal selection toolbar |
+
+### RichTextEditor.FloatingMenu
+
+Wraps Tiptap's React FloatingMenu and renders its children inside a HeroUI Toolbar. By default, Tiptap shows this menu on an empty editable text block.
+
+| Prop           | Type           | Default | Description                                       |
+| -------------- | -------------- | ------- | ------------------------------------------------- |
+| `toolbarProps` | `ToolbarProps` | -       | Props forwarded to the internal insertion toolbar |
+
+### RichTextEditor.SuggestionMenu
+
+Registers a Tiptap suggestion plugin for slash commands, mentions, variables, snippets, and other triggered menus. If no render function is provided, items with `{title, description, icon, command}` render in the default menu.
+
+| Prop              | Type                                             | Default | Description                               |
+| ----------------- | ------------------------------------------------ | ------- | ----------------------------------------- |
+| `char`            | `string`                                         | `"/"`   | Trigger character                         |
+| `items`           | `({query, editor}) => Item[] \| Promise<Item[]>` | -       | Suggestion item loader                    |
+| `children`        | `(props) => ReactNode`                           | -       | Custom renderer for complete menu control |
+| `onSelect`        | `(props) => void`                                | -       | Selection handler for custom item shapes  |
+| `pluginKey`       | `string \| PluginKey`                            | -       | Stable ProseMirror plugin key             |
+| `allowSpaces`     | `boolean`                                        | `false` | Allows spaces in the query                |
+| `allowedPrefixes` | `string[] \| null`                               | `[" "]` | Prefixes allowed before the trigger       |
+| `startOfLine`     | `boolean`                                        | `false` | Restricts matches to the start of a line  |
+| `maxHeight`       | `number`                                         | `384`   | Max menu height in pixels                 |
+
+### Hooks
+
+| Hook                                           | Description                                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `useRichTextEditor()`                          | Returns `{editor, isDisabled, isReadOnly, maxLength}` from the nearest editor              |
+| `useRichTextEditorState(selector, equalityFn)` | Subscribes to selected Tiptap editor state without re-rendering for unrelated transactions |
+
+### RichTextEditor.CharacterCount
+
+Displays the CharacterCount extension storage values.
+
+| Prop        | Type                                | Default | Description                             |
+| ----------- | ----------------------------------- | ------- | --------------------------------------- |
+| `showWords` | `boolean`                           | `false` | Appends word count to the default label |
+| `children`  | `ReactNode \| (stats) => ReactNode` | -       | Custom count rendering                  |

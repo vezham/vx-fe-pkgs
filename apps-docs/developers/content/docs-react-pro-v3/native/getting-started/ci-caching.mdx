@@ -1,0 +1,155 @@
+---
+title: 'CI caching'
+description: 'Cache HeroUI Native installs in GitHub Actions, Vercel, EAS, and other CI so pipelines stay under the daily CDN download limit.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/ci-caching
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native CI installs download the package from the CDN during `postinstall`. Each install that cannot reuse a previous download counts against the daily limit for that CI/CD token. The limit resets at **00:00 UTC**.
+
+| License                             | Daily CI downloads |
+| ----------------------------------- | ------------------ |
+| Individual (any plan)               | 1,000              |
+| Team Web                            | 5,000              |
+| Team Super                          | 10,000             |
+| Enterprise with unlimited downloads | No daily cap       |
+
+The count is per CI/CD token, not per seat. React and React Native installs on the same token share that counter. A pipeline that installs on every commit, matrix job, or preview build can spend the allowance even when `heroui-native-pro` has not changed. Caching is allowed and is the way to avoid that.
+
+The dashboard shows today's usage, the allowance, and the reset time on the [Tokens](https://heroui.pro/dashboard/pro/tokens) page and the overview CI/CD token card.
+
+## What to cache
+
+The CDN request happens when the package is installed and its postinstall script runs. Restoring a warm install skips that script.
+
+Cache both of these, keyed by the lockfile:
+
+- The package manager store (pnpm store or npm cache), so the tarball does not have to be fetched again
+- `node_modules` (and pnpm's virtual store, if you use one), so install is a no-op and postinstall does not run again
+
+A store-only cache is not enough. An empty `node_modules` still installs the package and runs postinstall, which calls the CDN again.
+
+Do not delete `node_modules` before install, and do not pass `--force` or clean the package manager cache in CI. Those options throw away the cache and count another download.
+
+## GitHub Actions
+
+`actions/setup-node` with `cache: pnpm` or `cache: npm` caches the store. Also cache the install output with `actions/cache` so postinstall does not run on every job.
+
+Use `HEROUI_AUTH_TOKEN` from the dashboard. Keep it in repository secrets. EAS builds should use the same secret as an EAS environment variable.
+
+<Tabs items={["pnpm", "npm"]}>
+  <Tab value="pnpm">
+    ```yaml title=".github/workflows/ci.yml"
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        env:
+          HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+        steps:
+          - uses: actions/checkout@v4
+          - uses: pnpm/action-setup@v4
+          - uses: actions/setup-node@v4
+            with:
+              node-version: 22
+              cache: pnpm
+          - name: Cache installed dependencies
+            uses: actions/cache@v4
+            with:
+              path: |
+                node_modules
+                ~/.local/share/pnpm/store
+              key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+              restore-keys: |
+                ${{ runner.os }}-pnpm-
+          - run: pnpm install --frozen-lockfile
+    ```
+  </Tab>
+
+  <Tab value="npm">
+    ```yaml title=".github/workflows/ci.yml"
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        env:
+          HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4
+            with:
+              node-version: 22
+              cache: npm
+          - name: Cache installed dependencies
+            uses: actions/cache@v4
+            with:
+              path: node_modules
+              key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+              restore-keys: |
+                ${{ runner.os }}-node-modules-
+          - run: npm ci
+    ```
+  </Tab>
+</Tabs>
+
+Point the cache key at the lockfile only. Hashing source files misses the cache on every commit. `restore-keys` lets a lockfile change reuse the previous store instead of downloading every package from scratch.
+
+In a monorepo, run one install for the workflow and share that cache across jobs. A matrix that installs the same lockfile in every cell multiplies the CDN downloads.
+
+## Vercel
+
+Vercel restores `node_modules` and the package manager cache between builds when the lockfile is unchanged. Leave that cache on.
+
+- Set `HEROUI_AUTH_TOKEN` in the project's environment variables. Do not expose it to the browser or the native client bundle.
+- Keep the default install command (`pnpm install`, `npm install`, or the equivalent frozen install).
+- Do not set `VERCEL_FORCE_NO_BUILD_CACHE`.
+- Do not start the install command with `rm -rf node_modules` or `pnpm install --force`.
+
+A lockfile change still installs once. Later builds with the same lockfile reuse the cache and do not count another CDN download.
+
+EAS builds do not use the Vercel cache. Set `HEROUI_AUTH_TOKEN` as an EAS secret and cache dependencies in the workflow that triggers the build, using the GitHub Actions example above.
+
+## Other CI
+
+Restore the store and `node_modules` before install, then save them after a successful install. Key the cache with the lockfile hash.
+
+```bash
+# pnpm store location
+pnpm store path
+
+# npm cache location
+npm config get cache
+
+```
+
+```yaml
+# Generic cache inputs. The path list is the same idea as actions/cache.
+key: ci-pnpm-{{ checksum "pnpm-lock.yaml" }}
+paths:
+  - node_modules
+  - ~/.local/share/pnpm/store
+```
+
+Then install with the token present:
+
+```bash
+export HEROUI_AUTH_TOKEN=your-cicd-token
+pnpm install --frozen-lockfile
+
+```
+
+`heroui-native-pro` and `@heroui-pro/react` use the same CI/CD token. Caching either package avoids a download for that install.
+
+## Avoid extra downloads
+
+- Install only in jobs that need the package. Jobs that only lint unchanged files can skip install when the dependency cache is already warm.
+- Do not rotate the CI/CD token to reset the counter. Rotation creates a new key, but it also breaks every pipeline until the secret is updated, and it does not change the allowance.
+- Preview deployments and scheduled jobs count too. Cache them the same way as the main branch.
+- A fresh runner, a cleared cache, or a lockfile change should cost one download, not one per job.
+
+When a key reaches 80% of the daily allowance, the dashboard links back to this page. At 100%, installs fail until 00:00 UTC with the limit, remaining count, and reset time in the response headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`).

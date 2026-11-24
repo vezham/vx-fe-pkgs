@@ -1,0 +1,228 @@
+---
+title: 'Emoji Reaction Button'
+description: 'An animated emoji reaction button with count display and toggle state for social interactions.'
+sourceUrl: https://heroui.pro/docs/react/components/emoji-reaction-button
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-emoji-reaction-button-default">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { EmojiReactionButton } from '@vezham/react-pro-v3'
+
+export function Default() {
+  const [reactions, setReactions] = useState<
+    Record<string, { count: number; selected: boolean }>
+  >({
+    '❤️': { count: 12, selected: true },
+    '🎉': { count: 1, selected: false },
+    '👍': { count: 5, selected: false },
+    '😂': { count: 3, selected: false },
+    '🚀': { count: 1, selected: false }
+  })
+
+  const toggle = (emoji: string) => {
+    setReactions(prev => {
+      const reaction = prev[emoji]
+
+      if (!reaction) return prev
+      const selected = !reaction.selected
+      const count = selected ? reaction.count + 1 : reaction.count - 1
+
+      if (count < 1) {
+        const { [emoji]: _, ...rest } = prev
+
+        return rest
+      }
+
+      return { ...prev, [emoji]: { count, selected } }
+    })
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {Object.entries(reactions).map(([emoji, { count, selected }]) => (
+        <EmojiReactionButton
+          key={emoji}
+          isSelected={selected}
+          onChange={() => toggle(emoji)}>
+          <EmojiReactionButton.Emoji>{emoji}</EmojiReactionButton.Emoji>
+          {count > 0 && (
+            <EmojiReactionButton.Count>{count}</EmojiReactionButton.Count>
+          )}
+        </EmojiReactionButton>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the EmojiReactionButton component and access all parts using dot notation.
+
+```tsx
+import { EmojiReactionButton } from '@vezham/react-pro-v3'
+
+;<EmojiReactionButton>
+  <EmojiReactionButton.Emoji />
+  <EmojiReactionButton.Count />
+</EmojiReactionButton>
+```
+
+## Disabled
+
+<ComponentPreview name="pro-emoji-reaction-button-disabled">
+
+```tsx
+'use client'
+
+import { EmojiReactionButton } from '@vezham/react-pro-v3'
+
+export function Disabled() {
+  return (
+    <div className="flex items-center gap-2">
+      <EmojiReactionButton isDisabled isSelected>
+        <EmojiReactionButton.Emoji>❤️</EmojiReactionButton.Emoji>
+        <EmojiReactionButton.Count>12</EmojiReactionButton.Count>
+      </EmojiReactionButton>
+      <EmojiReactionButton isDisabled>
+        <EmojiReactionButton.Emoji>👍</EmojiReactionButton.Emoji>
+        <EmojiReactionButton.Count>3</EmojiReactionButton.Count>
+      </EmojiReactionButton>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Read-only
+
+<ComponentPreview name="pro-emoji-reaction-button-read-only">
+
+```tsx
+'use client'
+
+import { EmojiReactionButton } from '@vezham/react-pro-v3'
+
+export function ReadOnly() {
+  return (
+    <div className="flex items-center gap-2">
+      <EmojiReactionButton isReadOnly isSelected>
+        <EmojiReactionButton.Emoji>❤️</EmojiReactionButton.Emoji>
+        <EmojiReactionButton.Count>12</EmojiReactionButton.Count>
+      </EmojiReactionButton>
+      <EmojiReactionButton isReadOnly>
+        <EmojiReactionButton.Emoji>👍</EmojiReactionButton.Emoji>
+        <EmojiReactionButton.Count>3</EmojiReactionButton.Count>
+      </EmojiReactionButton>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-emoji-reaction-button-sizes">
+
+```tsx
+'use client'
+
+import { EmojiReactionButton } from '@vezham/react-pro-v3'
+
+export function Sizes() {
+  return (
+    <div className="flex flex-col items-start gap-4">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <div key={size} className="flex items-center gap-3">
+          <span className="text-muted w-8 text-xs font-medium">{size}</span>
+          <div className="flex items-center gap-2">
+            <EmojiReactionButton isSelected size={size}>
+              <EmojiReactionButton.Emoji>👍</EmojiReactionButton.Emoji>
+              <EmojiReactionButton.Count>5</EmojiReactionButton.Count>
+            </EmojiReactionButton>
+            <EmojiReactionButton size={size}>
+              <EmojiReactionButton.Emoji>😂</EmojiReactionButton.Emoji>
+              <EmojiReactionButton.Count>2</EmojiReactionButton.Count>
+            </EmojiReactionButton>
+            <EmojiReactionButton size={size}>
+              <EmojiReactionButton.Emoji>🎉</EmojiReactionButton.Emoji>
+              <EmojiReactionButton.Count>1</EmojiReactionButton.Count>
+            </EmojiReactionButton>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.emoji-reaction-button` - Base toggle button with rounded-full shape
+- `.emoji-reaction-button--sm` - Small size
+- `.emoji-reaction-button--md` - Medium size (default)
+- `.emoji-reaction-button--lg` - Large size
+
+### Element Classes
+
+- `.emoji-reaction-button__emoji` - The emoji character
+- `.emoji-reaction-button__count` - The reaction count
+
+### Interactive States
+
+- **Selected**: `[data-selected="true"]` on root (accent border and background tint; count text turns accent)
+- **Hover**: `:hover` or `[data-hovered="true"]` (background change)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` (focus ring)
+- **Pressed**: `:active` or `[data-pressed="true"]` (scale down)
+- **Read-only**: `[data-readonly="true"]` on root (default cursor, no press scale, no pointer interaction)
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` (reduced opacity)
+
+## API Reference
+
+### EmojiReactionButton
+
+The root component. Wraps RAC [ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html).
+
+| Prop              | Type                                        | Default | Description                                                                |
+| ----------------- | ------------------------------------------- | ------- | -------------------------------------------------------------------------- |
+| `size`            | `'sm' \| 'md' \| 'lg'`                      | `'md'`  | Size variant                                                               |
+| `isSelected`      | `boolean`                                   | -       | Whether the button is selected (controlled)                                |
+| `defaultSelected` | `boolean`                                   | -       | Default selected state (uncontrolled)                                      |
+| `onChange`        | `(isSelected: boolean) => void`             | -       | Handler called when the selected state changes                             |
+| `isReadOnly`      | `boolean`                                   | -       | Whether the button is read-only and should not respond to user interaction |
+| `isDisabled`      | `boolean`                                   | -       | Whether the button is disabled                                             |
+| `children`        | `ReactNode \| ((renderProps) => ReactNode)` | -       | Emoji and Count elements                                                   |
+
+Also supports all RAC [ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html) props.
+
+### EmojiReactionButton.Emoji
+
+The emoji character display.
+
+Also supports all native `span` HTML attributes.
+
+### EmojiReactionButton.Count
+
+The reaction count display.
+
+Also supports all native `span` HTML attributes.

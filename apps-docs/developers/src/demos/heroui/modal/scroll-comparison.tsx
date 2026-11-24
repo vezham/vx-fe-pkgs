@@ -1,0 +1,74 @@
+// vx-bot/INFO: Adapted HeroUI demo (Apache-2.0); see README.md and LICENSE.
+'use client'
+
+import { useState } from 'react'
+
+import { Button, Modal, Radio, RadioGroup } from '@vezham/react-v3'
+
+export function ScrollComparison() {
+  const [scroll, setScroll] = useState<'inside' | 'outside'>('inside')
+
+  return (
+    <div className="flex flex-col gap-4">
+      <RadioGroup
+        orientation="horizontal"
+        value={scroll}
+        onChange={value => setScroll(value as 'inside' | 'outside')}>
+        <Radio value="inside">
+          <Radio.Content>
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            Inside
+          </Radio.Content>
+        </Radio>
+        <Radio value="outside">
+          <Radio.Content>
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            Outside
+          </Radio.Content>
+        </Radio>
+      </RadioGroup>
+
+      <Modal>
+        <Button variant="secondary">
+          Open Modal ({scroll.charAt(0).toUpperCase() + scroll.slice(1)})
+        </Button>
+        <Modal.Backdrop>
+          <Modal.Container scroll={scroll}>
+            <Modal.Dialog className="sm:max-w-[360px]">
+              <Modal.Header>
+                <Modal.Heading>
+                  Scroll: {scroll.charAt(0).toUpperCase() + scroll.slice(1)}
+                </Modal.Heading>
+                <p className="text-muted text-sm leading-5">
+                  Compare scroll behaviors - inside keeps content scrollable
+                  within the modal, outside allows page scrolling
+                </p>
+              </Modal.Header>
+              <Modal.Body>
+                {Array.from({ length: 30 }).map((_, i) => (
+                  <p key={i} className="mb-3">
+                    Paragraph {i + 1}: Lorem ipsum dolor sit amet, consectetur
+                    adipiscing elit. Nullam pulvinar risus non risus hendrerit
+                    venenatis. Pellentesque sit amet hendrerit risus, sed
+                    porttitor quam.
+                  </p>
+                ))}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button slot="close" variant="secondary">
+                  Cancel
+                </Button>
+                <Button slot="close">Confirm</Button>
+              </Modal.Footer>
+              <Modal.CloseTrigger />
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
+    </div>
+  )
+}

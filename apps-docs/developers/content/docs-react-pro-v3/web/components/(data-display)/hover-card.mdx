@@ -1,0 +1,519 @@
+---
+title: 'Hover Card'
+description: 'A popover card that appears on hover to preview additional content without navigating away.'
+sourceUrl: https://heroui.pro/docs/react/components/hover-card
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-hover-card-default">
+
+```tsx
+'use client'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Avatar, Link } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <div className="px-10 py-24">
+      <p className="text-sm leading-8">
+        Check out{' '}
+        <HoverCard>
+          <HoverCard.Trigger>
+            <Link
+              className="underline"
+              href="https://x.com/hero_ui"
+              target="_blank">
+              @hero_ui
+            </Link>
+          </HoverCard.Trigger>
+          <HoverCard.Content>
+            <div className="flex items-center gap-3">
+              <Avatar size="sm">
+                <Avatar.Image
+                  alt="HeroUI"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/heroui_isotipo.png"
+                />
+                <Avatar.Fallback>H</Avatar.Fallback>
+              </Avatar>
+              <div className="flex flex-col items-start justify-center">
+                <span className="text-sm leading-4 font-semibold">HeroUI</span>
+                <span className="text-muted text-sm tracking-tight">
+                  @hero_ui
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 pl-px text-sm font-medium">
+              Building the future of UI for web & mobile.&nbsp;
+              <span aria-label="confetti" role="img">
+                🚀
+              </span>
+              &nbsp;(YC S24)&nbsp;
+            </p>
+            <div className="mt-3 flex gap-2">
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">4</p>
+                <p className="text-muted text-sm">Following</p>
+              </div>
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">97.1K</p>
+                <p className="text-muted text-sm">Followers</p>
+              </div>
+            </div>
+          </HoverCard.Content>
+        </HoverCard>{' '}
+        for beautiful React components.
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the HoverCard component and access all parts using dot notation.
+
+```tsx
+import { HoverCard } from '@vezham/react-pro-v3'
+
+;<HoverCard>
+  <HoverCard.Trigger />
+  <HoverCard.Content>
+    <HoverCard.Arrow />
+  </HoverCard.Content>
+</HoverCard>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-hover-card-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Avatar, Button, Link } from '@vezham/react-v3'
+
+export function Controlled() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <div className="px-10 py-24">
+      <div className="mb-4 flex items-center gap-2">
+        <Button size="sm" variant="outline" onPress={() => setOpen(v => !v)}>
+          {isOpen ? 'Close' : 'Open'} HoverCard
+        </Button>
+        <span className="text-[13px] opacity-60">
+          State: <strong>{isOpen ? 'open' : 'closed'}</strong>
+        </span>
+      </div>
+      <p className="text-sm leading-8">
+        This card is controlled:{' '}
+        <HoverCard open={isOpen} onOpenChange={setOpen}>
+          <HoverCard.Trigger>
+            <Link
+              className="underline"
+              href="https://x.com/hero_ui"
+              target="_blank">
+              @hero_ui
+            </Link>
+          </HoverCard.Trigger>
+          <HoverCard.Content>
+            <HoverCard.Arrow />
+            <div className="flex items-center gap-3">
+              <Avatar size="sm">
+                <Avatar.Image
+                  alt="HeroUI"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/heroui_isotipo.png"
+                />
+                <Avatar.Fallback>H</Avatar.Fallback>
+              </Avatar>
+              <div className="flex flex-col items-start justify-center">
+                <span className="text-sm leading-4 font-semibold">HeroUI</span>
+                <span className="text-muted text-sm tracking-tight">
+                  @hero_ui
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 pl-px text-sm font-medium">
+              Building the future of UI for web & mobile.&nbsp;
+              <span aria-label="confetti" role="img">
+                🚀
+              </span>
+              &nbsp;(YC S24)&nbsp;
+            </p>
+            <div className="mt-3 flex gap-2">
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">4</p>
+                <p className="text-muted text-sm">Following</p>
+              </div>
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">97.1K</p>
+                <p className="text-muted text-sm">Followers</p>
+              </div>
+            </div>
+          </HoverCard.Content>
+        </HoverCard>
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Delays
+
+<ComponentPreview name="pro-hover-card-custom-delays">
+
+```tsx
+'use client'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+function ImageCard() {
+  return (
+    <>
+      <img
+        alt="Neo Brutalism design"
+        className="h-36 w-full rounded-t-2xl object-cover"
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/heroui-pro-landing/chat-message.webp"
+      />
+      <div className="p-4">
+        <p className="text-sm font-semibold">Neo Brutalism</p>
+        <p className="text-muted mt-1 text-sm leading-relaxed">
+          Raw aesthetics, bold colors, and playful typography.
+        </p>
+      </div>
+    </>
+  )
+}
+
+const delays = [
+  { closeDelay: 0, label: 'Instant', openDelay: 0 },
+  { closeDelay: 300, label: 'Default (700 / 300)', openDelay: 700 },
+  { closeDelay: 500, label: 'Slow (1s / 500)', openDelay: 1000 }
+]
+
+export function CustomDelays() {
+  return (
+    <div className="flex items-center gap-6 px-10 py-24">
+      {delays.map(({ closeDelay, label, openDelay }) => (
+        <HoverCard key={label} closeDelay={closeDelay} openDelay={openDelay}>
+          <HoverCard.Trigger>
+            <Button variant="outline">{label}</Button>
+          </HoverCard.Trigger>
+          <HoverCard.Content className="w-72 p-0">
+            <HoverCard.Arrow />
+            <ImageCard />
+          </HoverCard.Content>
+        </HoverCard>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Placements
+
+<ComponentPreview name="pro-hover-card-placements">
+
+```tsx
+'use client'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Avatar, Button } from '@vezham/react-v3'
+
+function UserProfileCard() {
+  return (
+    <>
+      <div className="flex items-center gap-3">
+        <Avatar size="sm">
+          <Avatar.Image
+            alt="HeroUI"
+            src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/heroui_isotipo.png"
+          />
+          <Avatar.Fallback>H</Avatar.Fallback>
+        </Avatar>
+        <div className="flex flex-col items-start justify-center">
+          <span className="text-sm leading-4 font-semibold">HeroUI</span>
+          <span className="text-muted text-sm tracking-tight">@hero_ui</span>
+        </div>
+      </div>
+      <p className="mt-3 pl-px text-sm font-medium">
+        Building the future of UI for web & mobile.&nbsp;
+        <span aria-label="confetti" role="img">
+          🚀
+        </span>
+        &nbsp;(YC S24)&nbsp;
+      </p>
+      <div className="mt-3 flex gap-2">
+        <div className="flex gap-1">
+          <p className="text-sm font-semibold">4</p>
+          <p className="text-muted text-sm">Following</p>
+        </div>
+        <div className="flex gap-1">
+          <p className="text-sm font-semibold">97.1K</p>
+          <p className="text-muted text-sm">Followers</p>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export function Placements() {
+  return (
+    <div className="grid gap-4">
+      <div className="text-muted my-2 text-sm">Hover buttons</div>
+
+      <HoverCard>
+        <HoverCard.Trigger>
+          <Button className="w-full" variant="outline">
+            Top
+          </Button>
+        </HoverCard.Trigger>
+        <HoverCard.Content placement="top">
+          <HoverCard.Arrow />
+          <UserProfileCard />
+        </HoverCard.Content>
+      </HoverCard>
+
+      <HoverCard>
+        <HoverCard.Trigger>
+          <Button className="w-full" variant="outline">
+            Left
+          </Button>
+        </HoverCard.Trigger>
+        <HoverCard.Content placement="left">
+          <HoverCard.Arrow />
+          <UserProfileCard />
+        </HoverCard.Content>
+      </HoverCard>
+
+      <HoverCard>
+        <HoverCard.Trigger>
+          <Button className="w-full" variant="outline">
+            Right
+          </Button>
+        </HoverCard.Trigger>
+        <HoverCard.Content placement="right">
+          <HoverCard.Arrow />
+          <UserProfileCard />
+        </HoverCard.Content>
+      </HoverCard>
+
+      <HoverCard>
+        <HoverCard.Trigger>
+          <Button className="w-full" variant="outline">
+            Bottom
+          </Button>
+        </HoverCard.Trigger>
+        <HoverCard.Content placement="bottom">
+          <HoverCard.Arrow />
+          <UserProfileCard />
+        </HoverCard.Content>
+      </HoverCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Arrow
+
+<ComponentPreview name="pro-hover-card-with-arrow">
+
+```tsx
+'use client'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Avatar, Link } from '@vezham/react-v3'
+
+export function WithArrow() {
+  return (
+    <div className="px-10 py-24">
+      <p className="text-sm leading-8">
+        Hover over{' '}
+        <HoverCard>
+          <HoverCard.Trigger>
+            <Link
+              className="underline"
+              href="https://x.com/hero_ui"
+              target="_blank">
+              @hero_ui
+            </Link>
+          </HoverCard.Trigger>
+          <HoverCard.Content>
+            <HoverCard.Arrow />
+            <div className="flex items-center gap-3">
+              <Avatar size="sm">
+                <Avatar.Image
+                  alt="HeroUI"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/heroui_isotipo.png"
+                />
+                <Avatar.Fallback>H</Avatar.Fallback>
+              </Avatar>
+              <div className="flex flex-col items-start justify-center">
+                <span className="text-sm leading-4 font-semibold">HeroUI</span>
+                <span className="text-muted text-sm tracking-tight">
+                  @hero_ui
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 pl-px text-sm font-medium">
+              Building the future of UI for web & mobile.&nbsp;
+              <span aria-label="confetti" role="img">
+                🚀
+              </span>
+              &nbsp;(YC S24)&nbsp;
+            </p>
+            <div className="mt-3 flex gap-2">
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">4</p>
+                <p className="text-muted text-sm">Following</p>
+              </div>
+              <div className="flex gap-1">
+                <p className="text-sm font-semibold">97.1K</p>
+                <p className="text-muted text-sm">Followers</p>
+              </div>
+            </div>
+          </HoverCard.Content>
+        </HoverCard>{' '}
+        to see a preview with an arrow.
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Image
+
+<ComponentPreview name="pro-hover-card-with-image">
+
+```tsx
+'use client'
+
+import { HoverCard } from '@vezham/react-pro-v3'
+import { Link } from '@vezham/react-v3'
+
+export function WithImage() {
+  return (
+    <div className="px-10 py-24">
+      <p className="text-sm leading-8">
+        Learn more about the{' '}
+        <HoverCard openDelay={0}>
+          <HoverCard.Trigger>
+            <Link
+              className="underline"
+              href="https://heroui.com"
+              target="_blank">
+              Neo Brutalism
+            </Link>
+          </HoverCard.Trigger>
+          <HoverCard.Content className="w-72 p-0">
+            <HoverCard.Arrow />
+            <img
+              alt="Neo Brutalism design"
+              className="h-36 w-full rounded-t-2xl object-cover"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/heroui-pro-landing/chat-message.webp"
+            />
+            <div className="p-4">
+              <p className="text-sm font-semibold">Neo Brutalism</p>
+              <p className="text-muted mt-1 text-sm leading-relaxed">
+                Raw aesthetics, bold colors, and playful typography.
+              </p>
+            </div>
+          </HoverCard.Content>
+        </HoverCard>{' '}
+        design trend.
+      </p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Element Classes
+
+- `.hover-card__trigger` - Inline wrapper around the trigger element
+- `.hover-card__content` - The floating panel that appears on hover
+- `.hover-card__arrow` - Optional pointing arrow connecting content to trigger
+
+### Interactive States
+
+- **Entering/Exiting**: `[data-entering="true"]` / `[data-exiting="true"]` on `.hover-card__content` (fade + zoom + slide animation). Skipped when swapping between cards during the shared warm-up window.
+- **Placement**: `[data-placement="top|bottom|left|right"]` on `.hover-card__content` and `.hover-card__arrow` (directional animations and arrow rotation)
+
+## Accessibility
+
+HoverCard is built on RAC [PreviewTrigger](https://react-spectrum.adobe.com/react-aria/PreviewTrigger.html), so it works across input methods:
+
+- **Pointer**: hovering the trigger opens the card after `openDelay`. A safe area between the trigger and the card keeps it open while the pointer travels toward it, even diagonally.
+- **Keyboard**: focusing the trigger opens the card, `Tab` moves focus into it, and `Escape` closes it.
+- **Touch**: long pressing the trigger opens the card and moves the screen reader cursor into it.
+
+The card renders with `role="dialog"`. Pass `aria-label` to `HoverCard.Content` to give it an accessible name.
+
+Delays are coordinated globally with other hover cards and tooltips: once one has opened, the next one opens immediately instead of waiting out its `openDelay` again.
+
+## API Reference
+
+### HoverCard
+
+The root component. Wraps RAC [PreviewTrigger](https://react-spectrum.adobe.com/react-aria/PreviewTrigger.html) to manage hover state and open/close timing.
+
+| Prop           | Type                      | Default | Description                                         |
+| -------------- | ------------------------- | ------- | --------------------------------------------------- |
+| `open`         | `boolean`                 | -       | Controlled open state                               |
+| `defaultOpen`  | `boolean`                 | -       | Default open state (uncontrolled)                   |
+| `onOpenChange` | `(open: boolean) => void` | -       | Callback when open state changes                    |
+| `openDelay`    | `number`                  | `700`   | Time in ms before opening after hover               |
+| `closeDelay`   | `number`                  | `300`   | Time in ms before closing after pointer/focus leave |
+| `isDisabled`   | `boolean`                 | `false` | Prevents the hover card from opening                |
+| `children`     | `ReactNode`               | -       | Trigger and Content elements                        |
+
+### HoverCard.Trigger
+
+Inline wrapper that tracks hover, focus, and long press on its children.
+
+Also supports all native `span` HTML attributes.
+
+### HoverCard.Content
+
+The floating panel. Wraps RAC [Popover](https://react-spectrum.adobe.com/react-aria/Popover.html).
+
+| Prop        | Type        | Default | Description                               |
+| ----------- | ----------- | ------- | ----------------------------------------- |
+| `placement` | `Placement` | `'top'` | Popover placement relative to the trigger |
+| `offset`    | `number`    | `8`     | Distance from the trigger                 |
+
+Also supports all RAC [Popover](https://react-spectrum.adobe.com/react-aria/Popover.html) props except the open state ones (`isOpen`, `defaultOpen`, `onOpenChange`) and `triggerRef`, which are owned by the root.
+
+### HoverCard.Arrow
+
+Optional pointing arrow. Wraps RAC [OverlayArrow](https://react-spectrum.adobe.com/react-aria/OverlayArrow.html). Renders a default SVG arrow when no children are provided.
+
+| Prop       | Type        | Default | Description          |
+| ---------- | ----------- | ------- | -------------------- |
+| `children` | `ReactNode` | -       | Custom arrow element |
+
+Also supports all RAC [OverlayArrow](https://react-spectrum.adobe.com/react-aria/OverlayArrow.html) props.

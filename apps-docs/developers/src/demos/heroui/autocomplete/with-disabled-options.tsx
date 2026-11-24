@@ -1,0 +1,78 @@
+// vx-bot/INFO: Adapted HeroUI demo (Apache-2.0); see README.md and LICENSE.
+'use client'
+
+import { useState } from 'react'
+
+import type { Key } from '@vezham/react-v3'
+import {
+  Autocomplete,
+  EmptyState,
+  Label,
+  ListBox,
+  SearchField,
+  useFilter
+} from '@vezham/react-v3'
+
+export function WithDisabledOptions() {
+  const [selectedKey, setSelectedKey] = useState<Key | null>(null)
+  const { contains } = useFilter({ sensitivity: 'base' })
+
+  return (
+    <Autocomplete
+      className="w-[256px]"
+      disabledKeys={['cat', 'kangaroo']}
+      placeholder="Select an animal"
+      selectionMode="single"
+      value={selectedKey}
+      onChange={setSelectedKey}>
+      <Label>Animal</Label>
+      <Autocomplete.Trigger>
+        <Autocomplete.Value />
+        <Autocomplete.ClearButton />
+        <Autocomplete.Indicator />
+      </Autocomplete.Trigger>
+      <Autocomplete.Popover>
+        <Autocomplete.Filter filter={contains}>
+          <SearchField
+            autoFocus
+            aria-label="Search animals"
+            name="search"
+            variant="secondary">
+            <SearchField.Group>
+              <SearchField.SearchIcon />
+              <SearchField.Input placeholder="Search animals..." />
+              <SearchField.ClearButton />
+            </SearchField.Group>
+          </SearchField>
+          <ListBox
+            renderEmptyState={() => <EmptyState>No results found</EmptyState>}>
+            <ListBox.Item id="dog" textValue="Dog">
+              Dog
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="cat" textValue="Cat">
+              Cat
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="bird" textValue="Bird">
+              Bird
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="kangaroo" textValue="Kangaroo">
+              Kangaroo
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="elephant" textValue="Elephant">
+              Elephant
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="tiger" textValue="Tiger">
+              Tiger
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </Autocomplete.Filter>
+      </Autocomplete.Popover>
+    </Autocomplete>
+  )
+}

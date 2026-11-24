@@ -1,0 +1,41 @@
+---
+title: 'Styling'
+description: 'Style HeroUI Pro components with CSS, Tailwind, or CSS-in-JS'
+sourceUrl: https://heroui.pro/docs/react/getting-started/styling
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro components follow the exact same styling patterns as [HeroUI OSS](https://heroui.com) — `className` props, Tailwind utilities, BEM classes, data attributes, render props, and CSS-in-JS all work the same way.
+
+<Callout type="info">
+  Read the full [Styling guide on
+  heroui.com](https://heroui.com/docs/react/getting-started/styling) to learn
+  all the available styling approaches.
+</Callout>
+
+The only difference is the CSS class prefix. OSS components use names like `.button`, `.card`, `.tabs`, while Pro components use names like `.command`, `.sheet`, `.sidebar`, `.kpi`. The BEM pattern is identical:
+
+```css
+/* OSS component */
+.button {
+  /* base */
+}
+.button--sm {
+  /* size modifier */
+}
+
+/* Pro component — same pattern */
+.command {
+  /* base */
+}
+.command__dialog--sm {
+  /* size modifier */
+}
+```
+
+See each component's documentation for the full list of available CSS classes.

@@ -1,0 +1,1393 @@
+---
+title: RangeCalendar
+description: Composable date range picker with month grid, navigation, and year picker support built on React Aria RangeCalendar
+
+links:
+  rac: RangeCalendar
+  source: range-calendar/range-calendar.tsx
+  styles: range-calendar.css
+  storybook: Components/Date and Time/RangeCalendar
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { RangeCalendar } from '@heroui/react'
+```
+
+<ComponentPreview name="range-calendar-basic">
+
+```tsx
+'use client'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+export function Basic() {
+  return (
+    <RangeCalendar aria-label="Trip dates" firstDayOfWeek="mon">
+      <RangeCalendar.Header>
+        <RangeCalendar.Heading />
+        <RangeCalendar.NavButton slot="previous" />
+        <RangeCalendar.NavButton slot="next" />
+      </RangeCalendar.Header>
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHeader>
+          {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+        </RangeCalendar.GridHeader>
+        <RangeCalendar.GridBody>
+          {date => <RangeCalendar.Cell date={date} />}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { RangeCalendar } from '@heroui/react'
+
+export default () => (
+  <RangeCalendar aria-label="Trip dates">
+    <RangeCalendar.Header>
+      <RangeCalendar.Heading />
+      <RangeCalendar.NavButton slot="previous" />
+      <RangeCalendar.NavButton slot="next" />
+    </RangeCalendar.Header>
+    <RangeCalendar.Grid>
+      <RangeCalendar.GridHeader>
+        {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+      </RangeCalendar.GridHeader>
+      <RangeCalendar.GridBody>
+        {date => <RangeCalendar.Cell date={date} />}
+      </RangeCalendar.GridBody>
+    </RangeCalendar.Grid>
+  </RangeCalendar>
+)
+```
+
+## Examples
+
+### Disabled
+
+<ComponentPreview name="range-calendar-disabled">
+
+```tsx
+'use client'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar isDisabled aria-label="Trip dates">
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Range calendar is disabled
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Year Picker
+
+`RangeCalendar.YearPickerTrigger`, `RangeCalendar.YearPickerGrid`, and their body/cell subcomponents provide an integrated year navigation pattern.
+
+<ComponentPreview name="range-calendar-year-picker">
+
+```tsx
+'use client'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+export function YearPicker() {
+  return (
+    <RangeCalendar aria-label="Trip dates">
+      <RangeCalendar.Header>
+        <RangeCalendar.YearPickerTrigger>
+          <RangeCalendar.YearPickerTriggerHeading />
+          <RangeCalendar.YearPickerTriggerIndicator />
+        </RangeCalendar.YearPickerTrigger>
+        <RangeCalendar.NavButton slot="previous" />
+        <RangeCalendar.NavButton slot="next" />
+      </RangeCalendar.Header>
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHeader>
+          {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+        </RangeCalendar.GridHeader>
+        <RangeCalendar.GridBody>
+          {date => <RangeCalendar.Cell date={date} />}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+      <RangeCalendar.YearPickerGrid>
+        <RangeCalendar.YearPickerGridBody>
+          {({ year }) => <RangeCalendar.YearPickerCell year={year} />}
+        </RangeCalendar.YearPickerGridBody>
+      </RangeCalendar.YearPickerGrid>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Default Value
+
+<ComponentPreview name="range-calendar-default-value">
+
+```tsx
+'use client'
+
+import { parseDate } from '@internationalized/date'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+export function DefaultValue() {
+  return (
+    <RangeCalendar
+      aria-label="Trip dates"
+      defaultValue={{
+        end: parseDate('2025-02-12'),
+        start: parseDate('2025-02-03')
+      }}
+      firstDayOfWeek="mon">
+      <RangeCalendar.Header>
+        <RangeCalendar.Heading />
+        <RangeCalendar.NavButton slot="previous" />
+        <RangeCalendar.NavButton slot="next" />
+      </RangeCalendar.Header>
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHeader>
+          {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+        </RangeCalendar.GridHeader>
+        <RangeCalendar.GridBody>
+          {date => <RangeCalendar.Cell date={date} />}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Controlled
+
+<ComponentPreview name="range-calendar-controlled">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import {
+  getLocalTimeZone,
+  parseDate,
+  startOfMonth,
+  startOfWeek,
+  today
+} from '@internationalized/date'
+import { useState } from 'react'
+import { useLocale } from 'react-aria-components'
+
+import {
+  Button,
+  ButtonGroup,
+  Description,
+  RangeCalendar
+} from '@vezham/react-v3'
+
+type DateRange = {
+  start: DateValue
+  end: DateValue
+}
+
+export function Controlled() {
+  const [value, setValue] = useState<DateRange | null>(null)
+  const [focusedDate, setFocusedDate] = useState<DateValue>(
+    parseDate('2025-12-25')
+  )
+  const { locale } = useLocale()
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <ButtonGroup variant="tertiary">
+        <Button
+          onPress={() => {
+            const start = today(getLocalTimeZone())
+
+            setFocusedDate(start)
+          }}>
+          This week
+        </Button>
+        <Button
+          onPress={() => {
+            const nextWeekStart = startOfWeek(
+              today(getLocalTimeZone()).add({ weeks: 1 }),
+              locale
+            )
+
+            setFocusedDate(nextWeekStart)
+          }}>
+          Next week
+        </Button>
+        <Button
+          onPress={() => {
+            const nextMonthStart = startOfMonth(
+              today(getLocalTimeZone()).add({ months: 1 })
+            )
+
+            setFocusedDate(nextMonthStart)
+          }}>
+          Next month
+        </Button>
+      </ButtonGroup>
+
+      <RangeCalendar
+        aria-label="Trip dates"
+        firstDayOfWeek="mon"
+        focusedValue={focusedDate}
+        value={value}
+        onChange={setValue}
+        onFocusChange={setFocusedDate}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+
+      <Description className="text-center">
+        Selected range:{' '}
+        {value
+          ? `${value.start.toString()} -> ${value.end.toString()}`
+          : '(none)'}
+      </Description>
+
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => {
+            const start = today(getLocalTimeZone())
+
+            setValue({ end: start.add({ days: 6 }), start })
+            setFocusedDate(start)
+          }}>
+          Set 1 week
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => {
+            const start = parseDate('2025-12-20')
+
+            setValue({ end: parseDate('2025-12-31'), start })
+            setFocusedDate(start)
+          }}>
+          Set Holidays
+        </Button>
+        <Button size="sm" variant="tertiary" onPress={() => setValue(null)}>
+          Clear
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Min and Max Dates
+
+<ComponentPreview name="range-calendar-min-max-dates">
+
+```tsx
+'use client'
+
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function MinMaxDates() {
+  const now = today(getLocalTimeZone())
+  const minDate = now
+  const maxDate = now.add({ months: 3 })
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Trip dates"
+        maxValue={maxDate}
+        minValue={minDate}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Select dates between today and {maxDate.toString()}
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Unavailable Dates
+
+Use `isDateUnavailable` to block dates such as weekends, holidays, or booked slots.
+
+<ComponentPreview name="range-calendar-unavailable-dates">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function UnavailableDates() {
+  const now = today(getLocalTimeZone())
+  const blockedRanges = [
+    [now.add({ days: 2 }), now.add({ days: 5 })],
+    [now.add({ days: 12 }), now.add({ days: 13 })]
+  ] as const
+
+  const isDateUnavailable = (date: DateValue) => {
+    return blockedRanges.some(
+      ([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Trip dates"
+        defaultValue={{
+          end: now.add({ days: 9 }),
+          start: now.add({ days: 6 })
+        }}
+        firstDayOfWeek="mon"
+        isDateUnavailable={isDateUnavailable}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Some days are unavailable
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Anchor-Based Unavailable Dates
+
+When selecting a range, `isDateUnavailable` receives a second argument, `anchorDate`, set to the first selected date. Use it to limit which end dates are valid (for example, within 7 days of the start).
+
+<ComponentPreview name="range-calendar-anchor-unavailable-dates">
+
+```tsx
+'use client'
+
+import type { CalendarDate, DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function AnchorUnavailableDates() {
+  const now = today(getLocalTimeZone())
+
+  const isDateUnavailable = (
+    date: DateValue,
+    anchorDate: CalendarDate | null
+  ) => {
+    return anchorDate != null && Math.abs(date.compare(anchorDate)) > 7
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Trip dates"
+        isDateUnavailable={isDateUnavailable}
+        minValue={now}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        After selecting a start date, only dates within 7 days are available
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Weeks in Month
+
+Set `weeksInMonth` to a fixed value (for example, `6`) to keep the grid height stable when navigating between months.
+
+<ComponentPreview name="range-calendar-weeks-in-month">
+
+```tsx
+'use client'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function WeeksInMonth() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar aria-label="Trip dates" weeksInMonth={6}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Always shows 6 weeks per month to avoid layout shift when navigating
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Week View
+
+Set `visibleDuration={{ weeks: n }}` to show one or more weeks at a time. Navigation advances by the visible week range. Use `pageBehavior="single"` to move one week at a time when showing multiple weeks.
+
+<ComponentPreview name="range-calendar-week-view">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Label, ListBox, RangeCalendar, Select } from '@vezham/react-v3'
+
+const weekOptions = [
+  { id: '1', name: '1 week' },
+  { id: '2', name: '2 weeks' },
+  { id: '3', name: '3 weeks' },
+  { id: '4', name: '4 weeks' },
+  { id: '5', name: '5 weeks' },
+  { id: '6', name: '6 weeks' },
+  { id: '8', name: '8 weeks' }
+] as const
+
+export function WeekView() {
+  const [weeks, setWeeks] = useState(1)
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <Select
+        className="w-40"
+        value={String(weeks)}
+        onChange={value => value && setWeeks(Number(value))}>
+        <Label>Visible weeks</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {weekOptions.map(option => (
+              <ListBox.Item
+                key={option.id}
+                id={option.id}
+                textValue={option.name}>
+                {option.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      <RangeCalendar
+        key={weeks}
+        aria-label="Trip dates"
+        visibleDuration={{ weeks }}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Day View
+
+Set `visibleDuration={{ days: n }}` to show a rolling window of consecutive days. Navigation advances by the visible day range. Use `pageBehavior="single"` to move one day at a time when showing multiple days.
+
+<ComponentPreview name="range-calendar-day-view">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { Label, ListBox, RangeCalendar, Select } from '@vezham/react-v3'
+
+const dayOptions = [
+  { id: '1', name: '1 day' },
+  { id: '5', name: '5 days' },
+  { id: '7', name: '7 days' },
+  { id: '8', name: '8 days' },
+  { id: '10', name: '10 days' },
+  { id: '14', name: '14 days' },
+  { id: '21', name: '21 days' }
+] as const
+
+export function DayView() {
+  const [days, setDays] = useState(5)
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <Select
+        className="w-40"
+        value={String(days)}
+        onChange={value => value && setDays(Number(value))}>
+        <Label>Visible days</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {dayOptions.map(option => (
+              <ListBox.Item
+                key={option.id}
+                id={option.id}
+                textValue={option.name}>
+                {option.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      <RangeCalendar
+        key={days}
+        aria-label="Trip dates"
+        visibleDuration={{ days }}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Allows Non-Contiguous Ranges
+
+Enable `allowsNonContiguousRanges` to allow selection across unavailable dates.
+
+<ComponentPreview name="range-calendar-allows-non-contiguous-ranges">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function AllowsNonContiguousRanges() {
+  const now = today(getLocalTimeZone())
+  const blockedRanges = [
+    [now.add({ days: 2 }), now.add({ days: 5 })],
+    [now.add({ days: 12 }), now.add({ days: 13 })]
+  ] as const
+
+  const isDateUnavailable = (date: DateValue) => {
+    return blockedRanges.some(
+      ([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        allowsNonContiguousRanges
+        aria-label="Trip dates"
+        defaultValue={{
+          end: now.add({ days: 9 }),
+          start: now.add({ days: 1 })
+        }}
+        firstDayOfWeek="mon"
+        isDateUnavailable={isDateUnavailable}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Non-contiguous ranges are allowed across unavailable dates
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Read Only
+
+<ComponentPreview name="range-calendar-read-only">
+
+```tsx
+'use client'
+
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+export function ReadOnly() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        isReadOnly
+        aria-label="Trip dates"
+        defaultValue={{
+          end: today(getLocalTimeZone()).add({ days: 4 }),
+          start: today(getLocalTimeZone())
+        }}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Range calendar is read-only
+      </Description>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Invalid
+
+<ComponentPreview name="range-calendar-invalid">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import { useState } from 'react'
+
+import { Description, RangeCalendar } from '@vezham/react-v3'
+
+type DateRange = {
+  start: DateValue
+  end: DateValue
+}
+
+export function Invalid() {
+  const now = today(getLocalTimeZone())
+  const [value, setValue] = useState<DateRange>({
+    end: now.add({ days: 14 }),
+    start: now.add({ days: 6 })
+  })
+  const isInvalid = value.end.compare(value.start) > 7
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Trip dates"
+        firstDayOfWeek="mon"
+        isInvalid={isInvalid}
+        value={value}
+        onChange={setValue}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      {isInvalid ? (
+        <p className="text-danger text-sm">Maximum stay duration is 1 week</p>
+      ) : (
+        <Description className="text-center">
+          Select a stay of up to 7 days
+        </Description>
+      )}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Focused Value
+
+<ComponentPreview name="range-calendar-focused-value">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { parseDate } from '@internationalized/date'
+import { useState } from 'react'
+
+import { Button, Description, RangeCalendar } from '@vezham/react-v3'
+
+export function FocusedValue() {
+  const [focusedDate, setFocusedDate] = useState<DateValue>(
+    parseDate('2025-06-15')
+  )
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Trip dates"
+        firstDayOfWeek="mon"
+        focusedValue={focusedDate}
+        onFocusChange={setFocusedDate}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <Description className="text-center">
+        Focused: {focusedDate.toString()}
+      </Description>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => setFocusedDate(parseDate('2025-01-01'))}>
+          Go to Jan
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => setFocusedDate(parseDate('2025-06-15'))}>
+          Go to Jun
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={() => setFocusedDate(parseDate('2025-12-25'))}>
+          Go to Christmas
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Cell Indicators
+
+You can customize `RangeCalendar.Cell` children and use `RangeCalendar.CellIndicator` to display metadata like events.
+
+<ComponentPreview name="range-calendar-with-indicators">
+
+```tsx
+'use client'
+
+import { getLocalTimeZone, isToday } from '@internationalized/date'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+const datesWithEvents = [3, 7, 12, 15, 21, 28]
+
+export function WithIndicators() {
+  return (
+    <RangeCalendar aria-label="Trip dates">
+      <RangeCalendar.Header>
+        <RangeCalendar.Heading />
+        <RangeCalendar.NavButton slot="previous" />
+        <RangeCalendar.NavButton slot="next" />
+      </RangeCalendar.Header>
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHeader>
+          {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+        </RangeCalendar.GridHeader>
+        <RangeCalendar.GridBody>
+          {date => (
+            <RangeCalendar.Cell date={date}>
+              {({ formattedDate }) => (
+                <>
+                  {formattedDate}
+                  {(isToday(date, getLocalTimeZone()) ||
+                    datesWithEvents.includes(date.day)) && (
+                    <RangeCalendar.CellIndicator />
+                  )}
+                </>
+              )}
+            </RangeCalendar.Cell>
+          )}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Real-World Example
+
+<ComponentPreview name="range-calendar-booking-calendar">
+
+```tsx
+'use client'
+
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, isWeekend, today } from '@internationalized/date'
+import { useState } from 'react'
+import { useLocale } from 'react-aria-components'
+
+import { Button, RangeCalendar } from '@vezham/react-v3'
+
+type DateRange = {
+  start: DateValue
+  end: DateValue
+}
+
+export function BookingCalendar() {
+  const [selectedRange, setSelectedRange] = useState<DateRange | null>(null)
+  const { locale } = useLocale()
+  const blockedDates = [5, 6, 12, 13, 14, 20]
+
+  const isDateUnavailable = (date: DateValue) => {
+    return isWeekend(date, locale) || blockedDates.includes(date.day)
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <RangeCalendar
+        aria-label="Booking range"
+        isDateUnavailable={isDateUnavailable}
+        minValue={today(getLocalTimeZone())}
+        value={selectedRange}
+        onChange={setSelectedRange}>
+        <RangeCalendar.Header>
+          <RangeCalendar.Heading />
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => (
+              <RangeCalendar.Cell date={date}>
+                {({ formattedDate, isUnavailable }) => (
+                  <>
+                    {formattedDate}
+                    {!isUnavailable &&
+                      !isWeekend(date, locale) &&
+                      blockedDates.includes(date.day) && (
+                        <RangeCalendar.CellIndicator />
+                      )}
+                  </>
+                )}
+              </RangeCalendar.Cell>
+            )}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+      </RangeCalendar>
+      <div className="flex flex-col gap-2 text-center">
+        <div className="text-muted flex items-center justify-center gap-4 text-xs">
+          <span className="flex items-center gap-1">
+            <span className="bg-muted size-2 rounded-full" /> Blocked dates
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="bg-default size-2 rounded-full" />{' '}
+            Weekend/Unavailable
+          </span>
+        </div>
+        {selectedRange ? (
+          <Button size="sm" variant="primary">
+            Book {selectedRange.start.toString()} -&gt;{' '}
+            {selectedRange.end.toString()}
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Multiple Months
+
+Render multiple grids with `visibleDuration` and `offset` for booking and planning experiences.
+
+<ComponentPreview name="range-calendar-multiple-months">
+
+```tsx
+'use client'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+export function MultipleMonths() {
+  return (
+    <RangeCalendar
+      aria-label="Trip dates"
+      className="@container-normal w-full max-w-none overflow-x-auto"
+      visibleDuration={{ months: 2 }}>
+      <div className="mx-auto flex w-max gap-8">
+        <div className="w-64">
+          <RangeCalendar.Header>
+            <RangeCalendar.NavButton slot="previous" />
+            <RangeCalendar.Heading className="flex-none" />
+            <div className="size-6" />
+          </RangeCalendar.Header>
+          <RangeCalendar.Grid>
+            <RangeCalendar.GridHeader>
+              {day => (
+                <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+              )}
+            </RangeCalendar.GridHeader>
+            <RangeCalendar.GridBody>
+              {date => <RangeCalendar.Cell date={date} />}
+            </RangeCalendar.GridBody>
+          </RangeCalendar.Grid>
+        </div>
+        <div className="w-64">
+          <RangeCalendar.Header>
+            <div className="size-6" />
+            <RangeCalendar.Heading
+              className="flex-none"
+              offset={{ months: 1 }}
+            />
+            <RangeCalendar.NavButton slot="next" />
+          </RangeCalendar.Header>
+          <RangeCalendar.Grid offset={{ months: 1 }}>
+            <RangeCalendar.GridHeader>
+              {day => (
+                <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+              )}
+            </RangeCalendar.GridHeader>
+            <RangeCalendar.GridBody>
+              {date => <RangeCalendar.Cell date={date} />}
+            </RangeCalendar.GridBody>
+          </RangeCalendar.Grid>
+        </div>
+      </div>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+### International Calendars
+
+By default, RangeCalendar displays dates using the calendar system for the user's locale. You can override this by wrapping your RangeCalendar with `I18nProvider` and setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string).
+
+The example below shows the Indian calendar system:
+
+<ComponentPreview name="range-calendar-international-calendar">
+
+```tsx
+'use client'
+
+import { I18nProvider } from 'react-aria-components'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+export function InternationalCalendar() {
+  return (
+    <I18nProvider locale="hi-IN-u-ca-indian">
+      <RangeCalendar aria-label="Trip dates">
+        <RangeCalendar.Header>
+          <RangeCalendar.YearPickerTrigger>
+            <RangeCalendar.YearPickerTriggerHeading />
+            <RangeCalendar.YearPickerTriggerIndicator />
+          </RangeCalendar.YearPickerTrigger>
+          <RangeCalendar.NavButton slot="previous" />
+          <RangeCalendar.NavButton slot="next" />
+        </RangeCalendar.Header>
+        <RangeCalendar.Grid>
+          <RangeCalendar.GridHeader>
+            {day => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+          </RangeCalendar.GridHeader>
+          <RangeCalendar.GridBody>
+            {date => <RangeCalendar.Cell date={date} />}
+          </RangeCalendar.GridBody>
+        </RangeCalendar.Grid>
+        <RangeCalendar.YearPickerGrid>
+          <RangeCalendar.YearPickerGridBody>
+            {({ year }) => <RangeCalendar.YearPickerCell year={year} />}
+          </RangeCalendar.YearPickerGridBody>
+        </RangeCalendar.YearPickerGrid>
+      </RangeCalendar>
+    </I18nProvider>
+  )
+}
+```
+
+</ComponentPreview>
+
+**Note:** The `onChange` event always returns a date in the same calendar system as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="range-calendar-custom-styles">
+
+```tsx
+'use client'
+
+import { parseDate } from '@internationalized/date'
+
+import { RangeCalendar } from '@vezham/react-v3'
+
+const cellClassName = [
+  'rounded-md',
+  '**:data-[slot=range-calendar-cell-button]:rounded-md',
+  'data-[outside-month=true]:text-muted data-[outside-month=true]:opacity-50',
+  'data-[hovered=true]:not-data-[selected=true]:**:data-[slot=range-calendar-cell-button]:bg-default',
+  'data-[today=true]:**:data-[slot=range-calendar-cell-button]:bg-success-soft',
+  'data-[today=true]:**:data-[slot=range-calendar-cell-button]:text-success-soft-foreground',
+  'data-[today=true]:data-[hovered=true]:not-data-[selected=true]:**:data-[slot=range-calendar-cell-button]:bg-success-soft-hover',
+  'data-[selected=true]:rounded-none data-[selected=true]:bg-success-soft',
+  'data-[outside-month=true]:data-[selected=true]:bg-default/20',
+  'data-[selection-start=true]:rounded-tl-md data-[selection-start=true]:rounded-bl-md',
+  'data-[selection-end=true]:rounded-tr-md data-[selection-end=true]:rounded-br-md',
+  'data-[selection-start=true]:**:data-[slot=range-calendar-cell-button]:bg-success',
+  'data-[selection-start=true]:**:data-[slot=range-calendar-cell-button]:text-success-foreground',
+  'data-[selection-start=true]:data-[pressed=true]:**:data-[slot=range-calendar-cell-button]:bg-success-hover',
+  'data-[selection-end=true]:**:data-[slot=range-calendar-cell-button]:bg-success',
+  'data-[selection-end=true]:**:data-[slot=range-calendar-cell-button]:text-success-foreground',
+  'data-[selection-end=true]:data-[pressed=true]:**:data-[slot=range-calendar-cell-button]:bg-success-hover'
+].join(' ')
+
+export function CustomStyles() {
+  return (
+    <RangeCalendar
+      aria-label="Hotel stay"
+      className="border-border/80 bg-surface ring-success/10 w-63 rounded-xl border p-3 shadow-sm ring-1"
+      defaultValue={{
+        end: parseDate('2025-02-14'),
+        start: parseDate('2025-02-08')
+      }}
+      firstDayOfWeek="mon">
+      <RangeCalendar.Header className="px-0.5 pb-4">
+        <RangeCalendar.Heading className="text-foreground text-sm font-medium" />
+        <RangeCalendar.NavButton
+          className="text-success hover:bg-success-soft rounded-md active:scale-95"
+          slot="previous"
+        />
+        <RangeCalendar.NavButton
+          className="text-success hover:bg-success-soft rounded-md active:scale-95"
+          slot="next"
+        />
+      </RangeCalendar.Header>
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHeader>
+          {day => (
+            <RangeCalendar.HeaderCell className="text-muted pb-2 text-xs font-medium">
+              {day}
+            </RangeCalendar.HeaderCell>
+          )}
+        </RangeCalendar.GridHeader>
+        <RangeCalendar.GridBody>
+          {date => <RangeCalendar.Cell className={cellClassName} date={date} />}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+    </RangeCalendar>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+```css
+@layer components {
+  .range-calendar {
+    @apply border-border bg-surface w-80 rounded-2xl border p-3 shadow-sm;
+  }
+
+  .range-calendar__heading {
+    @apply text-default text-sm font-semibold;
+  }
+
+  .range-calendar__cell[data-selected='true'] .range-calendar__cell-button {
+    @apply bg-accent text-accent-foreground;
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+RangeCalendar uses these classes in `packages/styles/components/range-calendar.css` and `packages/styles/components/calendar-year-picker.css`:
+
+- `.range-calendar` - Root container.
+- `.range-calendar__header` - Header row containing nav buttons and heading.
+- `.range-calendar__heading` - Current month label.
+- `.range-calendar__nav-button` - Previous/next navigation controls.
+- `.range-calendar__grid` - Main day grid.
+- `.range-calendar__grid-header` - Weekday header row wrapper.
+- `.range-calendar__grid-body` - Date rows wrapper.
+- `.range-calendar__header-cell` - Weekday header cell.
+- `.range-calendar__cell` - Interactive day cell wrapper.
+- `.range-calendar__cell-button` - Interactive day button inside each cell.
+- `.range-calendar__cell-indicator` - Dot indicator inside a day cell.
+- `.calendar-year-picker__trigger` - Year picker toggle button.
+- `.calendar-year-picker__trigger-heading` - Heading text inside year picker trigger.
+- `.calendar-year-picker__trigger-indicator` - Indicator icon inside year picker trigger.
+- `.calendar-year-picker__year-grid` - Overlay grid of selectable years.
+- `.calendar-year-picker__year-cell` - Individual year option.
+
+### Interactive States
+
+RangeCalendar supports both pseudo-classes and React Aria data attributes:
+
+- **Selected**: `[data-selected="true"]`
+- **Selection start**: `[data-selection-start="true"]`
+- **Selection end**: `[data-selection-end="true"]`
+- **Range middle**: `[data-selection-in-range="true"]`
+- **Today**: `[data-today="true"]`
+- **Unavailable**: `[data-unavailable="true"]`
+- **Outside month**: `[data-outside-month="true"]`
+- **Hovered**: `:hover` or `[data-hovered="true"]`
+- **Pressed**: `:active` or `[data-pressed="true"]`
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]`
+- **Disabled**: `:disabled` or `[data-disabled="true"]`
+
+## API Reference
+
+### RangeCalendar
+
+RangeCalendar inherits all props from React Aria [RangeCalendar](https://react-spectrum.adobe.com/react-aria/RangeCalendar.html).
+
+| Prop                        | Type                                                             | Default                     | Description                                                                                                                |
+| --------------------------- | ---------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `value`                     | `RangeValue<DateValue> \| null`                                  | -                           | Controlled selected range.                                                                                                 |
+| `defaultValue`              | `RangeValue<DateValue> \| null`                                  | -                           | Initial selected range (uncontrolled).                                                                                     |
+| `onChange`                  | `(value: RangeValue<DateValue>) => void`                         | -                           | Called when selection changes.                                                                                             |
+| `focusedValue`              | `DateValue`                                                      | -                           | Controlled focused date.                                                                                                   |
+| `onFocusChange`             | `(value: DateValue) => void`                                     | -                           | Called when focus moves to another date.                                                                                   |
+| `minValue`                  | `DateValue`                                                      | Calendar-aware `1900-01-01` | Earliest selectable date.                                                                                                  |
+| `maxValue`                  | `DateValue`                                                      | Calendar-aware `2099-12-31` | Latest selectable date.                                                                                                    |
+| `weeksInMonth`              | `number`                                                         | -                           | The number of weeks in a month. This overrides the default set by the locale.                                              |
+| `isDateUnavailable`         | `(date: DateValue, anchorDate: CalendarDate \| null) => boolean` | -                           | Marks dates as unavailable. When `anchorDate` is set, it is the first date the user selected in the current range gesture. |
+| `firstDayOfWeek`            | `'sun' \| 'mon' \| 'tue' \| 'wed' \| 'thu' \| 'fri' \| 'sat'`    | -                           | Overrides the locale default for the first day of the week.                                                                |
+| `pageBehavior`              | `'visible' \| 'single'`                                          | `'visible'`                 | Whether paging advances by the visible duration or one unit at a time.                                                     |
+| `selectionAlignment`        | `'start' \| 'center' \| 'end'`                                   | `'center'`                  | Aligns the visible range to the selection on initial render.                                                               |
+| `allowsNonContiguousRanges` | `boolean`                                                        | `false`                     | Allows ranges that span unavailable dates.                                                                                 |
+| `isDisabled`                | `boolean`                                                        | `false`                     | Disables interaction and selection.                                                                                        |
+| `isReadOnly`                | `boolean`                                                        | `false`                     | Keeps content readable but prevents selection changes.                                                                     |
+| `isInvalid`                 | `boolean`                                                        | `false`                     | Marks the calendar as invalid for validation UI.                                                                           |
+| `visibleDuration`           | `{months?: number; weeks?: number; days?: number}`               | `{months: 1}`               | Visible time range. Use `{ months: n }` for month view, `{ weeks: n }` for week view, or `{ days: n }` for day view.       |
+| `defaultYearPickerOpen`     | `boolean`                                                        | `false`                     | Initial open state of internal year picker.                                                                                |
+| `isYearPickerOpen`          | `boolean`                                                        | -                           | Controlled year picker open state.                                                                                         |
+| `onYearPickerOpenChange`    | `(isOpen: boolean) => void`                                      | -                           | Called when year picker open state changes.                                                                                |
+
+### Composition Parts
+
+| Component                                  | Description                                                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `RangeCalendar.Header`                     | Header container for navigation and heading.                                                                                |
+| `RangeCalendar.Heading`                    | Formatted heading for the visible range. Supports `offset` (for multi-month layouts) and `format` (month/year/day options). |
+| `RangeCalendar.NavButton`                  | Previous/next navigation control (`slot="previous"` or `slot="next"`).                                                      |
+| `RangeCalendar.Grid`                       | Day grid for one month (`offset` supported for multi-month layouts).                                                        |
+| `RangeCalendar.GridHeader`                 | Weekday header container.                                                                                                   |
+| `RangeCalendar.GridBody`                   | Date cell body container.                                                                                                   |
+| `RangeCalendar.HeaderCell`                 | Weekday label cell.                                                                                                         |
+| `RangeCalendar.Cell`                       | Individual date cell.                                                                                                       |
+| `RangeCalendar.CellIndicator`              | Optional indicator element for custom metadata.                                                                             |
+| `RangeCalendar.YearPickerTrigger`          | Trigger to toggle year-picker mode.                                                                                         |
+| `RangeCalendar.YearPickerTriggerHeading`   | Localized heading content inside the year-picker trigger.                                                                   |
+| `RangeCalendar.YearPickerTriggerIndicator` | Toggle icon inside the year-picker trigger.                                                                                 |
+| `RangeCalendar.YearPickerGrid`             | Overlay year selection grid container.                                                                                      |
+| `RangeCalendar.YearPickerGridBody`         | Body renderer for year grid cells.                                                                                          |
+| `RangeCalendar.YearPickerCell`             | Individual year option cell.                                                                                                |
+
+### Year Picker Parts
+
+Year picker subcomponents inherit formatting props from React Aria [`useCalendarHeading`](https://react-aria.adobe.com/useCalendar#usecalendarheading) and [`useCalendarYearPicker`](https://react-aria.adobe.com/useCalendar#usecalendaryearpicker).
+
+| Component                                | Prop           | Type                   | Default              | Description                                                                                                                  |
+| ---------------------------------------- | -------------- | ---------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `RangeCalendar.YearPickerTriggerHeading` | `format`       | `DateFormatterOptions` | -                    | Customize month/year label (e.g. `{month: 'short'}`).                                                                        |
+| `RangeCalendar.YearPickerTriggerHeading` | `offset`       | `{months?: number}`    | -                    | Shift the heading relative to the focused date (multi-month layouts).                                                        |
+| `RangeCalendar.YearPickerGrid`           | `format`       | `DateFormatterOptions` | `{year: 'numeric'}`  | Customize year cell labels (era, calendar system, etc.).                                                                     |
+| `RangeCalendar.YearPickerGrid`           | `visibleYears` | `number`               | min–max span or `20` | Number of years shown in the sliding window. Defaults to the full range between `minValue` and `maxValue` when both are set. |
+
+### RangeCalendar.Cell Render Props
+
+When `RangeCalendar.Cell` children is a function, React Aria render props are available:
+
+| Prop               | Type      | Description                                          |
+| ------------------ | --------- | ---------------------------------------------------- |
+| `formattedDate`    | `string`  | Localized day label for the cell.                    |
+| `isSelected`       | `boolean` | Whether the date is selected.                        |
+| `isSelectionStart` | `boolean` | Whether the date is the start of the selected range. |
+| `isSelectionEnd`   | `boolean` | Whether the date is the end of the selected range.   |
+| `isUnavailable`    | `boolean` | Whether the date is unavailable.                     |
+| `isDisabled`       | `boolean` | Whether the cell is disabled.                        |
+| `isOutsideMonth`   | `boolean` | Whether the date belongs to adjacent month.          |
+
+For a complete list of supported calendar systems and their identifiers, see:
+
+- [React Aria Calendar Implementations](https://react-aria.adobe.com/internationalized/date/Calendar#implementations)
+- [React Aria International Calendars](https://react-aria.adobe.com/Calendar#international-calendars)
+
+### Related packages
+
+- [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) — date types (`CalendarDate`, `CalendarDateTime`, `ZonedDateTime`) and utilities used by all date components
+- [`I18nProvider`](https://react-aria.adobe.com/I18nProvider) — override locale for a subtree
+- [`useLocale`](https://react-aria.adobe.com/useLocale) — read the current locale and layout direction
+
+## Related Components
+
+<RelatedComponents component="range-calendar" />

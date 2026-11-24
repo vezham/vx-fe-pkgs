@@ -1,0 +1,276 @@
+---
+title: 'Trend Chip'
+description: 'A React trend chip for web metrics with direction, percentage, icon, and contextual suffix.'
+sourceUrl: https://heroui.pro/docs/react/components/trend-chip
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-trend-chip-default">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl p-6">
+      <TrendChip trend="up">+3.3%</TrendChip>
+      <TrendChip trend="down">-2.1%</TrendChip>
+      <TrendChip trend="neutral">0.0%</TrendChip>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the TrendChip component and access all parts using dot notation.
+
+```tsx
+import { TrendChip } from '@vezham/react-pro-v3'
+
+;<TrendChip>
+  <TrendChip.Prefix />
+  <TrendChip.Indicator />
+  <TrendChip.Suffix />
+</TrendChip>
+```
+
+## Custom Indicator
+
+<ComponentPreview name="pro-trend-chip-custom-indicator">
+
+```tsx
+'use client'
+
+import ArrowDown from '@gravity-ui/icons/ArrowDown'
+import ArrowUp from '@gravity-ui/icons/ArrowUp'
+import Flame from '@gravity-ui/icons/Flame'
+import Thunderbolt from '@gravity-ui/icons/Thunderbolt'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function CustomIndicator() {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl p-6">
+      <TrendChip trend="up">
+        <TrendChip.Indicator>
+          <ArrowUp />
+        </TrendChip.Indicator>
+        +3.3%
+      </TrendChip>
+
+      <TrendChip trend="down">
+        <TrendChip.Indicator>
+          <ArrowDown />
+        </TrendChip.Indicator>
+        -2.1%
+      </TrendChip>
+
+      <TrendChip trend="up">
+        <TrendChip.Indicator>
+          <Flame />
+        </TrendChip.Indicator>
+        +12.5%
+      </TrendChip>
+
+      <TrendChip trend="neutral">
+        <TrendChip.Indicator>
+          <Thunderbolt />
+        </TrendChip.Indicator>
+        0.0%
+      </TrendChip>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Prefix And Suffix
+
+<ComponentPreview name="pro-trend-chip-prefix-and-suffix">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function PrefixAndSuffix() {
+  return (
+    <div className="flex flex-col items-start gap-3 rounded-2xl p-6">
+      <TrendChip trend="up">
+        <TrendChip.Prefix>+$</TrendChip.Prefix>
+        1,234
+      </TrendChip>
+
+      <TrendChip trend="down">
+        -5.9%
+        <TrendChip.Suffix>vs last month</TrendChip.Suffix>
+      </TrendChip>
+
+      <TrendChip trend="up">
+        <TrendChip.Prefix>+</TrendChip.Prefix>
+        3.3%
+        <TrendChip.Suffix>MoM</TrendChip.Suffix>
+      </TrendChip>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-trend-chip-sizes">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function Sizes() {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl p-6">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <TrendChip key={size} size={size} trend="up">
+          +3.3%
+        </TrendChip>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Tabular Nums
+
+<ComponentPreview name="pro-trend-chip-tabular-nums">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function TabularNums() {
+  return (
+    <div className="flex flex-col items-start gap-2 rounded-2xl p-6">
+      <TrendChip trend="up">+1.1%</TrendChip>
+      <TrendChip trend="up">+22.2%</TrendChip>
+      <TrendChip trend="down">-333.3%</TrendChip>
+      <TrendChip trend="neutral">0.0%</TrendChip>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-trend-chip-variants">
+
+```tsx
+'use client'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+
+export function Variants() {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl p-6">
+      {(['primary', 'secondary', 'tertiary', 'soft'] as const).map(v => (
+        <div key={v} className="flex items-center gap-3">
+          <span className="text-muted w-20 text-xs">{v}</span>
+          <TrendChip trend="up" variant={v}>
+            +3.3%
+          </TrendChip>
+          <TrendChip trend="down" variant={v}>
+            -2.1%
+          </TrendChip>
+          <TrendChip trend="neutral" variant={v}>
+            0.0%
+          </TrendChip>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.trend-chip` - Base chip wrapper
+- `.trend-chip--sm` - Small size (default)
+- `.trend-chip--md` - Medium size
+- `.trend-chip--lg` - Large size
+
+### Element Classes
+
+- `.trend-chip__indicator` - Trend arrow icon
+- `.trend-chip__value` - Numeric value text
+- `.trend-chip__prefix` - Text before the value
+- `.trend-chip__suffix` - Text after the value
+
+### Data Attributes
+
+- `[data-trend="up"]` / `[data-trend="down"]` / `[data-trend="neutral"]` on the root - Current trend direction
+
+## API Reference
+
+### TrendChip
+
+The root component. Wraps HeroUI [Chip](https://heroui.com/docs/react/components/chip) with trend-aware coloring and arrow icons.
+
+| Prop       | Type                                               | Default  | Description                                                             |
+| ---------- | -------------------------------------------------- | -------- | ----------------------------------------------------------------------- |
+| `trend`    | `'up' \| 'down' \| 'neutral'`                      | `'up'`   | Trend direction; controls arrow icon and color (success/danger/warning) |
+| `size`     | `'sm' \| 'md' \| 'lg'`                             | `'sm'`   | Size variant                                                            |
+| `variant`  | `'primary' \| 'secondary' \| 'soft' \| 'tertiary'` | `'soft'` | Chip style variant                                                      |
+| `children` | `ReactNode`                                        | -        | Value text, optional Indicator, Prefix, and Suffix sub-components       |
+
+Also supports all [HeroUI Chip](https://heroui.com/docs/react/components/chip) props except `children`, `color`, and `size`.
+
+### TrendChip.Indicator
+
+Custom trend arrow icon. When omitted, a default directional arrow is rendered based on the `trend` prop.
+
+| Prop       | Type        | Default | Description             |
+| ---------- | ----------- | ------- | ----------------------- |
+| `children` | `ReactNode` | -       | Custom SVG icon element |
+
+Also supports all native `svg` HTML attributes.
+
+### TrendChip.Prefix
+
+Text displayed before the value.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Prefix text |
+
+Also supports all native `span` HTML attributes.
+
+### TrendChip.Suffix
+
+Text displayed after the value.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Suffix text |
+
+Also supports all native `span` HTML attributes.

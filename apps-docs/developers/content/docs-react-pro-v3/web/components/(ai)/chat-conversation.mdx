@@ -1,0 +1,440 @@
+---
+title: 'Chat Conversation'
+description: 'A stick-to-bottom conversation viewport for streaming chat messages.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-conversation
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatConversation` as the scrollable message viewport for assistant and user messages.
+
+<ComponentPreview name="pro-chat-conversation-default">
+
+```tsx
+'use client'
+
+import {
+  ChainOfThought,
+  ChatConversation,
+  ChatMessage
+} from '@vezham/react-pro-v3'
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const MESSAGES = [
+  {
+    id: '1',
+    role: 'user' as const,
+    text: 'How does auto-scroll work in chat UIs?'
+  },
+  {
+    id: '2',
+    role: 'assistant' as const,
+    text: `Stick-to-bottom keeps the viewport pinned to the latest message while you stream.
+
+It also leaves the user in control: once they scroll away from the bottom, new content can arrive without snapping the viewport away from what they are reading.`
+  },
+  {
+    id: '3',
+    role: 'user' as const,
+    text: 'What happens when the assistant is doing multiple steps?'
+  },
+  {
+    id: '4',
+    role: 'assistant' as const,
+    text: `You can combine the conversation viewport with reasoning and tool UI so the whole exchange remains in one scrollable surface.`,
+    trace: true
+  }
+]
+
+export function Default() {
+  return (
+    <div className="flex h-[520px] w-[640px] flex-col overflow-hidden">
+      <ChatConversation className="flex-1">
+        <ChatConversation.Content className="max-w-[714px] flex-col gap-8 px-4 pt-8 pb-8">
+          {MESSAGES.map(message =>
+            message.role === 'user' ? (
+              <ChatMessage.User key={message.id}>
+                <ChatMessage.Bubble>
+                  <ChatMessage.Content>{message.text}</ChatMessage.Content>
+                </ChatMessage.Bubble>
+              </ChatMessage.User>
+            ) : (
+              <ChatMessage.Assistant key={message.id}>
+                <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+                <ChatMessage.Body>
+                  <ChatMessage.Content>
+                    <Markdown>{message.text}</Markdown>
+                  </ChatMessage.Content>
+                  {'trace' in message && message.trace ? (
+                    <ChainOfThought defaultExpanded>
+                      <ChainOfThought.Trigger>
+                        Thought for 2s
+                      </ChainOfThought.Trigger>
+                      <ChainOfThought.Content>
+                        <ChainOfThought.Steps>
+                          <ChainOfThought.Step label="Check scroll behavior">
+                            Verified the viewport remains pinned while the
+                            assistant streams.
+                          </ChainOfThought.Step>
+                          <ChainOfThought.Step label="Compose response">
+                            Added reasoning UI inline with the assistant message
+                            body.
+                          </ChainOfThought.Step>
+                        </ChainOfThought.Steps>
+                      </ChainOfThought.Content>
+                    </ChainOfThought>
+                  ) : null}
+                </ChatMessage.Body>
+              </ChatMessage.Assistant>
+            )
+          )}
+        </ChatConversation.Content>
+      </ChatConversation>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Full Chat
+
+Combine `ChatConversation`, `ChatMessage`, `ChainOfThought`, and `PromptInput` for a complete chat surface.
+
+<ComponentPreview name="pro-chat-conversation-full-chat">
+
+```tsx
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import type { ChatStatus } from '@vezham/react-pro-v3'
+import {
+  ChainOfThought,
+  ChatConversation,
+  ChatMessage,
+  ChatMessageActions,
+  PromptInput
+} from '@vezham/react-pro-v3'
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+type Message = {
+  id: string
+  role: 'assistant' | 'user'
+  trace?: boolean
+  text: string
+}
+
+const INITIAL: Message[] = [
+  {
+    id: '1',
+    role: 'user',
+    text: 'Build a settings page with profile and notifications.'
+  },
+  {
+    id: '2',
+    role: 'assistant',
+    text: `Here is a **settings layout** outline with profile, notifications, and a danger zone section.
+
+- Profile card for avatar, display name, and email
+- Notification preferences grouped by channel
+- Danger zone with clear destructive affordances`,
+    trace: true
+  },
+  {
+    id: '3',
+    role: 'user',
+    text: 'Add a compact version that works well in a dashboard drawer.'
+  },
+  {
+    id: '4',
+    role: 'assistant',
+    text: `For a drawer, I would reduce section padding, keep labels visible, and move destructive actions behind a confirmation step. The same components can stay responsive with container width constraints.`
+  }
+]
+
+export function FullChat() {
+  const [messages, setMessages] = useState(INITIAL)
+  const [value, setValue] = useState('')
+  const [status, setStatus] = useState<ChatStatus>('ready')
+  const timersRef = useRef<number[]>([])
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(timer => window.clearTimeout(timer))
+    timersRef.current = []
+  }, [])
+
+  useEffect(() => {
+    return () => clearTimers()
+  }, [clearTimers])
+
+  const handleStop = () => {
+    clearTimers()
+    setStatus('ready')
+  }
+
+  const handleSubmit = () => {
+    const trimmed = value.trim()
+
+    if (!trimmed || status !== 'ready') return
+
+    const userMessage: Message = {
+      id: String(Date.now()),
+      role: 'user',
+      text: trimmed
+    }
+
+    setMessages(current => [...current, userMessage])
+    setValue('')
+    setStatus('submitted')
+    clearTimers()
+
+    timersRef.current.push(
+      window.setTimeout(() => setStatus('streaming'), 300),
+      window.setTimeout(() => {
+        setMessages(current => [
+          ...current,
+          {
+            id: String(Date.now() + 1),
+            role: 'assistant',
+            text: 'This is a mocked assistant reply rendered with HeroUI Pro AI components.'
+          }
+        ])
+        setStatus('ready')
+      }, 1200)
+    )
+  }
+
+  return (
+    <div className="flex h-[640px] w-[760px] flex-col overflow-hidden">
+      <ChatConversation className="flex-1">
+        <ChatConversation.Content className="max-w-[714px] flex-col gap-8 px-4 pt-8 pb-8">
+          {messages.map(message =>
+            message.role === 'user' ? (
+              <ChatMessage.User key={message.id}>
+                <ChatMessage.Bubble>
+                  <ChatMessage.Content>{message.text}</ChatMessage.Content>
+                </ChatMessage.Bubble>
+              </ChatMessage.User>
+            ) : (
+              <ChatMessage.Assistant key={message.id}>
+                <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+                <ChatMessage.Body>
+                  <ChatMessage.Content>
+                    <Markdown>{message.text}</Markdown>
+                  </ChatMessage.Content>
+                  {message.trace ? (
+                    <ChainOfThought defaultExpanded>
+                      <ChainOfThought.Trigger>
+                        Thought for 3s
+                      </ChainOfThought.Trigger>
+                      <ChainOfThought.Content>
+                        <ChainOfThought.Steps>
+                          <ChainOfThought.Step label="Read requirements">
+                            Mapped profile, notifications, and danger-zone
+                            sections to a settings layout.
+                          </ChainOfThought.Step>
+                          <ChainOfThought.Step label="Plan responsive behavior">
+                            Kept the same structure usable in both full-page and
+                            drawer layouts.
+                          </ChainOfThought.Step>
+                        </ChainOfThought.Steps>
+                      </ChainOfThought.Content>
+                    </ChainOfThought>
+                  ) : null}
+                  <ChatMessageActions>
+                    <ChatMessageActions.Copy aria-label="Copy" tooltip="Copy" />
+                    <ChatMessageActions.Regenerate
+                      aria-label="Regenerate"
+                      tooltip="Regenerate"
+                    />
+                  </ChatMessageActions>
+                </ChatMessage.Body>
+              </ChatMessage.Assistant>
+            )
+          )}
+        </ChatConversation.Content>
+      </ChatConversation>
+
+      <div className="bg-background shrink-0 px-4 pt-3 pb-4">
+        <PromptInput
+          status={status}
+          value={value}
+          onStop={handleStop}
+          onSubmit={handleSubmit}
+          onValueChange={setValue}>
+          <PromptInput.Shell>
+            <PromptInput.Content>
+              <PromptInput.TextArea placeholder="What do you want to know?" />
+            </PromptInput.Content>
+            <PromptInput.Toolbar>
+              <PromptInput.ToolbarEnd>
+                <PromptInput.Send />
+              </PromptInput.ToolbarEnd>
+            </PromptInput.Toolbar>
+          </PromptInput.Shell>
+          <PromptInput.Footer>
+            AI can make mistakes. Check important info.
+          </PromptInput.Footer>
+        </PromptInput>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Scroll Button
+
+Add `ChatConversation.ScrollButton` only when your product needs an explicit jump-to-bottom control.
+
+<ComponentPreview name="pro-chat-conversation-with-scroll-button">
+
+```tsx
+'use client'
+
+import { useEffect, useRef } from 'react'
+
+import { ChatConversation, ChatMessage } from '@vezham/react-pro-v3'
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const MESSAGES = [
+  {
+    id: '1',
+    role: 'user' as const,
+    text: 'Can you summarize the release notes?'
+  },
+  {
+    id: '2',
+    role: 'assistant' as const,
+    text: `The release focuses on the chat surface, component polish, and small API cleanup.
+
+- Chat messages now compose with markdown, sources, and actions
+- Conversation viewports keep streaming content readable
+- AI components share the same spacing and typography rhythm`
+  },
+  {
+    id: '3',
+    role: 'user' as const,
+    text: 'What changed for long conversations?'
+  },
+  {
+    id: '4',
+    role: 'assistant' as const,
+    text: `Long threads keep their message column centered while the viewport owns scrolling. The optional jump button can be added when an app wants an explicit return-to-bottom control.`
+  },
+  {
+    id: '5',
+    role: 'user' as const,
+    text: 'Show me the button treatment.'
+  },
+  {
+    id: '6',
+    role: 'assistant' as const,
+    text: `Scroll away from the latest response and the button appears over the lower edge of the conversation. Pressing it returns the viewport to the newest message.`
+  },
+  {
+    id: '7',
+    role: 'assistant' as const,
+    text: `The default conversation examples omit this control so teams can choose whether the extra affordance belongs in their product.`
+  }
+]
+
+export function WithScrollButton() {
+  const conversationRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const element = conversationRef.current
+
+      if (!element) return
+
+      element.scrollTo({
+        behavior: 'auto',
+        top: Math.max(0, element.scrollHeight - element.clientHeight - 160)
+      })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
+  return (
+    <div className="flex h-[520px] w-[640px] flex-col overflow-hidden">
+      <ChatConversation
+        ref={conversationRef}
+        className="flex-1"
+        initial="instant">
+        <ChatConversation.Content className="max-w-[714px] flex-col gap-8 px-4 pt-8 pb-8">
+          {MESSAGES.map(message =>
+            message.role === 'user' ? (
+              <ChatMessage.User key={message.id}>
+                <ChatMessage.Bubble>
+                  <ChatMessage.Content>{message.text}</ChatMessage.Content>
+                </ChatMessage.Bubble>
+              </ChatMessage.User>
+            ) : (
+              <ChatMessage.Assistant key={message.id}>
+                <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+                <ChatMessage.Body>
+                  <ChatMessage.Content>
+                    <Markdown>{message.text}</Markdown>
+                  </ChatMessage.Content>
+                </ChatMessage.Body>
+              </ChatMessage.Assistant>
+            )
+          )}
+        </ChatConversation.Content>
+        <ChatConversation.ScrollButton
+          aria-label="Scroll to bottom"
+          tooltip="Scroll to bottom"
+        />
+      </ChatConversation>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { ChatConversation } from '@vezham/react-pro-v3'
+
+;<ChatConversation>
+  <ChatConversation.Content>{messages}</ChatConversation.Content>
+  <ChatConversation.ScrollAnchor />
+</ChatConversation>
+```
+
+## CSS Classes
+
+- `.chat-conversation` - Scrollable root viewport
+- `.chat-conversation__content` - Message column
+- `.chat-conversation__scroll-button` - Jump-to-bottom button
+- `.chat-conversation__scroll-button-container` - Jump-to-bottom button positioner
+- `.chat-conversation__scroll-anchor` - Bottom scroll anchor
+
+## API Reference
+
+### ChatConversation
+
+Root scroll viewport. Supports native `div` props.
+
+### ChatConversation.Content
+
+Centers and stacks conversation content. Supports native `div` props.
+
+### ChatConversation.ScrollButton
+
+Optional button that appears when the viewport is away from the bottom. Extends HeroUI `Button` props.
+
+### ChatConversation.ScrollAnchor
+
+Bottom anchor used by the stick-to-bottom behavior. Supports native `div` props.

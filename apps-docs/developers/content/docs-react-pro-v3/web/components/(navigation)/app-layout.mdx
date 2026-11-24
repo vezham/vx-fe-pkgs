@@ -1,0 +1,4518 @@
+---
+title: 'AppLayout'
+description: 'A scaffold layout that composes a full-height sidebar, a sticky navbar, a main content area, and an optional right-side aside panel.'
+sourceUrl: https://heroui.pro/docs/react/components/app-layout
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-app-layout-default">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier,
+  Person
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <AppLayout navbar={<DemoNavbar />} sidebar={<DemoSidebar />}>
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Dashboard</h1>
+        <p className="text-muted mt-2 text-sm">
+          The sidebar fills the full viewport height while the navbar and main
+          content live in the right column. Resize to mobile to see the sidebar
+          collapse into a sheet.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  {
+    icon: ChartColumn,
+    items: ['Overview', 'Reports', 'Conversions'],
+    label: 'Analytics'
+  },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  {
+    icon: Gear,
+    items: ['General', 'Team', 'Notifications'],
+    label: 'Settings'
+  }
+]
+
+function DemoSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help & Information">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help & Information</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem href="#" id="logout" textValue="Log out">
+              <Sidebar.MenuIcon>
+                <ArrowRightFromSquare className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Log out</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DemoNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6" color="success" variant="soft">
+                <Avatar.Fallback className="text-xs font-semibold">
+                  JG
+                </Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Dropdown.Item id="settings" textValue="Settings">
+                  <Gear className="text-muted size-4" />
+                  <Label>Settings</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+`AppLayout` is a controlled scaffold that wires together the `Sidebar`, `Navbar`, an optional right-side `aside` panel, and the `main` region. Pass the sidebar, navbar, and aside as props and render the page content as children:
+
+```tsx
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+
+export function DashboardLayout({ children }) {
+  return (
+    <AppLayout
+      aside={<DetailsPanel />}
+      navbar={
+        <Navbar maxWidth="full">
+          <Navbar.Header>
+            <AppLayout.MenuToggle />
+            <Sidebar.Trigger />
+            {/* … */}
+            <Navbar.Spacer />
+            <AppLayout.AsideTrigger />
+          </Navbar.Header>
+        </Navbar>
+      }
+      sidebar={
+        <>
+          <Sidebar>{/* … */}</Sidebar>
+          <Sidebar.Mobile>{/* … */}</Sidebar.Mobile>
+        </>
+      }>
+      {children}
+    </AppLayout>
+  )
+}
+```
+
+Under the hood `AppLayout` renders a `Sidebar.Provider`, so you can use all of the [Sidebar](https://heroui.pro/docs/react/components/sidebar) and [Navbar](https://heroui.pro/docs/react/components/navbar) compound parts inside without additional setup.
+
+> **Do not wrap `AppLayout` with your own `Sidebar.Provider`.** It's already set up internally and would create a nested context that shadows the layout's sidebar state. Configure the sidebar through `AppLayout`'s `sidebarOpen`, `defaultSidebarOpen`, `onSidebarOpenChange`, `sidebarSide`, `sidebarVariant`, `sidebarCollapsible`, `navigate`, `reduceMotion`, and `toggleShortcut` props — they're all forwarded to the internal provider.
+
+## Collapsible
+
+Set `sidebarCollapsible="icon"` to let the sidebar collapse into an icon-only rail. Press `Cmd+B` (or `Ctrl+B`) or click the sidebar trigger to toggle.
+
+<ComponentPreview name="pro-app-layout-collapsible">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier,
+  Person
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function Collapsible() {
+  return (
+    <AppLayout
+      navbar={<CollapsibleNavbar />}
+      sidebar={<CollapsibleSidebar />}
+      sidebarCollapsible="icon">
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Dashboard</h1>
+        <p className="text-muted mt-2 text-sm">
+          Click the sidebar trigger or rail edge to collapse to icon-only mode.
+          Press Cmd+B (or Ctrl+B) as a keyboard shortcut.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  {
+    icon: ChartColumn,
+    items: ['Overview', 'Reports', 'Conversions'],
+    label: 'Analytics'
+  },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function CollapsibleSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function CollapsibleNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6" color="success" variant="soft">
+                <Avatar.Fallback className="text-xs font-semibold">
+                  JG
+                </Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Offcanvas
+
+With `sidebarCollapsible="offcanvas"` the sidebar slides fully off-screen when collapsed, giving the main content area the full viewport width.
+
+<ComponentPreview name="pro-app-layout-offcanvas">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier,
+  Person
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function Offcanvas() {
+  return (
+    <AppLayout
+      navbar={<OffcanvasNavbar />}
+      sidebar={<OffcanvasSidebar />}
+      sidebarCollapsible="offcanvas">
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Dashboard</h1>
+        <p className="text-muted mt-2 text-sm">
+          The offcanvas sidebar slides fully off-screen when collapsed, giving
+          the main content area the full viewport width. Click the sidebar
+          trigger to toggle.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  {
+    icon: ChartColumn,
+    items: ['Overview', 'Reports'],
+    label: 'Analytics'
+  },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function OffcanvasSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function OffcanvasNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6" color="success" variant="soft">
+                <Avatar.Fallback className="text-xs font-semibold">
+                  JG
+                </Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Inset Sidebar
+
+`sidebarVariant="inset"` renders the sidebar inside a bordered card while still filling the full viewport height. The main content sits next to it flush with the viewport edge.
+
+<ComponentPreview name="pro-app-layout-with-inset-sidebar">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier,
+  Person
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function WithInsetSidebar() {
+  return (
+    <AppLayout
+      navbar={<InsetNavbar />}
+      sidebar={<InsetSidebar />}
+      sidebarVariant="inset">
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Dashboard</h1>
+        <p className="text-muted mt-2 text-sm">
+          This variant uses the inset sidebar style, where the sidebar panel
+          sits inside a bordered card. The sidebar still fills the full viewport
+          height.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  {
+    icon: ChartColumn,
+    items: ['Overview', 'Reports'],
+    label: 'Analytics'
+  },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function InsetSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function InsetNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Dropdown.Item id="settings" textValue="Settings">
+                  <Gear className="text-muted size-4" />
+                  <Label>Settings</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Floating Sidebar
+
+`sidebarVariant="floating"` detaches the sidebar from the viewport edge with rounded corners and a shadow, a common pattern for product dashboards.
+
+<ComponentPreview name="pro-app-layout-floating-sidebar">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier,
+  Person
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function FloatingSidebar_() {
+  return (
+    <AppLayout
+      navbar={<FloatingNavbar />}
+      sidebar={<FloatingSidebar />}
+      sidebarVariant="floating">
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Dashboard</h1>
+        <p className="text-muted mt-2 text-sm">
+          The floating sidebar variant renders a rounded, shadowed panel
+          detached from the viewport edge.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  {
+    icon: ChartColumn,
+    items: ['Overview', 'Reports'],
+    label: 'Analytics'
+  },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function FloatingSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu
+              aria-label="Navigation"
+              defaultExpandedKeys={['Analytics']}>
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href={item.items ? undefined : '#'}
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>
+                    {item.label}
+                    {item.items ? (
+                      <Sidebar.MenuTrigger>
+                        <Sidebar.MenuIndicator />
+                      </Sidebar.MenuTrigger>
+                    ) : null}
+                  </Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                  {item.items ? (
+                    <Sidebar.Submenu>
+                      {item.items.map(subitem => (
+                        <Sidebar.MenuItem
+                          key={subitem}
+                          href="#"
+                          id={`${item.label}-${subitem}`}
+                          textValue={subitem}>
+                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                        </Sidebar.MenuItem>
+                      ))}
+                    </Sidebar.Submenu>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function FloatingNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6" color="success" variant="soft">
+                <Avatar.Fallback className="text-xs font-semibold">
+                  JG
+                </Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Inset Dashboard
+
+A full dashboard composition combining the `inset` sidebar variant, offcanvas collapse behavior, KPIs, and a rich user dropdown.
+
+<ComponentPreview name="pro-app-layout-inset-dashboard">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bulb,
+  ChartColumn,
+  ChevronsExpandVertical,
+  CircleQuestion,
+  Gear,
+  Headphones,
+  House,
+  Magnifier,
+  Megaphone,
+  Microphone,
+  Person,
+  Persons,
+  Plus,
+  ShieldCheck,
+  Sparkles,
+  SquareArticle
+} from '@gravity-ui/icons'
+
+import {
+  AppLayout,
+  Navbar,
+  PressableFeedback,
+  Sidebar
+} from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function InsetDashboard() {
+  return (
+    <AppLayout
+      navbar={<DashboardNavbar />}
+      sidebar={<DashboardSidebar />}
+      sidebarCollapsible="offcanvas"
+      sidebarVariant="inset">
+      <div className="flex flex-col gap-6 p-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {kpiCards.map(card => (
+            <KPI key={card.title}>
+              <KPI.Header>
+                <KPI.Title>{card.title}</KPI.Title>
+              </KPI.Header>
+              <KPI.Content>
+                <KPI.Value maximumFractionDigits={0} value={card.value} />
+                <KPI.Trend size="md" trend={card.trend}>
+                  {card.change}
+                </KPI.Trend>
+              </KPI.Content>
+              <KPI.Chart
+                color={card.color}
+                data={card.chartData}
+                height={72}
+                strokeWidth={1.5}
+              />
+            </KPI>
+          ))}
+        </div>
+        <div className="bg-surface shadow-surface flex flex-col gap-4 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-foreground text-sm font-semibold">
+              Latest episodes
+            </h2>
+            <Button size="sm" variant="tertiary">
+              View all
+            </Button>
+          </div>
+          <ul className="-mx-3 flex flex-col gap-0.5">
+            {latestEpisodes.map(episode => (
+              <li key={episode.id}>
+                <PressableFeedback
+                  aria-label={`Open ${episode.title}`}
+                  className="flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left">
+                  <PressableFeedback.Ripple className="text-muted" />
+                  <div className="flex items-center gap-3">
+                    <div className="bg-accent-soft text-accent flex size-8 items-center justify-center rounded-md">
+                      <Microphone className="size-4" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-foreground text-sm font-medium">
+                        {episode.title}
+                      </span>
+                      <span className="text-muted text-xs">
+                        Guest · {episode.guest}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <span className="text-foreground text-sm font-medium tabular-nums">
+                      {episode.plays}
+                    </span>
+                    <span className="text-muted text-xs tabular-nums">
+                      {episode.publishedAt}
+                    </span>
+                  </div>
+                </PressableFeedback>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Overview' }
+]
+
+const mainNavItems = [
+  { icon: House, isCurrent: true, label: 'Overview' },
+  { icon: Microphone, label: 'Episodes' },
+  { icon: Persons, label: 'Guests' },
+  { icon: ChartColumn, label: 'Analytics' },
+  { icon: Megaphone, label: 'Campaigns' },
+  { icon: Gear, label: 'Settings' }
+]
+
+const upcomingEpisodes = [
+  { label: 'Designing for attention spans' },
+  { label: 'The pricing conversation nobody wants' },
+  { label: 'Building a creative studio from zero' },
+  { label: 'Late-night debugging with Ada' }
+]
+
+const plays = [
+  { value: 42000 },
+  { value: 48500 },
+  { value: 44200 },
+  { value: 52100 },
+  { value: 49800 },
+  { value: 61400 },
+  { value: 57900 },
+  { value: 68200 },
+  { value: 64500 },
+  { value: 74800 },
+  { value: 78600 },
+  { value: 84210 }
+]
+
+const subscribers = [
+  { value: 2740 },
+  { value: 2890 },
+  { value: 2820 },
+  { value: 3010 },
+  { value: 2950 },
+  { value: 3180 },
+  { value: 3240 },
+  { value: 3190 },
+  { value: 3330 },
+  { value: 3410 },
+  { value: 3380 },
+  { value: 3487 }
+]
+
+const episodes = [
+  { value: 34 },
+  { value: 36 },
+  { value: 35 },
+  { value: 39 },
+  { value: 38 },
+  { value: 41 },
+  { value: 43 },
+  { value: 42 },
+  { value: 45 },
+  { value: 44 },
+  { value: 47 },
+  { value: 48 }
+]
+
+const kpiCards = [
+  {
+    change: '+14%',
+    chartData: plays,
+    color: 'var(--color-accent)',
+    title: 'Monthly plays',
+    trend: 'up' as const,
+    value: 84210
+  },
+  {
+    change: '+6%',
+    chartData: subscribers,
+    color: 'var(--color-success)',
+    title: 'Active subscribers',
+    trend: 'up' as const,
+    value: 3487
+  },
+  {
+    change: '2 scheduled',
+    chartData: episodes,
+    color: 'var(--color-muted)',
+    title: 'Episodes published',
+    trend: 'neutral' as const,
+    value: 48
+  }
+]
+
+const quickActions = [
+  { icon: Magnifier, label: 'Search' },
+  { count: 4, icon: SquareArticle, label: 'Drafts' }
+]
+
+const latestEpisodes = [
+  {
+    guest: 'Ada Park',
+    id: '1',
+    plays: '12,489',
+    publishedAt: '2d',
+    title: 'Designing for attention spans'
+  },
+  {
+    guest: 'Mateo Silva',
+    id: '2',
+    plays: '8,902',
+    publishedAt: '1w',
+    title: 'The pricing conversation nobody wants'
+  },
+  {
+    guest: 'Lenna Huang',
+    id: '3',
+    plays: '21,008',
+    publishedAt: '2w',
+    title: 'Building a creative studio from zero'
+  },
+  {
+    guest: 'Kai Johansen',
+    id: '4',
+    plays: '4,132',
+    publishedAt: '3w',
+    title: 'Late-night debugging with Ada'
+  }
+]
+
+function StudioSwitcher() {
+  return (
+    <Dropdown>
+      <Dropdown.Trigger className="hover:bg-default flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left outline-none">
+        <div className="bg-accent-soft flex size-6 shrink-0 items-center justify-center rounded-md">
+          <Headphones className="text-accent size-3.5" />
+        </div>
+        <span
+          className="text-foreground text-sm font-semibold"
+          data-sidebar="label">
+          Soundwave Studio
+        </span>
+        <ChevronsExpandVertical
+          className="text-muted ml-auto size-3.5"
+          data-sidebar="label"
+        />
+      </Dropdown.Trigger>
+      <Dropdown.Popover className="min-w-[220px]" placement="bottom start">
+        <Dropdown.Menu>
+          <Dropdown.Item id="workspace-personal" textValue="Personal">
+            <Person className="text-muted size-4" />
+            <Label>Personal</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="workspace-soundwave" textValue="Soundwave Studio">
+            <Headphones className="text-muted size-4" />
+            <Label>Soundwave Studio</Label>
+          </Dropdown.Item>
+          <Separator />
+          <Dropdown.Item id="workspace-new" textValue="New workspace">
+            <Plus className="text-muted size-4" />
+            <Label>New workspace</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  )
+}
+
+function UserMenu() {
+  return (
+    <Dropdown>
+      <Dropdown.Trigger className="hover:bg-default flex items-center gap-2 rounded-lg py-1 pr-1 pl-2 text-left outline-none">
+        <span className="text-foreground hidden text-sm font-medium sm:inline">
+          Nora Kim
+        </span>
+        <Avatar className="size-6">
+          <Avatar.Image
+            alt="Nora Kim"
+            src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+          />
+          <Avatar.Fallback>NK</Avatar.Fallback>
+        </Avatar>
+      </Dropdown.Trigger>
+      <Dropdown.Popover className="min-w-[240px]" placement="bottom end">
+        <div className="flex flex-col gap-0 px-3 pt-3 pb-1">
+          <p className="text-foreground text-sm leading-5 font-medium">
+            Nora Kim
+          </p>
+          <p className="text-muted text-xs leading-none">nora@soundwave.fm</p>
+        </div>
+        <Dropdown.Menu>
+          <Dropdown.Item id="account" textValue="My account">
+            <Person className="text-muted size-4" />
+            <Label>My account</Label>
+          </Dropdown.Item>
+          <Separator />
+          <Dropdown.Item id="privacy" textValue="Privacy policy">
+            <ShieldCheck className="text-muted size-4" />
+            <Label>Privacy policy</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="feedback" textValue="Share feedback">
+            <Bulb className="text-muted size-4" />
+            <Label>Share feedback</Label>
+          </Dropdown.Item>
+          <Separator />
+          <Dropdown.Item id="sign-out" textValue="Sign out">
+            <ArrowRightFromSquare className="text-muted size-4" />
+            <Label>Sign out</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  )
+}
+
+function DashboardSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <StudioSwitcher />
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Quick actions">
+              {quickActions.map(action => (
+                <Sidebar.MenuItem
+                  key={action.label}
+                  id={`quick-${action.label}`}
+                  textValue={action.label}>
+                  <Sidebar.MenuIcon>
+                    <action.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{action.label}</Sidebar.MenuLabel>
+                  {action.count ? (
+                    <Sidebar.MenuChip>
+                      <span className="text-muted text-xs">{action.count}</span>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Separator />
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Main navigation">
+              {mainNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.isCurrent}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Group>
+            <Sidebar.GroupLabel>Upcoming releases</Sidebar.GroupLabel>
+            <Sidebar.Menu aria-label="Upcoming releases">
+              {upcomingEpisodes.map(episode => (
+                <Sidebar.MenuItem
+                  key={episode.label}
+                  href="#"
+                  id={`episode-${episode.label}`}
+                  textValue={episode.label}>
+                  <Sidebar.MenuLabel>{episode.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Resources">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help Center">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help Center</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem href="#" id="changelog" textValue="What's new">
+              <Sidebar.MenuIcon>
+                <Sparkles className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>What's new</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <StudioSwitcher />
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Main navigation">
+              {mainNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={`mobile-${item.label}`}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Group>
+            <Sidebar.GroupLabel>Upcoming releases</Sidebar.GroupLabel>
+            <Sidebar.Menu aria-label="Upcoming releases">
+              {upcomingEpisodes.map(episode => (
+                <Sidebar.MenuItem
+                  key={episode.label}
+                  href="#"
+                  id={`episode-mobile-${episode.label}`}
+                  textValue={episode.label}>
+                  <Sidebar.MenuLabel>{episode.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DashboardNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <UserMenu />
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Docs Site
+
+A documentation-style layout with a search bar, theme segment, and a grouped navigation sidebar.
+
+<ComponentPreview name="pro-app-layout-docs-site">
+
+```tsx
+'use client'
+
+import {
+  Book,
+  Code,
+  Cube,
+  Display,
+  LifeRing,
+  LogoGithub,
+  Moon,
+  Palette,
+  Rocket,
+  SquareArticle,
+  Sun
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { AppLayout, Navbar, Segment, Sidebar } from '@vezham/react-pro-v3'
+import { Chip, Kbd, SearchField } from '@vezham/react-v3'
+
+export function DocsSite() {
+  return (
+    <AppLayout
+      navbar={<DocsNavbar />}
+      sidebar={<DocsSidebar />}
+      sidebarCollapsible="offcanvas">
+      <div className="p-6">
+        <div className="flex items-center gap-2">
+          <Rocket className="text-accent size-5" />
+          <span className="text-muted text-xs font-medium tracking-wider uppercase">
+            Getting Started
+          </span>
+        </div>
+        <h1 className="text-foreground mt-3 text-2xl font-bold">
+          Introduction
+        </h1>
+        <p className="text-muted mt-4 max-w-2xl text-sm leading-relaxed">
+          HeroUI is a modern React component library built on top of React Aria
+          Components and Tailwind CSS v4. It provides accessible, customizable
+          UI primitives for building high-quality web applications.
+        </p>
+        <h2 className="text-foreground mt-8 text-lg font-semibold">Features</h2>
+        <ul className="text-muted mt-3 list-inside list-disc space-y-2 text-sm">
+          <li>Accessible by default with React Aria</li>
+          <li>Tailwind CSS v4 with design tokens</li>
+          <li>Compound component patterns</li>
+          <li>Dark mode support</li>
+          <li>Server Component compatible</li>
+        </ul>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BrandLogo = () => (
+  <svg
+    className="size-5"
+    fill="none"
+    viewBox="0 0 24 34"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0 8.22973V18.0896C0 18.5557 0.239547 18.9887 0.633655 19.2352L7.35585 23.4389C8.25167 23.9991 9.41193 23.3527 9.41193 22.2934V14.0053C9.41193 13.5285 9.66262 13.0871 10.0714 12.844L14.1719 10.4064V31.6481C14.1719 32.7039 15.3252 33.3509 16.2213 32.7979L23.1595 28.5156C23.5574 28.27 23.7998 27.8347 23.7998 27.3659V6.96774C23.7998 5.91715 22.6566 5.26934 21.7603 5.81202L14.1719 10.4064V1.35182C14.1719 0.304069 13.0342 -0.34416 12.1378 0.192813L0.65562 7.07073C0.249018 7.31429 0 7.7545 0 8.22973Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+type DocsItem = {
+  badge?: 'New' | 'Beta'
+  label: string
+}
+
+type FlatSection = {
+  icon: typeof Rocket
+  items: DocsItem[]
+  label: string
+}
+
+type NestedSection = {
+  icon: typeof Cube
+  label: string
+  subsections: { items: DocsItem[]; label: string }[]
+}
+
+const gettingStarted: FlatSection = {
+  icon: Rocket,
+  items: [
+    { label: 'Introduction' },
+    { label: 'Installation' },
+    { label: 'Project Structure' },
+    { label: 'Editor Setup' },
+    { label: 'Quick Start' }
+  ],
+  label: 'Getting Started'
+}
+
+const foundations: FlatSection = {
+  icon: Palette,
+  items: [
+    { label: 'Design Tokens' },
+    { label: 'Colors' },
+    { label: 'Typography' },
+    { label: 'Spacing' },
+    { label: 'Dark Mode' },
+    { label: 'Accessibility' }
+  ],
+  label: 'Foundations'
+}
+
+const components: NestedSection = {
+  icon: Cube,
+  label: 'Components',
+  subsections: [
+    {
+      items: [
+        { label: 'Button' },
+        { label: 'Button Group' },
+        { label: 'Icon Button' },
+        { label: 'Link' }
+      ],
+      label: 'Actions'
+    },
+    {
+      items: [
+        { label: 'TextField' },
+        { label: 'Select' },
+        { badge: 'Beta', label: 'Combobox' },
+        { label: 'Checkbox' },
+        { label: 'Radio Group' },
+        { label: 'Switch' },
+        { label: 'Slider' }
+      ],
+      label: 'Inputs'
+    },
+    {
+      items: [
+        { label: 'Avatar' },
+        { label: 'Badge' },
+        { label: 'Card' },
+        { label: 'Chip' },
+        { label: 'Skeleton' },
+        { label: 'Tag' }
+      ],
+      label: 'Data Display'
+    },
+    {
+      items: [
+        { label: 'Alert' },
+        { label: 'Progress' },
+        { label: 'Spinner' },
+        { badge: 'New', label: 'Toast' }
+      ],
+      label: 'Feedback'
+    },
+    {
+      items: [
+        { label: 'Breadcrumbs' },
+        { label: 'Menu' },
+        { label: 'Pagination' },
+        { label: 'Tabs' }
+      ],
+      label: 'Navigation'
+    },
+    {
+      items: [
+        { label: 'Dialog' },
+        { badge: 'Beta', label: 'Drawer' },
+        { label: 'Popover' },
+        { label: 'Tooltip' }
+      ],
+      label: 'Overlays'
+    }
+  ]
+}
+
+const hooks: FlatSection = {
+  icon: Code,
+  items: [
+    { label: 'useTheme' },
+    { label: 'useDisclosure' },
+    { label: 'useMediaQuery' },
+    { label: 'useControlledState' },
+    { label: 'useInterval' }
+  ],
+  label: 'Hooks'
+}
+
+const guides: FlatSection = {
+  icon: Book,
+  items: [
+    { label: 'Theming' },
+    { label: 'Customizing Components' },
+    { label: 'Server Components' },
+    { label: 'Migrating from v2' },
+    { label: 'Testing' }
+  ],
+  label: 'Guides'
+}
+
+const flatSections: FlatSection[] = [gettingStarted, foundations]
+const secondaryFlatSections: FlatSection[] = [hooks, guides]
+
+const renderBadge = (badge?: DocsItem['badge']) => {
+  if (!badge) return null
+
+  return (
+    <Sidebar.MenuChip>
+      <Chip
+        color={badge === 'New' ? 'success' : 'accent'}
+        size="sm"
+        variant="soft">
+        {badge}
+      </Chip>
+    </Sidebar.MenuChip>
+  )
+}
+
+const renderFlatSection = (
+  { icon: Icon, items, label }: FlatSection,
+  keyPrefix: string
+) => (
+  <Sidebar.Group key={`${keyPrefix}-${label}`}>
+    <Sidebar.GroupLabel className="flex items-center gap-2">
+      <Icon className="text-muted size-3.5" />
+      {label}
+    </Sidebar.GroupLabel>
+    <Sidebar.Menu aria-label={label}>
+      {items.map(item => (
+        <Sidebar.MenuItem
+          key={`${keyPrefix}-${label}-${item.label}`}
+          href="#"
+          id={`${keyPrefix}-${label}-${item.label}`}
+          isCurrent={item.label === 'Introduction'}
+          textValue={item.label}>
+          <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+          {renderBadge(item.badge)}
+        </Sidebar.MenuItem>
+      ))}
+    </Sidebar.Menu>
+  </Sidebar.Group>
+)
+
+const renderComponentsSection = (keyPrefix: string) => (
+  <Sidebar.Group key={`${keyPrefix}-${components.label}`}>
+    <Sidebar.GroupLabel className="flex items-center gap-2">
+      <components.icon className="text-muted size-3.5" />
+      {components.label}
+    </Sidebar.GroupLabel>
+    <Sidebar.Menu
+      aria-label={components.label}
+      defaultExpandedKeys={[`${keyPrefix}-Inputs`]}
+      showGuideLines="hover">
+      {components.subsections.map(subsection => (
+        <Sidebar.MenuItem
+          key={`${keyPrefix}-${subsection.label}`}
+          id={`${keyPrefix}-${subsection.label}`}
+          textValue={subsection.label}>
+          <Sidebar.MenuLabel>{subsection.label}</Sidebar.MenuLabel>
+          <Sidebar.MenuTrigger>
+            <Sidebar.MenuIndicator />
+          </Sidebar.MenuTrigger>
+          <Sidebar.Submenu>
+            {subsection.items.map(item => (
+              <Sidebar.MenuItem
+                key={`${keyPrefix}-${subsection.label}-${item.label}`}
+                href="#"
+                id={`${keyPrefix}-${subsection.label}-${item.label}`}
+                textValue={item.label}>
+                <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                {renderBadge(item.badge)}
+              </Sidebar.MenuItem>
+            ))}
+          </Sidebar.Submenu>
+        </Sidebar.MenuItem>
+      ))}
+    </Sidebar.Menu>
+  </Sidebar.Group>
+)
+
+const DocsSidebarHeader = () => (
+  <div className="flex items-center gap-3 px-1 py-2">
+    <BrandLogo />
+    <div className="flex flex-col">
+      <span className="text-foreground text-sm leading-tight font-semibold">
+        HeroUI Docs
+      </span>
+      <span className="text-muted text-xs leading-tight">v3.0 Beta</span>
+    </div>
+  </div>
+)
+
+const DocsSidebarContent = ({ keyPrefix }: { keyPrefix: string }) => (
+  <>
+    {flatSections.map(section => renderFlatSection(section, keyPrefix))}
+    {renderComponentsSection(keyPrefix)}
+    {secondaryFlatSections.map(section =>
+      renderFlatSection(section, keyPrefix)
+    )}
+  </>
+)
+
+const DocsSidebarFooter = ({ keyPrefix }: { keyPrefix: string }) => (
+  <Sidebar.Menu aria-label="Footer links">
+    <Sidebar.MenuItem
+      href="#"
+      id={`${keyPrefix}-changelog`}
+      textValue="Changelog">
+      <Sidebar.MenuIcon>
+        <SquareArticle className="size-4" />
+      </Sidebar.MenuIcon>
+      <Sidebar.MenuLabel>Changelog</Sidebar.MenuLabel>
+      <Sidebar.MenuChip>
+        <Chip color="success" size="sm" variant="soft">
+          New
+        </Chip>
+      </Sidebar.MenuChip>
+    </Sidebar.MenuItem>
+    <Sidebar.MenuItem href="#" id={`${keyPrefix}-github`} textValue="GitHub">
+      <Sidebar.MenuIcon>
+        <LogoGithub className="size-4" />
+      </Sidebar.MenuIcon>
+      <Sidebar.MenuLabel>GitHub</Sidebar.MenuLabel>
+    </Sidebar.MenuItem>
+    <Sidebar.MenuItem
+      href="#"
+      id={`${keyPrefix}-help`}
+      textValue="Help & Support">
+      <Sidebar.MenuIcon>
+        <LifeRing className="size-4" />
+      </Sidebar.MenuIcon>
+      <Sidebar.MenuLabel>Help & Support</Sidebar.MenuLabel>
+    </Sidebar.MenuItem>
+  </Sidebar.Menu>
+)
+
+function DocsSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <DocsSidebarHeader />
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <DocsSidebarContent keyPrefix="desktop" />
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <DocsSidebarFooter keyPrefix="desktop" />
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <DocsSidebarHeader />
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <DocsSidebarContent keyPrefix="mobile" />
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <DocsSidebarFooter keyPrefix="mobile" />
+        </Sidebar.Footer>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DocsNavbar() {
+  const [theme, setTheme] = useState<string>('system')
+
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Navbar.Spacer />
+        <SearchField
+          aria-label="Search documentation"
+          className="w-[200px]"
+          variant="secondary">
+          <SearchField.Group className="h-8">
+            <SearchField.SearchIcon />
+            <SearchField.Input className="w-16" placeholder="Search docs…" />
+            <Kbd className="pointer-events-none mr-1.5 text-xs">
+              <Kbd.Abbr keyValue="command" />
+              <Kbd.Content>K</Kbd.Content>
+            </Kbd>
+          </SearchField.Group>
+        </SearchField>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Segment
+            className="gap-0"
+            selectedKey={theme}
+            size="sm"
+            onSelectionChange={key => setTheme(key as string)}>
+            <Segment.Item
+              aria-label="Light"
+              className="size-[28px] px-0"
+              id="light">
+              <Sun className="size-3.5" />
+            </Segment.Item>
+            <Segment.Item
+              aria-label="Dark"
+              className="size-[28px] px-0"
+              id="dark">
+              <Moon className="size-3.5" />
+            </Segment.Item>
+            <Segment.Item
+              aria-label="System"
+              className="size-[28px] px-0"
+              id="system">
+              <Display className="size-3.5" />
+            </Segment.Item>
+          </Segment>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Breadcrumbs
+
+A project-management-style navbar with a multi-level breadcrumb trail reflecting the current navigation depth.
+
+<ComponentPreview name="pro-app-layout-with-breadcrumbs">
+
+```tsx
+'use client'
+
+import {
+  Bell,
+  CircleQuestion,
+  Folder,
+  Gear,
+  House,
+  LayoutColumns,
+  Magnifier,
+  Palette,
+  Person,
+  SquareArticle,
+  TextAlignLeft
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function WithBreadcrumbs() {
+  return (
+    <AppLayout navbar={<BreadcrumbsNavbar />} sidebar={<BreadcrumbsSidebar />}>
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Components</h1>
+        <p className="text-muted mt-2 text-sm">
+          The navbar shows a multi-level breadcrumb trail reflecting the current
+          navigation depth. This pattern is common in project management and
+          nested content apps.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { label: 'Home' },
+  { label: 'Projects' },
+  { label: 'Design System' },
+  { icon: <LayoutColumns className="size-4" />, label: 'Components' }
+]
+
+const projectNavItems = [
+  { icon: House, label: 'Overview' },
+  { icon: LayoutColumns, label: 'Components' },
+  { icon: Palette, label: 'Tokens' },
+  { icon: TextAlignLeft, label: 'Typography' },
+  { icon: SquareArticle, label: 'Changelog' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function BreadcrumbsSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">DS</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              Design System
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Project navigation">
+              {projectNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.label === 'Components'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Separator />
+          <Sidebar.Group>
+            <Sidebar.GroupLabel>Workspaces</Sidebar.GroupLabel>
+            <Sidebar.Menu aria-label="Workspaces">
+              <Sidebar.MenuItem href="#" id="ws-frontend" textValue="Frontend">
+                <Sidebar.MenuIcon>
+                  <Folder className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>Frontend</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+              <Sidebar.MenuItem href="#" id="ws-backend" textValue="Backend">
+                <Sidebar.MenuIcon>
+                  <Folder className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>Backend</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">DS</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              Design System
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Project navigation">
+              {projectNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function BreadcrumbsNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => {
+            const isLast = index === BreadcrumbItems.length - 1
+            const isMiddle = !isLast && index > 0
+
+            return (
+              <Breadcrumbs.Item
+                key={`${item.label}-${index}`}
+                className={`min-w-0 ${isLast ? 'font-semibold' : 'text-muted'} ${isMiddle ? 'hidden md:flex' : ''}`}
+                href={isLast ? undefined : '#'}>
+                <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                  {item.icon}
+                  <span className="truncate">{item.label}</span>
+                </span>
+              </Breadcrumbs.Item>
+            )
+          })}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Aside
+
+Pass content to the `aside` prop to render a right-side panel — ideal for conversation details, metadata, or contextual tooling. The aside is hidden below the desktop breakpoint and slides off-screen when closed.
+
+Use `AppLayout.AsideTrigger` inside the navbar to let users toggle the aside open and closed.
+
+<ComponentPreview name="pro-app-layout-with-aside">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  ChartColumn,
+  CircleQuestion,
+  Envelope,
+  Magnifier,
+  Pencil,
+  Person
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Disclosure,
+  DisclosureGroup,
+  Dropdown,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function WithAside({
+  asideMobile = 'hidden'
+}: { asideMobile?: 'hidden' | 'sheet' } = {}) {
+  return (
+    <AppLayout
+      aside={<ConversationDetailsAside />}
+      asideMobile={asideMobile}
+      navbar={<AsideNavbar />}
+      sidebar={<AsideSidebar />}>
+      <div className="flex flex-col gap-6 px-6 py-8">
+        <header className="flex items-center gap-3">
+          <Avatar className="size-10">
+            <Avatar.Image
+              alt="Dan Fox"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+            />
+            <Avatar.Fallback>DF</Avatar.Fallback>
+          </Avatar>
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-foreground text-base leading-tight font-semibold">
+              Dan Fox
+            </h1>
+            <p className="text-muted text-xs tabular-nums">
+              Email · 6 months ago
+            </p>
+          </div>
+        </header>
+        <div className="flex flex-col gap-6">
+          {messages.map(m => (
+            <ChatMessage key={m.id} {...m} />
+          ))}
+        </div>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <Envelope className="size-4" />, label: 'Inbox' }
+]
+
+const inboxNavItems = [
+  { count: 3, icon: Envelope, label: 'My inbox' },
+  { count: 13, icon: Envelope, isCurrent: true, label: 'All messages' },
+  { icon: Pencil, label: 'Created by me' },
+  { count: 10, icon: CircleQuestion, label: 'Unassigned' }
+]
+
+const teamInboxes = [
+  { color: 'success', label: 'Customer success' },
+  { color: 'danger', label: 'Sales' },
+  { color: 'accent', label: 'Developers' }
+]
+
+type ChatMessageProps = {
+  avatarFallback: string
+  avatarSrc?: string
+  body: string
+  id: string
+  isAgent?: boolean
+  name: string
+  timeAgo: string
+}
+
+const messages: ChatMessageProps[] = [
+  {
+    avatarFallback: 'DF',
+    avatarSrc:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    body: "My direct deposit didn't show up today. It's usually here by now. Can you check what happened?",
+    id: '1',
+    name: 'Dan Fox',
+    timeAgo: '6mo'
+  },
+  {
+    avatarFallback: 'JG',
+    avatarSrc:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    body: "Thanks for reaching out, Dan. I'm looking into this now and will get back to you shortly.",
+    id: '2',
+    isAgent: true,
+    name: 'Junior Garcia',
+    timeAgo: '6mo'
+  },
+  {
+    avatarFallback: 'DF',
+    avatarSrc:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    body: 'Thanks, I appreciate it!',
+    id: '3',
+    name: 'Dan Fox',
+    timeAgo: '6mo'
+  },
+  {
+    avatarFallback: 'JG',
+    avatarSrc:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    body: "Good news — the deposit has been released and should land in your account within the next hour. Let me know if you don't see it.",
+    id: '4',
+    isAgent: true,
+    name: 'Junior Garcia',
+    timeAgo: '6mo'
+  }
+]
+
+function ChatMessage({
+  avatarFallback,
+  avatarSrc,
+  body,
+  isAgent,
+  name,
+  timeAgo
+}: ChatMessageProps) {
+  return (
+    <div
+      className={`flex items-end gap-2 ${isAgent ? 'flex-row-reverse' : ''}`}>
+      <Avatar size="sm">
+        {avatarSrc ? <Avatar.Image alt={name} src={avatarSrc} /> : null}
+        <Avatar.Fallback>{avatarFallback}</Avatar.Fallback>
+      </Avatar>
+      <div
+        className={`flex max-w-md flex-col gap-1 ${isAgent ? 'items-end' : 'items-start'}`}>
+        <div
+          className={`rounded-2xl px-3.5 py-2 ${
+            isAgent
+              ? 'bg-surface-tertiary text-foreground'
+              : 'bg-surface text-foreground'
+          }`}>
+          <p className="text-sm leading-relaxed">{body}</p>
+        </div>
+        <p className="text-muted px-1 text-xs tabular-nums">{timeAgo}</p>
+      </div>
+    </div>
+  )
+}
+
+function ConversationDetailsAside() {
+  const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(
+    new Set(['user-details'])
+  )
+
+  return (
+    <div className="flex h-full flex-col">
+      <header className="flex items-center justify-between px-4 pt-4 pb-2">
+        <h2 className="text-foreground text-sm font-semibold">
+          Conversation details
+        </h2>
+      </header>
+      <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-4">
+        <div className="flex flex-col gap-3 px-1 py-2">
+          <DetailRow
+            label="Assignee"
+            value={
+              <span className="flex items-center gap-2">
+                <Avatar className="size-5" size="sm">
+                  <Avatar.Image
+                    alt="John Steele"
+                    src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                  />
+                  <Avatar.Fallback>JS</Avatar.Fallback>
+                </Avatar>
+                <span className="text-foreground text-sm font-medium">
+                  John Steele
+                </span>
+              </span>
+            }
+          />
+          <DetailRow
+            label="Team"
+            value={
+              <span className="text-foreground text-sm font-medium">
+                Developers
+              </span>
+            }
+          />
+          <DetailRow
+            label="Priority"
+            value={
+              <span className="text-foreground text-sm font-medium">
+                Normal
+              </span>
+            }
+          />
+          <DetailRow
+            label="Status"
+            value={
+              <Chip color="success" size="sm" variant="soft">
+                Open
+              </Chip>
+            }
+          />
+          <DetailRow
+            label="Tags"
+            value={
+              <div className="flex flex-wrap justify-end gap-1.5">
+                <Chip size="sm" variant="soft">
+                  Billing
+                </Chip>
+                <Chip color="accent" size="sm" variant="soft">
+                  Priority
+                </Chip>
+              </div>
+            }
+          />
+        </div>
+        <DisclosureGroup
+          allowsMultipleExpanded
+          className="mt-2 flex flex-col gap-2"
+          expandedKeys={expandedKeys}
+          onExpandedChange={setExpandedKeys}>
+          <AsideDisclosure
+            id="user-details"
+            isExpanded={expandedKeys.has('user-details')}
+            label="User details">
+            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 pr-1 pb-3 pl-3 text-sm">
+              <span className="text-muted">Name</span>
+              <span className="text-foreground font-medium">Dan Fox</span>
+              <span className="text-muted">Company</span>
+              <span className="text-foreground font-medium">Ashby</span>
+              <span className="text-muted">Type</span>
+              <span className="text-foreground font-medium">Customer</span>
+              <span className="text-muted">Email</span>
+              <span className="text-foreground min-w-0 truncate font-medium">
+                dan.fox@example.com
+              </span>
+            </div>
+          </AsideDisclosure>
+          <AsideDisclosure
+            id="recent-conversations"
+            isExpanded={expandedKeys.has('recent-conversations')}
+            label="Recent conversations">
+            <ul className="flex flex-col gap-2 pr-1 pb-3 pl-3 text-sm">
+              <li className="text-foreground truncate">
+                Payment failed on autopay
+              </li>
+              <li className="text-foreground truncate">
+                How do I export invoices?
+              </li>
+              <li className="text-foreground truncate">Upgrade plan inquiry</li>
+            </ul>
+          </AsideDisclosure>
+          <AsideDisclosure
+            id="company-info"
+            isExpanded={expandedKeys.has('company-info')}
+            label="Company information">
+            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 pr-1 pb-3 pl-3 text-sm">
+              <span className="text-muted">Name</span>
+              <span className="text-foreground font-medium">Ashby</span>
+              <span className="text-muted">Plan</span>
+              <span className="text-foreground font-medium">Enterprise</span>
+              <span className="text-muted">Size</span>
+              <span className="text-foreground font-medium">201 – 500</span>
+            </div>
+          </AsideDisclosure>
+        </DisclosureGroup>
+      </div>
+      <footer className="border-border flex flex-col gap-1.5 border-t px-4 py-3">
+        <Button fullWidth size="sm" variant="primary">
+          Close conversation
+        </Button>
+        <Button fullWidth size="sm" variant="secondary">
+          Snooze
+        </Button>
+      </footer>
+    </div>
+  )
+}
+
+interface AsideDisclosureProps {
+  children: React.ReactNode
+  id: string
+  isExpanded: boolean
+  label: string
+}
+
+function AsideDisclosure({
+  children,
+  id,
+  isExpanded,
+  label
+}: AsideDisclosureProps) {
+  return (
+    <Disclosure id={id}>
+      <Disclosure.Heading>
+        <Button
+          className="h-8 w-full justify-between border-none px-3"
+          slot="trigger"
+          variant={isExpanded ? 'secondary' : 'tertiary'}>
+          <span className="text-sm font-medium">{label}</span>
+          <Disclosure.Indicator className="text-muted size-3.5" />
+        </Button>
+      </Disclosure.Heading>
+      <Disclosure.Content>
+        <Disclosure.Body className="pt-2">{children}</Disclosure.Body>
+      </Disclosure.Content>
+    </Disclosure>
+  )
+}
+
+interface DetailRowProps {
+  label: string
+  value: React.ReactNode
+}
+
+function DetailRow({ label, value }: DetailRowProps) {
+  return (
+    <div className="flex min-h-[28px] items-center justify-between gap-4">
+      <span className="text-muted text-sm">{label}</span>
+      <div className="flex items-center justify-end">{value}</div>
+    </div>
+  )
+}
+
+function AsideSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">I</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              Inbox
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Inbox">
+              {inboxNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.isCurrent}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                  {item.count ? (
+                    <Sidebar.MenuChip>
+                      <span className="text-muted text-xs">{item.count}</span>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Group>
+            <Sidebar.GroupLabel>Team inboxes</Sidebar.GroupLabel>
+            <Sidebar.Menu aria-label="Team inboxes">
+              {teamInboxes.map(team => (
+                <Sidebar.MenuItem
+                  key={team.label}
+                  href="#"
+                  id={`team-${team.label}`}
+                  textValue={team.label}>
+                  <Sidebar.MenuIcon>
+                    <span
+                      className="size-2 rounded-full"
+                      style={{ backgroundColor: `var(--color-${team.color})` }}
+                    />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{team.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="analytics" textValue="Analytics">
+              <Sidebar.MenuIcon>
+                <ChartColumn className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Analytics</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem href="#" id="help" textValue="Help Center">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help Center</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">I</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">Inbox</span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Inbox">
+              {inboxNavItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.isCurrent}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                  {item.count ? (
+                    <Sidebar.MenuChip>
+                      <span className="text-muted text-xs">{item.count}</span>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+          <Sidebar.Group>
+            <Sidebar.GroupLabel>Team inboxes</Sidebar.GroupLabel>
+            <Sidebar.Menu aria-label="Team inboxes">
+              {teamInboxes.map(team => (
+                <Sidebar.MenuItem
+                  key={team.label}
+                  href="#"
+                  id={`team-mobile-${team.label}`}
+                  textValue={team.label}>
+                  <Sidebar.MenuIcon>
+                    <span
+                      className="size-2 rounded-full"
+                      style={{ backgroundColor: `var(--color-${team.color})` }}
+                    />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{team.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem
+              href="#"
+              id="analytics-mobile"
+              textValue="Analytics">
+              <Sidebar.MenuIcon>
+                <ChartColumn className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Analytics</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem href="#" id="help-mobile" textValue="Help Center">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help Center</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function AsideNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6" color="success" variant="soft">
+                <Avatar.Fallback className="text-xs font-semibold">
+                  JG
+                </Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+          <AppLayout.AsideTrigger
+            closedTooltip="Show details"
+            openTooltip="Hide details"
+          />
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Content Scroll Mode
+
+By default, `AppLayout` uses page-level scrolling (`scrollMode="page"`). Set `scrollMode="content"` to keep the shell fixed to the viewport and move vertical scrolling into the main column instead.
+
+This is useful for app shells where the sidebar and navbar should stay pinned while only the content region scrolls.
+
+<ComponentPreview name="pro-app-layout-content-scroll">
+
+```tsx
+'use client'
+
+import { Bell, ChartColumn, House, Magnifier, Person } from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import { Avatar, Button } from '@vezham/react-v3'
+
+const sections = [
+  { id: 'overview', title: 'Overview' },
+  { id: 'activity', title: 'Activity' },
+  { id: 'timeline', title: 'Timeline' },
+  { id: 'metrics', title: 'Metrics' },
+  { id: 'notes', title: 'Notes' }
+]
+
+const navItems = [
+  { icon: House, label: 'Home' },
+  { icon: ChartColumn, label: 'Analytics' },
+  { icon: Bell, label: 'Alerts' }
+]
+
+export function ContentScroll() {
+  const jumpToSection = (sectionId: string) => {
+    const target = document.getElementById(sectionId)
+
+    if (!target) return
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    window.history.replaceState(null, '', `#${sectionId}`)
+  }
+
+  return (
+    <AppLayout
+      navbar={<DemoNavbar />}
+      scrollMode="content"
+      sidebar={<DemoSidebar />}
+      footer={
+        <div className="border-border bg-background flex items-center justify-between border-t px-4 py-2">
+          <span className="text-muted text-xs">Content scroll footer</span>
+          <span className="text-muted text-xs tabular-nums">
+            v3.0.0-alpha.33
+          </span>
+        </div>
+      }>
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 p-6">
+        <div className="border-border bg-surface sticky top-0 z-10 rounded-xl border p-3">
+          <p className="text-muted mb-2 text-xs font-medium tracking-wide uppercase">
+            Jump to
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {sections.map(section => (
+              <Button
+                key={section.id}
+                size="sm"
+                variant="tertiary"
+                onPress={() => jumpToSection(section.id)}>
+                {section.title}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {sections.map(section => (
+          <section key={section.id} className="scroll-mt-24" id={section.id}>
+            <h2 className="text-foreground text-xl font-semibold">
+              {section.title}
+            </h2>
+            <div className="mt-3 grid gap-3">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <article
+                  key={`${section.id}-${index}`}
+                  className="border-border rounded-xl border p-4">
+                  <p className="text-foreground text-sm font-medium">
+                    {section.title} item {index + 1}
+                  </p>
+                  <p className="text-muted mt-1 text-sm">
+                    In <code>scrollMode=&quot;content&quot;</code>, the main
+                    column scrolls while the sidebar and navbar remain fixed.
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </AppLayout>
+  )
+}
+
+function DemoSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={`mobile-${item.label}`}
+                  href="#"
+                  id={`mobile-${item.label}`}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DemoNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Button isIconOnly aria-label="Account" variant="ghost">
+            <Avatar className="size-6" color="success" variant="soft">
+              <Avatar.Fallback className="text-xs font-semibold">
+                <Person className="size-3.5" />
+              </Avatar.Fallback>
+            </Avatar>
+          </Button>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Complex
+
+A full-featured layout combining an agent-hub-style sidebar, compact spacing, multiple menu groups, chips, a user dropdown, and a navbar with breadcrumbs and actions.
+
+<ComponentPreview name="pro-app-layout-complex">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  Book,
+  BookOpen,
+  Calendar,
+  ChartColumn,
+  ChevronDown,
+  Code,
+  Envelope,
+  FileText,
+  Gear,
+  House,
+  Magnifier,
+  Pencil,
+  Person,
+  Persons,
+  Plus,
+  Rocket,
+  Sparkles,
+  SquareCheck,
+  Target
+} from '@gravity-ui/icons'
+import type { CSSProperties } from 'react'
+
+import { AppLayout, Navbar, Sidebar, useSidebar } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Dropdown,
+  Kbd,
+  Label,
+  Separator
+} from '@vezham/react-v3'
+
+export function Complex() {
+  return (
+    <AppLayout navbar={<ComplexNavbar />} sidebar={<ComplexSidebar />}>
+      <div className="p-6">
+        <h1 className="text-foreground text-xl font-semibold">Roadmap</h1>
+        <p className="text-muted mt-2 text-sm">
+          A complex layout combining an agent-hub-style sidebar with compact
+          spacing, multiple groups, chips, user dropdown, and a full navbar with
+          breadcrumbs and actions.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <ChartColumn className="size-4" />, label: 'Roadmap' }
+]
+
+const topNav = [
+  { icon: Sparkles, isButton: true, label: 'New Agent' },
+  { icon: Magnifier, isButton: true, label: 'Search' },
+  { icon: House, label: 'Home' },
+  { badge: '3', icon: Envelope, label: 'Inbox' },
+  { icon: Calendar, label: 'Meetings' }
+]
+
+const recentChats = [
+  { icon: Sparkles, label: 'Refactor auth module' },
+  { icon: Sparkles, label: 'Debug payment flow' },
+  { icon: Sparkles, label: 'Write API docs' },
+  { icon: Sparkles, label: 'Review PR #482' }
+]
+
+const teamspaceItems = [
+  { icon: House, label: 'Home' },
+  { icon: SquareCheck, label: 'My Tasks' },
+  { icon: Target, label: 'Projects' },
+  { icon: Rocket, label: 'Epics' },
+  { icon: ChartColumn, isCurrent: true, label: 'Roadmap' },
+  { icon: Code, label: 'Eng Board' }
+]
+
+const agentItems = [
+  { icon: Code, label: 'Coder' },
+  { icon: BookOpen, label: 'Reviewer' },
+  { icon: FileText, label: 'Writer' }
+]
+
+const ComplexSidebarInner = ({ idPrefix }: { idPrefix: string }) => {
+  const { collapsible, isMobile, isOpen } = useSidebar()
+  const isIconCollapsed = collapsible === 'icon' && !isMobile && !isOpen
+
+  return (
+    <>
+      <Sidebar.Header>
+        <div className="flex items-center justify-between px-1 py-2">
+          <div className="flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-emerald-600">
+              <span className="text-sm font-bold text-white">A</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              Acme Labs
+            </span>
+          </div>
+          <div className="flex items-center" data-sidebar="label">
+            <button className="text-foreground hover:bg-default flex items-center gap-0.5 rounded-md p-1">
+              <Pencil className="size-4" />
+            </button>
+          </div>
+        </div>
+      </Sidebar.Header>
+
+      <Sidebar.Content>
+        <Sidebar.Group>
+          <Sidebar.Menu aria-label="Main navigation">
+            {topNav.map(item => (
+              <Sidebar.MenuItem
+                key={item.label}
+                href={item.isButton ? undefined : '#'}
+                id={`${idPrefix}-nav-${item.label}`}
+                isCurrent={item.label === 'Home'}
+                textValue={item.label}>
+                <Sidebar.MenuIcon>
+                  <item.icon className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                {item.badge ? (
+                  <Sidebar.MenuChip>
+                    <Chip color="accent" size="sm" variant="soft">
+                      <Chip.Label>{item.badge}</Chip.Label>
+                    </Chip>
+                  </Sidebar.MenuChip>
+                ) : null}
+                {item.label === 'Search' ? (
+                  <Sidebar.MenuChip>
+                    <Kbd className="text-xs">
+                      <Kbd.Abbr keyValue="command" />
+                      <Kbd.Content>K</Kbd.Content>
+                    </Kbd>
+                  </Sidebar.MenuChip>
+                ) : null}
+              </Sidebar.MenuItem>
+            ))}
+          </Sidebar.Menu>
+        </Sidebar.Group>
+
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>Recent chats</Sidebar.GroupLabel>
+          <Sidebar.Menu aria-label="Recent chats">
+            {recentChats.map(item => (
+              <Sidebar.MenuItem
+                key={item.label}
+                href="#"
+                id={`${idPrefix}-chat-${item.label}`}
+                textValue={item.label}>
+                <Sidebar.MenuIcon>
+                  <item.icon className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            ))}
+          </Sidebar.Menu>
+        </Sidebar.Group>
+
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>
+            <span className="flex items-center gap-2">
+              Agents
+              <Chip size="sm" variant="soft">
+                Beta
+              </Chip>
+            </span>
+          </Sidebar.GroupLabel>
+          <Sidebar.Menu aria-label="Agents">
+            {agentItems.map(item => (
+              <Sidebar.MenuItem
+                key={item.label}
+                href="#"
+                id={`${idPrefix}-agent-${item.label}`}
+                textValue={item.label}>
+                <Sidebar.MenuIcon>
+                  <item.icon className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            ))}
+            <Sidebar.MenuItem
+              id={`${idPrefix}-add-agent`}
+              textValue="Add agent">
+              <Sidebar.MenuIcon>
+                <Plus className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel className="text-muted">
+                Add agent
+              </Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Group>
+
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>Teamspaces</Sidebar.GroupLabel>
+          <Sidebar.Menu
+            aria-label="Teamspaces"
+            defaultExpandedKeys={[`${idPrefix}-acme-hq`]}>
+            <Sidebar.MenuItem id={`${idPrefix}-acme-hq`} textValue="Acme HQ">
+              <Sidebar.MenuIcon>
+                <House className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>
+                Acme HQ
+                <Sidebar.MenuTrigger>
+                  <Sidebar.MenuIndicator />
+                </Sidebar.MenuTrigger>
+              </Sidebar.MenuLabel>
+              <Sidebar.Submenu>
+                {teamspaceItems.map(item => (
+                  <Sidebar.MenuItem
+                    key={item.label}
+                    href="#"
+                    id={`${idPrefix}-ts-${item.label}`}
+                    isCurrent={item.isCurrent}
+                    textValue={item.label}>
+                    <Sidebar.MenuIcon>
+                      <item.icon className="size-4" />
+                    </Sidebar.MenuIcon>
+                    <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                  </Sidebar.MenuItem>
+                ))}
+              </Sidebar.Submenu>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Group>
+
+        <Sidebar.Separator />
+
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>Apps</Sidebar.GroupLabel>
+          <Sidebar.Menu aria-label="Apps">
+            <Sidebar.MenuItem
+              href="#"
+              id={`${idPrefix}-app-docs`}
+              textValue="Docs">
+              <Sidebar.MenuIcon>
+                <Book className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Docs</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem
+              href="#"
+              id={`${idPrefix}-app-calendar`}
+              textValue="Calendar">
+              <Sidebar.MenuIcon>
+                <Calendar className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Calendar</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Group>
+      </Sidebar.Content>
+
+      <Sidebar.Separator />
+
+      <Sidebar.Footer className="gap-0">
+        {!isMobile && (
+          <div className="flex items-center justify-center gap-2 px-2 py-2">
+            {!isIconCollapsed && (
+              <Button
+                className="text-muted bg-surface shadow-surface flex h-9 flex-1 gap-2 text-sm"
+                size="sm"
+                variant="tertiary">
+                <Sparkles className="size-4" />
+                <span>New chat</span>
+                <Kbd className="text-xs">
+                  <Kbd.Abbr keyValue="command" />
+                  <Kbd.Content>N</Kbd.Content>
+                </Kbd>
+              </Button>
+            )}
+            <Button isIconOnly size="sm" variant="tertiary">
+              <Pencil className="text-muted size-4" />
+            </Button>
+          </div>
+        )}
+        <div className="px-2 pb-2">
+          <Dropdown>
+            <Dropdown.Trigger className="hover:bg-default flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left outline-none">
+              <Avatar size="sm">
+                <Avatar.Image
+                  alt="Junior Garcia"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg"
+                />
+                <Avatar.Fallback delayMs={600}>JG</Avatar.Fallback>
+              </Avatar>
+              <span
+                className="text-foreground text-sm font-medium"
+                data-sidebar="label">
+                Junior Garcia
+              </span>
+              <ChevronDown
+                className="text-muted ml-auto size-3"
+                data-sidebar="label"
+              />
+            </Dropdown.Trigger>
+            <Dropdown.Popover placement="top start">
+              <div className="px-3 pt-3 pb-1">
+                <div className="flex items-center gap-2">
+                  <Avatar size="sm">
+                    <Avatar.Image
+                      alt="Junior Garcia"
+                      src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg"
+                    />
+                    <Avatar.Fallback delayMs={600}>JG</Avatar.Fallback>
+                  </Avatar>
+                  <div className="flex flex-col gap-0">
+                    <p className="text-sm leading-5 font-medium">
+                      Junior Garcia
+                    </p>
+                    <p className="text-muted text-xs leading-none">
+                      junior@heroui.com
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  id={`${idPrefix}-dd-profile`}
+                  textValue="Profile">
+                  <Label>Profile</Label>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  id={`${idPrefix}-dd-settings`}
+                  textValue="Settings">
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <Label>Settings</Label>
+                    <Gear className="text-muted size-3.5" />
+                  </div>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  id={`${idPrefix}-dd-create-team`}
+                  textValue="Create Team">
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <Label>Create Team</Label>
+                    <Persons className="text-muted size-3.5" />
+                  </div>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  id={`${idPrefix}-dd-logout`}
+                  textValue="Logout"
+                  variant="danger">
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <Label>Log Out</Label>
+                    <ArrowRightFromSquare className="text-danger size-3.5" />
+                  </div>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </div>
+      </Sidebar.Footer>
+    </>
+  )
+}
+
+function ComplexSidebar() {
+  return (
+    <>
+      <Sidebar style={{ '--spacing': '0.2rem' } as CSSProperties}>
+        <ComplexSidebarInner idPrefix="complex" />
+        <Sidebar.Rail />
+      </Sidebar>
+      <Sidebar.Mobile>
+        <ComplexSidebarInner idPrefix="complex-m" />
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function ComplexNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Navbar.Separator />
+          <Dropdown>
+            <Button isIconOnly aria-label="Account menu" variant="ghost">
+              <Avatar className="size-6">
+                <Avatar.Image
+                  alt="Junior Garcia"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Account">
+                  <Person className="text-muted size-4" />
+                  <Label>Account</Label>
+                </Dropdown.Item>
+                <Dropdown.Item id="settings" textValue="Settings">
+                  <Gear className="text-muted size-4" />
+                  <Label>Settings</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Resizable Sidebar and Aside
+
+Opt into user-resizable panels with `sidebarResizable` / `asideResizable`. Both flags render the shell inside a [`Resizable`](https://heroui.pro/docs/react/components/resizable) group so users can drag the handles to adjust the layout. Sizes are persisted when `resizableAutoSaveId` is set.
+
+`sidebarResizable` requires `sidebarCollapsible="offcanvas"` or `"none"` — the icon-rail mode is not compatible with free-resize yet and falls back to the static layout.
+
+Resizable size props accept both percentages and CSS units. Numbers keep the existing percentage behavior, while strings let you set fixed constraints such as `"220px"` or `"18rem"`. Use `sidebarResizeBehavior="preserve-pixel-size"` or `asideResizeBehavior="preserve-pixel-size"` when that panel should keep its pixel width as the browser window changes size.
+
+```tsx
+<AppLayout
+  sidebarResizable
+  sidebarCollapsible="offcanvas"
+  sidebarDefaultSize="280px"
+  sidebarMinSize="220px"
+  sidebarMaxSize="420px"
+  sidebarResizeBehavior="preserve-pixel-size">
+  {children}
+</AppLayout>
+```
+
+<ComponentPreview name="pro-app-layout-resizable-sidebar">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  ListCheck,
+  Magnifier
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import { Avatar, Breadcrumbs, Button, Chip } from '@vezham/react-v3'
+
+const AUTO_SAVE_ID = 'app-layout-demo:resizable-sidebar'
+
+export function ResizableSidebar() {
+  return (
+    <AppLayout
+      sidebarResizable
+      navbar={<DemoNavbar />}
+      resizableAutoSaveId={AUTO_SAVE_ID}
+      sidebar={<DemoSidebar />}
+      sidebarCollapsible="offcanvas"
+      sidebarDefaultSize="280px"
+      sidebarMaxSize="420px"
+      sidebarMinSize="220px"
+      sidebarResizeBehavior="preserve-pixel-size">
+      <div className="flex flex-col gap-4 p-6">
+        <h1 className="text-foreground text-xl font-semibold">
+          Resizable sidebar
+        </h1>
+        <p className="text-muted max-w-prose text-sm">
+          Drag the vertical handle between the sidebar and the main area to
+          resize. Reload the page — the layout is persisted via{' '}
+          <code>resizableAutoSaveId</code>.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+const BreadcrumbItems = [
+  { icon: <House className="size-4" />, label: 'Dashboard' }
+]
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  { icon: ChartColumn, label: 'Analytics' },
+  { badge: 'New', icon: ListCheck, label: 'Tracker' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function DemoSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                  {item.badge ? (
+                    <Sidebar.MenuChip>
+                      <Chip color="success" size="sm" variant="soft">
+                        {item.badge}
+                      </Chip>
+                    </Sidebar.MenuChip>
+                  ) : null}
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <Sidebar.Menu aria-label="Footer actions">
+            <Sidebar.MenuItem href="#" id="help" textValue="Help">
+              <Sidebar.MenuIcon>
+                <CircleQuestion className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Help</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem href="#" id="logout" textValue="Log out">
+              <Sidebar.MenuIcon>
+                <ArrowRightFromSquare className="size-4" />
+              </Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>Log out</Sidebar.MenuLabel>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.Footer>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DemoNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          {BreadcrumbItems.map((item, index) => (
+            <Breadcrumbs.Item
+              key={`${item.label}-${index}`}
+              className="min-w-0 font-semibold">
+              <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </span>
+            </Breadcrumbs.Item>
+          ))}
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Button isIconOnly aria-label="Account" variant="ghost">
+            <Avatar className="size-6" color="success" variant="soft">
+              <Avatar.Fallback className="text-xs font-semibold">
+                JG
+              </Avatar.Fallback>
+            </Avatar>
+          </Button>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+<ComponentPreview name="pro-app-layout-resizable-aside">
+
+```tsx
+'use client'
+
+import {
+  Bell,
+  CircleQuestion,
+  Envelope,
+  House,
+  Magnifier
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+import { Avatar, Breadcrumbs, Button, Chip } from '@vezham/react-v3'
+
+const AUTO_SAVE_ID = 'app-layout-demo:resizable-aside'
+
+export function ResizableAside() {
+  return (
+    <AppLayout
+      asideResizable
+      sidebarResizable
+      aside={<DetailsAside />}
+      asideDefaultSize="320px"
+      asideMaxSize="420px"
+      asideMinSize="260px"
+      asideResizeBehavior="preserve-pixel-size"
+      asideToggleShortcut="mod+."
+      navbar={<DemoNavbar />}
+      resizableAutoSaveId={AUTO_SAVE_ID}
+      sidebar={<DemoSidebar />}
+      sidebarCollapsible="offcanvas"
+      sidebarDefaultSize="260px"
+      sidebarMaxSize="380px"
+      sidebarMinSize="220px"
+      sidebarResizeBehavior="preserve-pixel-size">
+      <div className="flex flex-col gap-4 p-6">
+        <h1 className="text-foreground text-xl font-semibold">
+          Resizable aside
+        </h1>
+        <p className="text-muted max-w-prose text-sm">
+          Both the sidebar and the aside are user-resizable. Toggle the aside
+          with the trigger in the top right or with <kbd>⌘</kbd> <kbd>.</kbd>.
+        </p>
+      </div>
+    </AppLayout>
+  )
+}
+
+function DetailsAside() {
+  return (
+    <div className="flex h-full flex-col">
+      <header className="px-4 pt-4 pb-2">
+        <h2 className="text-foreground text-sm font-semibold">Details</h2>
+      </header>
+      <div className="flex flex-col gap-3 px-4 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-muted">Status</span>
+          <Chip color="success" size="sm" variant="soft">
+            Open
+          </Chip>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-muted">Priority</span>
+          <span className="text-foreground">Normal</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DemoSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">I</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">Inbox</span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              <Sidebar.MenuItem isCurrent href="#" id="inbox" textValue="Inbox">
+                <Sidebar.MenuIcon>
+                  <Envelope className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>Inbox</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+              <Sidebar.MenuItem href="#" id="home" textValue="Home">
+                <Sidebar.MenuIcon>
+                  <House className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>Home</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">I</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">Inbox</span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              <Sidebar.MenuItem href="#" id="inbox-mobile" textValue="Inbox">
+                <Sidebar.MenuIcon>
+                  <Envelope className="size-4" />
+                </Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>Inbox</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DemoNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          <Breadcrumbs.Item className="min-w-0 font-semibold">
+            <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+              <Envelope className="size-4" />
+              <span className="truncate">Inbox</span>
+            </span>
+          </Breadcrumbs.Item>
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Button isIconOnly aria-label="Help" variant="ghost">
+            <CircleQuestion className="size-4" />
+          </Button>
+          <Button isIconOnly aria-label="Account" variant="ghost">
+            <Avatar className="size-6" color="success" variant="soft">
+              <Avatar.Fallback className="text-xs font-semibold">
+                JG
+              </Avatar.Fallback>
+            </Avatar>
+          </Button>
+          <AppLayout.AsideTrigger
+            closedTooltip="Show details"
+            openTooltip="Hide details"
+          />
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Persisted State
+
+When `AppLayout` is **uncontrolled** (no `sidebarOpen` / `asideOpen` props), it automatically writes `sidebar_state` and `aside_state` cookies on every toggle. To restore the state across page loads, read those cookies server-side and pass them as `defaultSidebarOpen` / `defaultAsideOpen`. Because the server renders with the correct state from the start, there is no flash and no hydration mismatch.
+
+### Next.js App Router
+
+```tsx
+// app/layout.tsx
+import { cookies } from 'next/headers'
+
+import { AppLayout, Navbar, Sidebar } from '@vezham/react-pro-v3'
+
+export default async function Layout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const store = await cookies()
+  const defaultSidebarOpen = store.get('sidebar_state')?.value !== 'false'
+  const defaultAsideOpen = store.get('aside_state')?.value !== 'false'
+
+  return (
+    <AppLayout
+      defaultSidebarOpen={defaultSidebarOpen}
+      defaultAsideOpen={defaultAsideOpen}
+      sidebar={<MySidebar />}
+      navbar={<MyNavbar />}>
+      {children}
+    </AppLayout>
+  )
+}
+```
+
+### Vite / CSR
+
+For client-only apps you can read the cookies with a library like `js-cookie`:
+
+```tsx
+import Cookies from 'js-cookie'
+
+const defaultSidebarOpen = Cookies.get('sidebar_state') !== 'false'
+const defaultAsideOpen = Cookies.get('aside_state') !== 'false'
+```
+
+> Using `Sidebar.Provider` on its own without `AppLayout`? It writes the same `sidebar_state` cookie automatically. See [Sidebar > Persisted State](https://heroui.pro/docs/react/components/sidebar#persisted-state).
+
+## Aside Keyboard Shortcut
+
+Pass `asideToggleShortcut` to bind a keyboard combo to `toggleAside()`. The shortcut parser is shared with `toggleShortcut` — same `mod+.`, `shift+?`, `ctrl+alt+k` syntax. Disabled by default to avoid swallowing `Cmd+.` on macOS.
+
+```tsx
+<AppLayout asideToggleShortcut="mod+." aside={<DetailsPanel />}>
+  {children}
+</AppLayout>
+```
+
+## Mobile Aside Sheet
+
+By default the aside is hidden below the `lg` breakpoint (`width < 64rem`). Set `asideMobile="sheet"` to render it in a full-height `Sheet` instead, toggled by the same `AppLayout.AsideTrigger`. Use the `<AppLayout.MobileAside>` slot to provide different mobile content (e.g. a condensed view):
+
+```tsx
+<AppLayout asideMobile="sheet" aside={<FullDetails />}>
+  <AppLayout.MobileAside>
+    <CondensedDetails />
+  </AppLayout.MobileAside>
+  {children}
+</AppLayout>
+```
+
+If no `MobileAside` slot is provided, the `aside` prop is used inside the sheet.
+
+## Toolbar and Footer
+
+Pass `toolbar` to render a second sticky row below the navbar, and `footer` for a pinned row at the bottom of the body column. Both are optional and tree-shake when unused.
+
+<ComponentPreview name="pro-app-layout-with-toolbar">
+
+```tsx
+'use client'
+
+import {
+  Bell,
+  ChartColumn,
+  CircleQuestion,
+  Gear,
+  House,
+  Magnifier
+} from '@gravity-ui/icons'
+
+import { AppLayout, Navbar, Segment, Sidebar } from '@vezham/react-pro-v3'
+import { Avatar, Breadcrumbs, Button } from '@vezham/react-v3'
+
+export function WithToolbar() {
+  return (
+    <AppLayout
+      navbar={<DemoNavbar />}
+      scrollMode="content"
+      sidebar={<DemoSidebar />}
+      footer={
+        <div className="border-border bg-background flex items-center justify-between border-t px-4 py-2">
+          <span className="text-muted text-xs">
+            © 2026 HeroUI — sticky footer slot.
+          </span>
+          <span className="text-muted text-xs tabular-nums">
+            v3.0.0-alpha.33
+          </span>
+        </div>
+      }
+      toolbar={
+        <div className="border-border bg-background flex items-center gap-2 border-b px-4 py-2">
+          <Segment aria-label="View mode" defaultSelectedKey="list">
+            <Segment.Item id="list">List</Segment.Item>
+            <Segment.Item id="board">Board</Segment.Item>
+            <Segment.Item id="calendar">Calendar</Segment.Item>
+          </Segment>
+        </div>
+      }>
+      <div className="flex flex-col gap-4 p-6">
+        <h1 className="text-foreground text-xl font-semibold">
+          Toolbar + Footer
+        </h1>
+        <p className="text-muted max-w-prose text-sm">
+          A second sticky row renders below the navbar via the{' '}
+          <code>toolbar</code> prop. The <code>footer</code> prop pins a row to
+          the bottom of the body column. This demo uses{' '}
+          <code>scrollMode="content"</code>, so scrolling happens inside the
+          main content region while the shell rows stay visible.
+        </p>
+        <div className="grid gap-3">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <div key={i} className="border-border rounded-md border p-4">
+              <p className="text-foreground font-medium">Item {i + 1}</p>
+              <p className="text-muted text-sm">
+                Scroll this content area to keep toolbar and footer pinned.
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AppLayout>
+  )
+}
+
+const navItems = [
+  { icon: House, label: 'Dashboard' },
+  { icon: ChartColumn, label: 'Analytics' },
+  { icon: Gear, label: 'Settings' }
+]
+
+function DemoSidebar() {
+  return (
+    <>
+      <Sidebar>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span
+              className="text-foreground text-sm font-semibold"
+              data-sidebar="label">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={item.label}
+                  isCurrent={item.label === 'Dashboard'}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar>
+      <Sidebar.Mobile>
+        <Sidebar.Header>
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="bg-accent flex size-6 shrink-0 items-center justify-center rounded-md">
+              <span className="text-sm font-bold text-white">H</span>
+            </div>
+            <span className="text-foreground text-sm font-semibold">
+              HeroUI
+            </span>
+          </div>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <Sidebar.Group>
+            <Sidebar.Menu aria-label="Navigation">
+              {navItems.map(item => (
+                <Sidebar.MenuItem
+                  key={item.label}
+                  href="#"
+                  id={`mobile-${item.label}`}
+                  textValue={item.label}>
+                  <Sidebar.MenuIcon>
+                    <item.icon className="size-4" />
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        </Sidebar.Content>
+      </Sidebar.Mobile>
+    </>
+  )
+}
+
+function DemoNavbar() {
+  return (
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        <Breadcrumbs className="min-w-0">
+          <Breadcrumbs.Item className="min-w-0 font-semibold">
+            <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+              <House className="size-4" />
+              <span className="truncate">Dashboard</span>
+            </span>
+          </Breadcrumbs.Item>
+        </Breadcrumbs>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Navbar.Item aria-label="Search">
+            <Magnifier className="size-4" />
+          </Navbar.Item>
+          <Navbar.Item aria-label="Notifications">
+            <Bell className="size-4" />
+          </Navbar.Item>
+          <Button isIconOnly aria-label="Help" variant="ghost">
+            <CircleQuestion className="size-4" />
+          </Button>
+          <Button isIconOnly aria-label="Account" variant="ghost">
+            <Avatar className="size-6" color="success" variant="soft">
+              <Avatar.Fallback className="text-xs font-semibold">
+                JG
+              </Avatar.Fallback>
+            </Avatar>
+          </Button>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Mobile Behavior
+
+On viewports below the `md` breakpoint (`width < 48rem`) the desktop sidebar is hidden. Use `AppLayout.MenuToggle` inside the `Navbar.Header` to open a `Sidebar.Mobile` sheet:
+
+```tsx
+<AppLayout
+  navbar={
+    <Navbar maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle />
+        <Sidebar.Trigger />
+        {/* … */}
+      </Navbar.Header>
+    </Navbar>
+  }
+  sidebar={
+    <>
+      <Sidebar>{/* desktop sidebar */}</Sidebar>
+      <Sidebar.Mobile>{/* mobile sheet sidebar */}</Sidebar.Mobile>
+    </>
+  }>
+  {children}
+</AppLayout>
+```
+
+- `AppLayout.MenuToggle` is **mobile-only** via CSS — it's hidden on desktop and visible below the `md` breakpoint.
+- `Sidebar.Trigger` is hidden on mobile inside an `AppLayout` so the two controls never appear together.
+
+## Client-Side Routing
+
+`AppLayout` forwards its `navigate` prop to both the internal `Sidebar.Provider` **and** any `Navbar` rendered inside it via the `navbar` prop. Pass your router's push function once and every `Sidebar.MenuItem`, `Navbar.Item`, and `Navbar.MenuItem` with an `href` will route through it:
+
+> **Already using a global `RouterProvider`?** If your app is wrapped in React Aria's [`RouterProvider`](https://react-spectrum.adobe.com/react-aria/routing.html), you can omit the `navigate` prop entirely — the layout's `Sidebar.MenuItem`, `Navbar.Item`, and `Navbar.MenuItem` all defer to it automatically. Pass `navigate` only when this layout needs a different router than the global one (an explicit `navigate` always wins). See the [Navbar](https://heroui.pro/docs/react/components/navbar#option-1--global-routerprovider-recommended) and [Sidebar](https://heroui.pro/docs/react/components/sidebar#option-1--global-routerprovider-recommended) routing guides.
+
+### Next.js (App Router)
+
+```tsx
+'use client'
+
+import { useRouter } from 'next/navigation'
+
+import { AppLayout } from '@vezham/react-pro-v3'
+
+export function DashboardLayout({ children }) {
+  const router = useRouter()
+
+  return (
+    <AppLayout navigate={router.push} navbar={/* … */} sidebar={/* … */}>
+      {children}
+    </AppLayout>
+  )
+}
+```
+
+> A `Navbar` rendered via the `navbar` prop inherits the layout's `navigate` automatically. If you set a `navigate` prop directly on the `Navbar`, that value wins — useful when the navbar needs a different router (e.g. an external shell app). See the [Navbar routing guide](https://heroui.pro/docs/react/components/navbar#client-side-routing) for non-layout usage.
+
+### React Router
+
+```tsx
+import { useNavigate } from 'react-router'
+
+import { AppLayout } from '@vezham/react-pro-v3'
+
+export function DashboardLayout({ children }) {
+  const navigate = useNavigate()
+
+  return (
+    <AppLayout navigate={navigate} navbar={/* … */} sidebar={/* … */}>
+      {children}
+    </AppLayout>
+  )
+}
+```
+
+### TanStack Router
+
+```tsx
+import { useRouter } from '@tanstack/react-router'
+
+import { AppLayout } from '@vezham/react-pro-v3'
+
+export function DashboardLayout({ children }) {
+  const router = useRouter()
+
+  return (
+    <AppLayout
+      navigate={href => router.navigate({ to: href })}
+      navbar={/* … */}
+      sidebar={/* … */}>
+      {children}
+    </AppLayout>
+  )
+}
+```
+
+## Controlled State
+
+Both the sidebar and aside panel can be controlled via props on `AppLayout`:
+
+```tsx
+const [sidebarOpen, setSidebarOpen] = useState(true)
+const [asideOpen, setAsideOpen] = useState(true)
+
+;<AppLayout
+  sidebarOpen={sidebarOpen}
+  onSidebarOpenChange={setSidebarOpen}
+  asideOpen={asideOpen}
+  onAsideOpenChange={setAsideOpen}
+  aside={<DetailsPanel />}
+  navbar={<AppNavbar />}
+  sidebar={<AppSidebar />}>
+  {children}
+</AppLayout>
+```
+
+Inside children, you can reach for [`useSidebar`](https://heroui.pro/docs/react/components/sidebar#usesidebar) to read or toggle the sidebar state, and [`useAppLayout`](#useapplayout) to read or toggle the aside state.
+
+## Navbar Adaptation
+
+When a `Navbar` is rendered inside `AppLayout` (via the `navbar` prop), it automatically detects the parent layout and:
+
+- Drops its own sticky/floating/static positioning (the `AppLayout` header element owns positioning).
+- Clears border, margin, radius, and shadow overrides from `position="floating"`.
+- Sets `data-in-app-layout="true"` so you can style it further if needed.
+
+This means you can reuse the same `Navbar` composition standalone or inside an `AppLayout` without changing its markup.
+
+## CSS Classes
+
+### Base Classes
+
+- `.app-layout__body` — The right column containing the navbar header and main content. Flex column, `min-w-0 flex-1`.
+- `.app-layout__header` — The sticky header row that wraps the `navbar` prop. `sticky top-0 z-40 shrink-0`.
+- `.app-layout__main` — Primary content area. `min-w-0 flex-1`.
+
+### Aside Classes
+
+- `.app-layout__aside` — The right-side aside panel. Sticky, full viewport height, with a left border. Hidden below the `lg` breakpoint (`width < 64rem`).
+- `.app-layout__aside[data-state="closed"]` — Collapsed state. Width transitions to `0` and the inner content slides off via `translateX(100%)`.
+- `.app-layout__aside-trigger` — The aside toggle button. Hidden below `lg` when the aside is removed. Stays visible when `asideMobile="sheet"` so it can open the sheet.
+
+### Toggle Classes
+
+- `.app-layout__menu-toggle` — The mobile-only sidebar menu toggle. Hidden on desktop, `display: inline-flex` below the `md` breakpoint (`width < 48rem`).
+
+### CSS Variables
+
+- `--app-layout-aside-width` — Width of the aside panel when open (default: `320px`).
+- `--app-layout-aside-duration` — Aside open/close transition duration (default: `200ms`).
+
+The sidebar width (`--sidebar-width`), collapsed width (`--sidebar-width-collapsed`), and navbar height (`--navbar-height`) are inherited from the [Sidebar](https://heroui.pro/docs/react/components/sidebar#css-variables) and [Navbar](https://heroui.pro/docs/react/components/navbar#css-variables) components.
+
+### Interactive States
+
+- **Mobile (`width < 48rem`, Tailwind `max-md`)**: The desktop `Sidebar` and `Sidebar.Trigger` inside `[data-app-layout]` are hidden, and `AppLayout.MenuToggle` becomes visible. Use `Sidebar.Mobile` for the mobile sheet. At exactly `48rem` the desktop sidebar is shown, matching `md:`.
+- **Below `lg` (`width < 64rem`)**: The aside column is hidden. The aside trigger is hidden too, unless `asideMobile="sheet"`, in which case the trigger stays available and opens the aside sheet. At exactly `64rem` the desktop aside is shown, matching `lg:`.
+- **Aside closed**: `[data-state="closed"]` on `.app-layout__aside` collapses width to `0` and slides the inner content off-screen.
+- **Reduced motion**: `@media (prefers-reduced-motion: reduce)` — disables aside width/transform transitions.
+
+## API Reference
+
+### AppLayout
+
+The root scaffold. Wraps a `Sidebar.Provider` and renders the sidebar, header (with the `navbar`), main content, and optional aside.
+
+| Prop                    | Type                                                | Default                    | Description                                                                                                                                                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sidebar`               | `ReactNode`                                         | —                          | Sidebar content rendered in the full-height side panel. Typically a `<Sidebar>` element alongside a `<Sidebar.Mobile>`.                                                                                                                                                                          |
+| `navbar`                | `ReactNode`                                         | —                          | Navbar content rendered inside the sticky header row of the body column.                                                                                                                                                                                                                         |
+| `aside`                 | `ReactNode`                                         | —                          | Content rendered in the optional right-side aside panel (full viewport height, hidden on mobile).                                                                                                                                                                                                |
+| `children`              | `ReactNode`                                         | —                          | Main content area. Rendered inside a `<main>` element.                                                                                                                                                                                                                                           |
+| `sidebarOpen`           | `boolean`                                           | —                          | Controlled sidebar open state.                                                                                                                                                                                                                                                                   |
+| `defaultSidebarOpen`    | `boolean`                                           | `true`                     | Initial sidebar open state (uncontrolled).                                                                                                                                                                                                                                                       |
+| `onSidebarOpenChange`   | `(open: boolean) => void`                           | —                          | Callback when the sidebar open state changes.                                                                                                                                                                                                                                                    |
+| `sidebarSide`           | `"left" \| "right"`                                 | `"left"`                   | Which side the sidebar is on. Forwarded to `Sidebar.Provider`.                                                                                                                                                                                                                                   |
+| `sidebarVariant`        | `"sidebar" \| "floating" \| "inset"`                | `"sidebar"`                | Sidebar visual variant. Forwarded to `Sidebar.Provider`.                                                                                                                                                                                                                                         |
+| `sidebarCollapsible`    | `"icon" \| "offcanvas" \| "none"`                   | `"icon"`                   | Sidebar collapse behavior. Forwarded to `Sidebar.Provider`.                                                                                                                                                                                                                                      |
+| `asideOpen`             | `boolean`                                           | —                          | Controlled aside open state.                                                                                                                                                                                                                                                                     |
+| `defaultAsideOpen`      | `boolean`                                           | `true`                     | Initial aside open state (uncontrolled).                                                                                                                                                                                                                                                         |
+| `onAsideOpenChange`     | `(open: boolean) => void`                           | —                          | Callback when the aside open state changes.                                                                                                                                                                                                                                                      |
+| `navigate`              | `(href: string) => void`                            | —                          | Programmatic navigation function for client-side routing. Forwarded to the internal `Sidebar.Provider` **and** inherited by any `Navbar` rendered inside the layout (unless the `Navbar` sets its own `navigate`). If omitted, links defer to a global React Aria `RouterProvider` when present. |
+| `reduceMotion`          | `boolean`                                           | `false`                    | Disables nested `Sidebar.Menu` expand/collapse animations. The user's reduced-motion preference is still respected.                                                                                                                                                                              |
+| `toggleShortcut`        | `string \| false \| null`                           | `"mod+b"`                  | Keyboard shortcut that toggles the sidebar. Forwarded to the internal `Sidebar.Provider`. See [Sidebar › Keyboard Shortcut](https://heroui.pro/docs/react/components/sidebar#keyboard-shortcut) for the combo-string syntax. Pass `false` or `null` to disable.                                  |
+| `asideToggleShortcut`   | `string \| false \| null`                           | —                          | Keyboard shortcut that toggles the aside. Disabled by default. Same combo syntax as `toggleShortcut`.                                                                                                                                                                                            |
+| `asideMobile`           | `"hidden" \| "sheet"`                               | `"hidden"`                 | How the aside behaves below the `lg` breakpoint (`width < 64rem`). `"sheet"` renders the aside in a `Sheet` toggled by the same `AsideTrigger`.                                                                                                                                                  |
+| `sidebarResizable`      | `boolean`                                           | `false`                    | Make the sidebar user-resizable. Requires `sidebarCollapsible="offcanvas"` or `"none"`.                                                                                                                                                                                                          |
+| `sidebarDefaultSize`    | `number \| string`                                  | `18`                       | Initial sidebar size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                          |
+| `sidebarMinSize`        | `number \| string`                                  | `12`                       | Minimum sidebar size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                          |
+| `sidebarMaxSize`        | `number \| string`                                  | `30`                       | Maximum sidebar size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                          |
+| `sidebarResizeBehavior` | `"preserve-relative-size" \| "preserve-pixel-size"` | `"preserve-relative-size"` | Whether the sidebar keeps its relative percentage or pixel size when the layout width changes.                                                                                                                                                                                                   |
+| `asideResizable`        | `boolean`                                           | `false`                    | Make the aside user-resizable.                                                                                                                                                                                                                                                                   |
+| `asideDefaultSize`      | `number \| string`                                  | `20`                       | Initial aside size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                            |
+| `asideMinSize`          | `number \| string`                                  | `15`                       | Minimum aside size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                            |
+| `asideMaxSize`          | `number \| string`                                  | `40`                       | Maximum aside size when resizable. Numbers are percentages; strings accept CSS units.                                                                                                                                                                                                            |
+| `asideResizeBehavior`   | `"preserve-relative-size" \| "preserve-pixel-size"` | `"preserve-relative-size"` | Whether the aside keeps its relative percentage or pixel size when the layout width changes.                                                                                                                                                                                                     |
+| `resizableAutoSaveId`   | `string`                                            | —                          | `autoSaveId` forwarded to the internal `Resizable` group (enables persisted panel sizes).                                                                                                                                                                                                        |
+| `scrollMode`            | `"page" \| "content"`                               | `"page"`                   | Controls which element owns vertical scrolling. `"page"` keeps window/body scrolling; `"content"` makes the main column scroll while the shell stays fixed to the viewport.                                                                                                                      |
+| `toolbar`               | `ReactNode`                                         | —                          | Optional second sticky row rendered below the navbar.                                                                                                                                                                                                                                            |
+| `footer`                | `ReactNode`                                         | —                          | Optional row pinned to the bottom of the body column.                                                                                                                                                                                                                                            |
+
+Also supports all `<div>` props — they are forwarded to the underlying `Sidebar.Provider`.
+
+### AppLayout.MenuToggle
+
+An icon button that opens the mobile sidebar sheet (`Sidebar.Mobile`). **Mobile-only** — hidden at the `md` breakpoint and above (`width >= 48rem`). Place it inside your `Navbar.Header` alongside the `Sidebar.Trigger`.
+
+| Prop           | Type                    | Default    | Description                                                         |
+| -------------- | ----------------------- | ---------- | ------------------------------------------------------------------- |
+| `children`     | `ReactNode`             | `<Bars />` | Custom icon.                                                        |
+| `tooltip`      | `ReactNode`             | —          | Tooltip content. When omitted, no tooltip is rendered.              |
+| `tooltipProps` | `AppLayoutTooltipProps` | —          | Props forwarded to the internal `Tooltip` (delay, placement, etc.). |
+
+Also supports all [HeroUI Button](https://heroui.com/docs/react/components/button) props.
+
+### AppLayout.AsideTrigger
+
+An icon button that toggles the aside panel open and closed. Hidden below the desktop breakpoint. Place it inside the navbar (typically at the end of `Navbar.Content`).
+
+| Prop            | Type                    | Default                      | Description                                                                        |
+| --------------- | ----------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
+| `children`      | `ReactNode`             | `<LayoutSideContentRight />` | Custom icon.                                                                       |
+| `closedTooltip` | `ReactNode`             | —                            | Tooltip content when the aside is closed.                                          |
+| `openTooltip`   | `ReactNode`             | —                            | Tooltip content when the aside is open.                                            |
+| `tooltipProps`  | `AppLayoutTooltipProps` | —                            | Props forwarded to the internal `Tooltip`. Applied to both open and closed states. |
+
+Also supports all [HeroUI Button](https://heroui.com/docs/react/components/button) props.
+
+The rendered button exposes `aria-expanded` and `data-state="open" | "closed"` so you can style it contextually.
+
+### AppLayout.MobileAside
+
+A marker component that provides alternative content for the mobile aside sheet (used when `asideMobile="sheet"`). Place it as a direct child of `AppLayout`.
+
+| Prop       | Type        | Description                                      |
+| ---------- | ----------- | ------------------------------------------------ |
+| `children` | `ReactNode` | Mobile-only aside content. Replaces the `aside`. |
+
+### AppLayoutTooltipProps
+
+Shared tooltip customization for `AppLayout.MenuToggle` and `AppLayout.AsideTrigger`.
+
+| Prop         | Type                                     | Default    | Description                                          |
+| ------------ | ---------------------------------------- | ---------- | ---------------------------------------------------- |
+| `placement`  | `"top" \| "bottom" \| "left" \| "right"` | `"bottom"` | Tooltip placement relative to the trigger.           |
+| `delay`      | `number`                                 | —          | Delay in ms before showing the tooltip.              |
+| `closeDelay` | `number`                                 | —          | Delay in ms before hiding the tooltip.               |
+| `offset`     | `number`                                 | —          | Offset from the trigger element in px.               |
+| `showArrow`  | `boolean`                                | `false`    | Whether to show the tooltip arrow.                   |
+| `isDisabled` | `boolean`                                | `false`    | Whether the tooltip is disabled.                     |
+| `className`  | `string`                                 | —          | Class name applied to the `Tooltip.Content` element. |
+
+### useAppLayout
+
+A hook for reading and mutating the aside state from inside `AppLayout`'s children.
+
+```tsx
+const appLayout = useAppLayout()
+
+if (appLayout) {
+  const { isAsideOpen, setAsideOpen, toggleAside } = appLayout
+}
+```
+
+| Property       | Type                      | Description                                |
+| -------------- | ------------------------- | ------------------------------------------ |
+| `isAsideOpen`  | `boolean`                 | Whether the aside panel is currently open. |
+| `setAsideOpen` | `(open: boolean) => void` | Set the aside open state.                  |
+| `toggleAside`  | `() => void`              | Toggle the aside open/closed.              |
+
+The hook returns `null` when called outside of an `AppLayout`. For sidebar state, use [`useSidebar`](https://heroui.pro/docs/react/components/sidebar#usesidebar) — the `AppLayout` sets up the same provider internally.

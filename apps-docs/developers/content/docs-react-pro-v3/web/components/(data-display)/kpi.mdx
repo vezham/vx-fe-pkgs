@@ -1,0 +1,943 @@
+---
+title: 'KPI'
+description: 'A key performance indicator card displaying a metric value with trend chip, sparkline chart, and contextual details.'
+sourceUrl: https://heroui.pro/docs/react/components/kpi
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-kpi-default">
+
+```tsx
+'use client'
+
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+const revenueCards = [
+  {
+    change: '+33%',
+    title: 'Total Revenue',
+    trend: 'up' as const,
+    value: 228451
+  },
+  {
+    change: '+13.0%',
+    title: 'Total Expenses',
+    trend: 'down' as const,
+    value: 71887
+  },
+  {
+    change: '0.0%',
+    title: 'Total Profit',
+    trend: 'neutral' as const,
+    value: 156540
+  },
+  { change: '+1.0%', title: 'New Customers', trend: 'up' as const, value: 1234 }
+]
+
+export function Default() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2 lg:grid-cols-4">
+      {revenueCards.map(card => (
+        <KPI key={card.title}>
+          <KPI.Header>
+            <KPI.Title>{card.title}</KPI.Title>
+          </KPI.Header>
+          <KPI.Content>
+            <KPI.Value
+              currency={card.title.includes('Customer') ? undefined : 'USD'}
+              maximumFractionDigits={0}
+              style={card.title.includes('Customer') ? 'decimal' : 'currency'}
+              value={card.value}
+            />
+            <KPI.Trend trend={card.trend}>{card.change}</KPI.Trend>
+          </KPI.Content>
+        </KPI>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the KPI component and access all parts using dot notation.
+
+<Callout type="info">
+  `KPI` is a subpath-only import (`@vezham/react-pro-v3/kpi`) because it renders
+  an inline chart and depends on the optional `recharts` peer. It is not
+  exported from the package root, so SSR apps that don't use it never need
+  `recharts` installed.
+</Callout>
+
+```tsx
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+;<KPI>
+  <KPI.Header />
+  <KPI.Icon />
+  <KPI.Title />
+  <KPI.Value />
+  <KPI.Trend />
+  <KPI.Progress />
+  <KPI.Chart />
+  <KPI.Content />
+  <KPI.Separator />
+  <KPI.Actions />
+  <KPI.Footer />
+</KPI>
+```
+
+## With Actions
+
+<ComponentPreview name="pro-kpi-with-actions">
+
+```tsx
+'use client'
+
+import {
+  ShoppingCart,
+  SquareChartBar,
+  SquareDashedCircle
+} from '@gravity-ui/icons'
+
+import { NumberValue } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function WithActions() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2 lg:grid-cols-3">
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <ShoppingCart />
+          </KPI.Icon>
+          <KPI.Title>Conversion Rate</KPI.Title>
+        </KPI.Header>
+        <KPI.Actions />
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={1} style="percent" value={0.038} />
+          <KPI.Trend trend="up">+1.7%</KPI.Trend>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="danger">
+            <SquareChartBar />
+          </KPI.Icon>
+          <KPI.Title>Bounce Rate</KPI.Title>
+        </KPI.Header>
+        <KPI.Actions />
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={1} style="percent" value={0.423} />
+          <KPI.Trend trend="down">-5.9%</KPI.Trend>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="warning">
+            <SquareDashedCircle />
+          </KPI.Icon>
+          <KPI.Title>Load Time</KPI.Title>
+        </KPI.Header>
+        <KPI.Actions />
+        <KPI.Content>
+          <KPI.Value value={856}>
+            <NumberValue.Suffix>ms</NumberValue.Suffix>
+          </KPI.Value>
+          <KPI.Progress status="warning" value={56} />
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Chart Bottom
+
+<ComponentPreview name="pro-kpi-with-chart-bottom">
+
+```tsx
+'use client'
+
+import { Persons } from '@gravity-ui/icons'
+
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+const sparklineUp = [
+  { value: 30 },
+  { value: 35 },
+  { value: 28 },
+  { value: 42 },
+  { value: 38 },
+  { value: 45 },
+  { value: 50 },
+  { value: 48 },
+  { value: 55 },
+  { value: 60 },
+  { value: 58 },
+  { value: 65 }
+]
+
+const sparklineDown = [
+  { value: 65 },
+  { value: 60 },
+  { value: 62 },
+  { value: 55 },
+  { value: 58 },
+  { value: 52 },
+  { value: 50 },
+  { value: 48 },
+  { value: 45 },
+  { value: 42 },
+  { value: 44 },
+  { value: 40 }
+]
+
+export function WithChartBottom() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2 lg:grid-cols-3">
+      <KPI>
+        <KPI.Header>
+          <KPI.Title>Total Revenue</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value
+            currency="USD"
+            maximumFractionDigits={0}
+            style="currency"
+            value={228451}
+          />
+          <KPI.Trend trend="up">+3.3%</KPI.Trend>
+        </KPI.Content>
+        <KPI.Chart color="var(--color-success)" data={sparklineUp} />
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Title>Baer Limited (BAL)</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value currency="USD" style="currency" value={49.33} />
+          <KPI.Trend trend="down">-1.9%</KPI.Trend>
+        </KPI.Content>
+        <KPI.Chart color="var(--color-danger)" data={sparklineDown} />
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <Persons />
+          </KPI.Icon>
+          <KPI.Title>Active Users</KPI.Title>
+        </KPI.Header>
+        <KPI.Actions />
+        <KPI.Content>
+          <KPI.Value
+            maximumFractionDigits={0}
+            notation="compact"
+            value={97859}
+          />
+          <KPI.Trend trend="neutral">10.9%</KPI.Trend>
+        </KPI.Content>
+        <KPI.Chart color="var(--color-accent)" data={sparklineUp} height={60} />
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Chart Inline
+
+<ComponentPreview name="pro-kpi-with-chart-inline">
+
+```tsx
+'use client'
+
+import { SquareChartBar, Target } from '@gravity-ui/icons'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+const sparklineUp = [
+  { value: 30 },
+  { value: 35 },
+  { value: 28 },
+  { value: 42 },
+  { value: 38 },
+  { value: 45 },
+  { value: 50 },
+  { value: 48 },
+  { value: 55 },
+  { value: 60 },
+  { value: 58 },
+  { value: 65 }
+]
+
+const sparklineDown = [
+  { value: 65 },
+  { value: 60 },
+  { value: 62 },
+  { value: 55 },
+  { value: 58 },
+  { value: 52 },
+  { value: 50 },
+  { value: 48 },
+  { value: 45 },
+  { value: 42 },
+  { value: 44 },
+  { value: 40 }
+]
+
+export function WithChartInline() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2">
+      <KPI>
+        <KPI.Header>
+          <Target className="text-muted size-4" />
+          <KPI.Title>Total Clicks</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              maximumFractionDigits={0}
+              value={2441}
+            />
+            <div className="flex items-center gap-1.5">
+              <TrendChip trend="up" variant="tertiary">
+                3.5%
+                <TrendChip.Suffix>last 30d</TrendChip.Suffix>
+              </TrendChip>
+            </div>
+          </div>
+          <KPI.Chart
+            color="var(--color-accent)"
+            data={sparklineUp}
+            height={70}
+            strokeWidth={1.5}
+          />
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <SquareChartBar className="text-muted size-4" />
+          <KPI.Title>Bounce Rate</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              maximumFractionDigits={1}
+              style="percent"
+              value={0.423}
+            />
+            <div className="flex items-center gap-1.5">
+              <TrendChip trend="down" variant="tertiary">
+                5.9%
+                <TrendChip.Suffix>vs last 7d</TrendChip.Suffix>
+              </TrendChip>
+            </div>
+          </div>
+          <KPI.Chart
+            color="var(--color-danger)"
+            data={sparklineDown}
+            height={70}
+            strokeWidth={1.5}
+          />
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Chart Tooltip
+
+Pass an `<AreaChart.Tooltip>` element to `KPI.Chart` via the `tooltip` prop to reveal the datapoint behind the line on hover.
+
+<ComponentPreview name="pro-kpi-with-chart-tooltip">
+
+```tsx
+'use client'
+
+import { CircleDollar } from '@gravity-ui/icons'
+
+import { ChartTooltip, TrendChip } from '@vezham/react-pro-v3'
+import { AreaChart } from '@vezham/react-pro-v3/area-chart'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+const revenue = [
+  { month: 'January', value: 12400 },
+  { month: 'February', value: 13200 },
+  { month: 'March', value: 12800 },
+  { month: 'April', value: 15100 },
+  { month: 'May', value: 14600 },
+  { month: 'June', value: 16800 },
+  { month: 'July', value: 17400 },
+  { month: 'August', value: 16900 },
+  { month: 'September', value: 18700 },
+  { month: 'October', value: 19500 },
+  { month: 'November', value: 19100 },
+  { month: 'December', value: 21300 }
+]
+
+export function WithChartTooltip() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2">
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <CircleDollar />
+          </KPI.Icon>
+          <KPI.Title>Monthly Revenue</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              currency="USD"
+              maximumFractionDigits={0}
+              style="currency"
+              value={21300}
+            />
+            <div className="flex items-center gap-1.5">
+              <TrendChip trend="up" variant="tertiary">
+                11.5%
+                <TrendChip.Suffix>last 30d</TrendChip.Suffix>
+              </TrendChip>
+            </div>
+          </div>
+          <KPI.Chart
+            color="var(--color-success)"
+            data={revenue}
+            height={70}
+            strokeWidth={1.5}
+            tooltip={
+              <AreaChart.Tooltip
+                allowEscapeViewBox={{ x: true, y: true }}
+                offset={0}
+                content={({ active, payload }) => {
+                  const point = payload?.[0]
+
+                  if (!active || !point) return null
+
+                  return (
+                    // Anchor is at the hovered point; shift up + center to sit above it.
+                    <div
+                      style={{
+                        transform: 'translate(-50%, calc(-100% - 10px))'
+                      }}>
+                      <ChartTooltip>
+                        <ChartTooltip.Header>
+                          {point.payload?.month}
+                        </ChartTooltip.Header>
+                        <ChartTooltip.Item>
+                          <ChartTooltip.Indicator color={point.stroke} />
+                          <ChartTooltip.Label>Revenue</ChartTooltip.Label>
+                          <ChartTooltip.Value>
+                            ${Number(point.value).toLocaleString()}
+                          </ChartTooltip.Value>
+                        </ChartTooltip.Item>
+                      </ChartTooltip>
+                    </div>
+                  )
+                }}
+              />
+            }
+          />
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Footer
+
+<ComponentPreview name="pro-kpi-with-footer">
+
+```tsx
+'use client'
+
+import { CircleDollar, Persons } from '@gravity-ui/icons'
+
+import { KPI } from '@vezham/react-pro-v3/kpi'
+import { Link } from '@vezham/react-v3'
+
+export function WithFooter() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2">
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <Persons />
+          </KPI.Icon>
+          <KPI.Title>Total Subscribers</KPI.Title>
+          <KPI.Trend className="ml-auto" trend="up">
+            +122
+          </KPI.Trend>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={0} value={71897} />
+        </KPI.Content>
+        <KPI.Footer>
+          <Link className="text-sm" href="#">
+            View all
+          </Link>
+        </KPI.Footer>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="warning">
+            <CircleDollar />
+          </KPI.Icon>
+          <KPI.Title>Monthly Revenue</KPI.Title>
+          <KPI.Trend className="ml-auto" trend="up">
+            +20.1%
+          </KPI.Trend>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value
+            currency="USD"
+            maximumFractionDigits={0}
+            style="currency"
+            value={45231}
+          />
+        </KPI.Content>
+        <KPI.Footer>
+          <Link className="text-sm" href="#">
+            View report
+          </Link>
+        </KPI.Footer>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Icon
+
+<ComponentPreview name="pro-kpi-with-icon">
+
+```tsx
+'use client'
+
+import { CircleDollar, PersonMagnifier, TagDollar } from '@gravity-ui/icons'
+
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function WithIcon() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2 lg:grid-cols-3">
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <PersonMagnifier />
+          </KPI.Icon>
+          <KPI.Title>Total Users</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={0} value={5400} />
+          <KPI.Trend trend="up">+33%</KPI.Trend>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="warning">
+            <CircleDollar />
+          </KPI.Icon>
+          <KPI.Title>Total Sales</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value
+            currency="USD"
+            maximumFractionDigits={0}
+            style="currency"
+            value={15400}
+          />
+          <KPI.Trend trend="neutral">0.0%</KPI.Trend>
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="danger">
+            <TagDollar />
+          </KPI.Icon>
+          <KPI.Title>Net Profit</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value
+            currency="USD"
+            maximumFractionDigits={0}
+            style="currency"
+            value={10400}
+          />
+          <KPI.Trend trend="down">-3.3%</KPI.Trend>
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Progress
+
+<ComponentPreview name="pro-kpi-with-progress">
+
+```tsx
+'use client'
+
+import { SquareChartBar, SquareDashedCircle } from '@gravity-ui/icons'
+
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+export function WithProgress() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2 lg:grid-cols-3">
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="success">
+            <SquareChartBar />
+          </KPI.Icon>
+          <KPI.Title>Server Load</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={0} style="percent" value={0.38} />
+          <KPI.Progress status="success" value={38} />
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="danger">
+            <SquareChartBar />
+          </KPI.Icon>
+          <KPI.Title>Server Load</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={0} style="percent" value={0.98} />
+          <KPI.Progress status="danger" value={98} />
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <KPI.Icon status="warning">
+            <SquareDashedCircle />
+          </KPI.Icon>
+          <KPI.Title>Average Memory Used</KPI.Title>
+        </KPI.Header>
+        <KPI.Content>
+          <KPI.Value maximumFractionDigits={0} style="percent" value={0.64} />
+          <KPI.Progress status="warning" value={64} />
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Handling Gaps
+
+A metric with no observation for a period is missing, not zero — a day with no tickets has no median response time. Use `null` for those points rather than filling with `0`, which would drop the line to the plot floor and anchor the Y domain at zero, compressing the band the real values live in.
+
+`null` renders as a break in the line by default. Set `connectNulls` to bridge the gap instead.
+
+```tsx
+<KPI.Chart
+  connectNulls
+  data={[{ value: 24 }, { value: null }, { value: 18 }]}
+/>
+```
+
+<ComponentPreview name="pro-kpi-with-chart-connect-nulls">
+
+```tsx
+'use client'
+
+import { CircleCheck, Clock } from '@gravity-ui/icons'
+
+import { TrendChip } from '@vezham/react-pro-v3'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+
+// Median durations, in minutes. The support desk is closed on weekends, so those days have no
+// median at all — `null`, not zero. `connectNulls` bridges the gap instead of breaking the line.
+const timeToFirstResponse = [
+  { day: 'Mon', value: 24 },
+  { day: 'Tue', value: 21 },
+  { day: 'Wed', value: 26 },
+  { day: 'Thu', value: 19 },
+  { day: 'Fri', value: 22 },
+  { day: 'Sat', value: null },
+  { day: 'Sun', value: null },
+  { day: 'Mon', value: 18 },
+  { day: 'Tue', value: 20 },
+  { day: 'Wed', value: 17 },
+  { day: 'Thu', value: 15 },
+  { day: 'Fri', value: 16 }
+]
+
+const timeToResolve = [
+  { day: 'Mon', value: 186 },
+  { day: 'Tue', value: 174 },
+  { day: 'Wed', value: 192 },
+  { day: 'Thu', value: 168 },
+  { day: 'Fri', value: 177 },
+  { day: 'Sat', value: null },
+  { day: 'Sun', value: null },
+  { day: 'Mon', value: 158 },
+  { day: 'Tue', value: 163 },
+  { day: 'Wed', value: 149 },
+  { day: 'Thu', value: 152 },
+  { day: 'Fri', value: 141 }
+]
+
+export function WithChartConnectNulls() {
+  return (
+    <div className="grid w-[900px] grid-cols-1 gap-3 rounded-2xl p-6 sm:grid-cols-2">
+      <KPI>
+        <KPI.Header>
+          <Clock className="text-muted size-4" />
+          <KPI.Title>Time to First Response</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              style="unit"
+              unit="minute"
+              value={16}
+            />
+            <div className="flex items-center gap-1.5">
+              <TrendChip trend="down" variant="tertiary">
+                27%
+                <TrendChip.Suffix>vs last week</TrendChip.Suffix>
+              </TrendChip>
+            </div>
+          </div>
+          <KPI.Chart
+            connectNulls
+            color="var(--color-success)"
+            data={timeToFirstResponse}
+            height={70}
+            strokeWidth={1.5}
+          />
+        </KPI.Content>
+      </KPI>
+
+      <KPI>
+        <KPI.Header>
+          <CircleCheck className="text-muted size-4" />
+          <KPI.Title>Time to Resolve</KPI.Title>
+        </KPI.Header>
+        <KPI.Content className="grid-cols-[1fr_1fr] items-end">
+          <div className="flex flex-col gap-1">
+            <KPI.Value
+              className="text-3xl"
+              style="unit"
+              unit="minute"
+              value={141}
+            />
+            <div className="flex items-center gap-1.5">
+              <TrendChip trend="down" variant="tertiary">
+                20%
+                <TrendChip.Suffix>vs last week</TrendChip.Suffix>
+              </TrendChip>
+            </div>
+          </div>
+          <KPI.Chart
+            connectNulls
+            color="var(--color-accent)"
+            data={timeToResolve}
+            height={70}
+            strokeWidth={1.5}
+          />
+        </KPI.Content>
+      </KPI>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.kpi` - Base card shell with flex column layout and padding
+
+### Element Classes
+
+- `.kpi__header` - Top row for icon, title, and actions
+- `.kpi__content` - Grid layout container for value and trend side by side
+- `.kpi__icon` - Status-tinted icon container
+- `.kpi__actions` - Absolutely positioned action button area
+- `.kpi__title` - Metric label text (`dt` element)
+- `.kpi__value` - Large formatted number (`dd` element)
+- `.kpi__trend` - Inline trend badge (wraps TrendChip)
+- `.kpi__progress` - Full-width progress bar area
+- `.kpi__chart` - Sparkline container with edge-fade mask
+- `.kpi__separator` - Edge-to-edge divider
+- `.kpi__footer` - Bottom section
+
+### Data Attributes
+
+- `[data-status="success"]` / `[data-status="warning"]` / `[data-status="danger"]` on `.kpi__icon` - Status color tinting
+
+### CSS Variables
+
+- `--kpi-chart-fade` - Edge fade width for the sparkline mask (default: `10%`)
+
+## API Reference
+
+### KPI
+
+The root component. Wraps HeroUI [Card](https://heroui.com/docs/react/components/card).
+
+| Prop       | Type        | Default | Description        |
+| ---------- | ----------- | ------- | ------------------ |
+| `children` | `ReactNode` | -       | KPI sub-components |
+
+Also supports all [HeroUI Card](https://heroui.com/docs/react/components/card) props.
+
+### KPI.Header
+
+Top row container for icon, title, and actions.
+
+| Prop       | Type        | Default | Description                       |
+| ---------- | ----------- | ------- | --------------------------------- |
+| `children` | `ReactNode` | -       | Icon, Title, and Actions elements |
+
+Also supports all native `div` HTML attributes.
+
+### KPI.Content
+
+Grid layout container placing value and trend side by side.
+
+| Prop       | Type        | Default | Description                  |
+| ---------- | ----------- | ------- | ---------------------------- |
+| `children` | `ReactNode` | -       | Value, Trend, Progress, etc. |
+
+Also supports all native `div` HTML attributes.
+
+### KPI.Icon
+
+Status-tinted icon container.
+
+| Prop       | Type                                 | Default | Description                              |
+| ---------- | ------------------------------------ | ------- | ---------------------------------------- |
+| `status`   | `'success' \| 'warning' \| 'danger'` | -       | Status color for icon background tinting |
+| `children` | `ReactNode`                          | -       | Icon element                             |
+
+Also supports all native `div` HTML attributes.
+
+### KPI.Title
+
+Metric label rendered as a `dt` element.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Title text  |
+
+Also supports all native `dt` HTML attributes.
+
+### KPI.Value
+
+Large formatted number display. Wraps [NumberValue](#numbervalue) with a `dd` element for semantics.
+
+| Prop       | Type                                 | Default | Description                                             |
+| ---------- | ------------------------------------ | ------- | ------------------------------------------------------- |
+| `value`    | `number`                             | -       | **Required.** The numeric value to format               |
+| `children` | `((formatted: string) => ReactNode)` | -       | Optional render function receiving the formatted string |
+
+Also supports all NumberValue props except `children`.
+
+### KPI.Trend
+
+Inline trend badge. Wraps [TrendChip](#trendchip).
+
+Also supports all TrendChip props.
+
+### KPI.Progress
+
+Full-width progress bar.
+
+| Prop     | Type                                 | Default     | Description                                |
+| -------- | ------------------------------------ | ----------- | ------------------------------------------ |
+| `value`  | `number`                             | -           | **Required.** Progress value from 0 to 100 |
+| `status` | `'success' \| 'warning' \| 'danger'` | `'success'` | Status color for the progress bar          |
+
+Also supports all native `div` HTML attributes.
+
+### KPI.Actions
+
+Action button (three-dot icon by default). Wraps HeroUI [Button](https://heroui.com/docs/react/components/button) as a ghost icon-only button.
+
+| Prop       | Type        | Default | Description                                      |
+| ---------- | ----------- | ------- | ------------------------------------------------ |
+| `children` | `ReactNode` | -       | Custom icon replacing the default three-dot icon |
+
+Also supports all [HeroUI Button](https://heroui.com/docs/react/components/button) props.
+
+### KPI.Chart
+
+Sparkline area chart using [Recharts](https://recharts.github.io/en-US/api/AreaChart/).
+
+| Prop           | Type                                         | Default          | Description                                                                                                                                                                 |
+| -------------- | -------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data`         | `Record<string, number \| string \| null>[]` | -                | **Required.** Chart data array. `null` renders a gap                                                                                                                        |
+| `dataKey`      | `string`                                     | `'value'`        | Key in each data object to use as the Y value                                                                                                                               |
+| `color`        | `string`                                     | `'currentColor'` | Stroke/line color                                                                                                                                                           |
+| `connectNulls` | `boolean`                                    | `false`          | Draw a continuous line across `null` gaps instead of splitting the path                                                                                                     |
+| `fillColor`    | `string`                                     | -                | Fill color for the area gradient. Defaults to `color` at 20% opacity                                                                                                        |
+| `height`       | `number`                                     | `80`             | Chart height in pixels                                                                                                                                                      |
+| `strokeWidth`  | `number`                                     | `2`              | Stroke width                                                                                                                                                                |
+| `tooltip`      | `ReactNode`                                  | -                | A tooltip element rendered inside the chart, e.g. `<AreaChart.Tooltip content={...} />`                                                                                     |
+| `areaProps`    | `Omit<AreaProps, 'dataKey'>`                 | -                | Props forwarded to the underlying Recharts [Area](https://recharts.github.io/en-US/api/Area/), e.g. `dot`, `activeDot`, `baseValue`. Overrides the props set by `KPI.Chart` |
+
+Also supports all native `div` HTML attributes.
+
+### KPI.Separator
+
+Edge-to-edge divider. Wraps HeroUI [Separator](https://heroui.com/docs/react/components/separator).
+
+Also supports all [HeroUI Separator](https://heroui.com/docs/react/components/separator) props.
+
+### KPI.Footer
+
+Bottom section for additional details or links.
+
+| Prop       | Type        | Default | Description    |
+| ---------- | ----------- | ------- | -------------- |
+| `children` | `ReactNode` | -       | Footer content |
+
+Also supports all native `div` HTML attributes.

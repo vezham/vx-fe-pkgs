@@ -1,0 +1,26 @@
+{
+  "title": "Icon documentation",
+  "pages": [
+    "index",
+    "---Frameworks---",
+    "(frameworks)/vanilla",
+    "(frameworks)/svg",
+    "(frameworks)/react",
+    "(frameworks)/react-native",
+    "(frameworks)/vue",
+    "(frameworks)/svelte",
+    "(frameworks)/flutter",
+    "---Integrations---",
+    "(integrations)/figma",
+    "(integrations)/vscode",
+    "(integrations)/mcp",
+    "---Reference---",
+    "(reference)/props",
+    "(reference)/weights",
+    "(reference)/styling",
+    "(reference)/accessibility",
+    "(reference)/performance",
+    "(reference)/typescript",
+    "(reference)/troubleshooting"
+  ]
+}

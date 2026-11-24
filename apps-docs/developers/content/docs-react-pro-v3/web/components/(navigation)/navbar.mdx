@@ -1,0 +1,1600 @@
+---
+title: 'Navbar'
+description: 'A composable top navigation bar with hide-on-scroll, responsive mobile menu, and client-side routing support.'
+sourceUrl: https://heroui.pro/docs/react/components/navbar
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-navbar-default">
+
+```tsx
+'use client'
+
+import { Bell, Magnifier } from '@gravity-ui/icons'
+
+import { Navbar } from '@vezham/react-pro-v3'
+import { Avatar } from '@vezham/react-v3'
+
+const BrandLogo = () => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 83 26"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0.536865 6.72737V14.2058C0.536865 14.5593 0.718555 14.8878 1.01747 15.0747L6.11609 18.2631C6.79552 18.688 7.67556 18.1977 7.67556 17.3942V11.108C7.67556 10.7463 7.86565 10.4115 8.1757 10.2271L11.2858 8.37825V24.4895C11.2858 25.2902 12.1606 25.781 12.8402 25.3616L18.1026 22.1136C18.4045 21.9273 18.5883 21.5972 18.5883 21.2415V5.77018C18.5883 4.97334 17.7212 4.48199 17.0414 4.89359L11.2858 8.37825V1.51066C11.2858 0.715978 10.4229 0.224316 9.74303 0.631596L1.03414 5.84829C0.725738 6.03305 0.536865 6.36691 0.536865 6.72737Z"
+      fill="currentColor"
+    />
+    <path
+      d="M37.8815 14.2238C37.8815 12.1031 37.0137 11.1243 35.2783 11.1243C33.2909 11.1243 31.8913 12.4565 31.8913 15.4473V22.299H28.3083V3.2666H31.8913V10.227C32.759 8.81318 34.1866 8.10627 36.146 8.10627C39.477 8.10627 41.4365 10.1454 41.4365 13.5713V22.299H37.8815V14.2238Z"
+      fill="currentColor"
+    />
+    <path
+      d="M50.3042 22.7342C45.8536 22.7342 43.0264 19.8521 43.0264 15.4203C43.0264 11.0428 45.8256 8.10645 50.3042 8.10645C55.1468 8.10645 57.778 11.5322 57.0502 16.3447H46.6093C46.8053 18.6286 48.1488 19.9337 50.3042 19.9337C52.0677 19.9337 53.1314 19.0365 53.4113 18.1392H56.9662C56.4064 20.8038 53.9431 22.7342 50.3042 22.7342ZM46.6933 13.9793H53.5792C53.5512 12.1032 52.3196 10.8253 50.2202 10.8253C48.3448 10.8253 47.0292 11.9129 46.6933 13.9793Z"
+      fill="currentColor"
+    />
+    <path
+      d="M59.0042 12.0212C59.0042 9.76449 60.2637 8.54102 62.671 8.54102H67.2618V11.4774H62.5871V22.2987H59.0042V12.0212Z"
+      fill="currentColor"
+    />
+    <path
+      d="M75.1008 22.7342C70.5662 22.7342 67.6831 19.8249 67.6831 15.4203C67.6831 11.0157 70.5662 8.10645 75.1008 8.10645C79.5793 8.10645 82.4629 11.0157 82.4629 15.4203C82.4629 19.8249 79.5793 22.7342 75.1008 22.7342ZM75.1008 19.7706C77.3403 19.7706 78.8235 18.0576 78.8235 15.4203C78.8235 12.783 77.3403 11.0428 75.1008 11.0428C72.8335 11.0428 71.3497 12.783 71.3497 15.4203C71.3497 18.0576 72.8335 19.7706 75.1008 19.7706Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const navItems = [
+  { href: '#features', label: 'Features' },
+  { href: '#customers', label: 'Customers' },
+  { href: '#integrations', label: 'Integrations' },
+  { href: '#pricing', label: 'Pricing' }
+]
+
+export function Default() {
+  return (
+    <div className="border-border w-full overflow-hidden rounded-xl border">
+      <Navbar position="static">
+        <Navbar.Header>
+          <Navbar.Brand>
+            <BrandLogo />
+            <span className="sr-only">HeroUI</span>
+          </Navbar.Brand>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content>
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                href={item.href}
+                isCurrent={item.href === '#customers'}>
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content>
+            <Navbar.Item>
+              <Magnifier data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Item>
+              <Bell data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Separator />
+            <Navbar.Item>
+              <Avatar className="size-7">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Navbar.Item>
+          </Navbar.Content>
+        </Navbar.Header>
+      </Navbar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Navbar component and access all parts using dot notation.
+
+```tsx
+import { Navbar } from '@vezham/react-pro-v3'
+
+;<Navbar>
+  <Navbar.Header>
+    <Navbar.Brand />
+    <Navbar.MenuToggle />
+    <Navbar.Menu>
+      <Navbar.MenuItem />
+    </Navbar.Menu>
+  </Navbar.Header>
+  <Navbar.Content>
+    <Navbar.Item />
+    <Navbar.Label />
+    <Navbar.Separator />
+    <Navbar.Spacer />
+  </Navbar.Content>
+</Navbar>
+```
+
+## Docs Site
+
+A docs-site style navbar with a search bar, theme segment, and responsive mobile menu.
+
+<ComponentPreview name="pro-navbar-docs-site">
+
+```tsx
+'use client'
+
+import { Display, Moon, Sun } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Navbar, Segment } from '@vezham/react-pro-v3'
+import { Kbd, SearchField } from '@vezham/react-v3'
+
+const BrandLogo = () => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 83 26"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0.536865 6.72737V14.2058C0.536865 14.5593 0.718555 14.8878 1.01747 15.0747L6.11609 18.2631C6.79552 18.688 7.67556 18.1977 7.67556 17.3942V11.108C7.67556 10.7463 7.86565 10.4115 8.1757 10.2271L11.2858 8.37825V24.4895C11.2858 25.2902 12.1606 25.781 12.8402 25.3616L18.1026 22.1136C18.4045 21.9273 18.5883 21.5972 18.5883 21.2415V5.77018C18.5883 4.97334 17.7212 4.48199 17.0414 4.89359L11.2858 8.37825V1.51066C11.2858 0.715978 10.4229 0.224316 9.74303 0.631596L1.03414 5.84829C0.725738 6.03305 0.536865 6.36691 0.536865 6.72737Z"
+      fill="currentColor"
+    />
+    <path
+      d="M37.8815 14.2238C37.8815 12.1031 37.0137 11.1243 35.2783 11.1243C33.2909 11.1243 31.8913 12.4565 31.8913 15.4473V22.299H28.3083V3.2666H31.8913V10.227C32.759 8.81318 34.1866 8.10627 36.146 8.10627C39.477 8.10627 41.4365 10.1454 41.4365 13.5713V22.299H37.8815V14.2238Z"
+      fill="currentColor"
+    />
+    <path
+      d="M50.3042 22.7342C45.8536 22.7342 43.0264 19.8521 43.0264 15.4203C43.0264 11.0428 45.8256 8.10645 50.3042 8.10645C55.1468 8.10645 57.778 11.5322 57.0502 16.3447H46.6093C46.8053 18.6286 48.1488 19.9337 50.3042 19.9337C52.0677 19.9337 53.1314 19.0365 53.4113 18.1392H56.9662C56.4064 20.8038 53.9431 22.7342 50.3042 22.7342ZM46.6933 13.9793H53.5792C53.5512 12.1032 52.3196 10.8253 50.2202 10.8253C48.3448 10.8253 47.0292 11.9129 46.6933 13.9793Z"
+      fill="currentColor"
+    />
+    <path
+      d="M59.0042 12.0212C59.0042 9.76449 60.2637 8.54102 62.671 8.54102H67.2618V11.4774H62.5871V22.2987H59.0042V12.0212Z"
+      fill="currentColor"
+    />
+    <path
+      d="M75.1008 22.7342C70.5662 22.7342 67.6831 19.8249 67.6831 15.4203C67.6831 11.0157 70.5662 8.10645 75.1008 8.10645C79.5793 8.10645 82.4629 11.0157 82.4629 15.4203C82.4629 19.8249 79.5793 22.7342 75.1008 22.7342ZM75.1008 19.7706C77.3403 19.7706 78.8235 18.0576 78.8235 15.4203C78.8235 12.783 77.3403 11.0428 75.1008 11.0428C72.8335 11.0428 71.3497 12.783 71.3497 15.4203C71.3497 18.0576 72.8335 19.7706 75.1008 19.7706Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+const navItems = [
+  { href: '#docs', label: 'Docs' },
+  { href: '#pro', label: 'Pro' },
+  { href: '#blog', label: 'Blog' }
+]
+
+export function DocsSite() {
+  const [currentItem, setCurrentItem] = useState('#docs')
+
+  return (
+    <div className="border-border w-full overflow-hidden rounded-xl border">
+      <Navbar position="static" shouldBlockScroll={false}>
+        <Navbar.Header>
+          <Navbar.MenuToggle className="md:hidden" />
+
+          <Navbar.Brand>
+            <BrandLogo />
+            <span className="sr-only">HeroUI</span>
+          </Navbar.Brand>
+
+          <Navbar.Content className="hidden gap-0 md:flex">
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                className="px-2"
+                href={item.href}
+                isCurrent={item.href === currentItem}
+                onClick={e => {
+                  e.preventDefault()
+                  setCurrentItem(item.href)
+                }}>
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content className="hidden md:flex">
+            <SearchField
+              aria-label="Search documentation"
+              className="w-[200px]"
+              variant="secondary">
+              <SearchField.Group className="h-8">
+                <SearchField.SearchIcon />
+                <SearchField.Input
+                  className="w-16"
+                  placeholder="Search docs…"
+                />
+                <Kbd className="pointer-events-none mr-1.5 text-xs">
+                  <Kbd.Abbr keyValue="command" />
+                  <Kbd.Content>K</Kbd.Content>
+                </Kbd>
+              </SearchField.Group>
+            </SearchField>
+
+            <Segment className="gap-0" defaultSelectedKey="system" size="sm">
+              <Segment.Item
+                aria-label="Light"
+                className="size-[28px] px-0"
+                id="light">
+                <Sun className="size-3.5" />
+              </Segment.Item>
+              <Segment.Item
+                aria-label="Dark"
+                className="size-[28px] px-0"
+                id="dark">
+                <Moon className="size-3.5" />
+              </Segment.Item>
+              <Segment.Item
+                aria-label="System"
+                className="size-[28px] px-0"
+                id="system">
+                <Display className="size-3.5" />
+              </Segment.Item>
+            </Segment>
+          </Navbar.Content>
+        </Navbar.Header>
+
+        <Navbar.Menu>
+          {navItems.map(item => (
+            <Navbar.MenuItem
+              key={item.href}
+              href={item.href}
+              isCurrent={item.href === currentItem}
+              onClick={e => {
+                e.preventDefault()
+                setCurrentItem(item.href)
+              }}>
+              {item.label}
+            </Navbar.MenuItem>
+          ))}
+        </Navbar.Menu>
+      </Navbar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Dropdowns
+
+SaaS-style navbar with a team switcher, user dropdown, and mobile menu.
+
+<ComponentPreview name="pro-navbar-with-dropdowns">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  ChevronDown,
+  Comment,
+  Gear,
+  Magnifier,
+  Person,
+  Plus,
+  ShieldCheck
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Navbar } from '@vezham/react-pro-v3'
+import { Avatar, Button, Dropdown, Label, Separator } from '@vezham/react-v3'
+
+const BrandLogo = ({ className }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    className={className}
+    fill="none"
+    viewBox="0 0 24 34"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0 8.22973V18.0896C0 18.5557 0.239547 18.9887 0.633655 19.2352L7.35585 23.4389C8.25167 23.9991 9.41193 23.3527 9.41193 22.2934V14.0053C9.41193 13.5285 9.66262 13.0871 10.0714 12.844L14.1719 10.4064V31.6481C14.1719 32.7039 15.3252 33.3509 16.2213 32.7979L23.1595 28.5156C23.5574 28.27 23.7998 27.8347 23.7998 27.3659V6.96774C23.7998 5.91715 22.6566 5.26934 21.7603 5.81202L14.1719 10.4064V1.35182C14.1719 0.304069 13.0342 -0.34416 12.1378 0.192813L0.65562 7.07073C0.249018 7.31429 0 7.7545 0 8.22973Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const teams = [
+  { id: 'heroui', logo: <BrandLogo className="size-5" />, name: 'HeroUI' },
+  {
+    id: 'acme-studio',
+    logo: (
+      <Avatar className="size-5" color="accent" variant="soft">
+        <Avatar.Fallback className="text-[10px]">AS</Avatar.Fallback>
+      </Avatar>
+    ),
+    name: 'Acme Studio'
+  },
+  {
+    id: 'moonshot',
+    logo: (
+      <Avatar className="size-5" color="warning" variant="soft">
+        <Avatar.Fallback className="text-[10px]">MS</Avatar.Fallback>
+      </Avatar>
+    ),
+    name: 'Moonshot Inc.'
+  }
+]
+
+const navItems = [
+  { href: '#dashboard', label: 'Dashboard' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#members', label: 'Members' },
+  { href: '#billing', label: 'Billing' }
+]
+
+export function WithDropdowns() {
+  const [activeTeam, setActiveTeam] = useState('heroui')
+
+  const team = teams.find(t => t.id === activeTeam) ?? teams[0]
+
+  return (
+    <div className="border-border w-full overflow-hidden rounded-xl border">
+      <Navbar position="static" shouldBlockScroll={false}>
+        <Navbar.Header>
+          <Navbar.MenuToggle className="md:hidden" />
+
+          <Dropdown>
+            <Button className="gap-1.5 px-2" variant="ghost">
+              {team?.logo}
+              <span className="text-sm font-semibold">{team?.name}</span>
+              <ChevronDown className="text-muted size-3.5" />
+            </Button>
+            <Dropdown.Popover className="min-w-[220px]">
+              <Dropdown.Menu
+                onAction={key => {
+                  if (key !== 'team-settings' && key !== 'new-workspace') {
+                    setActiveTeam(String(key))
+                  }
+                }}>
+                <Dropdown.Item id="team-settings" textValue="Team settings">
+                  <Gear className="text-muted size-4" />
+                  <Label>Team settings</Label>
+                </Dropdown.Item>
+                <Separator />
+                {teams.map(t => (
+                  <Dropdown.Item key={t.id} id={t.id} textValue={t.name}>
+                    {t.logo}
+                    <Label>{t.name}</Label>
+                  </Dropdown.Item>
+                ))}
+                <Separator />
+                <Dropdown.Item id="new-workspace" textValue="Create workspace">
+                  <Plus className="text-muted size-4" />
+                  <Label>Create workspace…</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+
+          <Navbar.Separator className="hidden h-4 md:block" />
+
+          <Navbar.Content className="hidden md:flex">
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                href={item.href}
+                isCurrent={item.href === '#dashboard'}>
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content className="hidden md:flex">
+            <Navbar.Item>
+              <Magnifier data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Item>
+              <Bell data-slot="icon" />
+            </Navbar.Item>
+          </Navbar.Content>
+
+          <Dropdown>
+            <Button isIconOnly aria-label="User menu" variant="ghost">
+              <Avatar className="size-7">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://img.heroui.chat/image/avatar?w=200&h=200&u=1"
+                />
+                <Avatar.Fallback>AJ</Avatar.Fallback>
+              </Avatar>
+            </Button>
+            <Dropdown.Popover className="min-w-[200px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item id="account" textValue="Your account">
+                  <Person className="text-muted size-4" />
+                  <Label>Your account</Label>
+                </Dropdown.Item>
+                <Dropdown.Item id="preferences" textValue="Preferences">
+                  <Gear className="text-muted size-4" />
+                  <Label>Preferences</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="security" textValue="Security & privacy">
+                  <ShieldCheck className="text-muted size-4" />
+                  <Label>Security & privacy</Label>
+                </Dropdown.Item>
+                <Dropdown.Item id="feedback" textValue="Send feedback">
+                  <Comment className="text-muted size-4" />
+                  <Label>Send feedback</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="sign-out" textValue="Log out">
+                  <ArrowRightFromSquare className="text-muted size-4" />
+                  <Label>Log out</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Header>
+
+        <Navbar.Menu>
+          {navItems.map(item => (
+            <Navbar.MenuItem
+              key={item.href}
+              href={item.href}
+              isCurrent={item.href === '#dashboard'}>
+              {item.label}
+            </Navbar.MenuItem>
+          ))}
+        </Navbar.Menu>
+      </Navbar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dashboard
+
+Breadcrumb-style dashboard navbar built with `InlineSelect` for the workspace, project, and timezone selectors.
+
+<ComponentPreview name="pro-navbar-dashboard">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  Bell,
+  CircleQuestion,
+  Gear,
+  Person
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { InlineSelect, Navbar } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Label,
+  ListBox,
+  Separator
+} from '@vezham/react-v3'
+
+const BrandMark = () => (
+  <svg
+    aria-hidden="true"
+    className="size-5"
+    fill="none"
+    viewBox="0 0 24 34"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0 8.22973V18.0896C0 18.5557 0.239547 18.9887 0.633655 19.2352L7.35585 23.4389C8.25167 23.9991 9.41193 23.3527 9.41193 22.2934V14.0053C9.41193 13.5285 9.66262 13.0871 10.0714 12.844L14.1719 10.4064V31.6481C14.1719 32.7039 15.3252 33.3509 16.2213 32.7979L23.1595 28.5156C23.5574 28.27 23.7998 27.8347 23.7998 27.3659V6.96774C23.7998 5.91715 22.6566 5.26934 21.7603 5.81202L14.1719 10.4064V1.35182C14.1719 0.304069 13.0342 -0.34416 12.1378 0.192813L0.65562 7.07073C0.249018 7.31429 0 7.7545 0 8.22973Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const PathSeparator = () => (
+  <svg
+    aria-hidden="true"
+    className="text-border size-4 shrink-0"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1"
+    viewBox="0 0 16 16">
+    <path d="M10.75 2.75 5.25 13.25" strokeLinecap="round" />
+  </svg>
+)
+
+const workspaces = [
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+    fallback: 'SM',
+    id: 'samlee',
+    name: 'samlee'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    fallback: 'AC',
+    id: 'acme-corp',
+    name: 'acme-corp'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+    fallback: 'MS',
+    id: 'moonshot',
+    name: 'moonshot'
+  }
+]
+
+const projects = [
+  { id: 'content-hub', name: 'content-hub' },
+  { id: 'marketing-site', name: 'marketing-site' },
+  { id: 'api-gateway', name: 'api-gateway' },
+  { id: 'design-tokens', name: 'design-tokens' }
+]
+
+const timezones = [
+  { id: 'utc', label: 'UTC', offset: 'UTC+00:00' },
+  { id: 'pst', label: 'PST', offset: 'UTC−08:00' },
+  { id: 'est', label: 'EST', offset: 'UTC−05:00' },
+  { id: 'cet', label: 'CET', offset: 'UTC+01:00' },
+  { id: 'jst', label: 'JST', offset: 'UTC+09:00' }
+]
+
+export function Dashboard() {
+  const [workspace, setWorkspace] = useState<Key | null>('samlee')
+  const [project, setProject] = useState<Key | null>('content-hub')
+  const [timezone, setTimezone] = useState<Key | null>('utc')
+
+  const selectedWorkspace =
+    workspaces.find(w => w.id === workspace) ?? workspaces[0]!
+  const selectedTimezone =
+    timezones.find(t => t.id === timezone) ?? timezones[0]!
+
+  return (
+    <div className="border-border w-full overflow-hidden rounded-xl border">
+      <Navbar position="static" shouldBlockScroll={false}>
+        <Navbar.Header className="gap-2">
+          <Navbar.Brand className="mr-1">
+            <BrandMark />
+            <span className="sr-only">HeroUI</span>
+          </Navbar.Brand>
+
+          <PathSeparator />
+
+          <InlineSelect
+            aria-label="Workspace"
+            value={workspace}
+            onChange={v => setWorkspace(v)}>
+            <InlineSelect.Trigger className="gap-2">
+              <Avatar className="size-5">
+                <Avatar.Image
+                  alt={selectedWorkspace.name}
+                  src={selectedWorkspace.avatar}
+                />
+                <Avatar.Fallback className="text-[10px]">
+                  {selectedWorkspace.fallback}
+                </Avatar.Fallback>
+              </Avatar>
+              <span className="text-foreground text-sm font-medium">
+                {selectedWorkspace.name}
+              </span>
+              <InlineSelect.Indicator />
+            </InlineSelect.Trigger>
+            <InlineSelect.Popover className="w-[220px]">
+              <ListBox>
+                {workspaces.map(w => (
+                  <ListBox.Item key={w.id} id={w.id} textValue={w.name}>
+                    <Avatar className="size-5">
+                      <Avatar.Image alt={w.name} src={w.avatar} />
+                      <Avatar.Fallback className="text-[10px]">
+                        {w.fallback}
+                      </Avatar.Fallback>
+                    </Avatar>
+                    {w.name}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </InlineSelect.Popover>
+          </InlineSelect>
+
+          <PathSeparator />
+
+          <InlineSelect
+            aria-label="Project"
+            value={project}
+            onChange={v => setProject(v)}>
+            <InlineSelect.Trigger>
+              <span className="text-foreground text-sm font-medium">
+                {projects.find(p => p.id === project)?.name ??
+                  projects[0]!.name}
+              </span>
+              <InlineSelect.Indicator />
+            </InlineSelect.Trigger>
+            <InlineSelect.Popover className="w-[200px]">
+              <ListBox>
+                {projects.map(p => (
+                  <ListBox.Item key={p.id} id={p.id} textValue={p.name}>
+                    {p.name}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </InlineSelect.Popover>
+          </InlineSelect>
+
+          <Navbar.Spacer />
+
+          <div
+            aria-label="Estimated monthly costs"
+            className="hidden items-center gap-1.5 md:flex">
+            <span className="text-muted text-[11px] font-medium tracking-wider uppercase">
+              Est. costs
+            </span>
+            <span className="text-foreground text-sm font-semibold tabular-nums">
+              $71.96
+            </span>
+          </div>
+
+          <Navbar.Separator className="hidden h-4 md:block" />
+
+          <InlineSelect
+            aria-label="Timezone"
+            value={timezone}
+            onChange={v => setTimezone(v)}>
+            <InlineSelect.Trigger>
+              <span className="text-foreground text-sm font-medium">
+                {selectedTimezone.label}
+              </span>
+              <InlineSelect.Indicator />
+            </InlineSelect.Trigger>
+            <InlineSelect.Popover className="w-[200px]">
+              <ListBox>
+                {timezones.map(t => (
+                  <ListBox.Item
+                    key={t.id}
+                    id={t.id}
+                    textValue={`${t.label} ${t.offset}`}>
+                    <div className="flex flex-1 items-center justify-between gap-4 pr-6">
+                      <span>{t.label}</span>
+                      <span className="text-muted text-xs tabular-nums">
+                        {t.offset}
+                      </span>
+                    </div>
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </InlineSelect.Popover>
+          </InlineSelect>
+
+          <Navbar.Content>
+            <Navbar.Item aria-label="Notifications">
+              <Bell data-slot="icon" />
+            </Navbar.Item>
+
+            <Dropdown>
+              <Button isIconOnly aria-label="Account menu" variant="ghost">
+                <Avatar className="size-7" color="success" variant="soft">
+                  <Avatar.Fallback className="text-xs font-semibold">
+                    SM
+                  </Avatar.Fallback>
+                </Avatar>
+              </Button>
+              <Dropdown.Popover
+                className="min-w-[200px]"
+                placement="bottom end">
+                <Dropdown.Menu>
+                  <Dropdown.Item id="account" textValue="Account">
+                    <Person className="text-muted size-4" />
+                    <Label>Account</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item id="settings" textValue="Settings">
+                    <Gear className="text-muted size-4" />
+                    <Label>Settings</Label>
+                  </Dropdown.Item>
+                  <Separator />
+                  <Dropdown.Item id="support" textValue="Help & support">
+                    <CircleQuestion className="text-muted size-4" />
+                    <Label>Help & support</Label>
+                  </Dropdown.Item>
+                  <Separator />
+                  <Dropdown.Item id="sign-out" textValue="Log out">
+                    <ArrowRightFromSquare className="text-muted size-4" />
+                    <Label>Log out</Label>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown>
+          </Navbar.Content>
+        </Navbar.Header>
+      </Navbar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Compact
+
+A dense navbar tuned via `--spacing` and `height` overrides for a Luma-style compact layout.
+
+<ComponentPreview name="pro-navbar-compact">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  BellDot,
+  Calendar,
+  Compass,
+  Gear,
+  Magnifier,
+  Person,
+  Persons,
+  Plus
+} from '@gravity-ui/icons'
+import type { CSSProperties } from 'react'
+
+import { Navbar } from '@vezham/react-pro-v3'
+import { Avatar, Button, Dropdown, Label, Separator } from '@vezham/react-v3'
+
+const BrandLogo = () => (
+  <svg
+    aria-hidden="true"
+    fill="none"
+    height="16"
+    viewBox="0 0 83 26"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0.536865 6.72737V14.2058C0.536865 14.5593 0.718555 14.8878 1.01747 15.0747L6.11609 18.2631C6.79552 18.688 7.67556 18.1977 7.67556 17.3942V11.108C7.67556 10.7463 7.86565 10.4115 8.1757 10.2271L11.2858 8.37825V24.4895C11.2858 25.2902 12.1606 25.781 12.8402 25.3616L18.1026 22.1136C18.4045 21.9273 18.5883 21.5972 18.5883 21.2415V5.77018C18.5883 4.97334 17.7212 4.48199 17.0414 4.89359L11.2858 8.37825V1.51066C11.2858 0.715978 10.4229 0.224316 9.74303 0.631596L1.03414 5.84829C0.725738 6.03305 0.536865 6.36691 0.536865 6.72737Z"
+      fill="currentColor"
+    />
+    <path
+      d="M37.8815 14.2238C37.8815 12.1031 37.0137 11.1243 35.2783 11.1243C33.2909 11.1243 31.8913 12.4565 31.8913 15.4473V22.299H28.3083V3.2666H31.8913V10.227C32.759 8.81318 34.1866 8.10627 36.146 8.10627C39.477 8.10627 41.4365 10.1454 41.4365 13.5713V22.299H37.8815V14.2238Z"
+      fill="currentColor"
+    />
+    <path
+      d="M50.3042 22.7342C45.8536 22.7342 43.0264 19.8521 43.0264 15.4203C43.0264 11.0428 45.8256 8.10645 50.3042 8.10645C55.1468 8.10645 57.778 11.5322 57.0502 16.3447H46.6093C46.8053 18.6286 48.1488 19.9337 50.3042 19.9337C52.0677 19.9337 53.1314 19.0365 53.4113 18.1392H56.9662C56.4064 20.8038 53.9431 22.7342 50.3042 22.7342ZM46.6933 13.9793H53.5792C53.5512 12.1032 52.3196 10.8253 50.2202 10.8253C48.3448 10.8253 47.0292 11.9129 46.6933 13.9793Z"
+      fill="currentColor"
+    />
+    <path
+      d="M59.0042 12.0212C59.0042 9.76449 60.2637 8.54102 62.671 8.54102H67.2618V11.4774H62.5871V22.2987H59.0042V12.0212Z"
+      fill="currentColor"
+    />
+    <path
+      d="M75.1008 22.7342C70.5662 22.7342 67.6831 19.8249 67.6831 15.4203C67.6831 11.0157 70.5662 8.10645 75.1008 8.10645C79.5793 8.10645 82.4629 11.0157 82.4629 15.4203C82.4629 19.8249 79.5793 22.7342 75.1008 22.7342ZM75.1008 19.7706C77.3403 19.7706 78.8235 18.0576 78.8235 15.4203C78.8235 12.783 77.3403 11.0428 75.1008 11.0428C72.8335 11.0428 71.3497 12.783 71.3497 15.4203C71.3497 18.0576 72.8335 19.7706 75.1008 19.7706Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const navItems = [
+  { href: '#explore', icon: Compass, label: 'Explore' },
+  { href: '#calendars', icon: Calendar, label: 'Calendars' },
+  { href: '#community', icon: Persons, label: 'Community' }
+]
+
+export function Compact() {
+  return (
+    <div
+      className="border-border w-full overflow-hidden rounded-xl border"
+      style={
+        {
+          '--spacing': '0.22rem'
+        } as CSSProperties
+      }>
+      <Navbar
+        height="2.75rem"
+        position="static"
+        shouldBlockScroll={false}
+        size="sm">
+        <Navbar.Header className="text-xs">
+          <Navbar.Brand>
+            <BrandLogo />
+            <span className="sr-only">HeroUI</span>
+          </Navbar.Brand>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content className="hidden gap-4 md:flex">
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                className="gap-1.5 text-xs"
+                href={item.href}
+                isCurrent={item.href === '#explore'}>
+                <item.icon className="size-3.5" data-slot="icon" />
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <span className="text-muted hidden text-xs tabular-nums md:inline">
+            10:24 AM UTC
+          </span>
+
+          <Navbar.Item className="gap-1.5 text-xs font-medium" href="#new">
+            <Plus className="size-3.5" data-slot="icon" />
+            Host event
+          </Navbar.Item>
+
+          <Navbar.Content className="gap-1">
+            <Navbar.Item aria-label="Search" className="size-7">
+              <Magnifier className="size-3.5" data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Item aria-label="Notifications" className="relative size-7">
+              <BellDot className="size-3.5" data-slot="icon" />
+            </Navbar.Item>
+
+            <Dropdown>
+              <Button
+                isIconOnly
+                aria-label="Account menu"
+                className="size-7"
+                variant="ghost">
+                <Avatar className="size-6" color="accent" variant="soft">
+                  <Avatar.Fallback className="text-[10px] font-semibold">
+                    JR
+                  </Avatar.Fallback>
+                </Avatar>
+              </Button>
+              <Dropdown.Popover
+                className="min-w-[200px]"
+                placement="bottom end">
+                <div className="flex items-center gap-2.5 px-2.5 pt-2.5 pb-2">
+                  <Avatar className="size-8" color="accent" variant="soft">
+                    <Avatar.Fallback className="text-xs font-semibold">
+                      JR
+                    </Avatar.Fallback>
+                  </Avatar>
+                  <div className="flex min-w-0 flex-col">
+                    <span className="text-foreground truncate text-sm font-semibold">
+                      Junior Garcia
+                    </span>
+                    <span className="text-muted truncate text-xs">
+                      @jrgarciadev
+                    </span>
+                  </div>
+                </div>
+                <Separator />
+                <Dropdown.Menu>
+                  <Dropdown.Item id="profile" textValue="View profile">
+                    <Person className="text-muted size-4" />
+                    <Label>View profile</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item id="preferences" textValue="Preferences">
+                    <Gear className="text-muted size-4" />
+                    <Label>Preferences</Label>
+                  </Dropdown.Item>
+                  <Separator />
+                  <Dropdown.Item id="sign-out" textValue="Sign out">
+                    <ArrowRightFromSquare className="text-muted size-4" />
+                    <Label>Sign out</Label>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown>
+          </Navbar.Content>
+        </Navbar.Header>
+      </Navbar>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Menu
+
+Responsive navbar with a mobile hamburger toggle and animated dropdown menu.
+
+<ComponentPreview name="pro-navbar-with-menu">
+
+```tsx
+'use client'
+
+import { Bell, Gear, House, Magnifier, Persons } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Navbar } from '@vezham/react-pro-v3'
+import { Avatar } from '@vezham/react-v3'
+
+const BrandLogo = () => (
+  <>
+    <svg
+      aria-hidden="true"
+      className="h-[22px] w-auto"
+      fill="none"
+      height="22"
+      viewBox="0 0 83 26"
+      width="83"
+      xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M.54 6.73v7.48c0 .35.18.68.48.86l5.1 3.2c.68.42 1.56-.07 1.56-.88v-6.28c0-.36.19-.7.5-.88l3.1-1.85v16.11c0 .8.88 1.29 1.56.87l5.26-3.25c.3-.18.49-.51.49-.87V5.77c0-.8-.87-1.29-1.55-.88l-5.76 3.49V1.51c0-.79-.86-1.29-1.54-.88L1.03 5.85c-.3.18-.5.52-.5.88Z"
+        fill="currentColor"
+      />
+      <path
+        d="M37.88 14.22c0-2.12-.87-3.1-2.6-3.1-1.99 0-3.39 1.34-3.39 4.33v6.85h-3.58V3.27h3.58v6.96c.87-1.42 2.3-2.12 4.26-2.12 3.33 0 5.29 2.04 5.29 5.46v8.73h-3.56v-8.08Z"
+        fill="currentColor"
+      />
+      <path
+        d="M50.3 22.73c-4.45 0-7.27-2.88-7.27-7.31 0-4.38 2.8-7.32 7.27-7.32 4.85 0 7.48 3.43 6.75 8.25H46.61c.2 2.28 1.54 3.58 3.7 3.58 1.76 0 2.82-.9 3.1-1.79h3.56c-.56 2.66-3.03 4.59-6.66 4.59Zm-3.61-8.75h6.89c-.03-1.88-1.26-3.15-3.36-3.15-1.88 0-3.19 1.09-3.53 3.15Z"
+        fill="currentColor"
+      />
+      <path
+        d="M59 12.02c0-2.26 1.26-3.48 3.67-3.48h4.59v2.94h-4.67V22.3H59V12.02Z"
+        fill="currentColor"
+      />
+      <path
+        d="M75.1 22.73c-4.53 0-7.42-2.9-7.42-7.31 0-4.4 2.89-7.31 7.42-7.31 4.48 0 7.36 2.9 7.36 7.31 0 4.4-2.88 7.31-7.36 7.31Zm0-2.96c2.24 0 3.72-1.71 3.72-4.35s-1.48-4.38-3.72-4.38c-2.27 0-3.75 1.74-3.75 4.38s1.48 4.35 3.75 4.35Z"
+        fill="currentColor"
+      />
+    </svg>
+    <span className="sr-only">HeroUI</span>
+  </>
+)
+
+const navItems = [
+  { href: '#dashboard', icon: House, label: 'Dashboard' },
+  { href: '#team', icon: Persons, label: 'Team' },
+  { href: '#settings', icon: Gear, label: 'Settings' }
+]
+
+const sections = [
+  {
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae arcu sed nibh mattis consequat. Donec ac justo non urna tempor luctus.',
+    label: 'Overview',
+    title: 'Mobile navigation overlay'
+  },
+  {
+    body: 'Suspendisse potenti. Praesent et mi eu purus viverra dignissim. Aenean tristique velit at mauris dictum, nec luctus eros gravida.',
+    label: 'Activity',
+    title: 'Recent workspace updates'
+  },
+  {
+    body: 'Curabitur sit amet lorem id sem volutpat facilisis. Morbi at erat quis sem porta cursus. Fusce non mauris sit amet lectus feugiat rhoncus.',
+    label: 'Notes',
+    title: 'Project context'
+  }
+]
+
+export function WithMenu() {
+  const [currentItem, setCurrentItem] = useState('#dashboard')
+
+  return (
+    <div className="bg-background w-full overflow-visible">
+      <Navbar defaultMenuOpen position="static" shouldBlockScroll={false}>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <BrandLogo />
+          </Navbar.Brand>
+
+          <Navbar.Content className="hidden sm:flex">
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                href={item.href}
+                isCurrent={item.href === currentItem}
+                onClick={e => {
+                  e.preventDefault()
+                  setCurrentItem(item.href)
+                }}>
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content>
+            <Navbar.Item>
+              <Magnifier data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Item>
+              <Bell data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Separator />
+            <Navbar.Item>
+              <Avatar className="size-7">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Navbar.Item>
+          </Navbar.Content>
+
+          <Navbar.MenuToggle />
+        </Navbar.Header>
+
+        <Navbar.Menu>
+          {navItems.map(item => (
+            <Navbar.MenuItem
+              key={item.href}
+              href={item.href}
+              isCurrent={item.href === currentItem}
+              onClick={e => {
+                e.preventDefault()
+                setCurrentItem(item.href)
+              }}>
+              <item.icon data-slot="icon" />
+              {item.label}
+            </Navbar.MenuItem>
+          ))}
+        </Navbar.Menu>
+      </Navbar>
+
+      <main className="flex min-h-[680px] flex-col gap-4 p-4 sm:p-6">
+        <section className="bg-surface border-border flex flex-col gap-3 rounded-lg border p-4">
+          <span className="text-muted text-xs font-medium uppercase">
+            Dashboard
+          </span>
+          <h2 className="text-foreground text-xl font-semibold">
+            Team workspace
+          </h2>
+          <p className="text-muted text-sm leading-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+            id lectus scelerisque, gravida erat at, lacinia sem. Nunc sed luctus
+            tortor, vitae porttitor ipsum.
+          </p>
+        </section>
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          {sections.map(section => (
+            <section
+              key={section.title}
+              className="bg-surface border-border flex flex-col gap-2 rounded-lg border p-4">
+              <span className="text-muted text-xs font-medium">
+                {section.label}
+              </span>
+              <h3 className="text-foreground text-sm font-semibold">
+                {section.title}
+              </h3>
+              <p className="text-muted text-sm leading-6">{section.body}</p>
+            </section>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Hide on Scroll
+
+Pass `hideOnScroll` to hide the navbar when the user scrolls down and reveal it on scroll up.
+
+<ComponentPreview name="pro-navbar-hide-on-scroll">
+
+```tsx
+'use client'
+
+import { Bell, Magnifier } from '@gravity-ui/icons'
+import { useRef, useState } from 'react'
+
+import { Navbar } from '@vezham/react-pro-v3'
+import { Avatar } from '@vezham/react-v3'
+
+const BrandLogo = () => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 83 26"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M0.536865 6.72737V14.2058C0.536865 14.5593 0.718555 14.8878 1.01747 15.0747L6.11609 18.2631C6.79552 18.688 7.67556 18.1977 7.67556 17.3942V11.108C7.67556 10.7463 7.86565 10.4115 8.1757 10.2271L11.2858 8.37825V24.4895C11.2858 25.2902 12.1606 25.781 12.8402 25.3616L18.1026 22.1136C18.4045 21.9273 18.5883 21.5972 18.5883 21.2415V5.77018C18.5883 4.97334 17.7212 4.48199 17.0414 4.89359L11.2858 8.37825V1.51066C11.2858 0.715978 10.4229 0.224316 9.74303 0.631596L1.03414 5.84829C0.725738 6.03305 0.536865 6.36691 0.536865 6.72737Z"
+      fill="currentColor"
+    />
+    <path
+      d="M37.8815 14.2238C37.8815 12.1031 37.0137 11.1243 35.2783 11.1243C33.2909 11.1243 31.8913 12.4565 31.8913 15.4473V22.299H28.3083V3.2666H31.8913V10.227C32.759 8.81318 34.1866 8.10627 36.146 8.10627C39.477 8.10627 41.4365 10.1454 41.4365 13.5713V22.299H37.8815V14.2238Z"
+      fill="currentColor"
+    />
+    <path
+      d="M50.3042 22.7342C45.8536 22.7342 43.0264 19.8521 43.0264 15.4203C43.0264 11.0428 45.8256 8.10645 50.3042 8.10645C55.1468 8.10645 57.778 11.5322 57.0502 16.3447H46.6093C46.8053 18.6286 48.1488 19.9337 50.3042 19.9337C52.0677 19.9337 53.1314 19.0365 53.4113 18.1392H56.9662C56.4064 20.8038 53.9431 22.7342 50.3042 22.7342ZM46.6933 13.9793H53.5792C53.5512 12.1032 52.3196 10.8253 50.2202 10.8253C48.3448 10.8253 47.0292 11.9129 46.6933 13.9793Z"
+      fill="currentColor"
+    />
+    <path
+      d="M59.0042 12.0212C59.0042 9.76449 60.2637 8.54102 62.671 8.54102H67.2618V11.4774H62.5871V22.2987H59.0042V12.0212Z"
+      fill="currentColor"
+    />
+    <path
+      d="M75.1008 22.7342C70.5662 22.7342 67.6831 19.8249 67.6831 15.4203C67.6831 11.0157 70.5662 8.10645 75.1008 8.10645C79.5793 8.10645 82.4629 11.0157 82.4629 15.4203C82.4629 19.8249 79.5793 22.7342 75.1008 22.7342ZM75.1008 19.7706C77.3403 19.7706 78.8235 18.0576 78.8235 15.4203C78.8235 12.783 77.3403 11.0428 75.1008 11.0428C72.8335 11.0428 71.3497 12.783 71.3497 15.4203C71.3497 18.0576 72.8335 19.7706 75.1008 19.7706Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const navItems = [
+  { href: '#features', label: 'Features' },
+  { href: '#customers', label: 'Customers' },
+  { href: '#integrations', label: 'Integrations' },
+  { href: '#pricing', label: 'Pricing' }
+]
+
+export function HideOnScroll() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [currentItem, setCurrentItem] = useState('#features')
+
+  return (
+    <div
+      ref={scrollRef}
+      className="border-border relative h-[400px] w-full overflow-y-auto rounded-xl border">
+      <Navbar
+        hideOnScroll
+        className="border-border border-b"
+        parentRef={scrollRef}
+        position="sticky">
+        <Navbar.Header>
+          <Navbar.Brand>
+            <BrandLogo />
+            <span className="sr-only">HeroUI</span>
+          </Navbar.Brand>
+
+          <Navbar.Content>
+            {navItems.map(item => (
+              <Navbar.Item
+                key={item.href}
+                href={item.href}
+                isCurrent={item.href === currentItem}
+                onClick={e => {
+                  e.preventDefault()
+                  setCurrentItem(item.href)
+                }}>
+                {item.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Content>
+
+          <Navbar.Spacer />
+
+          <Navbar.Content>
+            <Navbar.Item>
+              <Magnifier data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Item>
+              <Bell data-slot="icon" />
+            </Navbar.Item>
+            <Navbar.Separator />
+            <Navbar.Item>
+              <Avatar className="size-7">
+                <Avatar.Image
+                  alt="User avatar"
+                  src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg"
+                />
+                <Avatar.Fallback>JG</Avatar.Fallback>
+              </Avatar>
+            </Navbar.Item>
+          </Navbar.Content>
+        </Navbar.Header>
+      </Navbar>
+
+      <div className="space-y-6 p-6">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div key={i} className="bg-surface rounded-lg p-4">
+            <p className="text-muted text-sm">
+              Scroll down to hide the navbar, scroll up to reveal it. This is
+              paragraph {i + 1}.
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Responsive Mobile Menu
+
+`Navbar.MenuToggle` and `Navbar.Menu` provide a built-in mobile dropdown. Use `hidden md:flex` on desktop-only groups and keep the toggle visible below the breakpoint:
+
+```tsx
+<Navbar>
+  <Navbar.Header>
+    <Navbar.MenuToggle className="md:hidden" />
+    <Navbar.Brand>…</Navbar.Brand>
+
+    {/* Desktop-only nav */}
+    <Navbar.Content className="hidden md:flex">
+      <Navbar.Item href="/features">Features</Navbar.Item>
+      <Navbar.Item href="/pricing">Pricing</Navbar.Item>
+    </Navbar.Content>
+  </Navbar.Header>
+
+  {/* Mobile-only menu — animates in when the toggle is pressed */}
+  <Navbar.Menu>
+    <Navbar.MenuItem href="/features">Features</Navbar.MenuItem>
+    <Navbar.MenuItem href="/pricing">Pricing</Navbar.MenuItem>
+  </Navbar.Menu>
+</Navbar>
+```
+
+The menu open state can be controlled via `isMenuOpen` / `onMenuOpenChange` on `Navbar`, or uncontrolled via `defaultMenuOpen`. By default the navbar locks body scroll while the menu is open — pass `shouldBlockScroll={false}` to disable.
+
+## Compact Density
+
+Scale the entire navbar (paddings, gaps, icon sizes) by overriding the Tailwind v4 `--spacing` variable on the navbar or a wrapper, and tune the bar height with the `height` prop:
+
+```tsx
+<Navbar
+  height="2.75rem"
+  size="sm"
+  style={{ '--spacing': '0.22rem' } as React.CSSProperties}>
+  …
+</Navbar>
+```
+
+- `--spacing` scales every Tailwind spacing utility (`gap-*`, `p-*`, `size-*`) inside the navbar
+- `height` overrides the internal `--navbar-height` CSS variable
+- `size="sm"` applies the built-in compact text + padding variants
+
+## Client-Side Routing
+
+`Navbar.Item` renders a real `<a>` element when `href` is set (and `Navbar.MenuItem` does the same for the mobile menu), so it works with any router. You have three ways to integrate client-side routing:
+
+### Option 1 — Global `RouterProvider` (recommended)
+
+Wrap your app once in React Aria's [`RouterProvider`](https://react-spectrum.adobe.com/react-aria/routing.html) with your router's navigation function. Every `Navbar.Item` / `Navbar.MenuItem` with an `href` — along with any other HeroUI Pro component that links (e.g. `Sidebar.MenuItem`) — automatically routes through it, no per-`Navbar` `navigate` prop required. Modifier clicks (⌘/Ctrl-click) still open in a new tab, and external links keep their native behavior.
+
+```tsx
+import { RouterProvider } from 'react-aria-components'
+import { Outlet, useHref, useNavigate } from 'react-router'
+
+export default function App() {
+  const navigate = useNavigate()
+
+  return (
+    <RouterProvider navigate={navigate} useHref={useHref}>
+      <main className="bg-background text-foreground min-h-dvh">
+        <Outlet />
+      </main>
+    </RouterProvider>
+  )
+}
+```
+
+With the provider in place, the `Navbar` needs no routing props at all:
+
+<ComponentPreview name="pro-navbar-app-navbar">
+
+```tsx
+import { Navbar } from '@vezham/react-pro-v3'
+
+export function AppNavbar() {
+  return (
+    <Navbar>
+      <Navbar.Header>
+        <Navbar.Brand>Acme</Navbar.Brand>
+        <Navbar.Content>
+          <Navbar.Item href="/features">Features</Navbar.Item>
+          <Navbar.Item href="/pricing">Pricing</Navbar.Item>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+> The `RouterProvider` `navigate` signature differs slightly per framework — see React Aria's [client-side routing guide](https://react-spectrum.adobe.com/react-aria/routing.html) for Next.js, React Router, TanStack Router, Remix, and others.
+
+### Option 2 — `navigate` callback (per-`Navbar`)
+
+When you don't have (or don't want) a global provider, pass your router's push function directly to `Navbar`. Every `Navbar.Item` / `Navbar.MenuItem` with an `href` routes through it. An explicit `navigate` prop always takes precedence over any global `RouterProvider` — useful when a navbar needs a different router (e.g. an external shell app).
+
+#### Next.js (App Router)
+
+```tsx
+'use client'
+
+import { useRouter } from 'next/navigation'
+
+import { Navbar } from '@vezham/react-pro-v3'
+
+export function AppNavbar() {
+  const router = useRouter()
+
+  return (
+    <Navbar navigate={router.push}>
+      <Navbar.Header>
+        <Navbar.Brand>Acme</Navbar.Brand>
+        <Navbar.Content>
+          <Navbar.Item href="/features">Features</Navbar.Item>
+          <Navbar.Item href="/pricing">Pricing</Navbar.Item>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+#### React Router
+
+```tsx
+import { useNavigate } from 'react-router'
+
+import { Navbar } from '@vezham/react-pro-v3'
+
+export function AppNavbar() {
+  const navigate = useNavigate()
+
+  return <Navbar navigate={navigate}>{/* ... */}</Navbar>
+}
+```
+
+#### TanStack Router
+
+```tsx
+import { useRouter } from '@tanstack/react-router'
+
+import { Navbar } from '@vezham/react-pro-v3'
+
+export function AppNavbar() {
+  const router = useRouter()
+
+  return (
+    <Navbar navigate={href => router.navigate({ to: href })}>
+      {/* ... */}
+    </Navbar>
+  )
+}
+```
+
+### Option 3 — `render` prop for a custom link component
+
+Since `Navbar.Item` and `Navbar.MenuItem` are polymorphic, you can swap the rendered element entirely to use a framework-specific `<Link>` component (preserving prefetch, scroll restoration, and any router-level behaviors):
+
+<ComponentPreview name="pro-navbar-app-navbar-option-3-render-prop-for-a-custom-link-component">
+
+```tsx
+import Link from 'next/link'
+
+import { Navbar } from '@vezham/react-pro-v3'
+
+export function AppNavbar() {
+  return (
+    <Navbar>
+      <Navbar.Header>
+        <Navbar.Content>
+          <Navbar.Item
+            href="/features"
+            render={props => <Link href="/features" {...props} />}>
+            Features
+          </Navbar.Item>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  )
+}
+```
+
+</ComponentPreview>
+
+Same works for `Navbar.MenuItem` in the mobile menu and for React Router's `Link`, TanStack Router's `Link`, etc.
+
+> Combine both approaches if you like — `render` owns the element/prefetch, and `navigate` is used as the fallback for programmatic navigations (e.g. closing the mobile menu and pushing to the href).
+
+### External Links and Force Reload
+
+External URLs (starting with `http://` or `https://`) are automatically opened in a new tab via `window.open(href, "_blank", "noopener,noreferrer")`. For internal links that need a full page reload instead of client-side navigation, use the `forceReload` prop:
+
+```tsx
+<Navbar.Item href="https://github.com/heroui-inc/heroui">GitHub</Navbar.Item>
+
+<Navbar.Item href="/legacy-page" forceReload>Legacy page</Navbar.Item>
+```
+
+> **Navigation resolution order:** an explicit `navigate` prop wins, then a `navigate` inherited from an enclosing `AppLayout`, then a global React Aria `RouterProvider`, and finally the browser's default navigation if none are present.
+
+## Positioning
+
+Use the `position` prop to control how the navbar is anchored:
+
+- `"sticky"` _(default)_ — sticks to the top of its scroll container (`sticky top-0`)
+- `"static"` — flows inline with the page
+- `"floating"` — sticky, but detached from the edges with rounded corners, margin, border, and a shadow
+
+```tsx
+<Navbar position="floating" maxWidth="xl">
+  …
+</Navbar>
+```
+
+## Programmatic Control
+
+Use the `useNavbar` hook inside children of `Navbar` for programmatic access to the menu state and scroll-hidden state:
+
+```tsx
+import { useNavbar } from '@vezham/react-pro-v3'
+
+function CloseMenuButton() {
+  const { isMenuOpen, setMenuOpen } = useNavbar()
+
+  return (
+    <Button onPress={() => setMenuOpen(false)} isDisabled={!isMenuOpen}>
+      Close menu
+    </Button>
+  )
+}
+```
+
+## CSS Classes
+
+### Base & Variant Classes
+
+- `.navbar` — Root `<nav>` element. Flex column, `bg-background`, `z-40`.
+- `.navbar--sticky` — Sticky to the top of the scroll container.
+- `.navbar--static` — Inline positioning.
+- `.navbar--floating` — Sticky, detached with `rounded-2xl`, `border`, `shadow-surface`, and `mx-2`.
+- `.navbar[data-hidden="true"]` — Applied while the navbar is hidden via `hideOnScroll`.
+- `.navbar[data-menu-open="true"]` — Applied while the mobile menu is open.
+
+### Layout Classes
+
+- `.navbar__header` — Horizontal bar wrapper. `flex items-center gap-4 px-6`, clamped by `--navbar-max-width` and `--navbar-height`.
+- `.navbar__header--max-sm|md|lg|xl|2xl|full` — Sets `--navbar-max-width` to `640px` / `768px` / `1024px` / `1280px` / `1536px` / `100%`.
+- `.navbar__header--sm|md|lg` — Size variants that tune `--navbar-height` and header padding.
+- `.navbar__brand` — Logo / site-title container. `flex shrink-0 items-center gap-2`.
+- `.navbar__content` — Horizontal group of items. `flex items-center gap-1`.
+- `.navbar__spacer` — Flex-grow gap that pushes sibling content to the edges.
+
+### Item Classes
+
+- `.navbar__item` — Nav link/button. `text-muted text-sm`, hover → `text-foreground`, `rounded-lg`.
+- `.navbar__item--sm|lg` — Size variants for items (padding + font size).
+- `.navbar__item[data-current="true"]` — Applied when `isCurrent` is true; bumps to `text-foreground`. Also sets `aria-current="page"`.
+- `.navbar__label` — Truncated text inside items.
+- `.navbar__separator` — Vertical decorative divider (`h-6 self-center`).
+
+### Menu Classes
+
+- `.navbar__menu-toggle` — Hamburger button (`size-9`). Toggles between hamburger and close icon via `::before`/`::after` pseudo-elements.
+- `.navbar__menu-toggle--sm|lg` — Size variants.
+- `.navbar__menu-toggle-icon` — Inner span housing the animated pseudo-element lines.
+- `.navbar__menu` — Mobile dropdown menu. `flex flex-col gap-1 overflow-y-auto px-6 pb-6 pt-2`. Height animates between `0` and `calc(100dvh - var(--navbar-height))`.
+- `.navbar__menu-item` — Individual mobile menu item. `text-foreground text-base font-medium`, hover → `bg-default`.
+- `.navbar__menu-item--sm|lg` — Size variants.
+- `.navbar__menu-item[data-current="true"]` — Current mobile menu item (bg-default).
+
+### CSS Variables
+
+- `--navbar-height` — Height of the horizontal bar (default: `4rem`; `3rem` for `sm`; `5rem` for `lg`). Can also be set via the `height` prop on `Navbar`.
+- `--navbar-max-width` — Max content width inside the header (default: `1024px`, overridable via `maxWidth`).
+- `--navbar-transition-duration` — Reserved for future transitions (default: `300ms`).
+- `--spacing` — Tailwind v4 base spacing token. Override on the navbar root (or a wrapper) to uniformly scale all internal paddings, gaps, and icon sizes.
+
+## Accessibility
+
+- Rendered as a `<nav>` landmark. Add an `aria-label` when multiple navigation regions share the page.
+- `Navbar.Item` with `isCurrent` sets `aria-current="page"` automatically.
+- `Navbar.MenuToggle` is backed by RAC `ToggleButton`; its selected state is wired to `isMenuOpen`. Customize the screen-reader label via the `srLabel` prop.
+- Animations respect the user's `prefers-reduced-motion` preference.
+
+## API Reference
+
+### Navbar
+
+The root `<nav>` landmark and the context provider. Accepts all `<nav>` props.
+
+| Prop                | Type                                              | Default    | Description                                                                                                                                                                                                       |
+| ------------------- | ------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `position`          | `"sticky" \| "static" \| "floating"`              | `"sticky"` | How the navbar is anchored to the page.                                                                                                                                                                           |
+| `size`              | `"sm" \| "md" \| "lg"`                            | `"md"`     | Applies the matching size variants to the header, items, and menu toggle.                                                                                                                                         |
+| `maxWidth`          | `"sm" \| "md" \| "lg" \| "xl" \| "2xl" \| "full"` | `"lg"`     | Caps the header's content width via `--navbar-max-width`.                                                                                                                                                         |
+| `height`            | `string`                                          | `"4rem"`   | CSS height for the bar. Sets `--navbar-height` inline.                                                                                                                                                            |
+| `hideOnScroll`      | `boolean`                                         | `false`    | Hide the navbar when scrolling down and reveal on scroll up. Uses a spring transform so layout stays intact.                                                                                                      |
+| `parentRef`         | `RefObject<HTMLElement \| null>`                  | `window`   | Scroll container used by `hideOnScroll`. Defaults to the window.                                                                                                                                                  |
+| `isMenuOpen`        | `boolean`                                         | —          | Controlled mobile menu open state.                                                                                                                                                                                |
+| `defaultMenuOpen`   | `boolean`                                         | `false`    | Initial mobile menu open state (uncontrolled).                                                                                                                                                                    |
+| `onMenuOpenChange`  | `(isOpen: boolean) => void`                       | —          | Callback when the mobile menu state changes.                                                                                                                                                                      |
+| `shouldBlockScroll` | `boolean`                                         | `true`     | Lock body scroll while the mobile menu is open.                                                                                                                                                                   |
+| `navigate`          | `(href: string) => void`                          | —          | Programmatic navigation function used by `Navbar.Item` / `Navbar.MenuItem` when pressed. If omitted, the `Navbar` defers to a global React Aria `RouterProvider` when present, then to native browser navigation. |
+
+### Navbar.Header
+
+Horizontal bar wrapper. Renders a `<header>` with the header size and `max-width` slot classes applied.
+
+### Navbar.Brand
+
+Logo / site-title container. Polymorphic — accepts a `render` prop to customize the rendered element. Renders a `<div>` by default.
+
+### Navbar.Content
+
+Horizontal group of nav items. Renders a `<div>`.
+
+### Navbar.Item
+
+A single nav link or action. Renders an `<a>` when `href` is set, otherwise a `<button>`. Polymorphic via the `render` prop.
+
+| Prop          | Type                      | Default | Description                                                                                                                                                                                                                           |
+| ------------- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `href`        | `string`                  | —       | Destination URL. Uses the parent `Navbar`'s `navigate` (or a global React Aria `RouterProvider`) for client-side routing, or the browser's default navigation as a fallback. External URLs (`http://`, `https://`) open in a new tab. |
+| `isCurrent`   | `boolean`                 | `false` | Marks the item as the current page. Sets `aria-current="page"` and `data-current="true"`.                                                                                                                                             |
+| `forceReload` | `boolean`                 | `false` | Skip the `navigate` callback and use `window.location.href` for this item.                                                                                                                                                            |
+| `render`      | `(props) => ReactElement` | —       | Override the rendered element (e.g. to render a Next.js / React Router `<Link>`).                                                                                                                                                     |
+
+### Navbar.Label
+
+Truncated text span for use inside `Navbar.Item`.
+
+### Navbar.Separator
+
+Vertical divider. Wraps [HeroUI Separator](https://heroui.com/docs/react/components/separator) with `orientation="vertical"`.
+
+### Navbar.Spacer
+
+Flex-grow spacer that pushes surrounding content to opposite ends of the header.
+
+### Navbar.MenuToggle
+
+Hamburger button for the mobile menu. Wraps RAC [ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html); its selected state is bound to `isMenuOpen`.
+
+| Prop       | Type        | Default                    | Description                                                                    |
+| ---------- | ----------- | -------------------------- | ------------------------------------------------------------------------------ |
+| `srLabel`  | `string`    | `"Toggle navigation menu"` | Screen-reader label for the toggle.                                            |
+| `children` | `ReactNode` | —                          | Custom icon. When omitted, the built-in animated hamburger/close icon is used. |
+
+### Navbar.Menu
+
+Animated mobile dropdown. Only renders when `isMenuOpen` is true. Fills the viewport below the navbar with `calc(100dvh - var(--navbar-height))`.
+
+### Navbar.MenuItem
+
+An individual item inside `Navbar.Menu`. Same API surface as `Navbar.Item` — but pressing an item automatically closes the mobile menu.
+
+| Prop          | Type                      | Default | Description                                                       |
+| ------------- | ------------------------- | ------- | ----------------------------------------------------------------- |
+| `href`        | `string`                  | —       | Destination URL. Same client-side routing rules as `Navbar.Item`. |
+| `isCurrent`   | `boolean`                 | `false` | Marks the item as the current page.                               |
+| `forceReload` | `boolean`                 | `false` | Skip the `navigate` callback and use `window.location.href`.      |
+| `render`      | `(props) => ReactElement` | —       | Override the rendered element.                                    |
+
+### useNavbar
+
+A hook for reading and mutating navbar state from inside `Navbar`'s children.
+
+```tsx
+const { height, isHidden, isMenuOpen, setMenuOpen, navigate } = useNavbar()
+```
+
+| Property      | Type                                    | Description                                                |
+| ------------- | --------------------------------------- | ---------------------------------------------------------- |
+| `height`      | `string`                                | Current navbar height (as passed via the `height` prop).   |
+| `isHidden`    | `boolean`                               | Whether the navbar is currently hidden via `hideOnScroll`. |
+| `isMenuOpen`  | `boolean`                               | Whether the mobile menu is currently open.                 |
+| `setMenuOpen` | `(open: boolean) => void`               | Programmatically open/close the mobile menu.               |
+| `navigate`    | `((href: string) => void) \| undefined` | The navigation function passed to `Navbar`, if any.        |

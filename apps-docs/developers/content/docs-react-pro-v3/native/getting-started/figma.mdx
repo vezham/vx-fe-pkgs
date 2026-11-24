@@ -1,0 +1,63 @@
+---
+title: 'Figma'
+description: 'Design HeroUI Pro Native interfaces with exclusive Figma components and theme-variable sync.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/figma
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Pro Native includes mobile-focused Figma resources for designing screens that stay aligned with the components shipped in your React Native app.
+
+## What's Included
+
+- **Native Pro component Figma file** — Mobile interface assets for HeroUI Pro Native components, matching the anatomy, variants, and slots available in code
+- **Figma theme variables plugin** — Sync your supported HeroUI theme variables directly into Figma, so design tokens stay consistent between your codebase and design files
+
+## Download
+
+<Callout type="warning">
+  Figma files (.fig) are available exclusively to HeroUI Pro license holders.
+  Sign in with an active license to download.
+</Callout>
+
+[Open Figma downloads on HeroUI Pro](https://heroui.pro/docs/native/getting-started/figma#download)
+
+## Figma Sync Plugin
+
+The **Figma Sync Plugin** lets you push your custom themes from the [HeroUI Design Systems](https://heroui.pro/dashboard/pro/ds) directly into the HeroUI Figma design system — keeping supported design tokens and code variables perfectly in sync. It works with supported **OSS** and **Pro** themes.
+
+<Callout type="info">
+  The plugin is live on the Figma Community: [HeroUI Theme
+  Sync](https://www.figma.com/community/plugin/1628472563022614828/heroui-theme-sync).
+</Callout>
+
+### How it works
+
+1. Create or customize a theme in the [Design Systems](https://heroui.pro/dashboard/pro/ds) and copy the Web CSS export
+2. Open the HeroUI Sync plugin inside a Figma file
+3. Paste the CSS output from the Design Systems in the plugin
+4. Sync — your supported Figma variables, including colors, radius, and spacing, update instantly
+
+### Before you sync
+
+- **Use the right Figma file version** — Community files require HeroUI Figma Kit **v3.0.3 or newer**. Pro files support the plugin from their initial versions, but we recommend using the latest files for minor updates and fixes.
+- **Treat code as the source of truth** — create and maintain your themes in the [HeroUI Design Systems](https://heroui.pro/dashboard/pro/ds), then sync those variables into Figma with the plugin.
+- **Duplicate first** — run the plugin in a duplicated Figma file first, check that everything looks right, then sync your main file.
+
+### Notes and limitations
+
+- Font family changes are manual. In Figma, open the Variables panel, go to the Typography collection, and update the font variable.
+- Shadow effect styles sync using light-mode values. Dark-mode shadow changes require a manual update in Figma.
+- Brutalism, Glass, and Mouve Pro theme tokens are supported. Keep the theme import in the Web CSS export so the plugin can resolve the theme's default values.
+
+## HeroUI OSS Figma
+
+Looking for the free HeroUI OSS Figma kit? It's available on the Figma Community:
+
+- [HeroUI Figma Kit V3](https://www.figma.com/community/file/1546526812159103429) (free, OSS components)

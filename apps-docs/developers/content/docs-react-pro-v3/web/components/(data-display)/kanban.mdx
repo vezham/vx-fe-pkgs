@@ -1,0 +1,1136 @@
+---
+title: 'Kanban'
+description: 'A drag-and-drop kanban board with columns, cards, and keyboard navigation for organizing tasks and workflows.'
+sourceUrl: https://heroui.pro/docs/react/components/kanban
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-kanban-default">
+
+```tsx
+'use client'
+
+import { CircleCheck, CircleDashed, CirclePlay } from '@gravity-ui/icons'
+
+import { Kanban } from '@vezham/react-pro-v3/kanban'
+import { useKanban } from '@vezham/react-pro-v3/kanban'
+
+import type { Ticket } from './_shared'
+import {
+  AddTaskModalProvider,
+  TicketColumn,
+  ticketColumns,
+  tickets
+} from './_shared'
+
+export function Default() {
+  const kanban = useKanban<Ticket>({
+    getColumn: item => item.status,
+    initialItems: tickets,
+    setColumn: (item, column) => ({ ...item, status: column })
+  })
+
+  const columnIcons: Record<string, { color: string; icon: React.ReactNode }> =
+    {
+      Closed: { color: 'text-danger', icon: <CircleCheck /> },
+      'In Progress': { color: 'text-warning', icon: <CirclePlay /> },
+      Open: { color: 'text-success', icon: <CircleDashed /> }
+    }
+
+  return (
+    <Kanban>
+      {ticketColumns.map(col => (
+        <AddTaskModalProvider key={col} column={col} kanban={kanban}>
+          <TicketColumn
+            color={columnIcons[col]?.color}
+            column={col}
+            icon={columnIcons[col]?.icon}
+            kanban={kanban}
+          />
+        </AddTaskModalProvider>
+      ))}
+    </Kanban>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Kanban component and access all parts using dot notation.
+
+```tsx
+import { Kanban } from '@vezham/react-pro-v3'
+
+;<Kanban>
+  <Kanban.Column>
+    <Kanban.ColumnHeader>
+      <Kanban.ColumnIndicator />
+      <Kanban.ColumnTitle />
+      <Kanban.ColumnCount />
+      <Kanban.ColumnActions />
+    </Kanban.ColumnHeader>
+    <Kanban.ColumnBody>
+      <Kanban.ScrollShadow>
+        <Kanban.CardList>
+          <Kanban.Card />
+        </Kanban.CardList>
+      </Kanban.ScrollShadow>
+    </Kanban.ColumnBody>
+  </Kanban.Column>
+  <Kanban.DropIndicator />
+</Kanban>
+```
+
+## Notion Board
+
+<ComponentPreview name="pro-kanban-notion-board">
+
+```tsx
+'use client'
+
+import { Calendar, Ellipsis, Plus, ThunderboltFill } from '@gravity-ui/icons'
+
+import type { UseKanbanReturn } from '@vezham/react-pro-v3/kanban'
+import { Kanban } from '@vezham/react-pro-v3/kanban'
+import {
+  useKanban,
+  useKanbanCardPlaceholder,
+  useKanbanColumn
+} from '@vezham/react-pro-v3/kanban'
+import { Avatar, Button, Chip, Tooltip } from '@vezham/react-v3'
+
+type Priority = 'High' | 'Medium' | 'Low'
+type Size = 'S' | 'M' | 'L' | 'XL'
+
+interface NotionTask {
+  assignees: Array<{ avatar: string; name: string }>
+  categories: string[]
+  dueDate?: string
+  epic: string
+  id: string
+  priority: Priority
+  size: Size
+  status: string
+  title: string
+}
+
+const avatars = {
+  alex: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+  diego:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/black.jpg',
+  emily:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/white.jpg',
+  jake: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  maria:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+  sam: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg'
+}
+
+const priorityConfig: Record<
+  Priority,
+  {
+    chipColor: 'danger' | 'default' | 'success' | 'warning'
+    squareColor: string
+  }
+> = {
+  High: { chipColor: 'danger', squareColor: 'bg-danger' },
+  Low: { chipColor: 'success', squareColor: 'bg-success' },
+  Medium: { chipColor: 'warning', squareColor: 'bg-warning' }
+}
+
+const notionColumns = ['Todo', 'In Progress', 'To Document', 'Done']
+
+interface ColumnMeta {
+  bodyBg: string
+  btnStyle: string
+  countColor: string
+  indicator: string
+  pillBg: string
+}
+
+const columnMeta: Record<string, ColumnMeta> = {
+  Done: {
+    bodyBg: 'bg-success/8',
+    btnStyle: 'text-success border-success/30 hover:bg-success/10',
+    countColor: 'text-success',
+    indicator: 'bg-success',
+    pillBg: 'bg-success/15'
+  },
+  'In Progress': {
+    bodyBg: 'bg-warning/8',
+    btnStyle: 'text-warning border-warning/30 hover:bg-warning/10',
+    countColor: 'text-warning',
+    indicator: 'bg-warning',
+    pillBg: 'bg-warning/15'
+  },
+  'To Document': {
+    bodyBg: 'bg-danger/8',
+    btnStyle: 'text-danger border-danger/30 hover:bg-danger/10',
+    countColor: 'text-danger',
+    indicator: 'bg-danger',
+    pillBg: 'bg-danger/15'
+  },
+  Todo: {
+    bodyBg: 'bg-accent/8',
+    btnStyle: 'text-accent border-accent/30 hover:bg-accent/10',
+    countColor: 'text-accent',
+    indicator: 'bg-accent',
+    pillBg: 'bg-accent/15'
+  }
+}
+
+const tasks: NotionTask[] = [
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'Block'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n1',
+    priority: 'High',
+    size: 'M',
+    status: 'Todo',
+    title: 'Calendar Blocks'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Launch', 'New Component'],
+    dueDate: 'Mar 5, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n2',
+    priority: 'High',
+    size: 'M',
+    status: 'Todo',
+    title: 'Pro badge on the Expo Go app'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n3',
+    priority: 'Medium',
+    size: 'M',
+    status: 'Todo',
+    title: 'FeedCarousel'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n4',
+    priority: 'Medium',
+    size: 'M',
+    status: 'Todo',
+    title: 'FlipCard'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n5',
+    priority: 'Medium',
+    size: 'M',
+    status: 'Todo',
+    title: 'NumberPad'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n6',
+    priority: 'Medium',
+    size: 'M',
+    status: 'Todo',
+    title: 'Phone Number Input'
+  },
+  {
+    assignees: [{ avatar: avatars.maria, name: 'Maria' }],
+    categories: ['Mobile', 'Block'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n7',
+    priority: 'Medium',
+    size: 'M',
+    status: 'Todo',
+    title: 'Bottom Sheet Blocks'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    dueDate: 'Mar 29, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n8',
+    priority: 'High',
+    size: 'L',
+    status: 'In Progress',
+    title: 'MorphButton'
+  },
+  {
+    assignees: [{ avatar: avatars.sam, name: 'Sam' }],
+    categories: ['Mobile', 'Block'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n9',
+    priority: 'Low',
+    size: 'S',
+    status: 'In Progress',
+    title: 'Create Password'
+  },
+  {
+    assignees: [
+      { avatar: avatars.sam, name: 'Sam' },
+      { avatar: avatars.jake, name: 'Jake' }
+    ],
+    categories: ['Mobile', 'Block'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n10',
+    priority: 'Low',
+    size: 'S',
+    status: 'In Progress',
+    title: 'OTP Verification'
+  },
+  {
+    assignees: [{ avatar: avatars.sam, name: 'Sam' }],
+    categories: ['Mobile', 'Block'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n11',
+    priority: 'Low',
+    size: 'S',
+    status: 'In Progress',
+    title: 'Login / Sign up'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    dueDate: 'Apr 5, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n12',
+    priority: 'High',
+    size: 'L',
+    status: 'To Document',
+    title: 'ProgressButton'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    dueDate: 'Apr 5, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n13',
+    priority: 'High',
+    size: 'L',
+    status: 'To Document',
+    title: 'SlideButton'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    dueDate: 'Apr 5, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n14',
+    priority: 'High',
+    size: 'M',
+    status: 'To Document',
+    title: 'NumberField'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    dueDate: 'Apr 10, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n15',
+    priority: 'High',
+    size: 'L',
+    status: 'To Document',
+    title: 'RadioButtonGroup'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Launch', 'New Component'],
+    dueDate: 'Apr 9, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n16',
+    priority: 'High',
+    size: 'XL',
+    status: 'To Document',
+    title: 'Calendar'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'Block'],
+    dueDate: 'Mar 29, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n17',
+    priority: 'Medium',
+    size: 'L',
+    status: 'To Document',
+    title: 'Multi Step Bottom Sheet'
+  },
+  {
+    assignees: [{ avatar: avatars.diego, name: 'Diego' }],
+    categories: ['Mobile', 'New Component'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n18',
+    priority: 'Medium',
+    size: 'M',
+    status: 'To Document',
+    title: 'Stepper'
+  },
+  {
+    assignees: [
+      { avatar: avatars.emily, name: 'Emily' },
+      { avatar: avatars.alex, name: 'Alex' }
+    ],
+    categories: ['Mobile'],
+    dueDate: 'Mar 10, 2026',
+    epic: 'Pro Native (Alpha)',
+    id: 'n19',
+    priority: 'High',
+    size: 'S',
+    status: 'Done',
+    title: 'Pre-release in-app message'
+  },
+  {
+    assignees: [
+      { avatar: avatars.sam, name: 'Sam' },
+      { avatar: avatars.diego, name: 'Diego' }
+    ],
+    categories: ['Mobile', 'Improvement'],
+    epic: 'Pro Native (Alpha)',
+    id: 'n20',
+    priority: 'Medium',
+    size: 'S',
+    status: 'Done',
+    title: 'OSS \u2194 PRO Sync'
+  }
+]
+
+function NotionCard({ task }: { task: NotionTask }) {
+  const { chipColor, squareColor } = priorityConfig[task.priority]
+
+  return (
+    <>
+      <div className="flex items-start gap-2">
+        <span className={`mt-1 size-2.5 shrink-0 rounded-sm ${squareColor}`} />
+        <span className="text-foreground leading-snug font-semibold">
+          {task.title}
+        </span>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Chip color={chipColor} size="sm" variant="soft">
+          {task.priority}
+        </Chip>
+        <Chip size="sm" variant="secondary">
+          {task.size}
+        </Chip>
+        {task.assignees.map(a => (
+          <Avatar
+            key={a.name}
+            className="ring-background size-5 ring-2"
+            size="sm">
+            <Avatar.Image alt={a.name} src={a.avatar} />
+            <Avatar.Fallback>{a.name[0]}</Avatar.Fallback>
+          </Avatar>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-muted flex items-center gap-1 text-xs">
+          <ThunderboltFill className="text-warning size-3" />
+          {task.epic}
+        </span>
+        {!!task.dueDate && (
+          <span className="text-muted flex shrink-0 items-center gap-1 text-xs">
+            <Calendar className="size-3" />
+            {task.dueDate}
+          </span>
+        )}
+      </div>
+
+      {task.categories.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {task.categories.map(cat => (
+            <Chip key={cat} size="sm" variant="secondary">
+              {cat}
+            </Chip>
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
+function NotionColumn({
+  column,
+  kanban
+}: {
+  column: string
+  kanban: UseKanbanReturn<NotionTask>
+}) {
+  const { renderDropIndicator } = useKanbanCardPlaceholder({
+    renderIndicator: target => <Kanban.DropIndicator target={target} />
+  })
+  const { dragAndDropHooks, items } = useKanbanColumn(kanban, column, {
+    renderDropIndicator
+  })
+
+  const meta = columnMeta[column] ?? {
+    bodyBg: 'bg-default/8',
+    btnStyle: 'text-muted border-default/30 hover:bg-default/10',
+    countColor: 'text-muted',
+    indicator: 'bg-default',
+    pillBg: 'bg-default/15'
+  }
+
+  return (
+    <Kanban.Column className="gap-0">
+      <div className="bg-background sticky top-0 z-10 pt-2">
+        <Kanban.ColumnHeader
+          className={`rounded-t-[calc(var(--radius-2xl)_+_var(--radius-sm))] px-3 py-2.5 ${meta.bodyBg}`}>
+          <span
+            className={`flex items-center gap-2 rounded-[calc(var(--radius)*infinity)] px-3 py-1 ${meta.pillBg}`}>
+            <Kanban.ColumnIndicator className={meta.indicator} />
+            <Kanban.ColumnTitle>{column}</Kanban.ColumnTitle>
+          </span>
+          <Kanban.ColumnCount className={meta.countColor}>
+            {items.length}
+          </Kanban.ColumnCount>
+          <Kanban.ColumnActions>
+            <Tooltip delay={300}>
+              <Button
+                isIconOnly
+                aria-label="Add task"
+                className={meta.countColor}
+                size="sm"
+                variant="ghost">
+                <Plus />
+              </Button>
+              <Tooltip.Content>Add task</Tooltip.Content>
+            </Tooltip>
+            <Tooltip delay={300}>
+              <Button
+                isIconOnly
+                aria-label="More options"
+                className={meta.countColor}
+                size="sm"
+                variant="ghost">
+                <Ellipsis />
+              </Button>
+              <Tooltip.Content>More options</Tooltip.Content>
+            </Tooltip>
+          </Kanban.ColumnActions>
+        </Kanban.ColumnHeader>
+      </div>
+      <Kanban.ColumnBody className={`rounded-t-none ${meta.bodyBg}`}>
+        <Kanban.CardList
+          aria-label={column}
+          className="pt-0 pb-2"
+          dragAndDropHooks={dragAndDropHooks}
+          items={items}
+          renderEmptyState={() => 'No tasks yet.'}>
+          {task => (
+            <Kanban.Card textValue={task.title}>
+              <NotionCard task={task} />
+            </Kanban.Card>
+          )}
+        </Kanban.CardList>
+        <div className="p-2 pt-0">
+          <Button fullWidth className={meta.btnStyle} variant="outline">
+            <Plus />
+            New task
+          </Button>
+        </div>
+      </Kanban.ColumnBody>
+    </Kanban.Column>
+  )
+}
+
+export function NotionBoard() {
+  const kanban = useKanban<NotionTask>({
+    getColumn: item => item.status,
+    initialItems: tasks,
+    setColumn: (item, column) => ({ ...item, status: column })
+  })
+
+  return (
+    <div className="w-full pr-3">
+      <Kanban
+        hideScrollBar
+        className="items-start overflow-visible"
+        isEnabled={false}>
+        {notionColumns.map(col => (
+          <NotionColumn key={col} column={col} kanban={kanban} />
+        ))}
+      </Kanban>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Project Board
+
+<ComponentPreview name="pro-kanban-project-board">
+
+```tsx
+'use client'
+
+import { Ellipsis, Plus } from '@gravity-ui/icons'
+
+import type { UseKanbanReturn } from '@vezham/react-pro-v3/kanban'
+import { Kanban } from '@vezham/react-pro-v3/kanban'
+import { useKanban, useKanbanColumn } from '@vezham/react-pro-v3/kanban'
+import { Avatar, Button, ProgressBar } from '@vezham/react-v3'
+
+interface ProjectTask {
+  assignees: Array<{ avatar: string; name: string }>
+  category: string
+  categoryColor: string
+  dueDate?: string
+  id: string
+  status: string
+  subtasksCompleted?: number
+  subtasksTotal?: number
+  title: string
+}
+
+const avatars = {
+  alex: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+  emily:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/white.jpg',
+  jake: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/black.jpg',
+  maria:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  sam: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+  sarah:
+    'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg'
+}
+
+const projectTasks: ProjectTask[] = [
+  {
+    assignees: [{ avatar: avatars.sam, name: 'Sam' }],
+    category: 'Research',
+    categoryColor: '#8b5cf6',
+    id: 'p1',
+    status: 'Backlog',
+    title: 'Research competitor onboarding patterns'
+  },
+  {
+    assignees: [{ avatar: avatars.alex, name: 'Alex' }],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    id: 'p2',
+    status: 'Backlog',
+    title: 'Audit analytics event naming'
+  },
+  {
+    assignees: [
+      { avatar: avatars.emily, name: 'Emily' },
+      { avatar: avatars.maria, name: 'Maria' }
+    ],
+    category: 'UX',
+    categoryColor: '#ef4444',
+    dueDate: 'Jun 18',
+    id: 'p3',
+    status: 'To Do',
+    title: 'Design empty states for dashboard widgets'
+  },
+  {
+    assignees: [
+      { avatar: avatars.jake, name: 'Jake' },
+      { avatar: avatars.sarah, name: 'Sarah' }
+    ],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    dueDate: 'Jun 20',
+    id: 'p4',
+    status: 'To Do',
+    title: 'Set up CI/CD for staging environment'
+  },
+  {
+    assignees: [{ avatar: avatars.maria, name: 'Maria' }],
+    category: 'UX',
+    categoryColor: '#ef4444',
+    dueDate: 'Jun 15',
+    id: 'p5',
+    status: 'In Progress',
+    subtasksCompleted: 3,
+    subtasksTotal: 7,
+    title: 'Redesign onboarding flow'
+  },
+  {
+    assignees: [{ avatar: avatars.jake, name: 'Jake' }],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    id: 'p6',
+    status: 'In Progress',
+    subtasksCompleted: 3,
+    subtasksTotal: 5,
+    title: 'API rate limiting implementation'
+  },
+  {
+    assignees: [{ avatar: avatars.sam, name: 'Sam' }],
+    category: 'Research',
+    categoryColor: '#8b5cf6',
+    id: 'p7',
+    status: 'In Progress',
+    title: 'Create user interview script for v2.5'
+  },
+  {
+    assignees: [
+      { avatar: avatars.sarah, name: 'Sarah' },
+      { avatar: avatars.emily, name: 'Emily' }
+    ],
+    category: 'UX',
+    categoryColor: '#ef4444',
+    id: 'p8',
+    status: 'In Review',
+    title: 'Push notification permission flow'
+  },
+  {
+    assignees: [
+      { avatar: avatars.jake, name: 'Jake' },
+      { avatar: avatars.alex, name: 'Alex' },
+      { avatar: avatars.maria, name: 'Maria' }
+    ],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    id: 'p9',
+    status: 'In Review',
+    title: 'Database migration script for v2.4'
+  },
+  {
+    assignees: [{ avatar: avatars.sam, name: 'Sam' }],
+    category: 'Docs',
+    categoryColor: '#06b6d4',
+    id: 'p10',
+    status: 'In Review',
+    title: 'Write release notes for v2.4'
+  },
+  {
+    assignees: [{ avatar: avatars.maria, name: 'Maria' }],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    id: 'p11',
+    status: 'Done',
+    title: 'Implement dark mode toggle'
+  },
+  {
+    assignees: [
+      { avatar: avatars.emily, name: 'Emily' },
+      { avatar: avatars.sarah, name: 'Sarah' }
+    ],
+    category: 'Engineering',
+    categoryColor: '#3b82f6',
+    id: 'p12',
+    status: 'Done',
+    title: 'Fix pagination bug on search results'
+  },
+  {
+    assignees: [{ avatar: avatars.alex, name: 'Alex' }],
+    category: 'UX',
+    categoryColor: '#ef4444',
+    id: 'p13',
+    status: 'Done',
+    title: 'Add skeleton loaders to dashboard'
+  }
+]
+
+const columnMeta: Record<string, string> = {
+  Backlog: 'bg-default',
+  Done: 'bg-success',
+  'In Progress': 'bg-warning',
+  'In Review': 'bg-danger',
+  'To Do': 'bg-accent'
+}
+
+const projectColumns = ['Backlog', 'To Do', 'In Progress', 'In Review', 'Done']
+
+function ProjectColumn({
+  column,
+  kanban
+}: {
+  column: string
+  kanban: UseKanbanReturn<ProjectTask>
+}) {
+  const { dragAndDropHooks, items } = useKanbanColumn(kanban, column)
+
+  return (
+    <Kanban.Column>
+      <Kanban.ColumnHeader>
+        <Kanban.ColumnIndicator
+          className={columnMeta[column] ?? 'bg-default'}
+        />
+        <Kanban.ColumnTitle>{column}</Kanban.ColumnTitle>
+        <Kanban.ColumnCount>{items.length}</Kanban.ColumnCount>
+        <Kanban.ColumnActions>
+          <Button isIconOnly aria-label="Add task" size="sm" variant="ghost">
+            <Plus />
+          </Button>
+          <Button
+            isIconOnly
+            aria-label="More options"
+            size="sm"
+            variant="ghost">
+            <Ellipsis />
+          </Button>
+        </Kanban.ColumnActions>
+      </Kanban.ColumnHeader>
+      <Kanban.ColumnBody>
+        <Kanban.ScrollShadow className="max-h-[480px]">
+          <Kanban.CardList
+            aria-label={column}
+            dragAndDropHooks={dragAndDropHooks}
+            items={items}
+            renderEmptyState={() => 'No tasks.'}>
+            {task => (
+              <Kanban.Card textValue={task.title}>
+                <span
+                  className={`text-foreground leading-snug font-semibold ${column === 'Done' ? 'line-through opacity-60' : ''}`}>
+                  {task.title}
+                </span>
+
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="size-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: task.categoryColor }}
+                  />
+                  <span className="text-muted text-xs">{task.category}</span>
+                </span>
+
+                {task.subtasksTotal != null && (
+                  <div className="flex items-center gap-2">
+                    <ProgressBar
+                      aria-label="Subtasks"
+                      className="flex-1"
+                      color="accent"
+                      size="sm"
+                      value={
+                        (task.subtasksCompleted! / task.subtasksTotal) * 100
+                      }>
+                      <ProgressBar.Track>
+                        <ProgressBar.Fill />
+                      </ProgressBar.Track>
+                    </ProgressBar>
+                    <span className="text-muted text-xs tabular-nums">
+                      {task.subtasksCompleted}/{task.subtasksTotal}
+                    </span>
+                  </div>
+                )}
+
+                <div className="mt-0.5 flex items-center justify-between">
+                  <div className="flex -space-x-2">
+                    {task.assignees.slice(0, 3).map(a => (
+                      <Avatar
+                        key={a.name}
+                        className="ring-background size-5 ring-2"
+                        size="sm">
+                        <Avatar.Image alt={a.name} src={a.avatar} />
+                        <Avatar.Fallback>{a.name[0]}</Avatar.Fallback>
+                      </Avatar>
+                    ))}
+                    {task.assignees.length > 3 && (
+                      <Avatar
+                        className="ring-background size-5 ring-2"
+                        size="sm">
+                        <Avatar.Fallback className="text-xs">
+                          +{task.assignees.length - 3}
+                        </Avatar.Fallback>
+                      </Avatar>
+                    )}
+                  </div>
+                  {!!task.dueDate && (
+                    <span className="text-muted text-xs">{task.dueDate}</span>
+                  )}
+                </div>
+              </Kanban.Card>
+            )}
+          </Kanban.CardList>
+        </Kanban.ScrollShadow>
+      </Kanban.ColumnBody>
+    </Kanban.Column>
+  )
+}
+
+export function ProjectBoard() {
+  const kanban = useKanban<ProjectTask>({
+    getColumn: item => item.status,
+    initialItems: projectTasks,
+    setColumn: (item, column) => ({ ...item, status: column })
+  })
+
+  return (
+    <Kanban>
+      {projectColumns.map(col => (
+        <ProjectColumn key={col} column={col} kanban={kanban} />
+      ))}
+    </Kanban>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-kanban-sizes">
+
+```tsx
+'use client'
+
+import { Kanban } from '@vezham/react-pro-v3/kanban'
+import { useKanban } from '@vezham/react-pro-v3/kanban'
+
+import type { Ticket } from './_shared'
+import { AddTaskModalProvider, TicketColumn, tickets } from './_shared'
+
+function SizeBoard({ size }: { size: 'sm' | 'md' | 'lg' }) {
+  const kanban = useKanban<Ticket>({
+    getColumn: item => item.status,
+    initialItems: tickets.slice(0, 5),
+    setColumn: (item, column) => ({ ...item, status: column })
+  })
+
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-muted text-xs font-medium">{size}</span>
+      <Kanban size={size}>
+        {['Open', 'In Progress'].map(col => (
+          <AddTaskModalProvider key={col} column={col} kanban={kanban}>
+            <TicketColumn
+              color={col === 'Open' ? 'bg-success' : 'bg-warning'}
+              column={col}
+              kanban={kanban}
+            />
+          </AddTaskModalProvider>
+        ))}
+      </Kanban>
+    </div>
+  )
+}
+
+export function Sizes() {
+  return (
+    <div className="flex flex-col gap-10">
+      {(['sm', 'md', 'lg'] as const).map(size => (
+        <SizeBoard key={size} size={size} />
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Size Classes
+
+- `.kanban` — Root board container. CSS grid with horizontal auto-flow and snap scrolling.
+- `.kanban--sm` — Small size. Narrower columns (`240px`), tighter gap (`12px`).
+- `.kanban--md` — Medium size (default). Standard columns (`280px`), default gap (`16px`).
+- `.kanban--lg` — Large size. Wider columns (`320px`), spacious gap (`20px`).
+
+### Element Classes
+
+- `.kanban__column` — Individual column section. Flex column with snap-center alignment.
+- `.kanban__column-body` — Visual container for card list and add button. Rounded with `bg-default/40`.
+- `.kanban__column-header` — Header area with indicator, title, count, and action buttons.
+- `.kanban__column-actions` — Hover-reveal action buttons inside the header. Fades in on column header hover.
+- `.kanban__column-indicator` — Colored status dot (when empty) or icon container (when children are provided).
+- `.kanban__column-title` — Column heading text (`text-sm font-semibold`).
+- `.kanban__column-count` — Item count badge (`text-xs text-muted`).
+- `.kanban__card` — Outer card wrapper (RAC `GridListItem`). Handles focus ring, cursor, and drag opacity.
+- `.kanban__card--sm` — Small card variant.
+- `.kanban__card--md` — Medium card variant.
+- `.kanban__card--lg` — Large card variant.
+- `.kanban__card-content` — Inner motion wrapper. Carries background (`bg-overlay`), rounded corners, shadow, and flex layout.
+- `.kanban__card-content--sm` — Small card content (`gap-1.5 p-2 text-xs`).
+- `.kanban__card-content--md` — Medium card content (`gap-2 p-3 text-sm`). Default.
+- `.kanban__card-content--lg` — Large card content (`gap-3 p-4 text-base`).
+- `.kanban__card-list` — Scrollable GridList container with vertical gap between cards.
+- `.kanban__scroll-shadow` — Optional ScrollShadow wrapper for constrained, scrollable columns.
+- `.kanban__drop-indicator` — Custom drop indicator with animated height via `--kanban-drop-height`.
+- `.kanban__drag-handle` — Grip button, screen-reader-only by default. Reveals on focus.
+- `.kanban__empty` — Empty state placeholder centered inside an empty column.
+
+### Interactive States
+
+- **Hover**: `.kanban__card:hover > .kanban__card-content` — applies `shadow-sm`.
+- **Selected**: `.kanban__card[data-selected="true"] > .kanban__card-content` — applies `bg-accent-soft`.
+- **Dragging**: `.kanban__card[data-dragging]` — reduced opacity (0.5).
+- **Focus visible**: `.kanban__card[data-focus-visible="true"]` — focus ring with `ring-2`.
+- **Disabled**: `.kanban__card[aria-disabled="true"]` — disabled opacity.
+- **Column actions reveal**: `.kanban__column-header:hover .kanban__column-actions` — opacity transitions to 1.
+- **Drop target**: `.kanban__drop-indicator[data-drop-target]` — border and animated height.
+- **Drag handle reveal**: `.kanban__card[data-focus-visible="true"] .kanban__drag-handle` — becomes visible (exits `sr-only`).
+
+### CSS Variables
+
+- `--kanban-column-min-width` — Minimum column width (default: `280px`).
+- `--kanban-column-gap` — Gap between columns (default: `16px`).
+- `--kanban-column-height` — Column height reference (default: `480px`).
+- `--kanban-drop-height` — Drop indicator placeholder height. Set automatically by `useKanbanCardPlaceholder`.
+
+## API Reference
+
+### Kanban
+
+The root board container. Wraps children in a horizontal `ScrollShadow` with Motion support.
+
+| Prop   | Type                   | Default | Description                                                         |
+| ------ | ---------------------- | ------- | ------------------------------------------------------------------- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"`  | Size variant controlling card padding, font size, and column width. |
+
+Also supports all [HeroUI ScrollShadow](https://heroui.com/docs/react/components/scroll-shadow) props (except `size`).
+
+### Kanban.Column
+
+An individual column section. Renders a `<section>`.
+
+### Kanban.ColumnBody
+
+Visual container for the card list and footer actions (e.g., "Add task" button). Renders a `<div>` with rounded background.
+
+### Kanban.ColumnHeader
+
+Header area containing indicator, title, count, and action buttons. Renders a `<header>`.
+
+### Kanban.ColumnActions
+
+Action buttons container that reveals on column header hover. Renders a `<div>`.
+
+### Kanban.ColumnIndicator
+
+Colored status dot or icon. Renders as a small dot when empty; switches to an icon container when children are provided. Renders a `<span>`.
+
+### Kanban.ColumnTitle
+
+Column heading text. Renders an `<h3>`.
+
+### Kanban.ColumnCount
+
+Item count badge next to the title. Renders a `<span>`.
+
+### Kanban.CardList
+
+The scrollable card list backed by RAC `GridList`.
+
+| Prop               | Type                               | Default  | Description                                              |
+| ------------------ | ---------------------------------- | -------- | -------------------------------------------------------- |
+| `selectionMode`    | `"none" \| "single" \| "multiple"` | `"none"` | Selection behavior for cards.                            |
+| `renderEmptyState` | `() => ReactNode`                  | —        | Custom empty state content when the column has no cards. |
+
+Also supports all RAC [GridList](https://react-spectrum.adobe.com/react-aria/GridList.html) props.
+
+### Kanban.Card
+
+An individual draggable card. Wraps content in a Motion `layout` animation for smooth reorder transitions. Backed by RAC `GridListItem`.
+
+| Prop        | Type                                        | Default | Description                                                        |
+| ----------- | ------------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `textValue` | `string`                                    | —       | Accessible text value for the card.                                |
+| `children`  | `ReactNode \| ((renderProps) => ReactNode)` | —       | Card content. Can be a render function receiving RAC render props. |
+
+Also supports all RAC [GridListItem](https://react-spectrum.adobe.com/react-aria/GridList.html#gridlistitem) props.
+
+### Kanban.DropIndicator
+
+Visual drop indicator shown during drag operations. Supports animated height sizing.
+
+| Prop     | Type     | Default | Description                                                                                                      |
+| -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------- |
+| `height` | `number` | —       | Height of the drop placeholder in pixels. Typically set to the dragged card's height via `--kanban-drop-height`. |
+
+Also supports all RAC [DropIndicator](https://react-spectrum.adobe.com/react-aria/DropIndicator.html) props.
+
+### Kanban.DragHandle
+
+Grip button for keyboard-accessible dragging. Screen-reader-only by default; reveals on focus. Uses `slot="drag"` for RAC drag integration.
+
+Also supports all RAC [Button](https://react-spectrum.adobe.com/react-aria/Button.html) props.
+
+### Kanban.ScrollShadow
+
+Optional scroll wrapper for constrained column heights. Use with `max-h-[...]` to enable vertical scrolling within a column.
+
+Also supports all [HeroUI ScrollShadow](https://heroui.com/docs/react/components/scroll-shadow) props.
+
+### useKanban
+
+A hook that manages the shared list data for the entire board.
+
+```tsx
+const kanban = useKanban({
+  initialItems: tasks,
+  getColumn: item => item.status,
+  setColumn: (item, column) => ({ ...item, status: column })
+})
+```
+
+**Options:**
+
+| Option         | Type                             | Default            | Description                                                            |
+| -------------- | -------------------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `initialItems` | `T[]`                            | —                  | Items to populate the board with.                                      |
+| `getColumn`    | `(item: T) => string`            | —                  | Return the column identifier for a given item.                         |
+| `setColumn`    | `(item: T, column: string) => T` | —                  | Return a copy of the item assigned to a new column.                    |
+| `dragType`     | `string`                         | `"kanban-item-id"` | Custom MIME-like drag type for transferring item keys between columns. |
+| `getKey`       | `(item: T) => string \| number`  | `item.id`          | Derive a unique key from each item.                                    |
+
+**Returns:**
+
+| Property     | Type                                                | Description                                            |
+| ------------ | --------------------------------------------------- | ------------------------------------------------------ |
+| `list`       | `ListData<T>`                                       | The underlying RAC `ListData` for advanced operations. |
+| `addItem`    | `(item: T) => void`                                 | Add an item to the board.                              |
+| `removeItem` | `(key: string \| number) => void`                   | Remove an item by key.                                 |
+| `moveItem`   | `(key: string \| number, toColumn: string) => void` | Move an item to a different column.                    |
+| `updateItem` | `(key: string \| number, item: T) => void`          | Update an item by key.                                 |
+| `getColumn`  | `(item: T) => string`                               | Return the column for an item.                         |
+| `setColumn`  | `(item: T, column: string) => T`                    | Return item copy with new column.                      |
+| `dragType`   | `string`                                            | The drag type string.                                  |
+
+### useKanbanColumn
+
+A hook that provides filtered items and drag-and-drop hooks for a single column.
+
+```tsx
+const { items, dragAndDropHooks } = useKanbanColumn(kanban, 'In Progress', {
+  renderDropIndicator
+})
+```
+
+| Option                        | Type                      | Default | Description                                    |
+| ----------------------------- | ------------------------- | ------- | ---------------------------------------------- |
+| `kanban`                      | `UseKanbanReturn<T>`      | —       | The kanban instance from `useKanban`.          |
+| `column`                      | `string`                  | —       | The column identifier to filter items by.      |
+| `options.renderDropIndicator` | `(target) => JSX.Element` | —       | Override the default drop indicator rendering. |
+
+**Returns:**
+
+| Property           | Type               | Description                                      |
+| ------------------ | ------------------ | ------------------------------------------------ |
+| `items`            | `T[]`              | Items filtered to this column.                   |
+| `dragAndDropHooks` | `DragAndDropHooks` | Pass to `Kanban.CardList` as `dragAndDropHooks`. |
+
+### useKanbanCardPlaceholder
+
+A hook that measures the dragged card's height and writes it as a CSS variable for card-sized drop indicators.
+
+```tsx
+const { renderDropIndicator } = useKanbanCardPlaceholder({
+  renderIndicator: target => <Kanban.DropIndicator target={target} />
+})
+```
+
+| Option            | Type                                  | Default | Description                                                                         |
+| ----------------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `renderIndicator` | `(target: DropTarget) => JSX.Element` | —       | Render function that receives the drop target and returns a custom `DropIndicator`. |
+
+**Returns:** `{ renderDropIndicator }` — pass to `useKanbanColumn` options.

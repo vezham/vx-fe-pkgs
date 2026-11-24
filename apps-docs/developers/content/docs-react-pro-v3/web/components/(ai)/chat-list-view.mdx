@@ -1,0 +1,236 @@
+---
+title: 'Chat List View'
+description: 'Thread list rows for chat sidebars and conversation pickers.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-list-view
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatListView` to render recent conversations or saved threads.
+
+<ComponentPreview name="pro-chat-list-view-default">
+
+```tsx
+'use client'
+
+import { Comment } from '@gravity-ui/icons'
+
+import { ChatListView } from '@vezham/react-pro-v3'
+
+const THREADS = [
+  {
+    id: '1',
+    preview: 'Can you help me draft a launch checklist?',
+    title: 'Product launch planning',
+    updatedAt: '2h ago'
+  },
+  {
+    id: '2',
+    preview: 'Summarize the customer feedback from last week.',
+    title: 'Customer feedback review',
+    updatedAt: 'Yesterday'
+  },
+  {
+    id: '3',
+    preview: 'Rewrite this paragraph to sound more concise.',
+    title: 'Copy editing help',
+    updatedAt: 'Mon'
+  }
+] as const
+
+export function Default() {
+  return (
+    <div className="w-[480px]">
+      <ChatListView aria-label="Recent chats" items={THREADS}>
+        {thread => (
+          <ChatListView.Item
+            id={thread.id}
+            textValue={`${thread.title} ${thread.preview}`}>
+            <ChatListView.ItemContent>
+              <ChatListView.Icon>
+                <Comment />
+              </ChatListView.Icon>
+              <ChatListView.Text>
+                <ChatListView.Title>{thread.title}</ChatListView.Title>
+                <ChatListView.Preview>{thread.preview}</ChatListView.Preview>
+              </ChatListView.Text>
+              <ChatListView.Meta>{thread.updatedAt}</ChatListView.Meta>
+            </ChatListView.ItemContent>
+          </ChatListView.Item>
+        )}
+      </ChatListView>
+    </div>
+  )
+}
+
+export function Compact() {
+  return (
+    <div className="w-[280px]">
+      <ChatListView aria-label="Recent chats" density="compact" items={THREADS}>
+        {thread => (
+          <ChatListView.Item id={thread.id} textValue={thread.title}>
+            <ChatListView.ItemContent>
+              <ChatListView.Icon>
+                <Comment />
+              </ChatListView.Icon>
+              <ChatListView.Text>
+                <ChatListView.Title>{thread.title}</ChatListView.Title>
+                <ChatListView.Preview>{thread.preview}</ChatListView.Preview>
+              </ChatListView.Text>
+              <ChatListView.Meta>{thread.updatedAt}</ChatListView.Meta>
+            </ChatListView.ItemContent>
+          </ChatListView.Item>
+        )}
+      </ChatListView>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Compact
+
+Use the compact variant for dense sidebars.
+
+<ComponentPreview name="pro-chat-list-view-compact">
+
+```tsx
+'use client'
+
+import { Comment } from '@gravity-ui/icons'
+
+import { ChatListView } from '@vezham/react-pro-v3'
+
+const THREADS = [
+  {
+    id: '1',
+    preview: 'Can you help me draft a launch checklist?',
+    title: 'Product launch planning',
+    updatedAt: '2h ago'
+  },
+  {
+    id: '2',
+    preview: 'Summarize the customer feedback from last week.',
+    title: 'Customer feedback review',
+    updatedAt: 'Yesterday'
+  },
+  {
+    id: '3',
+    preview: 'Rewrite this paragraph to sound more concise.',
+    title: 'Copy editing help',
+    updatedAt: 'Mon'
+  }
+] as const
+
+export function Default() {
+  return (
+    <div className="w-[480px]">
+      <ChatListView aria-label="Recent chats" items={THREADS}>
+        {thread => (
+          <ChatListView.Item
+            id={thread.id}
+            textValue={`${thread.title} ${thread.preview}`}>
+            <ChatListView.ItemContent>
+              <ChatListView.Icon>
+                <Comment />
+              </ChatListView.Icon>
+              <ChatListView.Text>
+                <ChatListView.Title>{thread.title}</ChatListView.Title>
+                <ChatListView.Preview>{thread.preview}</ChatListView.Preview>
+              </ChatListView.Text>
+              <ChatListView.Meta>{thread.updatedAt}</ChatListView.Meta>
+            </ChatListView.ItemContent>
+          </ChatListView.Item>
+        )}
+      </ChatListView>
+    </div>
+  )
+}
+
+export function Compact() {
+  return (
+    <div className="w-[280px]">
+      <ChatListView aria-label="Recent chats" density="compact" items={THREADS}>
+        {thread => (
+          <ChatListView.Item id={thread.id} textValue={thread.title}>
+            <ChatListView.ItemContent>
+              <ChatListView.Icon>
+                <Comment />
+              </ChatListView.Icon>
+              <ChatListView.Text>
+                <ChatListView.Title>{thread.title}</ChatListView.Title>
+                <ChatListView.Preview>{thread.preview}</ChatListView.Preview>
+              </ChatListView.Text>
+              <ChatListView.Meta>{thread.updatedAt}</ChatListView.Meta>
+            </ChatListView.ItemContent>
+          </ChatListView.Item>
+        )}
+      </ChatListView>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { ChatListView } from '@vezham/react-pro-v3'
+
+;<ChatListView>
+  <ChatListView.Item>
+    <ChatListView.Icon />
+    <ChatListView.ItemContent>
+      <ChatListView.Title>Project planning</ChatListView.Title>
+      <ChatListView.Preview>Last assistant reply preview</ChatListView.Preview>
+    </ChatListView.ItemContent>
+  </ChatListView.Item>
+</ChatListView>
+```
+
+## CSS Classes
+
+- `.chat-list-view` - Root list
+- `.chat-list-view__item` - Thread row
+- `.chat-list-view__icon` - Leading icon/avatar
+- `.chat-list-view__item-content` - Row text content
+- `.chat-list-view__title` - Thread title
+- `.chat-list-view__preview` - Thread preview
+- `.chat-list-view__meta` - Optional metadata
+
+## API Reference
+
+### ChatListView
+
+Root list container. Supports native `div` props.
+
+### ChatListView\.Item
+
+Thread row. Supports native button/link composition depending on usage.
+
+### ChatListView\.Icon
+
+Leading icon slot.
+
+### ChatListView\.ItemContent
+
+Text content wrapper.
+
+### ChatListView\.Title
+
+Thread title slot.
+
+### ChatListView\.Preview
+
+Thread description or last-message preview slot.
+
+### ChatListView\.Meta
+
+Optional metadata slot, such as date or unread counts.

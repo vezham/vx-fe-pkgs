@@ -1,0 +1,157 @@
+---
+title: 'MCP Server'
+description: 'Use Vezham Icons with MCP Server.'
+logo: mcp-model-context-protocol
+---
+
+The `vezham-icons-mcp` package exposes Vezham icons to AI agents and automation tools through the Model Context Protocol. Agents can search the icon library, inspect SVG markup, and generate copy-pasteable code snippets for React, Vue, Svelte, HTML, or raw SVG without human intervention.
+
+## What you can accomplish
+
+- Search 2,700+ icons by keyword with ranked results
+- Preview raw SVG markup before applying an icon
+- Generate framework-specific import and docs snippets
+- Browse icons by category
+- Run the same logic from a CLI for scripts and CI
+
+---
+
+## Installation
+
+Install from npm or build from the monorepo:
+
+<InstallTabs packages="@vezham/icons-mcp" />
+
+From source:
+
+```bash
+git clone https://github.com/vezham-oss/reicon.git
+cd vezham
+npm run build:mcp
+```
+
+---
+
+## MCP Configuration
+
+Add the server to your MCP client. With no arguments, `vezham-icons-mcp` starts a stdio MCP server.
+
+```json
+{
+  "mcpServers": {
+    "vezham": {
+      "command": "npx",
+      "args": ["@vezham/icons-mcp"]
+    }
+  }
+}
+```
+
+For a local development build:
+
+```json
+{
+  "mcpServers": {
+    "vezham": {
+      "command": "node",
+      "args": ["./packages/icons-mcp/bin/run.cjs"]
+    }
+  }
+}
+```
+
+---
+
+## Agent Workflow
+
+A typical two-step flow for an agent adding an icon to a React component:
+
+1. **Search** with concise keywords (not full sentences):
+
+```
+search_icons({ query: "heart", weight: "filled" })
+```
+
+2. **Apply** the chosen icon:
+
+```
+apply_icon({
+  name: "heart",
+  weight: "filled",
+  framework: "react",
+  size: 24,
+  color: "#ef4444"
+})
+```
+
+The tool returns `{ importStatement, docsSnippet }`. The agent uses its own file edit tools to insert the code.
+
+---
+
+## Tools Reference
+
+### search_icons
+
+Input: `{ query: string, weight?: "outline" | "filled" | "duotone-outline" | "duotone-filled", limit?: number }`
+
+Returns ranked results with `name`, `weight`, `category`, `tags`, and `score`. Queries that look like full sentences are rejected. Use short keywords like `cart`, `user`, or `settings`.
+
+### view_icon
+
+Input: `{ name: string, weight: "outline" | "filled" | "duotone-outline" | "duotone-filled" }`
+
+Returns the raw optimized SVG string plus `viewBox`, `tags`, and `category`.
+
+### apply_icon
+
+Input:
+
+```ts
+{
+  name: string;
+  weight: "outline" | "filled" | "duotone-outline" | "duotone-filled";
+  framework: "react" | "vue" | "svelte" | "html" | "svg";
+  size?: number;
+  color?: string;
+  componentName?: string;
+}
+```
+
+Defaults: `size` 24, `color` currentColor, `componentName` is PascalCase of the icon name.
+
+Returns `{ importStatement, docsSnippet }` matching the syntax in the React, Vue, Svelte, and CDN usage guides.
+
+### list_categories
+
+No input. Returns all distinct category values from the dataset.
+
+---
+
+## CLI Usage
+
+The same binary supports CLI mode when arguments are provided:
+
+```bash
+npx @vezham/icons-mcp search "shopping cart"
+npx @vezham/icons-mcp view heart --weight filled
+npx @vezham/icons-mcp apply heart --framework react --size 32 --color "#ef4444"
+npx @vezham/icons-mcp categories
+```
+
+### Scripted file insertion
+
+For CI or scripts without an agent supervising edits:
+
+```bash
+npx @vezham/icons-mcp apply heart --framework react --file src/App.tsx --marker "{/* ICON */}"
+```
+
+This replaces the exact marker with the docs snippet and inserts the import at the top if missing. Exits non-zero if the marker is not found.
+
+---
+
+## Offline Operation
+
+The search index is bundled at build time from `data/icons`. No network calls are made at runtime. Once installed, the server works fully offline.
+
+> **Note:** Rebuild with `npm run build:mcp` after the icon dataset changes to refresh the bundled index.

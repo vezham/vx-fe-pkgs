@@ -1,0 +1,440 @@
+---
+title: 'Cell Slider'
+description: 'A range slider styled as a settings cell with label, value display, and step configuration.'
+sourceUrl: https://heroui.pro/docs/react/components/cell-slider
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-cell-slider-default">
+
+```tsx
+'use client'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="w-[252px]">
+      <CellSlider
+        aria-label="Spacing"
+        defaultValue={0.5}
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Spacing</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the CellSlider component and access all parts using dot notation.
+
+```tsx
+import { CellSlider } from '@vezham/react-pro-v3'
+
+;<CellSlider>
+  <CellSlider.Label />
+  <CellSlider.Output />
+  <CellSlider.Track>
+    <CellSlider.Fill />
+    <CellSlider.Thumb />
+  </CellSlider.Track>
+</CellSlider>
+```
+
+## Controlled
+
+<ComponentPreview name="pro-cell-slider-controlled">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function Controlled() {
+  const [spacing, setSpacing] = useState(0.5)
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellSlider
+        aria-label="Spacing"
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}
+        value={spacing}
+        onChange={v => setSpacing(v as number)}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Spacing</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+      <p className="text-muted px-1 text-sm">Value: {spacing.toFixed(2)}</p>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Disabled
+
+<ComponentPreview name="pro-cell-slider-disabled">
+
+```tsx
+'use client'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function Disabled() {
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellSlider
+        isDisabled
+        aria-label="Spacing"
+        defaultValue={0.5}
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Spacing</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+      <CellSlider
+        isDisabled
+        aria-label="Font Size"
+        defaultValue={0.3}
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Font Size</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Integer Step
+
+<ComponentPreview name="pro-cell-slider-integer-step">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function IntegerStep() {
+  const [volume, setVolume] = useState(75)
+
+  return (
+    <div className="w-[252px]">
+      <CellSlider
+        aria-label="Volume"
+        maxValue={100}
+        minValue={0}
+        step={1}
+        value={volume}
+        onChange={v => setVolume(v as number)}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Volume</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Secondary Group
+
+<ComponentPreview name="pro-cell-slider-secondary-group">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function SecondaryGroup() {
+  const [spacing, setSpacing] = useState(0.5)
+  const [fontSize, setFontSize] = useState(0.3)
+
+  return (
+    <div className="flex w-[252px] flex-col gap-2">
+      <CellSlider
+        aria-label="Spacing"
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}
+        value={spacing}
+        variant="secondary"
+        onChange={v => setSpacing(v as number)}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Spacing</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+      <CellSlider
+        aria-label="Font Size"
+        formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+        maxValue={1}
+        minValue={0}
+        step={0.01}
+        value={fontSize}
+        variant="secondary"
+        onChange={v => setFontSize(v as number)}>
+        <CellSlider.Track>
+          <CellSlider.Fill />
+          <CellSlider.Thumb />
+          <CellSlider.Label>Font Size</CellSlider.Label>
+          <CellSlider.Output />
+        </CellSlider.Track>
+      </CellSlider>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Settings Group
+
+<ComponentPreview name="pro-cell-slider-settings-group">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function SettingsGroup() {
+  const [spacing, setSpacing] = useState(0.5)
+  const [fontSize, setFontSize] = useState(0.3)
+  const [radius, setRadius] = useState(0.5)
+  const [fieldRadius, setFieldRadius] = useState(0.3)
+
+  return (
+    <div className="flex w-[252px] flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <span className="text-muted text-sm">Density</span>
+        <CellSlider
+          aria-label="Spacing"
+          formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+          maxValue={1}
+          minValue={0}
+          step={0.01}
+          value={spacing}
+          onChange={v => setSpacing(v as number)}>
+          <CellSlider.Track>
+            <CellSlider.Fill />
+            <CellSlider.Thumb />
+            <CellSlider.Label>Spacing</CellSlider.Label>
+            <CellSlider.Output />
+          </CellSlider.Track>
+        </CellSlider>
+        <CellSlider
+          aria-label="Font Size"
+          formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+          maxValue={1}
+          minValue={0}
+          step={0.01}
+          value={fontSize}
+          onChange={v => setFontSize(v as number)}>
+          <CellSlider.Track>
+            <CellSlider.Fill />
+            <CellSlider.Thumb />
+            <CellSlider.Label>Font Size</CellSlider.Label>
+            <CellSlider.Output />
+          </CellSlider.Track>
+        </CellSlider>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-muted text-sm">Corners</span>
+        <CellSlider
+          aria-label="General Radius"
+          formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+          maxValue={1}
+          minValue={0}
+          step={0.01}
+          value={radius}
+          onChange={v => setRadius(v as number)}>
+          <CellSlider.Track>
+            <CellSlider.Fill />
+            <CellSlider.Thumb />
+            <CellSlider.Label>General Radius</CellSlider.Label>
+            <CellSlider.Output />
+          </CellSlider.Track>
+        </CellSlider>
+        <CellSlider
+          aria-label="Forms Radius"
+          formatOptions={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+          maxValue={1}
+          minValue={0}
+          step={0.01}
+          value={fieldRadius}
+          onChange={v => setFieldRadius(v as number)}>
+          <CellSlider.Track>
+            <CellSlider.Fill />
+            <CellSlider.Thumb />
+            <CellSlider.Label>Forms Radius</CellSlider.Label>
+            <CellSlider.Output />
+          </CellSlider.Track>
+        </CellSlider>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-cell-slider-variants">
+
+```tsx
+'use client'
+
+import { CellSlider } from '@vezham/react-pro-v3'
+
+export function Variants() {
+  const variants = ['default', 'secondary'] as const
+
+  return (
+    <div className="flex w-[252px] flex-col gap-3">
+      {variants.map(variant => (
+        <div key={variant} className="flex flex-col gap-1">
+          <span className="text-muted text-xs">{variant}</span>
+          <CellSlider
+            aria-label="Spacing"
+            defaultValue={0.5}
+            formatOptions={{
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2
+            }}
+            maxValue={1}
+            minValue={0}
+            step={0.01}
+            variant={variant}>
+            <CellSlider.Track>
+              <CellSlider.Fill />
+              <CellSlider.Thumb />
+              <CellSlider.Label>Spacing</CellSlider.Label>
+              <CellSlider.Output />
+            </CellSlider.Track>
+          </CellSlider>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.cell-slider` - Root wrapper
+
+### Element Classes
+
+- `.cell-slider__track` - The visible cell row (Slider.Track)
+- `.cell-slider__track--default` - Default variant track styling
+- `.cell-slider__track--secondary` - Secondary variant track styling
+- `.cell-slider__fill` - Accent tint showing the current value
+- `.cell-slider__thumb` - Transparent hit area with a `::after` pill indicator
+- `.cell-slider__label` - Leading text label (absolutely positioned left)
+- `.cell-slider__output` - Value display (absolutely positioned right)
+
+## API Reference
+
+### CellSlider
+
+The root component. Wraps HeroUI [Slider](https://heroui.com/docs/react/components/slider) with cell-style layout. Always renders in horizontal orientation.
+
+| Prop      | Type                       | Default     | Description          |
+| --------- | -------------------------- | ----------- | -------------------- |
+| `variant` | `'default' \| 'secondary'` | `'default'` | Visual style variant |
+
+Also supports all [HeroUI Slider](https://heroui.com/docs/react/components/slider) props except `variant` and `orientation`.
+
+### CellSlider.Track
+
+The visible cell row serving as the slider track. Contains fill, thumb, label, and output as children.
+
+Also supports all HeroUI `Slider.Track` props.
+
+### CellSlider.Fill
+
+Subtle accent tint showing the current slider value.
+
+Also supports all HeroUI `Slider.Fill` props.
+
+### CellSlider.Thumb
+
+Transparent hit area for drag and keyboard accessibility. The visible indicator is a `::after` pseudo-element (thin 3px pill).
+
+Also supports all HeroUI `Slider.Thumb` props.
+
+### CellSlider.Label
+
+Leading text label, absolutely positioned on the left.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Label text  |
+
+Also supports all native `span` HTML attributes.
+
+### CellSlider.Output
+
+Value display, absolutely positioned on the right.
+
+Also supports all HeroUI `Slider.Output` props.

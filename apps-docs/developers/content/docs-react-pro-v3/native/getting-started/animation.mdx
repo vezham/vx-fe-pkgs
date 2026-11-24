@@ -1,0 +1,60 @@
+---
+title: 'Animation'
+description: 'Add smooth animations and transitions to HeroUI Native components'
+sourceUrl: https://heroui.pro/docs/native/getting-started/animation
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components follow the same animation patterns as [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) — all built on [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/), with a unified `animation` prop for customizing values, timing, layout transitions, and disabling animations.
+
+<Callout type="info">
+  Read the full [Animation guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/animation) to learn
+  about the `animation` prop, value modification, spring/timing configs, layout
+  animations, disabling animations, global configuration, and accessibility.
+</Callout>
+
+Pro components use the same `animation` prop for customizing animation behavior:
+
+```tsx
+import { Stepper } from 'heroui-native-pro'
+import { Easing } from 'react-native-reanimated'
+
+;<Stepper
+  animation={{
+    progress: {
+      timingConfig: {
+        duration: 400,
+        easing: Easing.out(Easing.ease)
+      }
+    }
+  }}>
+  <Stepper.Step>
+    <Stepper.Rail />
+    <Stepper.Content>
+      <Stepper.Title>Account</Stepper.Title>
+    </Stepper.Content>
+  </Stepper.Step>
+</Stepper>
+```
+
+And the same `"disable-all"` option to turn off animations for an entire component tree:
+
+```tsx
+import { SlideButton } from 'heroui-native-pro'
+
+;<SlideButton animation="disable-all">
+  <SlideButton.UnderlayContent />
+  <SlideButton.Thumb />
+  <SlideButton.Label>Slide to confirm</SlideButton.Label>
+</SlideButton>
+```
+
+See each Pro component's API reference for the available `animation` prop options and their configurable properties.

@@ -1,0 +1,49 @@
+---
+title: 'Provider'
+description: 'Configure HeroUI Native provider with text, animation, and toast settings'
+sourceUrl: https://heroui.pro/docs/native/getting-started/provider
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components work directly with the [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) `HeroUINativeProvider` — no additional provider or configuration is required. If your app already has the OSS provider set up, Pro components work out of the box.
+
+<Callout type="info">
+  Read the full [Provider guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/provider) to learn
+  about the provider setup, configuration options (text, animation, toast, dev
+  info), Expo Router integration, the raw provider variant, best practices, and
+  the full API reference.
+</Callout>
+
+Pro components inherit all global settings from the same provider — animation configuration, text props, toast settings, and portal management all apply to both OSS and Pro components:
+
+```tsx
+import { HeroUINativeProvider } from 'heroui-native'
+import type { HeroUINativeConfig } from 'heroui-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
+const config: HeroUINativeConfig = {
+  textProps: {
+    maxFontSizeMultiplier: 1.5
+  },
+  animation: 'disable-all'
+}
+
+export default function App() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <HeroUINativeProvider config={config}>
+        {/* Both OSS and Pro components work here with no extra setup */}
+        <YourApp />
+      </HeroUINativeProvider>
+    </GestureHandlerRootView>
+  )
+}
+```

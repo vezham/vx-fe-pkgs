@@ -1,0 +1,813 @@
+---
+title: ButtonGroup
+description: Group related buttons together with consistent styling and spacing
+links:
+  rac: Button
+  source: button-group/button-group.tsx
+  styles: button-group.css
+  storybook: Components/Buttons/ButtonGroup
+  figma: true
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { Button, ButtonGroup } from '@heroui/react'
+```
+
+<ComponentPreview
+  name="button-group-basic">
+
+```tsx
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CodeFork,
+  Ellipsis,
+  Picture,
+  Pin,
+  QrCode,
+  Star,
+  TextAlignCenter,
+  TextAlignJustify,
+  TextAlignLeft,
+  TextAlignRight,
+  ThumbsDown,
+  ThumbsUp,
+  Video
+} from '@gravity-ui/icons'
+
+import {
+  Button,
+  ButtonGroup,
+  Chip,
+  Description,
+  Dropdown,
+  Label
+} from '@vezham/react-v3'
+
+export function Basic() {
+  return (
+    <div className="flex flex-col items-start gap-6">
+      {/* Single button with dropdown */}
+      <div className="flex flex-col gap-2">
+        <ButtonGroup>
+          <Button>Merge pull request</Button>
+          <Dropdown>
+            <Button isIconOnly aria-label="More options">
+              <ButtonGroup.Separator />
+              <ChevronDown />
+            </Button>
+            <Dropdown.Popover className="max-w-[290px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  className="flex flex-col items-start gap-1"
+                  id="merge"
+                  textValue="Create a merge commit">
+                  <Label>Create a merge commit</Label>
+                  <Description>
+                    All commits from this branch will be added to the base
+                    branch
+                  </Description>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  className="flex flex-col items-start gap-1"
+                  id="squash-and-merge"
+                  textValue="Squash and merge">
+                  <Label>Squash and merge</Label>
+                  <Description>
+                    The 14 commits from this branch will be combined into one
+                    commit in the base branch
+                  </Description>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  className="flex flex-col items-start gap-1"
+                  id="rebase-and-merge"
+                  textValue="Rebase and merge">
+                  <Label>Rebase and merge</Label>
+                  <Description>
+                    The 14 commits from this branch will be rebased and added to
+                    the base branch
+                  </Description>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </ButtonGroup>
+      </div>
+
+      {/* Individual buttons */}
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-x-2 gap-y-4">
+          <ButtonGroup variant="tertiary">
+            <Button>
+              <CodeFork className="size-3.5" />
+              Fork
+              <Chip color="accent" size="sm" variant="soft">
+                24
+              </Chip>
+            </Button>
+            <Button isIconOnly aria-label="More fork options">
+              <ButtonGroup.Separator />
+              <ChevronDown />
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup variant="tertiary">
+            <Button isIconOnly aria-label="Show QR code">
+              <QrCode />
+            </Button>
+            <Button>
+              <ButtonGroup.Separator />
+              Scan to pay
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup variant="tertiary">
+            <Button>
+              <ThumbsUp />
+              <span className="text-xs font-semibold">2.4K</span>
+            </Button>
+            <Button isIconOnly aria-label="Dislike">
+              <ButtonGroup.Separator />
+              <ThumbsDown />
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup variant="tertiary">
+            <Button>
+              <Star className="size-3.5" />
+              Star
+            </Button>
+            <Button className="px-2">
+              <ButtonGroup.Separator />
+              <Chip color="accent" size="sm" variant="soft">
+                104
+              </Chip>
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup variant="tertiary">
+            <Button>
+              <Pin />
+              Pinned
+            </Button>
+            <Button isIconOnly aria-label="More pin options">
+              <ButtonGroup.Separator />
+              <ChevronDown />
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+
+      {/* Previous/Next Button Group */}
+      <div className="flex flex-col gap-2">
+        <ButtonGroup variant="tertiary">
+          <Button>
+            <ChevronLeft />
+            Previous
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Next
+            <ChevronRight />
+          </Button>
+        </ButtonGroup>
+      </div>
+
+      {/* Content Selection Button Group */}
+      <div className="flex flex-col gap-2">
+        <ButtonGroup variant="tertiary">
+          <Button>
+            <Picture />
+            Photos
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            <Video />
+            Videos
+          </Button>
+          <Button isIconOnly aria-label="More options">
+            <ButtonGroup.Separator />
+            <Ellipsis />
+          </Button>
+        </ButtonGroup>
+      </div>
+
+      {/* Text Alignment Button Group */}
+      <div className="flex flex-col gap-2">
+        <ButtonGroup variant="tertiary">
+          <Button>Left</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Center
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Right
+          </Button>
+        </ButtonGroup>
+      </div>
+
+      {/* Icon-Only Alignment Button Group */}
+      <div className="flex flex-col gap-2">
+        <ButtonGroup variant="tertiary">
+          <Button isIconOnly aria-label="Align left">
+            <TextAlignLeft />
+          </Button>
+          <Button isIconOnly aria-label="Align center">
+            <ButtonGroup.Separator />
+            <TextAlignCenter />
+          </Button>
+          <Button isIconOnly aria-label="Align right">
+            <ButtonGroup.Separator />
+            <TextAlignRight />
+          </Button>
+          <Button isIconOnly aria-label="Justify">
+            <ButtonGroup.Separator />
+            <TextAlignJustify />
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { Button, ButtonGroup } from '@heroui/react'
+
+export default () => (
+  <ButtonGroup>
+    <Button>First</Button>
+    <Button>
+      <ButtonGroup.Separator />
+      Second
+    </Button>
+    <Button>
+      <ButtonGroup.Separator />
+      Third
+    </Button>
+  </ButtonGroup>
+)
+```
+
+> **ButtonGroup** wraps multiple Button components together, applying consistent styling, spacing, and automatic border radius handling. It uses React Context to pass `size`, `variant`, and `isDisabled` props to all child buttons.
+
+## Examples
+
+### Variants
+
+<ComponentPreview
+  name="button-group-variants">
+
+```tsx
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function Variants() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Primary</p>
+        <ButtonGroup variant="primary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Secondary</p>
+        <ButtonGroup variant="secondary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Tertiary</p>
+        <ButtonGroup variant="tertiary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Outline</p>
+        <ButtonGroup variant="outline">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Ghost</p>
+        <ButtonGroup variant="ghost">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted text-sm">Danger</p>
+        <ButtonGroup variant="danger">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Sizes
+
+<ComponentPreview
+  name="button-group-sizes">
+
+```tsx
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function Sizes() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">Small</p>
+        <ButtonGroup size="sm" variant="secondary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">Medium (default)</p>
+        <ButtonGroup size="md" variant="secondary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">Large</p>
+        <ButtonGroup size="lg" variant="secondary">
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Orientation
+
+Use the `orientation` prop to arrange buttons horizontally or vertically.
+
+<ComponentPreview
+  name="button-group-orientation">
+
+```tsx
+import {
+  TextAlignCenter,
+  TextAlignJustify,
+  TextAlignLeft,
+  TextAlignRight
+} from '@gravity-ui/icons'
+
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function Orientation() {
+  return (
+    <div className="flex items-start gap-8">
+      <div className="flex flex-col gap-2">
+        <span className="text-muted text-sm">Horizontal</span>
+        <ButtonGroup orientation="horizontal" variant="tertiary">
+          <Button isIconOnly aria-label="Align left">
+            <TextAlignLeft />
+          </Button>
+          <Button isIconOnly aria-label="Align center">
+            <ButtonGroup.Separator />
+            <TextAlignCenter />
+          </Button>
+          <Button isIconOnly aria-label="Align right">
+            <ButtonGroup.Separator />
+            <TextAlignRight />
+          </Button>
+          <Button isIconOnly aria-label="Justify">
+            <ButtonGroup.Separator />
+            <TextAlignJustify />
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col gap-2">
+        <span className="text-muted text-sm">Vertical</span>
+        <ButtonGroup orientation="vertical" variant="tertiary">
+          <Button isIconOnly aria-label="Align left">
+            <TextAlignLeft />
+          </Button>
+          <Button isIconOnly aria-label="Align center">
+            <ButtonGroup.Separator />
+            <TextAlignCenter />
+          </Button>
+          <Button isIconOnly aria-label="Align right">
+            <ButtonGroup.Separator />
+            <TextAlignRight />
+          </Button>
+          <Button isIconOnly aria-label="Justify">
+            <ButtonGroup.Separator />
+            <TextAlignJustify />
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### With Icons
+
+<ComponentPreview
+  name="button-group-with-icons">
+
+```tsx
+import { Globe, Plus, TrashBin } from '@gravity-ui/icons'
+
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function WithIcons() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">With icons</p>
+        <ButtonGroup variant="secondary">
+          <Button>
+            <Globe />
+            Search
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            <Plus />
+            Add
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            <TrashBin />
+            Delete
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">Icon only buttons</p>
+        <ButtonGroup variant="tertiary">
+          <Button isIconOnly aria-label="Search">
+            <Globe />
+          </Button>
+          <Button isIconOnly aria-label="Add">
+            <ButtonGroup.Separator />
+            <Plus />
+          </Button>
+          <Button isIconOnly aria-label="Delete">
+            <ButtonGroup.Separator />
+            <TrashBin />
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Full Width
+
+<ComponentPreview
+  name="button-group-full-width">
+
+```tsx
+import {
+  TextAlignCenter,
+  TextAlignLeft,
+  TextAlignRight
+} from '@gravity-ui/icons'
+
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function FullWidth() {
+  return (
+    <div className="w-[400px] space-y-3">
+      <ButtonGroup fullWidth>
+        <Button>First</Button>
+        <Button>
+          <ButtonGroup.Separator />
+          Second
+        </Button>
+        <Button>
+          <ButtonGroup.Separator />
+          Third
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup fullWidth>
+        <Button isIconOnly aria-label="Align left">
+          <TextAlignLeft />
+        </Button>
+        <Button isIconOnly aria-label="Align center">
+          <ButtonGroup.Separator />
+          <TextAlignCenter />
+        </Button>
+        <Button isIconOnly aria-label="Align right">
+          <ButtonGroup.Separator />
+          <TextAlignRight />
+        </Button>
+      </ButtonGroup>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Disabled State
+
+<ComponentPreview
+  name="button-group-disabled">
+
+```tsx
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function Disabled() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">All buttons disabled</p>
+        <ButtonGroup isDisabled>
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Third
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="flex flex-col items-start gap-2">
+        <p className="text-muted text-sm">
+          Group disabled, but one button overrides
+        </p>
+        <ButtonGroup isDisabled>
+          <Button>First</Button>
+          <Button>
+            <ButtonGroup.Separator />
+            Second
+          </Button>
+          <Button isDisabled={false}>
+            <ButtonGroup.Separator />
+            Third (enabled)
+          </Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Without Separator
+
+Simply omit the `<ButtonGroup.Separator />` component from your buttons.
+
+<ComponentPreview
+  name="button-group-without-separator">
+
+```tsx
+import { Button, ButtonGroup } from '@vezham/react-v3'
+
+export function WithoutSeparator() {
+  return (
+    <ButtonGroup>
+      <Button>First</Button>
+      <Button>Second</Button>
+      <Button>Third</Button>
+    </ButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="button-group-custom-styles">
+
+```tsx
+import { ChevronDown } from '@gravity-ui/icons'
+
+import {
+  Button,
+  ButtonGroup,
+  Description,
+  Dropdown,
+  Label
+} from '@vezham/react-v3'
+
+export function CustomStyles() {
+  return (
+    <ButtonGroup>
+      <Button className="rounded-none bg-[#08872B] data-hovered:bg-[#0FBF3E]">
+        Merge pull request
+      </Button>
+      <Dropdown>
+        <Button
+          isIconOnly
+          aria-label="Merge options"
+          className="rounded-none bg-[#08872B] data-hovered:bg-[#0FBF3E]">
+          <ButtonGroup.Separator />
+          <ChevronDown className="size-4" />
+        </Button>
+        <Dropdown.Popover
+          className="max-w-[290px] rounded-none"
+          placement="bottom end">
+          <Dropdown.Menu>
+            <Dropdown.Item
+              className="flex flex-col items-start gap-1 rounded-none"
+              id="merge"
+              textValue="Create a merge commit">
+              <Label>Create a merge commit</Label>
+              <Description>
+                All commits from this branch will be added to the base branch
+              </Description>
+            </Dropdown.Item>
+            <Dropdown.Item
+              className="flex flex-col items-start gap-1 rounded-none"
+              id="squash-and-merge"
+              textValue="Squash and merge">
+              <Label>Squash and merge</Label>
+              <Description>
+                The 14 commits from this branch will be combined into one commit
+                in the base branch
+              </Description>
+            </Dropdown.Item>
+            <Dropdown.Item
+              className="flex flex-col items-start gap-1 rounded-none"
+              id="rebase-and-merge"
+              textValue="Rebase and merge">
+              <Label>Rebase and merge</Label>
+              <Description>
+                The 14 commits from this branch will be rebased and added to the
+                base branch
+              </Description>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown>
+    </ButtonGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+To customize the ButtonGroup component classes, you can use the `@layer components` directive.
+[Learn more](https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes).
+
+```css
+@layer components {
+  .button-group {
+    @apply gap-2 rounded-lg;
+  }
+
+  .button-group__separator {
+    @apply opacity-25;
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+The ButtonGroup component uses these CSS classes ([View source styles](https://github.com/heroui-inc/heroui/blob/v3/packages/styles/components/button-group.css)):
+
+#### Base Classes [!toc]
+
+- `.button-group` - Base button group container
+- `.button-group--full-width` - Full width modifier
+- `.button-group__separator` - Separator element between buttons
+
+The ButtonGroup component automatically applies border radius to buttons:
+
+- First button gets rounded left/start edge
+- Last button gets rounded right/end edge
+- Middle buttons have no border radius
+- Single button gets full border radius on all edges
+
+Add `<ButtonGroup.Separator />` inside each Button (except the first) to show dividers between buttons.
+
+## API Reference
+
+### ButtonGroup
+
+| Prop          | Type                                                            | Default        | Description                                                                             |
+| ------------- | --------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- |
+| `variant`     | `'primary' \| 'secondary' \| 'tertiary' \| 'ghost' \| 'danger'` | -              | Visual style variant applied to all buttons in the group                                |
+| `size`        | `'sm' \| 'md' \| 'lg'`                                          | -              | Size applied to all buttons in the group                                                |
+| `orientation` | `'horizontal' \| 'vertical'`                                    | `'horizontal'` | The orientation of the button group                                                     |
+| `fullWidth`   | `boolean`                                                       | `false`        | Whether the button group should take full width of its container                        |
+| `isDisabled`  | `boolean`                                                       | `false`        | Whether all buttons in the group are disabled (can be overridden on individual buttons) |
+| `className`   | `string`                                                        | -              | Additional CSS classes                                                                  |
+| `children`    | `React.ReactNode`                                               | -              | Button components to group together                                                     |
+
+### ButtonGroup.Separator
+
+| Prop        | Type     | Default | Description            |
+| ----------- | -------- | ------- | ---------------------- |
+| `className` | `string` | -       | Additional CSS classes |
+
+## Note
+
+- ButtonGroup uses React Context to pass `size`, `variant`, and `isDisabled` props to all child Button components
+- **Only direct child buttons receive the ButtonGroup props** - Buttons nested inside other components (like Modal, Dropdown, etc.) will not inherit the group's props even if they are descendants of the ButtonGroup
+- Individual Button components can override the group's `isDisabled` prop by setting `isDisabled={false}`
+- The component automatically handles border radius between buttons
+- Add `<ButtonGroup.Separator />` inside each Button (except the first) to show dividers between buttons
+- Buttons in a group have their active/pressed scale transform removed for a more cohesive appearance
+
+## Related Components
+
+<RelatedComponents component="button-group" />

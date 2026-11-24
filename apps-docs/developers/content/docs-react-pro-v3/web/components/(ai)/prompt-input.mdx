@@ -1,0 +1,2871 @@
+---
+title: 'Prompt Input'
+description: 'A composable AI prompt composer with attachments, toolbar actions, send states, queued prompts, inline tokens, and drag-and-drop support.'
+sourceUrl: https://heroui.pro/docs/react/components/prompt-input
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `PromptInput` as the message composer for chat and agent interfaces.
+
+<ComponentPreview name="pro-prompt-input-default">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { ChatAttachmentInput, PromptInput } from '@vezham/react-pro-v3'
+
+import { DemoAttachmentPreviews } from './attachments'
+import { useDemoAttachments } from './attachments.utils'
+import { ModelSelector } from './model-selector'
+
+export function Default() {
+  const {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment
+  } = useDemoAttachments()
+  const [value, setValue] = useState('')
+
+  const handleSubmit = () => {
+    setValue('')
+    clearAttachments()
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        value={value}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+          <ChatAttachmentInput.Dropzone
+            render={dropzoneProps => (
+              <PromptInput.Shell {...dropzoneProps}>
+                <PromptInput.Content>
+                  <DemoAttachmentPreviews
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                  />
+                  <PromptInput.TextArea placeholder="What do you want to know?" />
+                </PromptInput.Content>
+                <PromptInput.Toolbar>
+                  <PromptInput.ToolbarStart>
+                    <ChatAttachmentInput.Trigger
+                      render={triggerProps => (
+                        <PromptInput.Action
+                          {...triggerProps}
+                          aria-label="Attach file"
+                          tooltip="Attach file">
+                          <Paperclip className="size-4" />
+                        </PromptInput.Action>
+                      )}
+                    />
+                    <ModelSelector variant="secondary" />
+                  </PromptInput.ToolbarStart>
+                  <PromptInput.ToolbarEnd>
+                    <PromptInput.Send>
+                      <ArrowUp className="size-4" />
+                    </PromptInput.Send>
+                  </PromptInput.ToolbarEnd>
+                </PromptInput.Toolbar>
+              </PromptInput.Shell>
+            )}
+          />
+        </ChatAttachmentInput>
+        <PromptInput.Footer>
+          AI can make mistakes. Check important info.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/prompt-input/demos/attachments.tsx
+
+```tsx
+'use client'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+import type { PendingAttachment } from './attachments.utils'
+
+type DemoAttachmentPreviewsProps = {
+  attachments: PendingAttachment[]
+  onRemove: (id: string) => void
+}
+
+export function DemoAttachmentPreviews({
+  attachments,
+  onRemove
+}: DemoAttachmentPreviewsProps) {
+  if (!attachments.length) return null
+
+  return (
+    <PromptInput.Attachments>
+      <ChatAttachmentGroup>
+        {attachments.map(file => (
+          <ChatAttachment
+            key={file.id}
+            mimeType={file.mimeType}
+            name={file.name}
+            src={file.src}>
+            <ChatAttachment.Preview />
+            <ChatAttachment.Remove
+              aria-label="Remove attachment"
+              onPress={() => onRemove(file.id)}
+            />
+          </ChatAttachment>
+        ))}
+      </ChatAttachmentGroup>
+    </PromptInput.Attachments>
+  )
+}
+```
+
+packages/react/src/components/prompt-input/demos/attachments.utils.ts
+
+```tsx
+import { useEffect, useRef, useState } from 'react'
+
+export type PendingAttachment = {
+  id: string
+  mimeType?: string
+  name: string
+  src?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function useDemoAttachments() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const clearAttachments = () => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return []
+    })
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(current => {
+      const removed = current.find(attachment => attachment.id === id)
+
+      if (removed) revokeAttachmentUrl(removed)
+
+      return current.filter(attachment => attachment.id !== id)
+    })
+  }
+
+  const replaceAttachments = (next: PendingAttachment[]) => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return next.map(attachment => ({ ...attachment }))
+    })
+  }
+
+  return {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment,
+    replaceAttachments
+  }
+}
+```
+
+packages/react/src/components/prompt-input/demos/model-selector.tsx
+
+```tsx
+import { Fragment } from 'react'
+
+import { Header, ListBox, Select, Separator } from '@vezham/react-v3'
+
+const MODEL_GROUPS = [
+  {
+    models: [
+      { id: 'gpt-5.4', name: 'GPT-5.4' },
+      { id: 'gpt-5.3-mini', name: 'GPT-5.3 Mini' },
+      { id: 'gpt-4.1', name: 'GPT-4.1' }
+    ],
+    provider: 'OpenAI'
+  },
+  {
+    models: [
+      { id: 'claude-opus-4.1', name: 'Claude Opus 4.1' },
+      { id: 'claude-sonnet-4.5', name: 'Claude Sonnet 4.5' },
+      { id: 'claude-haiku-3.5', name: 'Claude Haiku 3.5' }
+    ],
+    provider: 'Anthropic'
+  },
+  {
+    models: [
+      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
+      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' }
+    ],
+    provider: 'Google'
+  },
+  {
+    models: [{ id: 'grok-4', name: 'Grok 4' }],
+    provider: 'xAI'
+  }
+]
+
+type ModelSelectorProps = {
+  triggerClassName?: string
+  variant?: 'secondary'
+}
+
+export function ModelSelector({
+  triggerClassName,
+  variant
+}: ModelSelectorProps) {
+  return (
+    <Select
+      aria-label="Model"
+      className="w-[160px] sm:w-[220px]"
+      defaultValue="gpt-5.4"
+      variant={variant}>
+      <Select.Trigger className={triggerClassName}>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          {MODEL_GROUPS.map((group, index) => (
+            <Fragment key={group.provider}>
+              {index > 0 ? <Separator /> : null}
+              <ListBox.Section>
+                <Header>{group.provider}</Header>
+                {group.models.map(model => (
+                  <ListBox.Item
+                    key={model.id}
+                    id={model.id}
+                    textValue={model.name}>
+                    {model.name}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox.Section>
+            </Fragment>
+          ))}
+        </ListBox>
+      </Select.Popover>
+    </Select>
+  )
+}
+```
+
+## Secondary
+
+Use the secondary variant when the composer sits on a default surface.
+
+<ComponentPreview name="pro-prompt-input-secondary">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { ChatAttachmentInput, PromptInput } from '@vezham/react-pro-v3'
+
+import { DemoAttachmentPreviews } from './attachments'
+import { useDemoAttachments } from './attachments.utils'
+import { ModelSelector } from './model-selector'
+
+export function Secondary() {
+  const {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment
+  } = useDemoAttachments()
+  const [value, setValue] = useState('')
+
+  const handleSubmit = () => {
+    setValue('')
+    clearAttachments()
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        value={value}
+        variant="secondary"
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+          <ChatAttachmentInput.Dropzone
+            render={dropzoneProps => (
+              <PromptInput.Shell {...dropzoneProps}>
+                <PromptInput.Content>
+                  <DemoAttachmentPreviews
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                  />
+                  <PromptInput.TextArea placeholder="What do you want to know?" />
+                </PromptInput.Content>
+                <PromptInput.Toolbar>
+                  <PromptInput.ToolbarStart>
+                    <ChatAttachmentInput.Trigger
+                      render={triggerProps => (
+                        <PromptInput.Action
+                          {...triggerProps}
+                          aria-label="Attach file"
+                          tooltip="Attach file"
+                          variant="outline">
+                          <Paperclip className="size-4" />
+                        </PromptInput.Action>
+                      )}
+                    />
+                    <ModelSelector />
+                  </PromptInput.ToolbarStart>
+                  <PromptInput.ToolbarEnd>
+                    <PromptInput.Send>
+                      <ArrowUp className="size-4" />
+                    </PromptInput.Send>
+                  </PromptInput.ToolbarEnd>
+                </PromptInput.Toolbar>
+              </PromptInput.Shell>
+            )}
+          />
+        </ChatAttachmentInput>
+        <PromptInput.Footer>
+          Secondary surface with default background tokens.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/prompt-input/demos/attachments.tsx
+
+```tsx
+'use client'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+import type { PendingAttachment } from './attachments.utils'
+
+type DemoAttachmentPreviewsProps = {
+  attachments: PendingAttachment[]
+  onRemove: (id: string) => void
+}
+
+export function DemoAttachmentPreviews({
+  attachments,
+  onRemove
+}: DemoAttachmentPreviewsProps) {
+  if (!attachments.length) return null
+
+  return (
+    <PromptInput.Attachments>
+      <ChatAttachmentGroup>
+        {attachments.map(file => (
+          <ChatAttachment
+            key={file.id}
+            mimeType={file.mimeType}
+            name={file.name}
+            src={file.src}>
+            <ChatAttachment.Preview />
+            <ChatAttachment.Remove
+              aria-label="Remove attachment"
+              onPress={() => onRemove(file.id)}
+            />
+          </ChatAttachment>
+        ))}
+      </ChatAttachmentGroup>
+    </PromptInput.Attachments>
+  )
+}
+```
+
+packages/react/src/components/prompt-input/demos/attachments.utils.ts
+
+```tsx
+import { useEffect, useRef, useState } from 'react'
+
+export type PendingAttachment = {
+  id: string
+  mimeType?: string
+  name: string
+  src?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function useDemoAttachments() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const clearAttachments = () => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return []
+    })
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(current => {
+      const removed = current.find(attachment => attachment.id === id)
+
+      if (removed) revokeAttachmentUrl(removed)
+
+      return current.filter(attachment => attachment.id !== id)
+    })
+  }
+
+  const replaceAttachments = (next: PendingAttachment[]) => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return next.map(attachment => ({ ...attachment }))
+    })
+  }
+
+  return {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment,
+    replaceAttachments
+  }
+}
+```
+
+packages/react/src/components/prompt-input/demos/model-selector.tsx
+
+```tsx
+import { Fragment } from 'react'
+
+import { Header, ListBox, Select, Separator } from '@vezham/react-v3'
+
+const MODEL_GROUPS = [
+  {
+    models: [
+      { id: 'gpt-5.4', name: 'GPT-5.4' },
+      { id: 'gpt-5.3-mini', name: 'GPT-5.3 Mini' },
+      { id: 'gpt-4.1', name: 'GPT-4.1' }
+    ],
+    provider: 'OpenAI'
+  },
+  {
+    models: [
+      { id: 'claude-opus-4.1', name: 'Claude Opus 4.1' },
+      { id: 'claude-sonnet-4.5', name: 'Claude Sonnet 4.5' },
+      { id: 'claude-haiku-3.5', name: 'Claude Haiku 3.5' }
+    ],
+    provider: 'Anthropic'
+  },
+  {
+    models: [
+      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
+      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' }
+    ],
+    provider: 'Google'
+  },
+  {
+    models: [{ id: 'grok-4', name: 'Grok 4' }],
+    provider: 'xAI'
+  }
+]
+
+type ModelSelectorProps = {
+  triggerClassName?: string
+  variant?: 'secondary'
+}
+
+export function ModelSelector({
+  triggerClassName,
+  variant
+}: ModelSelectorProps) {
+  return (
+    <Select
+      aria-label="Model"
+      className="w-[160px] sm:w-[220px]"
+      defaultValue="gpt-5.4"
+      variant={variant}>
+      <Select.Trigger className={triggerClassName}>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          {MODEL_GROUPS.map((group, index) => (
+            <Fragment key={group.provider}>
+              {index > 0 ? <Separator /> : null}
+              <ListBox.Section>
+                <Header>{group.provider}</Header>
+                {group.models.map(model => (
+                  <ListBox.Item
+                    key={model.id}
+                    id={model.id}
+                    textValue={model.name}>
+                    {model.name}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox.Section>
+            </Fragment>
+          ))}
+        </ListBox>
+      </Select.Popover>
+    </Select>
+  )
+}
+```
+
+## Inline
+
+Use the inline layout when attachment, input, and send controls should stay aligned in one row while the textarea autosizes as users type or add line breaks.
+
+<ComponentPreview name="pro-prompt-input-inline">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { ChatAttachmentInput, PromptInput } from '@vezham/react-pro-v3'
+
+import { DemoAttachmentPreviews } from './attachments'
+import { useDemoAttachments } from './attachments.utils'
+
+export function Inline() {
+  const {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment
+  } = useDemoAttachments()
+  const [value, setValue] = useState('')
+
+  const handleSubmit = () => {
+    setValue('')
+    clearAttachments()
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        layout="inline"
+        value={value}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+          <ChatAttachmentInput.Dropzone
+            render={dropzoneProps => (
+              <PromptInput.Shell {...dropzoneProps}>
+                <PromptInput.Content>
+                  <DemoAttachmentPreviews
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                  />
+                  <PromptInput.TextArea placeholder="Send follow-up" />
+                </PromptInput.Content>
+                <PromptInput.Toolbar>
+                  <PromptInput.ToolbarStart>
+                    <ChatAttachmentInput.Trigger
+                      render={triggerProps => (
+                        <PromptInput.Action
+                          {...triggerProps}
+                          aria-label="Attach file"
+                          tooltip="Attach file">
+                          <Paperclip className="size-4" />
+                        </PromptInput.Action>
+                      )}
+                    />
+                  </PromptInput.ToolbarStart>
+                  <PromptInput.ToolbarEnd>
+                    <PromptInput.Send>
+                      <ArrowUp className="size-4" />
+                    </PromptInput.Send>
+                  </PromptInput.ToolbarEnd>
+                </PromptInput.Toolbar>
+              </PromptInput.Shell>
+            )}
+          />
+        </ChatAttachmentInput>
+        <PromptInput.Footer>
+          AI can make mistakes. Check important info.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/prompt-input/demos/attachments.tsx
+
+```tsx
+'use client'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+import type { PendingAttachment } from './attachments.utils'
+
+type DemoAttachmentPreviewsProps = {
+  attachments: PendingAttachment[]
+  onRemove: (id: string) => void
+}
+
+export function DemoAttachmentPreviews({
+  attachments,
+  onRemove
+}: DemoAttachmentPreviewsProps) {
+  if (!attachments.length) return null
+
+  return (
+    <PromptInput.Attachments>
+      <ChatAttachmentGroup>
+        {attachments.map(file => (
+          <ChatAttachment
+            key={file.id}
+            mimeType={file.mimeType}
+            name={file.name}
+            src={file.src}>
+            <ChatAttachment.Preview />
+            <ChatAttachment.Remove
+              aria-label="Remove attachment"
+              onPress={() => onRemove(file.id)}
+            />
+          </ChatAttachment>
+        ))}
+      </ChatAttachmentGroup>
+    </PromptInput.Attachments>
+  )
+}
+```
+
+packages/react/src/components/prompt-input/demos/attachments.utils.ts
+
+```tsx
+import { useEffect, useRef, useState } from 'react'
+
+export type PendingAttachment = {
+  id: string
+  mimeType?: string
+  name: string
+  src?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function useDemoAttachments() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const clearAttachments = () => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return []
+    })
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(current => {
+      const removed = current.find(attachment => attachment.id === id)
+
+      if (removed) revokeAttachmentUrl(removed)
+
+      return current.filter(attachment => attachment.id !== id)
+    })
+  }
+
+  const replaceAttachments = (next: PendingAttachment[]) => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return next.map(attachment => ({ ...attachment }))
+    })
+  }
+
+  return {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment,
+    replaceAttachments
+  }
+}
+```
+
+## Compact
+
+Use the compact layout when the composer should start as a single-row pill and switch to the stacked composer once text wraps or attachments are added.
+
+<ComponentPreview name="pro-prompt-input-compact">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { ChatAttachmentInput, PromptInput } from '@vezham/react-pro-v3'
+
+import { DemoAttachmentPreviews } from './attachments'
+import { useDemoAttachments } from './attachments.utils'
+
+export function Compact() {
+  const {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment
+  } = useDemoAttachments()
+  const [value, setValue] = useState('')
+
+  const handleSubmit = () => {
+    setValue('')
+    clearAttachments()
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        layout="compact"
+        value={value}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+          <ChatAttachmentInput.Dropzone
+            render={dropzoneProps => (
+              <PromptInput.Shell {...dropzoneProps}>
+                <PromptInput.Content>
+                  <DemoAttachmentPreviews
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                  />
+                  <PromptInput.TextArea placeholder="Send follow-up" />
+                </PromptInput.Content>
+                <PromptInput.Toolbar>
+                  <PromptInput.ToolbarStart>
+                    <ChatAttachmentInput.Trigger
+                      render={triggerProps => (
+                        <PromptInput.Action
+                          {...triggerProps}
+                          aria-label="Attach file"
+                          tooltip="Attach file">
+                          <Paperclip className="size-4" />
+                        </PromptInput.Action>
+                      )}
+                    />
+                  </PromptInput.ToolbarStart>
+                  <PromptInput.ToolbarEnd>
+                    <PromptInput.Send>
+                      <ArrowUp className="size-4" />
+                    </PromptInput.Send>
+                  </PromptInput.ToolbarEnd>
+                </PromptInput.Toolbar>
+              </PromptInput.Shell>
+            )}
+          />
+        </ChatAttachmentInput>
+        <PromptInput.Footer>
+          AI can make mistakes. Check important info.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/prompt-input/demos/attachments.tsx
+
+```tsx
+'use client'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+import type { PendingAttachment } from './attachments.utils'
+
+type DemoAttachmentPreviewsProps = {
+  attachments: PendingAttachment[]
+  onRemove: (id: string) => void
+}
+
+export function DemoAttachmentPreviews({
+  attachments,
+  onRemove
+}: DemoAttachmentPreviewsProps) {
+  if (!attachments.length) return null
+
+  return (
+    <PromptInput.Attachments>
+      <ChatAttachmentGroup>
+        {attachments.map(file => (
+          <ChatAttachment
+            key={file.id}
+            mimeType={file.mimeType}
+            name={file.name}
+            src={file.src}>
+            <ChatAttachment.Preview />
+            <ChatAttachment.Remove
+              aria-label="Remove attachment"
+              onPress={() => onRemove(file.id)}
+            />
+          </ChatAttachment>
+        ))}
+      </ChatAttachmentGroup>
+    </PromptInput.Attachments>
+  )
+}
+```
+
+packages/react/src/components/prompt-input/demos/attachments.utils.ts
+
+```tsx
+import { useEffect, useRef, useState } from 'react'
+
+export type PendingAttachment = {
+  id: string
+  mimeType?: string
+  name: string
+  src?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function useDemoAttachments() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const clearAttachments = () => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return []
+    })
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(current => {
+      const removed = current.find(attachment => attachment.id === id)
+
+      if (removed) revokeAttachmentUrl(removed)
+
+      return current.filter(attachment => attachment.id !== id)
+    })
+  }
+
+  const replaceAttachments = (next: PendingAttachment[]) => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return next.map(attachment => ({ ...attachment }))
+    })
+  }
+
+  return {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment,
+    replaceAttachments
+  }
+}
+```
+
+## Review Composer
+
+Compose `PromptInput` with workflow controls to build compact agent surfaces such as review follow-ups and commit actions.
+
+<ComponentPreview name="pro-prompt-input-review-composer">
+
+```tsx
+'use client'
+
+import {
+  ArrowUp,
+  ArrowUpRight,
+  BranchesRight,
+  ChevronDown,
+  ChevronRight,
+  Display,
+  Ellipsis,
+  Microphone,
+  Plus
+} from '@gravity-ui/icons'
+import type { CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { HoverCard, PromptInput } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import {
+  Button,
+  Input,
+  ListBox,
+  Popover,
+  ProgressCircle,
+  Select,
+  Separator,
+  Switch,
+  listboxItemVariants,
+  listboxVariants
+} from '@vezham/react-v3'
+
+const REVIEW_MODELS = [
+  {
+    contextWindow: '200k context window',
+    description:
+      'Balanced model for quick code review follow-ups and everyday implementation work.',
+    id: 'composer-2.5',
+    meta: 'Fast',
+    name: 'Composer 2.5',
+    note: 'Fast responses tuned for short iteration loops.',
+    title: 'Composer 2.5 (fast)',
+    version: 'balanced reasoning effort'
+  },
+  {
+    contextWindow: '1M context window',
+    description:
+      'Deep reasoning model for large codebases, architecture changes, and careful reviews.',
+    id: 'opus-4.8',
+    meta: '1M High',
+    name: 'Opus 4.8',
+    note: 'Best when quality matters more than speed.',
+    title: 'Opus 4.8',
+    version: 'high reasoning effort'
+  },
+  {
+    contextWindow: '1M context window',
+    description:
+      'General intelligence model with strong planning and implementation range.',
+    id: 'gpt-5.5',
+    meta: '1M High',
+    name: 'GPT-5.5',
+    note: 'Use for broad product work that mixes code, writing, and analysis.',
+    title: 'GPT-5.5',
+    version: 'high reasoning effort'
+  },
+  {
+    contextWindow: '1M context window',
+    description:
+      'Steady reasoning model for long conversations and nuanced implementation tradeoffs.',
+    id: 'sonnet-4.6',
+    meta: '1M Medium',
+    name: 'Sonnet 4.6',
+    note: 'A balanced pick for sustained pair-programming sessions.',
+    title: 'Sonnet 4.6',
+    version: 'medium reasoning effort'
+  },
+  {
+    contextWindow: '272k context window',
+    description:
+      "OpenAI's model specifically for coding. Good for ambitious coding tasks.",
+    id: 'codex-5.3',
+    meta: 'High Fast',
+    name: 'Codex 5.3',
+    note: "The same Codex 5.3 model, using OpenAI's fast priority processing at 2x the price.",
+    title: 'Codex 5.3 (fast)',
+    version: 'high reasoning effort'
+  },
+  {
+    contextWindow: '1M context window',
+    description:
+      'Reliable advanced model for complex code generation and careful refactors.',
+    id: 'opus-4.6',
+    meta: '1M High',
+    name: 'Opus 4.6',
+    note: 'Good for multi-file work where context retention is the priority.',
+    title: 'Opus 4.6',
+    version: 'high reasoning effort'
+  },
+  {
+    contextWindow: '1M context window',
+    description:
+      'Fast multimodal reasoning model with strong analysis and synthesis skills.',
+    id: 'gemini-3.1-pro',
+    meta: '',
+    name: 'Gemini 3.1 Pro',
+    note: 'Useful when exploring alternatives or comparing implementation approaches.',
+    title: 'Gemini 3.1 Pro',
+    version: 'pro reasoning effort'
+  }
+] as const
+
+type ReviewModelId = (typeof REVIEW_MODELS)[number]['id']
+type ReviewModel = (typeof REVIEW_MODELS)[number]
+
+const REVIEW_MODEL_IDS = new Set<ReviewModelId>(
+  REVIEW_MODELS.map(model => model.id)
+)
+const PINNABLE_ACTIONS = [
+  'agent-browser',
+  'ai-sdk',
+  'automate',
+  'babysit',
+  'canvas'
+] as const
+const ADD_MODEL_ACTIONS = [
+  'Browse Marketplace',
+  'Connect Provider',
+  'Import API Key'
+] as const
+const REVIEW_MODEL_MODES = [
+  { id: 'auto', label: 'Auto', meta: 'Efficiency' },
+  { id: 'premium', label: 'Premium', meta: 'Intelligence' }
+] as const
+const REVIEW_LISTBOX_CLASSNAME = `${listboxVariants()} p-2`
+const REVIEW_LISTBOX_ITEM_CLASSNAME = listboxItemVariants().item()
+const MODEL_TRIGGER_CLASSNAME =
+  'text-foreground hover:bg-default-hover data-[hovered=true]:bg-default-hover h-8 max-w-[180px] min-w-0 items-center gap-1 rounded-full border-0 bg-transparent px-2 text-sm font-normal shadow-none transition-colors'
+const POPOVER_MAX_WIDTH = 320
+const REVIEW_BUTTON_STYLE = {
+  '--button-bg': 'var(--background)',
+  '--button-bg-hover': 'var(--default-hover)',
+  '--button-bg-pressed': 'var(--default-hover)',
+  '--button-fg': 'var(--foreground)'
+} as CSSProperties
+
+function isReviewModelId(key: Key | null): key is ReviewModelId {
+  return typeof key === 'string' && REVIEW_MODEL_IDS.has(key as ReviewModelId)
+}
+
+function ReviewModelText({ model }: { model: ReviewModel }) {
+  return (
+    <span className="flex min-w-0 items-center gap-1">
+      <span className="truncate font-normal">{model.name}</span>
+      {model.meta ? (
+        <span className="text-muted shrink-0 font-normal">{model.meta}</span>
+      ) : null}
+    </span>
+  )
+}
+
+function ReviewModelDetails({ model }: { model: ReviewModel }) {
+  return (
+    <div className="w-full p-1 text-sm">
+      <div className="text-foreground text-base font-semibold sm:text-lg">
+        {model.title}
+      </div>
+      <p className="text-foreground mt-2 leading-relaxed">
+        {model.description}
+      </p>
+      <p className="text-foreground mt-6">{model.contextWindow}</p>
+      <p className="text-warning mt-6 leading-relaxed">{model.note}</p>
+      <p className="text-foreground mt-6 italic">Version: {model.version}</p>
+    </div>
+  )
+}
+
+interface ReviewModelOptionProps {
+  detailsPlacement: 'left' | 'right'
+  model: ReviewModel
+}
+
+function ReviewModelOption({
+  detailsPlacement,
+  model
+}: ReviewModelOptionProps) {
+  const hasEditAction = model.id === 'codex-5.3'
+
+  return (
+    <HoverCard closeDelay={100} openDelay={250}>
+      <HoverCard.Trigger className="min-w-0 flex-1 items-center justify-between gap-4">
+        <ReviewModelText model={model} />
+        {hasEditAction ? (
+          <span className="text-muted hidden shrink-0 font-normal group-hover/model:block group-data-[focused=true]/model:block">
+            Edit
+          </span>
+        ) : null}
+      </HoverCard.Trigger>
+      <HoverCard.Content
+        className="scrollbar max-h-[min(440px,calc(100vh-2rem))] w-[min(360px,calc(100vw-2rem))] overflow-y-auto p-4"
+        containerPadding={16}
+        offset={12}
+        placement={detailsPlacement}>
+        <ReviewModelDetails model={model} />
+      </HoverCard.Content>
+    </HoverCard>
+  )
+}
+
+interface ReviewModelSelectProps {
+  className?: string
+  detailsPlacement?: 'left' | 'right'
+  model: ReviewModel
+  popoverPlacement?: 'bottom end' | 'bottom start'
+  selectedKey: ReviewModelId
+  triggerClassName?: string
+  onSelectionChange: (key: ReviewModelId) => void
+}
+
+function ReviewModelSelect({
+  className,
+  detailsPlacement = 'right',
+  model,
+  onSelectionChange,
+  popoverPlacement = 'bottom start',
+  selectedKey,
+  triggerClassName
+}: ReviewModelSelectProps) {
+  const [isMaxMode, setIsMaxMode] = useState(true)
+  const [modelPopoverWidth, setModelPopoverWidth] = useState<number>()
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const updateModelPopoverWidth = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    const trigger = triggerRef.current
+
+    if (!trigger) return
+
+    const { left, right } = trigger.getBoundingClientRect()
+    const availableWidth =
+      popoverPlacement === 'bottom end'
+        ? right - 16
+        : window.innerWidth - left - 16
+
+    setModelPopoverWidth(
+      Math.max(220, Math.min(POPOVER_MAX_WIDTH, availableWidth))
+    )
+  }, [popoverPlacement])
+
+  useEffect(() => {
+    window.addEventListener('resize', updateModelPopoverWidth)
+
+    return () => window.removeEventListener('resize', updateModelPopoverWidth)
+  }, [updateModelPopoverWidth])
+
+  return (
+    <Select
+      aria-label="Model"
+      className={className}
+      value={selectedKey}
+      onChange={key => {
+        if (isReviewModelId(key)) onSelectionChange(key)
+      }}>
+      <Select.Trigger
+        ref={triggerRef}
+        className={triggerClassName}
+        onFocus={updateModelPopoverWidth}
+        onPointerDown={updateModelPopoverWidth}>
+        <Select.Value className="min-w-0 flex-1 overflow-hidden">
+          <ReviewModelText model={model} />
+        </Select.Value>
+        <Select.Indicator className="text-muted static my-0 size-4 shrink-0">
+          <ChevronDown />
+        </Select.Indicator>
+      </Select.Trigger>
+      <Select.Popover
+        className="scrollbar max-h-[min(560px,calc(100vh-2rem))] max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto rounded-2xl p-0"
+        containerPadding={16}
+        placement={popoverPlacement}
+        style={{ width: modelPopoverWidth }}>
+        <div className="flex flex-col gap-1 p-2">
+          <Input
+            fullWidth
+            aria-label="Search models"
+            className="h-9 w-full border-0 bg-transparent px-2 text-sm shadow-none"
+            placeholder="Search models"
+            variant="secondary"
+          />
+          <div className="flex h-10 items-center justify-between gap-4 px-2 text-sm">
+            <span>MAX Mode</span>
+            <Switch
+              aria-label="MAX Mode"
+              isSelected={isMaxMode}
+              onChange={setIsMaxMode}>
+              {({ isSelected }) => (
+                <Switch.Content>
+                  <Switch.Control
+                    className={isSelected ? '!bg-success' : undefined}>
+                    <Switch.Thumb />
+                  </Switch.Control>
+                </Switch.Content>
+              )}
+            </Switch>
+          </div>
+        </div>
+        <Separator />
+        <ul aria-label="Model modes" className={REVIEW_LISTBOX_CLASSNAME}>
+          {REVIEW_MODEL_MODES.map(mode => (
+            <li key={mode.id} className={REVIEW_LISTBOX_ITEM_CLASSNAME}>
+              <span className="text-sm" data-slot="label">
+                <span className="font-medium">{mode.label}</span>
+                <span className="text-muted ml-1 font-normal">{mode.meta}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <Separator />
+        <ListBox className="p-2">
+          {REVIEW_MODELS.map(option => (
+            <ListBox.Item
+              key={option.id}
+              className="group/model"
+              id={option.id}
+              textValue={`${option.name} ${option.meta}`}>
+              <ReviewModelOption
+                detailsPlacement={detailsPlacement}
+                model={option}
+              />
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+        <Separator />
+        <HoverCard closeDelay={100} openDelay={120}>
+          <HoverCard.Trigger className="text-muted hover:bg-default-hover data-[hovered=true]:bg-default-hover flex h-11 w-full cursor-default items-center justify-between gap-3 rounded-b-2xl px-4 text-left text-sm transition-colors outline-none">
+            <span>Add Models</span>
+            <ChevronRight className="size-4 shrink-0 rtl:-scale-x-100" />
+          </HoverCard.Trigger>
+          <HoverCard.Content
+            className="w-[220px] overflow-hidden rounded-2xl p-0"
+            containerPadding={16}
+            offset={8}
+            placement="right bottom">
+            <ul aria-label="Add models" className={REVIEW_LISTBOX_CLASSNAME}>
+              {ADD_MODEL_ACTIONS.map(action => (
+                <li key={action} className={REVIEW_LISTBOX_ITEM_CLASSNAME}>
+                  <span className="text-sm" data-slot="label">
+                    {action}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </HoverCard.Content>
+        </HoverCard>
+      </Select.Popover>
+    </Select>
+  )
+}
+
+function ActionsToPinPopover() {
+  const [search, setSearch] = useState('')
+  const normalizedSearch = search.trim().toLowerCase()
+  const filteredActions = PINNABLE_ACTIONS.filter(action =>
+    action.toLowerCase().includes(normalizedSearch)
+  )
+
+  return (
+    <Popover>
+      <Popover.Trigger>
+        <Button
+          isIconOnly
+          aria-label="More actions"
+          size="sm"
+          style={REVIEW_BUTTON_STYLE}
+          variant="outline">
+          <Ellipsis className="size-4" />
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content
+        className="w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-2xl p-0"
+        containerPadding={16}
+        offset={8}
+        placement="bottom end">
+        <Popover.Dialog className="p-0">
+          <div className="p-2">
+            <Input
+              autoFocus
+              fullWidth
+              aria-label="Search actions to pin"
+              className="h-9 w-full border-0 bg-transparent px-2 text-sm shadow-none"
+              placeholder="Search Actions to Pin"
+              value={search}
+              variant="secondary"
+              onChange={event => setSearch(event.target.value)}
+            />
+          </div>
+          <Separator />
+          {filteredActions.length > 0 ? (
+            <ListBox
+              aria-label="Actions to pin"
+              className="scrollbar max-h-[min(440px,calc(100vh-9rem))] overflow-y-auto p-2">
+              {filteredActions.map(action => (
+                <ListBox.Item key={action} id={action} textValue={action}>
+                  {action}
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          ) : (
+            <div className="text-muted flex h-24 items-center px-5 text-sm">
+              No actions found
+            </div>
+          )}
+          <Separator />
+          <Button
+            fullWidth
+            className="text-foreground h-12 justify-between gap-3 rounded-t-none rounded-b-2xl px-4 text-left text-sm font-medium"
+            variant="ghost">
+            <span>Browse Marketplace</span>
+            <ArrowUpRight className="text-muted size-4 shrink-0" />
+          </Button>
+        </Popover.Dialog>
+      </Popover.Content>
+    </Popover>
+  )
+}
+
+export function ReviewComposer() {
+  const [value, setValue] = useState('')
+  const [modelId, setModelId] = useState<ReviewModelId>('composer-2.5')
+  const hasValue = value.trim().length > 0
+  const selectedModel =
+    REVIEW_MODELS.find(model => model.id === modelId) ?? REVIEW_MODELS[0]
+
+  const handleSubmit = () => {
+    setValue('')
+  }
+
+  return (
+    <div className="flex w-full max-w-[800px] min-w-0 flex-col gap-3 p-4 sm:p-5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Button size="sm" style={REVIEW_BUTTON_STYLE} variant="outline">
+          <span>Review</span>
+          <span className="text-success-soft-foreground font-semibold">
+            +469
+          </span>
+          <span className="text-danger-soft-foreground font-semibold">-34</span>
+        </Button>
+        <Button
+          className="hidden sm:inline-flex"
+          size="sm"
+          style={REVIEW_BUTTON_STYLE}
+          variant="outline">
+          <span className="truncate">Create Branch &amp; Commit</span>
+        </Button>
+        <ActionsToPinPopover />
+      </div>
+
+      <PromptInput
+        className="group max-w-full min-w-0 overflow-hidden"
+        layout="compact"
+        value={value}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <PromptInput.Shell>
+          <PromptInput.Content>
+            <PromptInput.TextArea
+              className="min-w-0"
+              placeholder="Send follow-up"
+            />
+          </PromptInput.Content>
+          <PromptInput.Toolbar className="group-data-[expanded=true]:justify-start group-data-[expanded=true]:gap-1.5 sm:group-data-[expanded=true]:justify-between">
+            <PromptInput.ToolbarStart>
+              <PromptInput.Action
+                aria-label="Add context"
+                className="bg-default text-muted hover:bg-default-hover"
+                tooltip="Add context">
+                <Plus className="size-4" />
+              </PromptInput.Action>
+              <ReviewModelSelect
+                className="hidden w-auto min-w-0 min-[420px]:group-data-[expanded=true]:!block"
+                detailsPlacement="right"
+                model={selectedModel}
+                selectedKey={modelId}
+                triggerClassName={MODEL_TRIGGER_CLASSNAME}
+                onSelectionChange={setModelId}
+              />
+            </PromptInput.ToolbarStart>
+            <PromptInput.ToolbarEnd className="flex min-w-0 gap-1.5 group-data-[expanded=true]:!flex">
+              <ReviewModelSelect
+                className="hidden w-auto min-w-0 group-data-[expanded=true]:!hidden sm:block"
+                detailsPlacement="left"
+                model={selectedModel}
+                popoverPlacement="bottom end"
+                selectedKey={modelId}
+                triggerClassName={MODEL_TRIGGER_CLASSNAME}
+                onSelectionChange={setModelId}
+              />
+              {hasValue ? (
+                <>
+                  <PromptInput.Action
+                    aria-label="Voice input"
+                    className="text-muted hover:bg-default-hover bg-transparent"
+                    tooltip="Voice input">
+                    <Microphone className="size-4" />
+                  </PromptInput.Action>
+                  <PromptInput.Send className="bg-foreground text-background hover:bg-foreground/90">
+                    <ArrowUp className="size-4" />
+                  </PromptInput.Send>
+                </>
+              ) : (
+                <PromptInput.Action
+                  aria-label="Voice input"
+                  className="bg-foreground text-background hover:bg-foreground/90"
+                  tooltip="Voice input">
+                  <Microphone className="size-4" />
+                </PromptInput.Action>
+              )}
+            </PromptInput.ToolbarEnd>
+          </PromptInput.Toolbar>
+        </PromptInput.Shell>
+      </PromptInput>
+
+      <div className="text-muted flex items-center justify-between gap-3 px-2 text-xs sm:px-4 sm:text-sm">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <span className="flex items-center gap-1.5">
+            <BranchesRight className="size-4" />
+            develop
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Display className="size-4" />
+            Local
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <ProgressCircle
+            aria-label="Task progress"
+            color="default"
+            size="sm"
+            value={32}>
+            <ProgressCircle.Track>
+              <ProgressCircle.TrackCircle />
+              <ProgressCircle.FillCircle />
+            </ProgressCircle.Track>
+          </ProgressCircle>
+          <span className="tabular-nums">32%</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Suggestions
+
+Compose `PromptInput` with `PromptSuggestion` to create a landing-style composer with quick-start prompts.
+
+<ComponentPreview name="pro-prompt-input-with-suggestions">
+
+```tsx
+'use client'
+
+import {
+  ArrowUp,
+  CirclePlus,
+  Database,
+  LayoutHeaderCellsLargeThunderbolt,
+  Microphone,
+  MusicNote,
+  Text
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import {
+  PromptInput,
+  PromptSuggestion,
+  TextShimmer
+} from '@vezham/react-pro-v3'
+
+const SUGGESTIONS = [
+  { Icon: LayoutHeaderCellsLargeThunderbolt, label: 'Design a launch page' },
+  { Icon: Text, label: 'Summarize meeting notes' },
+  { Icon: MusicNote, label: 'Generate a sound brief' },
+  { Icon: Database, label: 'Plan a data model' }
+]
+
+export function WithSuggestions() {
+  const [value, setValue] = useState('')
+
+  return (
+    <div className="mx-auto flex min-h-[520px] w-full max-w-[920px] flex-col items-center justify-center gap-6 px-4">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <h2 className="text-foreground text-3xl font-normal tracking-tight">
+          Build something useful with{' '}
+          <TextShimmer className="text-muted">HeroUI Pro AI</TextShimmer>
+        </h2>
+        <p className="text-muted text-sm">
+          Start with a prompt, add files, or pick a suggestion to shape the
+          first response.
+        </p>
+      </div>
+
+      <PromptInput
+        className="w-full max-w-[780px]"
+        value={value}
+        onSubmit={() => setValue('')}
+        onValueChange={setValue}>
+        <PromptInput.Shell className="shadow-overlay">
+          <PromptInput.Content>
+            <PromptInput.TextArea
+              className="min-h-19"
+              placeholder="Describe an app, workflow, or interface..."
+            />
+          </PromptInput.Content>
+          <PromptInput.Toolbar>
+            <PromptInput.ToolbarStart>
+              <PromptInput.Action aria-label="Use voice" tooltip="Use voice">
+                <Microphone className="size-4" />
+              </PromptInput.Action>
+              <PromptInput.Action
+                aria-label="Add context"
+                tooltip="Add context">
+                <CirclePlus className="size-4" />
+              </PromptInput.Action>
+            </PromptInput.ToolbarStart>
+            <PromptInput.ToolbarEnd>
+              <PromptInput.Send>
+                <ArrowUp className="size-4" />
+              </PromptInput.Send>
+            </PromptInput.ToolbarEnd>
+          </PromptInput.Toolbar>
+        </PromptInput.Shell>
+      </PromptInput>
+
+      <PromptSuggestion className="w-full max-w-[560px]">
+        <PromptSuggestion.Items className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {SUGGESTIONS.map(({ Icon, label }) => (
+            <PromptSuggestion.Item
+              key={label}
+              className="items-center justify-start"
+              showEndIcon={false}
+              onPress={() => setValue(label)}>
+              <span className="inline-flex min-w-0 items-center gap-2">
+                <Icon className="size-4 shrink-0" />
+                <span className="truncate">{label}</span>
+              </span>
+            </PromptSuggestion.Item>
+          ))}
+        </PromptSuggestion.Items>
+      </PromptSuggestion>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Run State
+
+Prompt input supports `submitted`, `streaming`, `ready`, and `error` states for send/stop behavior.
+
+<ComponentPreview name="pro-prompt-input-run-state">
+
+```tsx
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import type { ChatStatus } from '@vezham/react-pro-v3'
+import { PromptInput } from '@vezham/react-pro-v3'
+
+export function RunState() {
+  const [value, setValue] = useState('')
+  const [status, setStatus] = useState<ChatStatus>('ready')
+  const timersRef = useRef<number[]>([])
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(timer => window.clearTimeout(timer))
+    timersRef.current = []
+  }, [])
+
+  useEffect(() => {
+    return () => clearTimers()
+  }, [clearTimers])
+
+  const handleStop = () => {
+    clearTimers()
+    setStatus('ready')
+  }
+
+  const handleSubmit = () => {
+    const trimmed = value.trim()
+
+    if (!trimmed || status !== 'ready') return
+
+    setValue('')
+    setStatus('submitted')
+    clearTimers()
+
+    timersRef.current.push(
+      window.setTimeout(() => setStatus('streaming'), 400),
+      window.setTimeout(() => setStatus('ready'), 1800)
+    )
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        status={status}
+        value={value}
+        onStop={handleStop}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        <PromptInput.Shell>
+          <PromptInput.Content>
+            <PromptInput.TextArea placeholder="Send to see submitted → streaming → ready" />
+          </PromptInput.Content>
+          <PromptInput.Toolbar>
+            <PromptInput.ToolbarEnd>
+              <PromptInput.Send />
+            </PromptInput.ToolbarEnd>
+          </PromptInput.Toolbar>
+        </PromptInput.Shell>
+        <PromptInput.Footer>
+          Status-driven send button with stop while generating.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Queue
+
+Use `PromptInput.Queue` to show queued follow-up prompts in a compact card above the composer shell. Place it as a sibling of `PromptInput.Shell` inside `PromptInput`. Keep queue rows text-only for a clean surface — store attachments in your queue model and restore them to `PromptInput.Attachments` when the user edits a queued prompt.
+
+<ComponentPreview name="pro-prompt-input-queue">
+
+```tsx
+'use client'
+
+import { Copy, Paperclip, Pencil, TrashBin } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { PromptInput } from '@vezham/react-pro-v3'
+import { Dropdown, Label } from '@vezham/react-v3'
+
+import { DemoAttachmentPreviews } from './attachments'
+import type { PendingAttachment } from './attachments.utils'
+import { useDemoAttachments } from './attachments.utils'
+
+const SAMPLE_ATTACHMENTS: PendingAttachment[] = [
+  {
+    id: 'attachment-1',
+    mimeType: 'image/png',
+    name: 'hero.png',
+    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/demo/hero.png'
+  },
+  {
+    id: 'attachment-2',
+    mimeType: 'image/jpeg',
+    name: 'dashboard.jpg',
+    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/demo/dashboard.jpg'
+  },
+  {
+    id: 'attachment-3',
+    mimeType: 'application/pdf',
+    name: 'brief.pdf'
+  }
+]
+
+const SAMPLE_QUEUE = [
+  {
+    attachments: SAMPLE_ATTACHMENTS.slice(0, 2),
+    id: 'queue-1',
+    text: 'Review the attached mockups before implementing the landing page updates.'
+  },
+  {
+    attachments: [...SAMPLE_ATTACHMENTS],
+    id: 'queue-2',
+    text: 'Add dark mode support to the settings page.'
+  },
+  {
+    id: 'queue-3',
+    text: 'Refactor the queue item layout to match Codex.'
+  },
+  {
+    attachments: SAMPLE_ATTACHMENTS.slice(0, 1),
+    id: 'queue-4',
+    text: ''
+  }
+]
+
+type QueueDemoItem = {
+  attachments?: PendingAttachment[]
+  id: string
+  text: string
+}
+
+function getQueueItemPreview(item: QueueDemoItem) {
+  if (item.text.trim()) return item.text
+  if (item.attachments?.length) {
+    const count = item.attachments.length
+
+    return `${count} attachment${count === 1 ? '' : 's'}`
+  }
+
+  return ''
+}
+
+function QueueItemMoreMenu({
+  item,
+  onDuplicate,
+  onEdit,
+  onRemove
+}: {
+  item: QueueDemoItem
+  onDuplicate: (id: string) => void
+  onEdit: (id: string) => void
+  onRemove: (id: string) => void
+}) {
+  return (
+    <Dropdown>
+      <PromptInput.Queue.Item.More aria-label="More queue actions" />
+      <Dropdown.Popover className="w-44" offset={6} placement="bottom end">
+        <Dropdown.Menu
+          aria-label="Queued prompt actions"
+          onAction={key => {
+            if (key === 'edit') onEdit(item.id)
+            if (key === 'duplicate') onDuplicate(item.id)
+            if (key === 'remove') onRemove(item.id)
+          }}>
+          <Dropdown.Item id="edit" textValue="Edit prompt">
+            <Pencil className="text-muted size-4 shrink-0" />
+            <Label>Edit prompt</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="duplicate" textValue="Duplicate">
+            <Copy className="text-muted size-4 shrink-0" />
+            <Label>Duplicate</Label>
+          </Dropdown.Item>
+          <Dropdown.Item
+            id="remove"
+            textValue="Remove from queue"
+            variant="danger">
+            <TrashBin className="text-danger size-4 shrink-0" />
+            <Label>Remove from queue</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  )
+}
+
+export function Queue() {
+  const [value, setValue] = useState('')
+  const [items, setItems] = useState<QueueDemoItem[]>(() =>
+    SAMPLE_QUEUE.map(item => ({
+      ...item,
+      attachments: item.attachments?.map(attachment => ({ ...attachment }))
+    }))
+  )
+  const {
+    attachments,
+    clearAttachments,
+    removeAttachment,
+    replaceAttachments
+  } = useDemoAttachments()
+
+  const handleSubmit = () => {
+    const text = value.trim()
+
+    if (!text && attachments.length === 0) return
+
+    setItems(current => [
+      ...current,
+      {
+        attachments: attachments.length
+          ? attachments.map(attachment => ({ ...attachment }))
+          : undefined,
+        id: crypto.randomUUID(),
+        text
+      }
+    ])
+    setValue('')
+    clearAttachments()
+  }
+
+  const removeItem = (id: string) => {
+    setItems(current => current.filter(entry => entry.id !== id))
+  }
+
+  const duplicateItem = (id: string) => {
+    setItems(current => {
+      const index = current.findIndex(entry => entry.id === id)
+      const item = current[index]
+
+      if (!item) return current
+
+      const duplicate: QueueDemoItem = {
+        attachments: item.attachments?.map(attachment => ({ ...attachment })),
+        id: crypto.randomUUID(),
+        text: item.text
+      }
+
+      return [
+        ...current.slice(0, index + 1),
+        duplicate,
+        ...current.slice(index + 1)
+      ]
+    })
+  }
+
+  const editItem = (id: string) => {
+    const item = items.find(entry => entry.id === id)
+
+    if (!item) return
+
+    setValue(item.text)
+    replaceAttachments(item.attachments ?? [])
+    removeItem(id)
+  }
+
+  return (
+    <div className="w-full max-w-[640px]">
+      <PromptInput
+        value={value}
+        onSubmit={handleSubmit}
+        onValueChange={setValue}>
+        {items.length ? (
+          <PromptInput.Queue>
+            <PromptInput.Queue.List values={items} onReorder={setItems}>
+              {items.map(item => (
+                <PromptInput.Queue.Item key={item.id} value={item}>
+                  <PromptInput.Queue.Item.Handle aria-label="Reorder queued prompt" />
+                  <PromptInput.Queue.Item.Body>
+                    <PromptInput.Queue.Item.Icon />
+                    <PromptInput.Queue.Item.Content>
+                      {getQueueItemPreview(item)}
+                    </PromptInput.Queue.Item.Content>
+                  </PromptInput.Queue.Item.Body>
+                  <PromptInput.Queue.Item.Actions>
+                    <PromptInput.Queue.Item.Remove
+                      aria-label="Remove queued prompt"
+                      onPress={() => removeItem(item.id)}
+                    />
+                    <QueueItemMoreMenu
+                      item={item}
+                      onDuplicate={duplicateItem}
+                      onEdit={editItem}
+                      onRemove={removeItem}
+                    />
+                  </PromptInput.Queue.Item.Actions>
+                </PromptInput.Queue.Item>
+              ))}
+            </PromptInput.Queue.List>
+          </PromptInput.Queue>
+        ) : null}
+
+        <PromptInput.Shell>
+          <PromptInput.Content>
+            <DemoAttachmentPreviews
+              attachments={attachments}
+              onRemove={removeAttachment}
+            />
+            <PromptInput.TextArea placeholder="Ask for follow-up changes" />
+          </PromptInput.Content>
+
+          <PromptInput.Toolbar>
+            <PromptInput.ToolbarStart>
+              <PromptInput.Action
+                aria-label="Add attachment"
+                tooltip="Add attachment">
+                <Paperclip className="size-4" />
+              </PromptInput.Action>
+            </PromptInput.ToolbarStart>
+            <PromptInput.ToolbarEnd>
+              <PromptInput.Send />
+            </PromptInput.ToolbarEnd>
+          </PromptInput.Toolbar>
+        </PromptInput.Shell>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+packages/react/src/components/prompt-input/demos/attachments.tsx
+
+```tsx
+'use client'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+import type { PendingAttachment } from './attachments.utils'
+
+type DemoAttachmentPreviewsProps = {
+  attachments: PendingAttachment[]
+  onRemove: (id: string) => void
+}
+
+export function DemoAttachmentPreviews({
+  attachments,
+  onRemove
+}: DemoAttachmentPreviewsProps) {
+  if (!attachments.length) return null
+
+  return (
+    <PromptInput.Attachments>
+      <ChatAttachmentGroup>
+        {attachments.map(file => (
+          <ChatAttachment
+            key={file.id}
+            mimeType={file.mimeType}
+            name={file.name}
+            src={file.src}>
+            <ChatAttachment.Preview />
+            <ChatAttachment.Remove
+              aria-label="Remove attachment"
+              onPress={() => onRemove(file.id)}
+            />
+          </ChatAttachment>
+        ))}
+      </ChatAttachmentGroup>
+    </PromptInput.Attachments>
+  )
+}
+```
+
+packages/react/src/components/prompt-input/demos/attachments.utils.ts
+
+```tsx
+import { useEffect, useRef, useState } from 'react'
+
+export type PendingAttachment = {
+  id: string
+  mimeType?: string
+  name: string
+  src?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function useDemoAttachments() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const clearAttachments = () => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return []
+    })
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(current => {
+      const removed = current.find(attachment => attachment.id === id)
+
+      if (removed) revokeAttachmentUrl(removed)
+
+      return current.filter(attachment => attachment.id !== id)
+    })
+  }
+
+  const replaceAttachments = (next: PendingAttachment[]) => {
+    setAttachments(current => {
+      revokeAttachmentUrls(current)
+
+      return next.map(attachment => ({ ...attachment }))
+    })
+  }
+
+  return {
+    attachments,
+    clearAttachments,
+    handleFilesSelected,
+    removeAttachment,
+    replaceAttachments
+  }
+}
+```
+
+## Token Input
+
+Use `PromptInput.TokenInput` instead of `PromptInput.TextArea` when the prompt should carry inline tokens such as `@mentions` or `/commands`. It is built on the React Aria Components `TokenField`, so its value is a `TokenFieldValue` segment list rather than a string, and it renders a `contenteditable` element instead of a textarea.
+
+Drive it with `usePromptInputTokens`, which tracks the value and resolves the trigger the caret currently sits in. Wrap both the field and `PromptInput.TokenSuggestions` in `PromptInput.Tokens` so arrow keys and Enter move through the menu while the caret stays in the field. The query ends at the first space unless you pass `allowsSpaces`, and the menu closes when the caret moves out of the trigger or the field loses focus. Escape dismisses the menu for the current trigger until the caret leaves it; every other close, including `close()`, only hides the menu until the next edit or caret move.
+
+The suggestion menu is anchored to the caret, not to the composer. For a composer docked to the bottom of the viewport, pass `placement="top start"` so the menu opens upward instead of covering the toolbar.
+
+<Callout type="warning">
+  `PromptInput.Tokens` is a React Aria `Autocomplete`, so every menu and list
+  box rendered inside it joins the suggestion collection. Keep
+  `PromptInput.Toolbar` and any other menus outside it.
+</Callout>
+
+<Callout type="warning">
+  `TokenField` is an alpha React Aria Components API. Its behavior and props may
+  change in a future release.
+</Callout>
+
+The token field owns the prompt and flattens it into a string for `PromptInput.Send` and the compact layout. Leave `value` on `PromptInput` unset when you use it — clear the prompt with `tokens.setValue(new TokenFieldValue([]))` instead.
+
+<ComponentPreview name="pro-prompt-input-token-mentions">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useMemo } from 'react'
+
+import {
+  PromptInput,
+  TokenFieldValue,
+  usePromptInputTokens
+} from '@vezham/react-pro-v3'
+import { Avatar, Menu } from '@vezham/react-v3'
+
+type MentionSuggestion = {
+  avatar: string
+  id: string
+  kind: 'user'
+  name: string
+  username: string
+}
+type CommandSuggestion = {
+  description: string
+  id: string
+  kind: 'command'
+  name: string
+}
+type Suggestion = CommandSuggestion | MentionSuggestion
+
+const users: MentionSuggestion[] = [
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    id: 'sarahjones',
+    kind: 'user',
+    name: 'Sarah Jones',
+    username: 'sarahjones'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    id: 'alexmiller',
+    kind: 'user',
+    name: 'Alex Miller',
+    username: 'alexmiller'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+    id: 'davidkim',
+    kind: 'user',
+    name: 'David Kim',
+    username: 'davidkim'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+    id: 'ellagreen',
+    kind: 'user',
+    name: 'Ella Green',
+    username: 'ellagreen'
+  },
+  {
+    avatar:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+    id: 'miahernandez',
+    kind: 'user',
+    name: 'Mia Hernandez',
+    username: 'miahernandez'
+  }
+]
+
+const commands: CommandSuggestion[] = [
+  {
+    description: 'Summarize the current thread',
+    id: 'summarize',
+    kind: 'command',
+    name: 'summarize'
+  },
+  {
+    description: 'Add a todo list item',
+    id: 'todo',
+    kind: 'command',
+    name: 'todo'
+  },
+  {
+    description: 'Explain the selected code',
+    id: 'explain',
+    kind: 'command',
+    name: 'explain'
+  },
+  {
+    description: 'Insert a quote block',
+    id: 'quote',
+    kind: 'command',
+    name: 'quote'
+  },
+  {
+    description: 'Run the test suite',
+    id: 'test',
+    kind: 'command',
+    name: 'test'
+  }
+]
+
+const initialValue = new TokenFieldValue<Suggestion>([
+  { text: 'Ask ', type: 'text' },
+  { text: '@sarahjones', type: 'token' },
+  { text: ' to review the release notes, then ', type: 'text' },
+  { text: '/summarize', type: 'token' },
+  { text: ' the thread', type: 'text' }
+])
+
+const tokenTextFor = (item: Suggestion) =>
+  item.kind === 'user' ? `@${item.username}` : `/${item.name}`
+
+export function TokenMentions() {
+  const tokens = usePromptInputTokens<Suggestion>({
+    defaultValue: initialValue
+  })
+  const { insertToken, query, setValue, trigger } = tokens
+
+  const items = useMemo<Suggestion[]>(() => {
+    const needle = query.toLowerCase()
+
+    if (trigger === '/')
+      return commands.filter(item => item.name.includes(needle))
+
+    if (trigger === '@') {
+      return users.filter(
+        item =>
+          item.name.toLowerCase().includes(needle) ||
+          item.username.includes(needle)
+      )
+    }
+
+    return []
+  }, [query, trigger])
+
+  const isMenuOpen = tokens.isOpen && items.length > 0
+
+  const handleSubmit = () => {
+    setValue(new TokenFieldValue<Suggestion>([]))
+  }
+
+  return (
+    <div className="flex min-h-[340px] w-full max-w-[640px] flex-col justify-end">
+      <PromptInput onSubmit={handleSubmit}>
+        <PromptInput.Shell>
+          {/* Tokens wraps only the field and its menu — a menu in the toolbar would otherwise
+              join the suggestion collection. */}
+          <PromptInput.Tokens>
+            <PromptInput.Content>
+              <PromptInput.TokenInput
+                placeholder="Ask anything — @ to mention, / for commands"
+                tokens={tokens}
+              />
+            </PromptInput.Content>
+            <PromptInput.TokenSuggestions
+              isOpen={isMenuOpen}
+              placement="top start"
+              tokens={tokens}>
+              <Menu items={items}>
+                {item => (
+                  <Menu.Item
+                    id={item.id}
+                    textValue={item.name}
+                    onAction={() =>
+                      insertToken(tokenTextFor(item), { value: item })
+                    }>
+                    {item.kind === 'user' ? (
+                      <>
+                        <Avatar size="sm">
+                          <Avatar.Image alt={item.name} src={item.avatar} />
+                          <Avatar.Fallback>
+                            {item.name.slice(0, 1)}
+                          </Avatar.Fallback>
+                        </Avatar>
+                        <span className="flex min-w-0 flex-col">
+                          <span className="truncate">{item.name}</span>
+                          <span className="text-muted truncate text-xs">
+                            @{item.username}
+                          </span>
+                        </span>
+                      </>
+                    ) : (
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate">/{item.name}</span>
+                        <span className="text-muted truncate text-xs">
+                          {item.description}
+                        </span>
+                      </span>
+                    )}
+                  </Menu.Item>
+                )}
+              </Menu>
+            </PromptInput.TokenSuggestions>
+          </PromptInput.Tokens>
+          <PromptInput.Toolbar>
+            <PromptInput.ToolbarStart>
+              <PromptInput.Action
+                aria-label="Attach file"
+                tooltip="Attach file">
+                <Paperclip className="size-4" />
+              </PromptInput.Action>
+            </PromptInput.ToolbarStart>
+            <PromptInput.ToolbarEnd>
+              <PromptInput.Send>
+                <ArrowUp className="size-4" />
+              </PromptInput.Send>
+            </PromptInput.ToolbarEnd>
+          </PromptInput.Toolbar>
+        </PromptInput.Shell>
+        <PromptInput.Footer>
+          AI can make mistakes. Check important info.
+        </PromptInput.Footer>
+      </PromptInput>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Attachments
+
+Pair `PromptInput` with `ChatAttachmentInput.Dropzone` to accept dropped files. While a file is dragged over the shell, the composer shows a dotted accent border.
+
+<ComponentPreview name="pro-prompt-input-default-with-attachments">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useEffect, useRef, useState } from 'react'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  ChatAttachmentInput,
+  ChatMessage,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+type PendingAttachment = {
+  id: string
+  name: string
+  size?: number
+  src?: string
+  mimeType?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function Default() {
+  return (
+    <ChatMessage.User>
+      <ChatAttachmentGroup className="mb-2">
+        <ChatAttachment
+          mediaType="image"
+          name="screenshot.png"
+          size={248_320}
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+        />
+      </ChatAttachmentGroup>
+      <ChatMessage.Bubble>
+        <ChatMessage.Content>What is in this screenshot?</ChatMessage.Content>
+      </ChatMessage.Bubble>
+    </ChatMessage.User>
+  )
+}
+
+export function Composer() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        size: file.size,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  return (
+    <PromptInput className="max-w-xl">
+      <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+        <ChatAttachmentInput.Dropzone
+          render={dropzoneProps => (
+            <PromptInput.Shell {...dropzoneProps}>
+              <PromptInput.Content>
+                {attachments.length ? (
+                  <PromptInput.Attachments>
+                    <ChatAttachmentGroup>
+                      {attachments.map(file => (
+                        <ChatAttachment
+                          key={file.id}
+                          mimeType={file.mimeType}
+                          name={file.name}
+                          size={file.size}
+                          src={file.src}>
+                          <ChatAttachment.Preview />
+                          <ChatAttachment.Info />
+                          <ChatAttachment.Remove
+                            aria-label="Remove attachment"
+                            onPress={() =>
+                              setAttachments(current => {
+                                const removed = current.find(
+                                  item => item.id === file.id
+                                )
+
+                                if (removed) revokeAttachmentUrl(removed)
+
+                                return current.filter(
+                                  item => item.id !== file.id
+                                )
+                              })
+                            }
+                          />
+                        </ChatAttachment>
+                      ))}
+                    </ChatAttachmentGroup>
+                  </PromptInput.Attachments>
+                ) : null}
+                <PromptInput.TextArea placeholder="Ask about your files..." />
+              </PromptInput.Content>
+              <PromptInput.Toolbar>
+                <PromptInput.ToolbarStart>
+                  <ChatAttachmentInput.Trigger
+                    render={triggerProps => (
+                      <PromptInput.Action
+                        {...triggerProps}
+                        aria-label="Attach file"
+                        tooltip="Attach file">
+                        <Paperclip className="size-4" />
+                      </PromptInput.Action>
+                    )}
+                  />
+                </PromptInput.ToolbarStart>
+                <PromptInput.ToolbarEnd>
+                  <PromptInput.Send aria-label="Send">
+                    <ArrowUp className="size-4" />
+                  </PromptInput.Send>
+                </PromptInput.ToolbarEnd>
+              </PromptInput.Toolbar>
+            </PromptInput.Shell>
+          )}
+        />
+      </ChatAttachmentInput>
+    </PromptInput>
+  )
+}
+
+export function Grouped() {
+  return (
+    <ChatAttachmentGroup>
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="project-brief.pdf"
+        size={824_120}
+      />
+      <ChatAttachment
+        mimeType="application/zip"
+        name="design-assets.zip"
+        size={15_204_352}
+      />
+      <ChatAttachment name="quarterly-report.xlsx" size={98_400} />
+      <ChatAttachment name="notes.docx" size={42_100} />
+      <ChatAttachment name="index.tsx" size={3_820} />
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="final-v2-annual-financial-summary-report.pdf"
+        size={2_411_008}
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="wireframe.png"
+        size={512_000}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="screenshot.png"
+        size={248_320}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+    </ChatAttachmentGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { PromptInput } from '@vezham/react-pro-v3'
+
+;<PromptInput
+  value={value}
+  layout="stacked"
+  onSubmit={send}
+  onValueChange={setValue}>
+  <PromptInput.Queue>
+    <PromptInput.Queue.List values={queuedPrompts} onReorder={setQueuedPrompts}>
+      {queuedPrompts.map(prompt => (
+        <PromptInput.Queue.Item key={prompt.id} value={prompt}>
+          <PromptInput.Queue.Item.Handle />
+          <PromptInput.Queue.Item.Body>
+            <PromptInput.Queue.Item.Icon />
+            <PromptInput.Queue.Item.Content>
+              Queued prompt text
+            </PromptInput.Queue.Item.Content>
+          </PromptInput.Queue.Item.Body>
+          <PromptInput.Queue.Item.Actions>
+            <PromptInput.Queue.Item.Remove />
+            <PromptInput.Queue.Item.More />
+          </PromptInput.Queue.Item.Actions>
+        </PromptInput.Queue.Item>
+      ))}
+    </PromptInput.Queue.List>
+  </PromptInput.Queue>
+  <PromptInput.Shell>
+    <PromptInput.Content>
+      <PromptInput.TextArea placeholder="What do you want to know?" />
+    </PromptInput.Content>
+    <PromptInput.Toolbar>
+      <PromptInput.ToolbarStart>
+        <PromptInput.Action aria-label="Attach file">...</PromptInput.Action>
+      </PromptInput.ToolbarStart>
+      <PromptInput.ToolbarEnd>
+        <PromptInput.Send />
+      </PromptInput.ToolbarEnd>
+    </PromptInput.Toolbar>
+  </PromptInput.Shell>
+  <PromptInput.Footer>
+    AI can make mistakes. Check important info.
+  </PromptInput.Footer>
+</PromptInput>
+```
+
+To use inline tokens, swap `PromptInput.TextArea` for `PromptInput.TokenInput` and add a suggestion menu:
+
+```tsx
+import {
+  PromptInput,
+  TokenFieldValue,
+  usePromptInputTokens
+} from '@vezham/react-pro-v3'
+import { Menu } from '@vezham/react-v3'
+
+const users = [
+  { id: 'ada', name: 'Ada Lovelace', username: 'ada' },
+  { id: 'grace', name: 'Grace Hopper', username: 'grace' }
+]
+
+function Composer() {
+  const tokens = usePromptInputTokens({ triggers: ['@'] })
+  const items = users.filter(user => user.username.startsWith(tokens.query))
+
+  return (
+    <PromptInput onSubmit={() => tokens.setValue(new TokenFieldValue([]))}>
+      <PromptInput.Shell>
+        <PromptInput.Tokens>
+          <PromptInput.Content>
+            <PromptInput.TokenInput tokens={tokens} />
+          </PromptInput.Content>
+          <PromptInput.TokenSuggestions tokens={tokens}>
+            <Menu items={items}>
+              {item => (
+                <Menu.Item
+                  id={item.id}
+                  onAction={() => tokens.insertToken(`@${item.username}`)}>
+                  {item.name}
+                </Menu.Item>
+              )}
+            </Menu>
+          </PromptInput.TokenSuggestions>
+        </PromptInput.Tokens>
+        <PromptInput.Toolbar>
+          <PromptInput.ToolbarEnd>
+            <PromptInput.Send />
+          </PromptInput.ToolbarEnd>
+        </PromptInput.Toolbar>
+      </PromptInput.Shell>
+    </PromptInput>
+  )
+}
+```
+
+## CSS Classes
+
+- `.prompt-input` - Root state wrapper
+- `.prompt-input__shell` - Composer surface
+- `.prompt-input__content` - Textarea and attachment content area
+- `.prompt-input__attachments` - Attachment preview row
+- `.prompt-input__textarea` - Text area
+- `.prompt-input__token-input` - Contenteditable token field
+- `.prompt-input__token` - Inline token pill
+- `.prompt-input__token-suggestions` - Caret-anchored suggestion popover
+- `.prompt-input__toolbar` - Absolute toolbar row
+- `.prompt-input__toolbar-start` - Leading toolbar actions
+- `.prompt-input__toolbar-end` - Trailing toolbar actions
+- `.prompt-input__footer` - Disclaimer/footer text
+- `.prompt-input__send` - Send/stop button
+- `.prompt-input__queue` - Queued prompts container
+- `.prompt-input__queue-list` - Scrollable queue list
+- `.prompt-input__queue-item` - Single queued prompt row
+- `.prompt-input__queue-item-handle` - Drag handle (presentational)
+- `.prompt-input__queue-item-icon` - Leading queue item icon
+- `.prompt-input__queue-item-body` - Main queue row content stack
+- `.prompt-input__queue-item-content` - Clamped prompt text (2 lines)
+- `.prompt-input__queue-item-description` - Secondary queue item text
+- `.prompt-input__queue-item-actions` - Trailing row actions
+- `.prompt-input__queue-item-attachments` - Attachment preview row inside a queue item
+- `.prompt-input__queue-item-attachments-overflow` - Hidden attachment count label
+
+The root also sets `--prompt-input-max-height` from `maxHeight`, which caps `.prompt-input__token-input`.
+
+## API Reference
+
+### PromptInput
+
+| Prop             | Type                                               | Default     | Description                                   |
+| ---------------- | -------------------------------------------------- | ----------- | --------------------------------------------- |
+| `value`          | `string`                                           | internal    | Controlled input value                        |
+| `onValueChange`  | `(value: string) => void`                          | -           | Called when the text changes                  |
+| `onSubmit`       | `() => void`                                       | -           | Called when submit is requested               |
+| `onStop`         | `() => void`                                       | -           | Called by the send button in stoppable states |
+| `status`         | `'ready' \| 'submitted' \| 'streaming' \| 'error'` | `'ready'`   | Composer run state                            |
+| `isDisabled`     | `boolean`                                          | `false`     | Disable composer controls                     |
+| `lockInputOnRun` | `boolean`                                          | `true`      | Disable textarea while submitted/streaming    |
+| `maxHeight`      | `number \| string`                                 | `240`       | Max input height, also as a CSS variable      |
+| `size`           | `'sm' \| 'md' \| 'lg'`                             | `'md'`      | Composer size                                 |
+| `variant`        | `'primary' \| 'secondary'`                         | `'primary'` | Surface styling variant                       |
+| `layout`         | `'stacked' \| 'compact' \| 'inline'`               | `'stacked'` | Composer layout and toolbar placement         |
+
+### PromptInput.TextArea
+
+Extends HeroUI `TextArea` props.
+
+| Prop              | Type      | Default | Description                         |
+| ----------------- | --------- | ------- | ----------------------------------- |
+| `disableAutosize` | `boolean` | `false` | Disable automatic height adjustment |
+
+### PromptInput.TokenInput
+
+An alternative to `PromptInput.TextArea` that renders inline tokens. Extends React Aria Components `TokenInput` props. Enter submits and Shift+Enter inserts a newline, and Enter is ignored while the composer is running unless `allowSubmitWhileRunning` is set, matching `PromptInput.TextArea`.
+
+| Prop             | Type                                      | Default                       | Description                                            |
+| ---------------- | ----------------------------------------- | ----------------------------- | ------------------------------------------------------ |
+| `tokens`         | `PromptInputTokenState`                   | -                             | Required token state from `usePromptInputTokens`       |
+| `children`       | `(segment: TokenSegment) => ReactElement` | `PromptInput.Token`           | Renders each token segment                             |
+| `placeholder`    | `string`                                  | `'What do you want to know?'` | Text shown while the field is empty                    |
+| `allowsNewlines` | `boolean`                                 | `true`                        | Whether Shift+Enter inserts a newline                  |
+| `isReadOnly`     | `boolean`                                 | `false`                       | Make the field read only                               |
+| `isDisabled`     | `boolean`                                 | inherited                     | Defaults to the composer's disabled and run-lock state |
+
+### PromptInput.Tokens
+
+Connects `PromptInput.TokenInput` to `PromptInput.TokenSuggestions` so arrow keys and Enter move through the menu while the caret stays in the field. Wrap both with it, and nothing else — it is a React Aria `Autocomplete`, whose props it extends, so any other menu inside it joins the suggestion collection. Renders no DOM of its own.
+
+### PromptInput.TokenSuggestions
+
+A suggestion menu anchored to the caret of the active trigger. Extends React Aria Components `Popover` props except `triggerRef` and `getTargetRect`, which it sets from the token state.
+
+| Prop        | Type                    | Default          | Description                                      |
+| ----------- | ----------------------- | ---------------- | ------------------------------------------------ |
+| `tokens`    | `PromptInputTokenState` | -                | Required token state from `usePromptInputTokens` |
+| `isOpen`    | `boolean`               | `tokens.isOpen`  | Overrides open state                             |
+| `placement` | `Placement`             | `'bottom start'` | Placement relative to the caret                  |
+
+The popover hides itself while its menu has no items, so narrowing `isOpen` is optional.
+
+### PromptInput.Token
+
+A non-editable inline token. Extends React Aria Components `Token` props. Exposes `[data-selected]` and `[data-disabled]` for styling.
+
+### usePromptInputTokens
+
+Tracks a token field value and resolves the trigger the caret currently sits in.
+
+| Option         | Type                               | Default      | Description                                    |
+| -------------- | ---------------------------------- | ------------ | ---------------------------------------------- |
+| `triggers`     | `string[]`                         | `['@', '/']` | Strings that open the menu at a word boundary  |
+| `allowsSpaces` | `boolean`                          | `false`      | Whether the query may run past the first space |
+| `defaultValue` | `TokenFieldValue`                  | empty        | Initial value when uncontrolled                |
+| `value`        | `TokenFieldValue`                  | -            | Controlled value                               |
+| `onChange`     | `(value: TokenFieldValue) => void` | -            | Called whenever the value changes              |
+
+It returns `value`, `setValue`, `inputRef`, `anchor`, `query`, `trigger`, `isOpen`, `insertToken(text, {appendSpace, value})`, and `close()`. `close()` hides the menu until the next edit or caret move, while Escape keeps it closed for the current trigger. `insertToken` and `close` keep a stable identity, so menu items can capture them in `onAction` without a `dependencies` list.
+
+### PromptInput.Action
+
+Extends HeroUI `Button` props.
+
+| Prop      | Type        | Default | Description              |
+| --------- | ----------- | ------- | ------------------------ |
+| `tooltip` | `ReactNode` | -       | Optional tooltip content |
+
+### PromptInput.Send
+
+Extends HeroUI `Button` props. Uses the current prompt status to render send, loading, stop, or error icons.
+
+### PromptInput.Shell, Content, Attachments, Toolbar, ToolbarStart, ToolbarEnd, Footer
+
+Layout slots for composing the prompt input. Each slot supports the corresponding native element props.
+
+### PromptInput.Queue
+
+| Prop                | Type                  | Default   | Description                        |
+| ------------------- | --------------------- | --------- | ---------------------------------- |
+| `actionsVisibility` | `'always' \| 'hover'` | `'hover'` | When queue row actions are visible |
+
+### PromptInput.Queue.List
+
+| Prop        | Type                    | Default | Description                                                                 |
+| ----------- | ----------------------- | ------- | --------------------------------------------------------------------------- |
+| `values`    | `T[]`                   | -       | Controlled queue values. Pass with `onReorder` to enable Motion reordering. |
+| `onReorder` | `(values: T[]) => void` | -       | Called when items are reordered via drag and drop.                          |
+| `axis`      | `'x' \| 'y'`            | `'y'`   | Reorder axis when drag and drop is enabled.                                 |
+
+### PromptInput.Queue.Item
+
+| Prop    | Type | Default | Description                                                    |
+| ------- | ---- | ------- | -------------------------------------------------------------- |
+| `value` | `T`  | -       | Item value from `values`. Required when reordering is enabled. |
+
+### PromptInput.Queue.Item.Body, Handle, Icon, Content, Description, Attachments, Actions
+
+Presentational slots for queue row structure. Wrap `Icon` and `Content` in `Body` so the icon sits beside the clamped text and stays vertically centered. `Content` clamps text to two lines with an ellipsis.
+
+### PromptInput.Queue.Item.AttachmentsOverflow
+
+Optional overflow label when you choose to render attachment previews inside a queue row.
+
+| Prop          | Type     | Default   | Description                                              |
+| ------------- | -------- | --------- | -------------------------------------------------------- |
+| `hiddenCount` | `number` | -         | Number of attachments hidden beyond the visible previews |
+| `noun`        | `string` | `'files'` | Noun used in the overflow label                          |
+
+### PromptInput.Queue.Item.Remove, More, Action
+
+Action buttons for queue rows. `Remove` and `More` include default labels and icons. Extend HeroUI `Button` props.

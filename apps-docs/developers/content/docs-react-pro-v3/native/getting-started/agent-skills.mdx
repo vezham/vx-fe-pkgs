@@ -1,0 +1,122 @@
+---
+title: 'Skills'
+description: 'Teach your AI assistant how to build with HeroUI Native Pro'
+sourceUrl: https://heroui.pro/docs/native/getting-started/agent-skills
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro skills are static instruction files that teach your AI agent `heroui-native-pro` component patterns, React Native conventions, and the HeroUI design system — so it writes correct code without needing to look everything up.
+
+<Callout>
+  Skills teach your agent **how to write code**. The [MCP
+  server](/docs/ui/react-pro-v3/native/getting-started/mcp-server) gives it
+  **live access** to component docs and theme variables. Use both together for
+  best results.
+</Callout>
+
+## Available Skills
+
+| Skill                     | What it teaches                                                                                                                                        | Install   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
+| `heroui-native-pro`       | `heroui-native-pro` component patterns, MCP tool usage, compound components, Uniwind styling                                                           | See below |
+| `heroui-pro-design-taste` | HeroUI design system principles — spacing, typography, color, cards, forms, buttons, icons, navigation, accessibility (shared across React and Native) | See below |
+
+## Installation
+
+<Tabs items={["Native Pro Skill", "Design Taste Skill", "Both"]}>
+  <Tab value="Native Pro Skill">
+    ```bash
+    curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-native-pro
+    ```
+  </Tab>
+
+<Tab value="Design Taste Skill">
+  ```bash curl -fsSL https://heroui.pro/docs/install |
+  HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-pro-design-taste ```
+</Tab>
+
+  <Tab value="Both">
+    ```bash
+    curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-native-pro
+    curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token bash -s -- heroui-pro-design-taste
+    ```
+  </Tab>
+</Tabs>
+
+Replace `your_token` with your token from the [Pro dashboard](https://heroui.pro/dashboard). The installer detects your tools (Claude Code, Cursor, OpenCode, Codex, Antigravity) and places the skill in the correct directory.
+
+## Install Scope
+
+By default the skill is installed in your home directory, so every project your agent opens sees it. Add `HEROUI_PRO_SKILL_SCOPE=project` and run the command from a project root to install it there instead — handy when only some of your projects use HeroUI Pro and you don't want the skill in every agent's context.
+
+```bash
+curl -fsSL https://heroui.pro/docs/install | HEROUI_PERSONAL_TOKEN=your_token HEROUI_PRO_SKILL_SCOPE=project bash -s -- heroui-native-pro
+
+```
+
+Each detected tool still gets the directory it reads from, just inside the project:
+
+| Tool        | Global (default)                | Project             |
+| ----------- | ------------------------------- | ------------------- |
+| Claude Code | `~/.claude/skills/`             | `.claude/skills/`   |
+| Cursor      | `~/.cursor/skills/`             | `.cursor/skills/`   |
+| OpenCode    | `~/.config/opencode/skill/`     | `.opencode/skills/` |
+| Codex       | `~/.codex/skills/`              | `.agents/skills/`   |
+| Antigravity | `~/.gemini/antigravity/skills/` | `.agents/skills/`   |
+
+Skills are licensed content, so a project install inside a git repository also adds the installed paths to the project's `.gitignore`.
+
+## What's Inside
+
+### `heroui-native-pro`
+
+- Two packages: `heroui-native` (base) vs `heroui-native-pro` (pro) — what comes from where
+- Unified MCP: one MCP covers both packages — `list_components`, `get_component_docs`, `get_docs`, `get_theme_variables`
+- Critical Native rules: compound components, Uniwind (Tailwind CSS for React Native), React Native Reanimated, Keyboard avoidance
+- All Native Pro component categories with names (buttons, date and time, forms, navigation, feedback)
+- Theming system overview: semantic colors, typography, spacing with light/dark mode
+- Common mistakes and corrections
+
+### `heroui-pro-design-taste`
+
+- Shared across the full HeroUI ecosystem: `heroui-native`, `heroui-native-pro`, `@heroui/react`, `@heroui-pro/react`
+- Design principles learned from iterative human feedback
+- Categories: spacing, typography, color, cards, forms, buttons, icons, navigation, accessibility
+- Design philosophy: semantic over visual, generous whitespace, subtle depth, minimalism
+
+## Start Prompting
+
+```
+
+Build a login screen with email and password fields, a "Sign in" button, and social auth options
+
+```
+
+```
+
+Review this screen and improve the spacing, typography, and color usage following HeroUI design principles
+
+```
+
+```
+
+Create an onboarding flow with illustrations, progress dots, and a "Get Started" button — make it look polished and production-ready
+
+```
+
+## Supported Tools
+
+Claude Code, Cursor, OpenCode, Codex, Antigravity (Gemini CLI). Skills follow the [Agent Skills](https://agentskills.io) open standard.
+
+## Related
+
+- [MCP Server](/docs/ui/react-pro-v3/native/getting-started/mcp-server) — Live access to both `heroui-native-pro` and `heroui-native` docs and themes from a single MCP
+- [Design Taste](/docs/ui/react-pro-v3/native/getting-started/design-taste) — Deep dive into the design principles
+- [UI for Agents](/docs/ui/react-pro-v3/native/getting-started/overview) — Overview of all AI tools

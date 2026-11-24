@@ -1,0 +1,26 @@
+{
+  "title": "Getting Started",
+  "root": true,
+  "pages": [
+    "---Overview---",
+    "index",
+    "installation",
+    "ci-caching",
+    "licensing",
+    "figma",
+    "---Handbook---",
+    "provider",
+    "portal",
+    "colors",
+    "theming",
+    "design-systems",
+    "styling",
+    "animation",
+    "composition",
+    "---UI for Agents---",
+    "overview",
+    "mcp-server",
+    "agent-skills",
+    "design-taste"
+  ]
+}

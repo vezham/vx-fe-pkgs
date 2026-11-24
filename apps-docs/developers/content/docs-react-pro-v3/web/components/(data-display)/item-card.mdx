@@ -1,0 +1,869 @@
+---
+title: 'Item Card'
+description: 'A versatile list card with icon, title, description, and optional trailing actions like switches or selects.'
+sourceUrl: https://heroui.pro/docs/react/components/item-card
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-item-card-default">
+
+```tsx
+'use client'
+
+import { CircleChevronRight, Globe } from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function Default() {
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Globe />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Language</ItemCard.Title>
+          <ItemCard.Description>
+            Choose your preferred language
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Button size="sm" variant="outline">
+            English
+            <CircleChevronRight className="size-3.5 rtl:-scale-x-100" />
+          </Button>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the ItemCard component and access all parts using dot notation.
+
+```tsx
+import { ItemCard } from '@vezham/react-pro-v3'
+
+;<ItemCard>
+  <ItemCard.Icon />
+  <ItemCard.Content>
+    <ItemCard.Title />
+    <ItemCard.Description />
+  </ItemCard.Content>
+  <ItemCard.Action />
+</ItemCard>
+```
+
+## Device List
+
+<ComponentPreview name="pro-item-card-device-list">
+
+```tsx
+'use client'
+
+import { Display, ShieldCheck, Smartphone } from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import { Button, Chip } from '@vezham/react-v3'
+
+export function DeviceList() {
+  return (
+    <div className="w-[500px] space-y-2 rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Smartphone />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>MacBook Pro</ItemCard.Title>
+          <ItemCard.Description>
+            Last active: 2 minutes ago
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Chip color="success" size="sm" variant="soft">
+            Active
+          </Chip>
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard>
+        <ItemCard.Icon>
+          <Display />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>iMac</ItemCard.Title>
+          <ItemCard.Description>Last active: 3 days ago</ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Button size="sm" variant="outline">
+            Revoke
+          </Button>
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard>
+        <ItemCard.Icon>
+          <ShieldCheck />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>iPhone 15 Pro</ItemCard.Title>
+          <ItemCard.Description>Last active: 1 hour ago</ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Button size="sm" variant="outline">
+            Revoke
+          </Button>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Email Setting
+
+<ComponentPreview name="pro-item-card-email-setting">
+
+```tsx
+'use client'
+
+import { Ellipsis, Pencil, Star, TrashBin } from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import {
+  Button,
+  Chip,
+  Dropdown,
+  Label,
+  Separator,
+  Tooltip
+} from '@vezham/react-v3'
+
+export function EmailSetting() {
+  return (
+    <div className="w-[600px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Content>
+          <ItemCard.Title>
+            junior@heroui.com
+            <Chip className="ml-2 align-middle" size="sm" variant="soft">
+              Primary
+            </Chip>
+          </ItemCard.Title>
+          <ItemCard.Description>
+            Notifications and account updates will be sent to this address.
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Dropdown>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger>
+                <Button
+                  isIconOnly
+                  aria-label="Actions"
+                  size="sm"
+                  variant="outline">
+                  <Ellipsis className="size-4" />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>Actions</Tooltip.Content>
+            </Tooltip>
+            <Dropdown.Popover className="min-w-[180px]" placement="bottom end">
+              <Dropdown.Menu>
+                <Dropdown.Item textValue="Change Email">
+                  <Pencil className="size-4" />
+                  <Label>Change Email</Label>
+                </Dropdown.Item>
+                <Dropdown.Item textValue="Set as Primary">
+                  <Star className="size-4" />
+                  <Label>Set as Primary</Label>
+                </Dropdown.Item>
+                <Separator />
+                <Dropdown.Item textValue="Remove Email">
+                  <TrashBin className="text-danger size-4" />
+                  <Label className="text-danger">Remove Email</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Pressable
+
+<ComponentPreview name="pro-item-card-pressable">
+
+```tsx
+'use client'
+
+import { ChevronRight, Key as KeyIcon, Person } from '@gravity-ui/icons'
+
+import { ItemCard, PressableFeedback } from '@vezham/react-pro-v3'
+
+export function Pressable() {
+  return (
+    <div className="w-[500px] space-y-4 rounded-2xl p-6">
+      <ItemCard<'button'>
+        className="relative w-full cursor-pointer overflow-hidden"
+        render={props => <button type="button" {...props} />}>
+        <PressableFeedback.Highlight />
+        <ItemCard.Icon>
+          <Person />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Account settings</ItemCard.Title>
+          <ItemCard.Description>
+            Manage your account preferences
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard<'button'>
+        className="relative w-full cursor-pointer overflow-hidden"
+        render={props => <button type="button" {...props} />}>
+        <PressableFeedback.Ripple />
+        <ItemCard.Icon>
+          <KeyIcon />
+        </ItemCard.Icon>
+        <ItemCard.Content className="w-full flex-1">
+          <ItemCard.Title>Security</ItemCard.Title>
+          <ItemCard.Description>
+            Passwords and two-factor authentication
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Title Only
+
+<ComponentPreview name="pro-item-card-title-only">
+
+```tsx
+'use client'
+
+import { CircleChevronRight, Palette } from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+
+export function TitleOnly() {
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Palette />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Appearance</ItemCard.Title>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <CircleChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Variants
+
+<ComponentPreview name="pro-item-card-variants">
+
+```tsx
+'use client'
+
+import {
+  Bell,
+  ChevronRight,
+  Globe,
+  Key as KeyIcon,
+  Moon,
+  Palette
+} from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+
+export function Variants() {
+  return (
+    <div className="w-[500px] space-y-3 p-6">
+      <ItemCard variant="default">
+        <ItemCard.Icon>
+          <Globe />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Default</ItemCard.Title>
+          <ItemCard.Description>
+            Surface background with shadow
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard variant="secondary">
+        <ItemCard.Icon>
+          <Palette />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Secondary</ItemCard.Title>
+          <ItemCard.Description>
+            Secondary surface, no shadow
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard variant="tertiary">
+        <ItemCard.Icon>
+          <Moon />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Tertiary</ItemCard.Title>
+          <ItemCard.Description>
+            Tertiary surface, no shadow
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard variant="outline">
+        <ItemCard.Icon>
+          <KeyIcon />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Outline</ItemCard.Title>
+          <ItemCard.Description>
+            Transparent with border, no shadow
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard variant="transparent">
+        <ItemCard.Icon>
+          <Bell />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Transparent</ItemCard.Title>
+          <ItemCard.Description>
+            No background, no border, no shadow
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <ChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Vertical Stack
+
+<ComponentPreview name="pro-item-card-vertical-stack">
+
+```tsx
+'use client'
+
+import {
+  CircleChevronRight,
+  Cloud,
+  Key as KeyIcon,
+  Person
+} from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+
+export function VerticalStack() {
+  return (
+    <div className="w-[500px] space-y-2 rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Person />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Profile</ItemCard.Title>
+          <ItemCard.Description>
+            Update your personal information
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <CircleChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard>
+        <ItemCard.Icon>
+          <KeyIcon />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Security</ItemCard.Title>
+          <ItemCard.Description>Manage passwords and 2FA</ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <CircleChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+
+      <ItemCard>
+        <ItemCard.Icon>
+          <Cloud />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Cloud sync</ItemCard.Title>
+          <ItemCard.Description>
+            Sync data across your devices
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <CircleChevronRight className="text-muted size-4 rtl:-scale-x-100" />
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Wallet Card
+
+<ComponentPreview name="pro-item-card-wallet-card">
+
+```tsx
+'use client'
+
+import {
+  ArrowRightFromSquare,
+  ArrowUpRightFromSquare,
+  Copy,
+  Ellipsis,
+  Globe,
+  PaperPlane,
+  Pencil,
+  QrCode,
+  Star,
+  TrashBin
+} from '@gravity-ui/icons'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import { Button, Dropdown, Label, Separator } from '@vezham/react-v3'
+
+export function WalletCard() {
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon className="size-10 rounded-full bg-green-500 text-lg">
+          <span>🏖️</span>
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>SLMobbin&apos;s</ItemCard.Title>
+          <ItemCard.Description>0x9DC5...621a</ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <div className="flex items-center gap-2">
+            <div className="text-right">
+              <p className="text-foreground text-sm font-semibold">$34.99</p>
+              <p className="text-muted text-xs">0.021 ETH</p>
+            </div>
+            <Dropdown>
+              <Button
+                isIconOnly
+                aria-label="Wallet actions"
+                size="sm"
+                variant="ghost">
+                <Ellipsis className="size-4" />
+              </Button>
+              <Dropdown.Popover
+                className="min-w-[200px]"
+                placement="bottom end">
+                <Dropdown.Menu>
+                  <Dropdown.Item textValue="Edit Wallet">
+                    <Pencil className="size-4" />
+                    <Label>Edit Wallet</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="Send">
+                    <PaperPlane className="size-4" />
+                    <Label>Send</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="View Activity">
+                    <Globe className="size-4" />
+                    <Label className="flex flex-1 items-center justify-between">
+                      View Activity
+                      <ArrowUpRightFromSquare className="text-muted size-3" />
+                    </Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="Set as Default">
+                    <Star className="size-4" />
+                    <Label>Set as Default</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="Copy Address">
+                    <Copy className="size-4" />
+                    <Label>Copy Address</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="Address QR Code">
+                    <QrCode className="size-4" />
+                    <Label>Address QR Code</Label>
+                  </Dropdown.Item>
+                  <Separator />
+                  <Dropdown.Item textValue="Remove Wallet">
+                    <TrashBin className="text-danger size-4" />
+                    <Label className="text-danger">Remove Wallet</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item textValue="Export Wallet">
+                    <ArrowRightFromSquare className="size-4" />
+                    <Label>Export Wallet</Label>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown>
+          </div>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Multi Select
+
+<ComponentPreview name="pro-item-card-with-multi-select">
+
+```tsx
+'use client'
+
+import { Bell } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { InlineSelect, ItemCard } from '@vezham/react-pro-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function WithMultiSelect() {
+  const [channels, setChannels] = useState<string[]>(['email', 'push'])
+
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Bell />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Event Invites</ItemCard.Title>
+          <ItemCard.Description>
+            Choose how you receive invitations
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <InlineSelect
+            aria-label="Event Invites channels"
+            selectionMode="multiple"
+            value={channels}
+            style={{
+              // @ts-expect-error --inline-select-value-max-width is a custom property
+              '--inline-select-value-max-width': '8rem'
+            }}
+            onChange={keys => setChannels(keys as string[])}>
+            <InlineSelect.Trigger>
+              <InlineSelect.Value />
+              <InlineSelect.Indicator />
+            </InlineSelect.Trigger>
+            <InlineSelect.Popover>
+              <ListBox selectionMode="multiple">
+                <ListBox.Item id="email" textValue="Email">
+                  Email
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+                <ListBox.Item id="whatsapp" textValue="WhatsApp">
+                  WhatsApp
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+                <ListBox.Item id="push" textValue="Push Notification">
+                  Push Notification
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              </ListBox>
+            </InlineSelect.Popover>
+          </InlineSelect>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Select
+
+<ComponentPreview name="pro-item-card-with-select">
+
+```tsx
+'use client'
+
+import { Globe } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { InlineSelect, ItemCard } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function WithSelect() {
+  const [lang, setLang] = useState<Key | null>('en')
+
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Globe />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Language</ItemCard.Title>
+          <ItemCard.Description>
+            Choose your preferred language
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <InlineSelect
+            aria-label="Language"
+            value={lang}
+            onChange={value => setLang(value)}>
+            <InlineSelect.Trigger>
+              <InlineSelect.Value />
+              <InlineSelect.Indicator />
+            </InlineSelect.Trigger>
+            <InlineSelect.Popover>
+              <ListBox>
+                <ListBox.Item id="en" textValue="English">
+                  English
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+                <ListBox.Item id="es" textValue="Spanish">
+                  Spanish
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+                <ListBox.Item id="fr" textValue="French">
+                  French
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+                <ListBox.Item id="ja" textValue="Japanese">
+                  Japanese
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              </ListBox>
+            </InlineSelect.Popover>
+          </InlineSelect>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Switch
+
+<ComponentPreview name="pro-item-card-with-switch">
+
+```tsx
+'use client'
+
+import { Moon } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import { Switch } from '@vezham/react-v3'
+
+export function WithSwitch() {
+  const [darkMode, setDarkMode] = useState(false)
+
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Icon>
+          <Moon />
+        </ItemCard.Icon>
+        <ItemCard.Content>
+          <ItemCard.Title>Dark mode</ItemCard.Title>
+          <ItemCard.Description>
+            Use dark theme across the app
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Switch
+            aria-label="Switch Dark mode"
+            isSelected={darkMode}
+            onChange={setDarkMode}>
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Without Icon
+
+<ComponentPreview name="pro-item-card-without-icon">
+
+```tsx
+'use client'
+
+import { ItemCard } from '@vezham/react-pro-v3'
+import { Button } from '@vezham/react-v3'
+
+export function WithoutIcon() {
+  return (
+    <div className="w-[500px] rounded-2xl p-6">
+      <ItemCard>
+        <ItemCard.Content>
+          <ItemCard.Title>Delete account</ItemCard.Title>
+          <ItemCard.Description>
+            Permanently remove your account and all data
+          </ItemCard.Description>
+        </ItemCard.Content>
+        <ItemCard.Action>
+          <Button size="sm" variant="danger-soft">
+            Delete
+          </Button>
+        </ItemCard.Action>
+      </ItemCard>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Variant Classes
+
+- `.item-card` - Base horizontal row layout with rounded corners
+- `.item-card--default` - Default variant with surface background and shadow
+- `.item-card--secondary` - Secondary variant with surface-secondary background
+- `.item-card--tertiary` - Tertiary variant with surface-tertiary background
+- `.item-card--outline` - Outline variant with border and transparent background
+- `.item-card--transparent` - Transparent variant with no background or shadow
+
+### Element Classes
+
+- `.item-card__icon` - Leading icon container (rounded square with default background)
+- `.item-card__content` - Title + description area, fills available space
+- `.item-card__title` - Primary label text (truncated)
+- `.item-card__description` - Secondary text (truncated)
+- `.item-card__action` - Trailing slot for buttons, toggles, etc.
+
+## API Reference
+
+### ItemCard
+
+The root component. Renders a horizontal row container.
+
+| Prop        | Type                                                                   | Default     | Description                                                  |
+| ----------- | ---------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
+| `variant`   | `'default' \| 'secondary' \| 'tertiary' \| 'outline' \| 'transparent'` | `'default'` | Visual style variant                                         |
+| `children`  | `ReactNode`                                                            | -           | Card content                                                 |
+| `className` | `string`                                                               | -           | Additional CSS class                                         |
+| `render`    | `DOMRenderFunction`                                                    | -           | Custom render function to override the default `div` element |
+
+Also supports all native `div` HTML attributes.
+
+### ItemCard.Icon
+
+Leading icon container.
+
+| Prop       | Type        | Default | Description  |
+| ---------- | ----------- | ------- | ------------ |
+| `children` | `ReactNode` | -       | Icon element |
+
+Also supports all native `div` HTML attributes.
+
+### ItemCard.Content
+
+Container for title and description, fills available space.
+
+| Prop       | Type        | Default | Description                    |
+| ---------- | ----------- | ------- | ------------------------------ |
+| `children` | `ReactNode` | -       | Title and description elements |
+
+Also supports all native `div` HTML attributes.
+
+### ItemCard.Title
+
+Primary label text rendered as a `span`.
+
+| Prop       | Type        | Default | Description |
+| ---------- | ----------- | ------- | ----------- |
+| `children` | `ReactNode` | -       | Title text  |
+
+Also supports all native `span` HTML attributes.
+
+### ItemCard.Description
+
+Secondary descriptive text rendered as a `span`.
+
+| Prop       | Type        | Default | Description      |
+| ---------- | ----------- | ------- | ---------------- |
+| `children` | `ReactNode` | -       | Description text |
+
+Also supports all native `span` HTML attributes.
+
+### ItemCard.Action
+
+Trailing action slot for buttons, toggles, or other controls.
+
+| Prop       | Type        | Default | Description    |
+| ---------- | ----------- | ------- | -------------- |
+| `children` | `ReactNode` | -       | Action content |
+
+Also supports all native `div` HTML attributes.

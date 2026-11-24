@@ -1,0 +1,48 @@
+---
+title: 'Portal'
+description: 'Configure portals for HeroUI Native Pro overlays, including default and custom PortalHost behavior.'
+sourceUrl: https://heroui.pro/docs/native/getting-started/portal
+---
+
+import {
+  Callout,
+  NativeImageHeroView,
+  NativeVideoPlayerView,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+HeroUI Native Pro components use the same portal system as [HeroUI Native OSS](https://heroui.com/docs/native/getting-started) — `PortalHost` is included in `HeroUINativeProvider` by default, and overlay-based components render through portals automatically.
+
+<Callout type="info">
+  Read the full [Portal guide on
+  heroui.com](https://heroui.com/docs/native/getting-started/portal) to learn
+  about the default setup, custom portal hosts, state management considerations,
+  and the `Portal` / `PortalHost` API reference.
+</Callout>
+
+Pro components that use overlays (like `DatePicker`) include a `.Portal` sub-component in their compound anatomy:
+
+```tsx
+import { Calendar, Label } from 'heroui-native'
+import { DatePicker } from 'heroui-native-pro'
+
+;<DatePicker>
+  <Label>Event date</Label>
+  <DatePicker.Select>
+    <DatePicker.Trigger>
+      <DatePicker.Value />
+      <DatePicker.TriggerIndicator />
+    </DatePicker.Trigger>
+    <DatePicker.Portal>
+      <DatePicker.Overlay />
+      <DatePicker.Content presentation="popover" width="trigger">
+        <DatePicker.Calendar>
+          <Calendar.Header />
+          <Calendar.Grid />
+        </DatePicker.Calendar>
+      </DatePicker.Content>
+    </DatePicker.Portal>
+  </DatePicker.Select>
+</DatePicker>
+```

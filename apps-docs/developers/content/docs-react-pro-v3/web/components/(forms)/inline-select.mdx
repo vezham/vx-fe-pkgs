@@ -1,0 +1,421 @@
+---
+title: 'Inline Select'
+description: 'A minimal inline dropdown that blends into surrounding text for contextual selections without a full form field.'
+sourceUrl: https://heroui.pro/docs/react/components/inline-select
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-inline-select-default">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { InlineSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Default() {
+  const [value, setValue] = useState<Key | null>('en')
+
+  return (
+    <InlineSelect
+      aria-label="Language"
+      value={value}
+      onChange={v => setValue(v)}>
+      <InlineSelect.Trigger>
+        <InlineSelect.Value />
+        <InlineSelect.Indicator />
+      </InlineSelect.Trigger>
+      <InlineSelect.Popover className="w-[140px]">
+        <ListBox>
+          <ListBox.Item id="en" textValue="English">
+            English
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="es" textValue="Spanish">
+            Spanish
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="fr" textValue="French">
+            French
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="ja" textValue="Japanese">
+            Japanese
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </InlineSelect.Popover>
+    </InlineSelect>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the InlineSelect component and access all parts using dot notation.
+
+```tsx
+import { InlineSelect } from '@vezham/react-pro-v3'
+
+;<InlineSelect>
+  <InlineSelect.Indicator />
+  <InlineSelect.Trigger />
+  <InlineSelect.Value />
+  <InlineSelect.Popover />
+</InlineSelect>
+```
+
+## Team Switcher
+
+<ComponentPreview name="pro-inline-select-team-switcher">
+
+```tsx
+'use client'
+
+import type { ComponentProps } from 'react'
+import { useState } from 'react'
+
+import { InlineSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+const Logo = (props: ComponentProps<'svg'>) => (
+  <svg
+    fill="none"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}>
+    <path
+      d="M6 7.99017V12.7707C6 12.9967 6.12078 13.2067 6.31949 13.3262L9.70886 15.3643C10.1605 15.6359 10.7455 15.3225 10.7455 14.8089V10.7905C10.7455 10.5593 10.8719 10.3452 11.0781 10.2274L13.1455 9.04552V19.3445C13.1455 19.8564 13.727 20.1701 14.1788 19.902L17.6771 17.8257C17.8778 17.7067 18 17.4956 18 17.2683V7.3783C18 6.86892 17.4236 6.55483 16.9716 6.81795L13.1455 9.04552V4.65543C13.1455 4.14743 12.5719 3.83313 12.1199 4.09349L6.33057 7.42823C6.12556 7.54632 6 7.75976 6 7.99017Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+const teams = [
+  {
+    color: 'bg-violet-700',
+    id: 'northwind-labs',
+    letter: 'N',
+    name: 'Northwind Labs'
+  },
+  { color: 'bg-blue-600', id: 'acme-corp', letter: 'A', name: 'Acme Corp' },
+  {
+    color: 'bg-amber-600',
+    id: 'maple-studio',
+    letter: 'M',
+    name: 'Maple Studio'
+  }
+]
+
+function TeamLetterIcon({ color, letter }: { color: string; letter: string }) {
+  return (
+    <div
+      className={`${color} flex size-5 shrink-0 items-center justify-center rounded`}>
+      <span className="text-[10px] font-bold text-white">{letter}</span>
+    </div>
+  )
+}
+
+export function TeamSwitcher() {
+  const [team, setTeam] = useState<Key | null>('northwind-labs')
+
+  const selectedTeam = teams.find(t => t.id === team) ?? teams[0]!
+
+  return (
+    <div className="flex items-center gap-2.5">
+      <Logo className="size-6" />
+      <span className="text-border text-lg font-light">/</span>
+      <InlineSelect aria-label="Team" value={team} onChange={v => setTeam(v)}>
+        <InlineSelect.Trigger className="gap-2">
+          <TeamLetterIcon
+            color={selectedTeam.color}
+            letter={selectedTeam.letter}
+          />
+          <span className="text-sm font-medium">{selectedTeam.name}</span>
+          <InlineSelect.Indicator />
+        </InlineSelect.Trigger>
+        <InlineSelect.Popover className="w-[200px]">
+          <ListBox>
+            {teams.map(t => (
+              <ListBox.Item key={t.id} id={t.id} textValue={t.name}>
+                <TeamLetterIcon color={t.color} letter={t.letter} />
+                {t.name}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </InlineSelect.Popover>
+      </InlineSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Custom Indicator
+
+<ComponentPreview name="pro-inline-select-custom-indicator">
+
+```tsx
+'use client'
+
+import { ChevronRight } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { InlineSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function CustomIndicator() {
+  const [role, setRole] = useState<Key | null>('editor')
+
+  return (
+    <InlineSelect aria-label="Role" value={role} onChange={v => setRole(v)}>
+      <InlineSelect.Trigger>
+        <InlineSelect.Value />
+        <InlineSelect.Indicator>
+          <ChevronRight className="rtl:-scale-x-100" />
+        </InlineSelect.Indicator>
+      </InlineSelect.Trigger>
+      <InlineSelect.Popover className="w-[124px]">
+        <ListBox>
+          <ListBox.Item id="viewer" textValue="Viewer">
+            Viewer
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="editor" textValue="Editor">
+            Editor
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="admin" textValue="Admin">
+            Admin
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </InlineSelect.Popover>
+    </InlineSelect>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multi Select
+
+<ComponentPreview name="pro-inline-select-multi-select">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import { InlineSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function MultiSelect() {
+  const [channels, setChannels] = useState<Key[]>(['email', 'push'])
+
+  return (
+    <InlineSelect
+      aria-label="Notification channels"
+      selectionMode="multiple"
+      value={channels}
+      onChange={keys => setChannels(keys as Key[])}>
+      <InlineSelect.Trigger>
+        <InlineSelect.Value />
+        <InlineSelect.Indicator />
+      </InlineSelect.Trigger>
+      <InlineSelect.Popover className="w-48 max-w-48 min-w-48">
+        <ListBox selectionMode="multiple">
+          <ListBox.Item id="email" textValue="Email">
+            Email
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="whatsapp" textValue="WhatsApp">
+            WhatsApp
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+          <ListBox.Item id="push" textValue="Push Notification">
+            Push Notification
+            <ListBox.ItemIndicator />
+          </ListBox.Item>
+        </ListBox>
+      </InlineSelect.Popover>
+    </InlineSelect>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Placements
+
+<ComponentPreview name="pro-inline-select-placements">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+import type { InlineSelectPopoverProps } from '@vezham/react-pro-v3'
+import { InlineSelect } from '@vezham/react-pro-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Placements() {
+  const [placement, setPlacement] =
+    useState<InlineSelectPopoverProps['placement']>('bottom end')
+
+  return (
+    <div className="flex items-center justify-center px-10">
+      <InlineSelect
+        aria-label="Placement"
+        value={placement}
+        onChange={v =>
+          setPlacement(v as InlineSelectPopoverProps['placement'])
+        }>
+        <InlineSelect.Trigger>
+          <InlineSelect.Value />
+          <InlineSelect.Indicator />
+        </InlineSelect.Trigger>
+        <InlineSelect.Popover placement={placement}>
+          <ListBox>
+            <ListBox.Item id="bottom" textValue="bottom">
+              bottom
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="bottom start" textValue="bottom start">
+              bottom start
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="bottom end" textValue="bottom end (default)">
+              bottom end (default)
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="top" textValue="top">
+              top
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="top start" textValue="top start">
+              top start
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="top end" textValue="top end">
+              top end
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="left" textValue="left">
+              left
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="left top" textValue="left top">
+              left top
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="left bottom" textValue="left bottom">
+              left bottom
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="right" textValue="right">
+              right
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="right top" textValue="right top">
+              right top
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+            <ListBox.Item id="right bottom" textValue="right bottom">
+              right bottom
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          </ListBox>
+        </InlineSelect.Popover>
+      </InlineSelect>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base Classes
+
+- `.inline-select` - Root wrapper with custom properties
+
+### Element Classes
+
+- `.inline-select__trigger` - Ghost-styled trigger button (overrides HeroUI Select field styles)
+- `.inline-select__value` - Displayed text of the selected item(s)
+- `.inline-select__indicator` - Inline chevron icon (static positioning instead of absolute)
+- `.inline-select__popover` - Dropdown panel
+
+### Interactive States
+
+- **Hover**: `:hover` or `[data-hovered="true"]` on `.inline-select__trigger` (text color change)
+- **Focus visible**: `:focus-visible` or `[data-focus-visible="true"]` on `.inline-select__trigger` (focus ring)
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` on `.inline-select__trigger` (reduced opacity)
+- **Open**: `[data-open="true"]` on `.inline-select__indicator`
+
+### CSS Variables
+
+- `--inline-select-value-max-width` - Max width of the value text (default: `12rem`)
+- `--inline-select-indicator-size` - Size of the indicator icon (default: `0.75rem`)
+
+## API Reference
+
+### InlineSelect
+
+The root component. Wraps the HeroUI [Select](https://heroui.com/docs/react/components/select) with ghost styling for inline use.
+
+| Prop       | Type        | Default | Description                                        |
+| ---------- | ----------- | ------- | -------------------------------------------------- |
+| `children` | `ReactNode` | -       | Trigger, Value, Indicator, Popover, and list items |
+
+Also supports all [HeroUI Select](https://heroui.com/docs/react/components/select) props.
+
+### InlineSelect.Trigger
+
+Ghost-styled trigger button.
+
+Also supports all HeroUI `Select.Trigger` props.
+
+### InlineSelect.Value
+
+Displayed text of the selected item(s), truncated.
+
+Also supports all HeroUI `Select.Value` props.
+
+### InlineSelect.Indicator
+
+Chevron icon. Defaults to a `ChevronsExpandVertical` icon when no children are provided.
+
+| Prop       | Type        | Default | Description           |
+| ---------- | ----------- | ------- | --------------------- |
+| `children` | `ReactNode` | -       | Custom indicator icon |
+
+Also supports all HeroUI `Select.Indicator` props.
+
+### InlineSelect.Popover
+
+Dropdown panel for selection options.
+
+| Prop        | Type        | Default        | Description                               |
+| ----------- | ----------- | -------------- | ----------------------------------------- |
+| `placement` | `Placement` | `'bottom end'` | Popover placement relative to the trigger |
+
+Also supports all HeroUI `Select.Popover` props.

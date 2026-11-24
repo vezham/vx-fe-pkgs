@@ -1,0 +1,697 @@
+---
+title: 'Chat Attachment'
+description: 'Attachment previews and composer file input helpers for AI chat surfaces.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-attachment
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatAttachment` for compact file previews in messages or prompt composers. Image and video
+attachments render as a square thumbnail (with the file name revealed on hover), while other file
+types render as a horizontal card with a format-specific icon, file name, and size.
+
+<ComponentPreview name="pro-chat-attachment-default">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useEffect, useRef, useState } from 'react'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  ChatAttachmentInput,
+  ChatMessage,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+type PendingAttachment = {
+  id: string
+  name: string
+  size?: number
+  src?: string
+  mimeType?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function Default() {
+  return (
+    <ChatMessage.User>
+      <ChatAttachmentGroup className="mb-2">
+        <ChatAttachment
+          mediaType="image"
+          name="screenshot.png"
+          size={248_320}
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+        />
+      </ChatAttachmentGroup>
+      <ChatMessage.Bubble>
+        <ChatMessage.Content>What is in this screenshot?</ChatMessage.Content>
+      </ChatMessage.Bubble>
+    </ChatMessage.User>
+  )
+}
+
+export function Composer() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        size: file.size,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  return (
+    <PromptInput className="max-w-xl">
+      <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+        <ChatAttachmentInput.Dropzone
+          render={dropzoneProps => (
+            <PromptInput.Shell {...dropzoneProps}>
+              <PromptInput.Content>
+                {attachments.length ? (
+                  <PromptInput.Attachments>
+                    <ChatAttachmentGroup>
+                      {attachments.map(file => (
+                        <ChatAttachment
+                          key={file.id}
+                          mimeType={file.mimeType}
+                          name={file.name}
+                          size={file.size}
+                          src={file.src}>
+                          <ChatAttachment.Preview />
+                          <ChatAttachment.Info />
+                          <ChatAttachment.Remove
+                            aria-label="Remove attachment"
+                            onPress={() =>
+                              setAttachments(current => {
+                                const removed = current.find(
+                                  item => item.id === file.id
+                                )
+
+                                if (removed) revokeAttachmentUrl(removed)
+
+                                return current.filter(
+                                  item => item.id !== file.id
+                                )
+                              })
+                            }
+                          />
+                        </ChatAttachment>
+                      ))}
+                    </ChatAttachmentGroup>
+                  </PromptInput.Attachments>
+                ) : null}
+                <PromptInput.TextArea placeholder="Ask about your files..." />
+              </PromptInput.Content>
+              <PromptInput.Toolbar>
+                <PromptInput.ToolbarStart>
+                  <ChatAttachmentInput.Trigger
+                    render={triggerProps => (
+                      <PromptInput.Action
+                        {...triggerProps}
+                        aria-label="Attach file"
+                        tooltip="Attach file">
+                        <Paperclip className="size-4" />
+                      </PromptInput.Action>
+                    )}
+                  />
+                </PromptInput.ToolbarStart>
+                <PromptInput.ToolbarEnd>
+                  <PromptInput.Send aria-label="Send">
+                    <ArrowUp className="size-4" />
+                  </PromptInput.Send>
+                </PromptInput.ToolbarEnd>
+              </PromptInput.Toolbar>
+            </PromptInput.Shell>
+          )}
+        />
+      </ChatAttachmentInput>
+    </PromptInput>
+  )
+}
+
+export function Grouped() {
+  return (
+    <ChatAttachmentGroup>
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="project-brief.pdf"
+        size={824_120}
+      />
+      <ChatAttachment
+        mimeType="application/zip"
+        name="design-assets.zip"
+        size={15_204_352}
+      />
+      <ChatAttachment name="quarterly-report.xlsx" size={98_400} />
+      <ChatAttachment name="notes.docx" size={42_100} />
+      <ChatAttachment name="index.tsx" size={3_820} />
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="final-v2-annual-financial-summary-report.pdf"
+        size={2_411_008}
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="wireframe.png"
+        size={512_000}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="screenshot.png"
+        size={248_320}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+    </ChatAttachmentGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Composer
+
+Pair `ChatAttachmentInput` with `PromptInput` to support file picker and drag-and-drop uploads.
+
+<ComponentPreview name="pro-chat-attachment-composer">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useEffect, useRef, useState } from 'react'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  ChatAttachmentInput,
+  ChatMessage,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+type PendingAttachment = {
+  id: string
+  name: string
+  size?: number
+  src?: string
+  mimeType?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function Default() {
+  return (
+    <ChatMessage.User>
+      <ChatAttachmentGroup className="mb-2">
+        <ChatAttachment
+          mediaType="image"
+          name="screenshot.png"
+          size={248_320}
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+        />
+      </ChatAttachmentGroup>
+      <ChatMessage.Bubble>
+        <ChatMessage.Content>What is in this screenshot?</ChatMessage.Content>
+      </ChatMessage.Bubble>
+    </ChatMessage.User>
+  )
+}
+
+export function Composer() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        size: file.size,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  return (
+    <PromptInput className="max-w-xl">
+      <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+        <ChatAttachmentInput.Dropzone
+          render={dropzoneProps => (
+            <PromptInput.Shell {...dropzoneProps}>
+              <PromptInput.Content>
+                {attachments.length ? (
+                  <PromptInput.Attachments>
+                    <ChatAttachmentGroup>
+                      {attachments.map(file => (
+                        <ChatAttachment
+                          key={file.id}
+                          mimeType={file.mimeType}
+                          name={file.name}
+                          size={file.size}
+                          src={file.src}>
+                          <ChatAttachment.Preview />
+                          <ChatAttachment.Info />
+                          <ChatAttachment.Remove
+                            aria-label="Remove attachment"
+                            onPress={() =>
+                              setAttachments(current => {
+                                const removed = current.find(
+                                  item => item.id === file.id
+                                )
+
+                                if (removed) revokeAttachmentUrl(removed)
+
+                                return current.filter(
+                                  item => item.id !== file.id
+                                )
+                              })
+                            }
+                          />
+                        </ChatAttachment>
+                      ))}
+                    </ChatAttachmentGroup>
+                  </PromptInput.Attachments>
+                ) : null}
+                <PromptInput.TextArea placeholder="Ask about your files..." />
+              </PromptInput.Content>
+              <PromptInput.Toolbar>
+                <PromptInput.ToolbarStart>
+                  <ChatAttachmentInput.Trigger
+                    render={triggerProps => (
+                      <PromptInput.Action
+                        {...triggerProps}
+                        aria-label="Attach file"
+                        tooltip="Attach file">
+                        <Paperclip className="size-4" />
+                      </PromptInput.Action>
+                    )}
+                  />
+                </PromptInput.ToolbarStart>
+                <PromptInput.ToolbarEnd>
+                  <PromptInput.Send aria-label="Send">
+                    <ArrowUp className="size-4" />
+                  </PromptInput.Send>
+                </PromptInput.ToolbarEnd>
+              </PromptInput.Toolbar>
+            </PromptInput.Shell>
+          )}
+        />
+      </ChatAttachmentInput>
+    </PromptInput>
+  )
+}
+
+export function Grouped() {
+  return (
+    <ChatAttachmentGroup>
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="project-brief.pdf"
+        size={824_120}
+      />
+      <ChatAttachment
+        mimeType="application/zip"
+        name="design-assets.zip"
+        size={15_204_352}
+      />
+      <ChatAttachment name="quarterly-report.xlsx" size={98_400} />
+      <ChatAttachment name="notes.docx" size={42_100} />
+      <ChatAttachment name="index.tsx" size={3_820} />
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="final-v2-annual-financial-summary-report.pdf"
+        size={2_411_008}
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="wireframe.png"
+        size={512_000}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="screenshot.png"
+        size={248_320}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+    </ChatAttachmentGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+When generating local image or video previews with `URL.createObjectURL`, revoke each `blob:` URL
+when the attachment is removed, when the composer is cleared, and when the component unmounts.
+
+## Grouped
+
+Use `ChatAttachmentGroup` to arrange multiple attachments.
+
+<ComponentPreview name="pro-chat-attachment-grouped">
+
+```tsx
+'use client'
+
+import { ArrowUp, Paperclip } from '@gravity-ui/icons'
+import { useEffect, useRef, useState } from 'react'
+
+import {
+  ChatAttachment,
+  ChatAttachmentGroup,
+  ChatAttachmentInput,
+  ChatMessage,
+  PromptInput
+} from '@vezham/react-pro-v3'
+
+type PendingAttachment = {
+  id: string
+  name: string
+  size?: number
+  src?: string
+  mimeType?: string
+}
+
+function createAttachmentId(file: File): string {
+  return `${file.name}-${file.lastModified}-${
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)
+  }`
+}
+
+function revokeAttachmentUrl(attachment: PendingAttachment) {
+  if (attachment.src?.startsWith('blob:')) URL.revokeObjectURL(attachment.src)
+}
+
+function revokeAttachmentUrls(attachments: readonly PendingAttachment[]) {
+  attachments.forEach(revokeAttachmentUrl)
+}
+
+export function Default() {
+  return (
+    <ChatMessage.User>
+      <ChatAttachmentGroup className="mb-2">
+        <ChatAttachment
+          mediaType="image"
+          name="screenshot.png"
+          size={248_320}
+          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+        />
+      </ChatAttachmentGroup>
+      <ChatMessage.Bubble>
+        <ChatMessage.Content>What is in this screenshot?</ChatMessage.Content>
+      </ChatMessage.Bubble>
+    </ChatMessage.User>
+  )
+}
+
+export function Composer() {
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
+  const attachmentsRef = useRef<PendingAttachment[]>([])
+
+  useEffect(() => {
+    attachmentsRef.current = attachments
+  }, [attachments])
+
+  useEffect(() => {
+    return () => revokeAttachmentUrls(attachmentsRef.current)
+  }, [])
+
+  const handleFilesSelected = (files: File[]) => {
+    setAttachments(current => [
+      ...current,
+      ...files.map(file => ({
+        id: createAttachmentId(file),
+        mimeType: file.type,
+        name: file.name,
+        size: file.size,
+        src: file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : undefined
+      }))
+    ])
+  }
+
+  return (
+    <PromptInput className="max-w-xl">
+      <ChatAttachmentInput onFilesSelected={handleFilesSelected}>
+        <ChatAttachmentInput.Dropzone
+          render={dropzoneProps => (
+            <PromptInput.Shell {...dropzoneProps}>
+              <PromptInput.Content>
+                {attachments.length ? (
+                  <PromptInput.Attachments>
+                    <ChatAttachmentGroup>
+                      {attachments.map(file => (
+                        <ChatAttachment
+                          key={file.id}
+                          mimeType={file.mimeType}
+                          name={file.name}
+                          size={file.size}
+                          src={file.src}>
+                          <ChatAttachment.Preview />
+                          <ChatAttachment.Info />
+                          <ChatAttachment.Remove
+                            aria-label="Remove attachment"
+                            onPress={() =>
+                              setAttachments(current => {
+                                const removed = current.find(
+                                  item => item.id === file.id
+                                )
+
+                                if (removed) revokeAttachmentUrl(removed)
+
+                                return current.filter(
+                                  item => item.id !== file.id
+                                )
+                              })
+                            }
+                          />
+                        </ChatAttachment>
+                      ))}
+                    </ChatAttachmentGroup>
+                  </PromptInput.Attachments>
+                ) : null}
+                <PromptInput.TextArea placeholder="Ask about your files..." />
+              </PromptInput.Content>
+              <PromptInput.Toolbar>
+                <PromptInput.ToolbarStart>
+                  <ChatAttachmentInput.Trigger
+                    render={triggerProps => (
+                      <PromptInput.Action
+                        {...triggerProps}
+                        aria-label="Attach file"
+                        tooltip="Attach file">
+                        <Paperclip className="size-4" />
+                      </PromptInput.Action>
+                    )}
+                  />
+                </PromptInput.ToolbarStart>
+                <PromptInput.ToolbarEnd>
+                  <PromptInput.Send aria-label="Send">
+                    <ArrowUp className="size-4" />
+                  </PromptInput.Send>
+                </PromptInput.ToolbarEnd>
+              </PromptInput.Toolbar>
+            </PromptInput.Shell>
+          )}
+        />
+      </ChatAttachmentInput>
+    </PromptInput>
+  )
+}
+
+export function Grouped() {
+  return (
+    <ChatAttachmentGroup>
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="project-brief.pdf"
+        size={824_120}
+      />
+      <ChatAttachment
+        mimeType="application/zip"
+        name="design-assets.zip"
+        size={15_204_352}
+      />
+      <ChatAttachment name="quarterly-report.xlsx" size={98_400} />
+      <ChatAttachment name="notes.docx" size={42_100} />
+      <ChatAttachment name="index.tsx" size={3_820} />
+      <ChatAttachment
+        mimeType="application/pdf"
+        name="final-v2-annual-financial-summary-report.pdf"
+        size={2_411_008}
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="wireframe.png"
+        size={512_000}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+      <ChatAttachment
+        mediaType="image"
+        name="screenshot.png"
+        size={248_320}
+        src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/egg.webp"
+      />
+    </ChatAttachmentGroup>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import {ChatAttachment, ChatAttachmentGroup, ChatAttachmentInput, PromptInput} from "@vezham/react-pro-v3";
+
+<ChatAttachmentGroup>
+  <ChatAttachment mimeType="application/pdf" name="brief.pdf" size={824120} />
+  <ChatAttachment mediaType="image" name="screenshot.png" size={248320} src="/screenshot.png" />
+</ChatAttachmentGroup>
+
+<ChatAttachmentInput onFilesSelected={setFiles}>
+  <ChatAttachmentInput.Dropzone
+    render={(props) => <PromptInput.Shell {...props}>{/* composer content */}</PromptInput.Shell>}
+  />
+</ChatAttachmentInput>
+```
+
+## CSS Classes
+
+The root exposes a `data-variant` attribute (`"media"` for image/video thumbnails, `"file"` for the
+horizontal file card) that styles the two layouts.
+
+- `.chat-attachment` - Attachment root (thumbnail tile or file card)
+- `.chat-attachment__preview` - Preview media wrapper (thumbnail or icon tile)
+- `.chat-attachment__preview-image` - Image preview
+- `.chat-attachment__preview-video` - Video preview
+- `.chat-attachment__icon` - Format-specific file-type icon
+- `.chat-attachment__info` - File name and size wrapper (hover overlay for media)
+- `.chat-attachment__name` - File name
+- `.chat-attachment__size` - Formatted file size
+- `.chat-attachment__remove` - Remove button
+- `.chat-attachment-group` - Attachment group wrapper
+
+## API Reference
+
+### ChatAttachment
+
+| Prop        | Type                                                       | Default         | Description                                                     |
+| ----------- | ---------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
+| `mediaType` | `'audio' \| 'document' \| 'image' \| 'unknown' \| 'video'` | inferred        | Attachment media type                                           |
+| `mimeType`  | `string`                                                   | -               | MIME type used to infer media type and icon                     |
+| `name`      | `string`                                                   | -               | Attachment file name (also used to infer the icon by extension) |
+| `size`      | `number`                                                   | -               | File size in bytes, formatted for display                       |
+| `src`       | `string`                                                   | -               | Preview URL for image or video attachments                      |
+| `children`  | `ReactNode`                                                | default content | Custom attachment content                                       |
+
+### ChatAttachment.Preview
+
+Renders the image, video, or format-specific icon preview. Accepts `children` to replace the preview content.
+
+### ChatAttachment.Icon
+
+Renders the format-specific file-type icon inferred from `mimeType`/`name` (PDF, archive, spreadsheet, document, code, audio, video, image, or generic). Accepts `children` to override the icon.
+
+### ChatAttachment.Info
+
+Wrapper for the file name and size. Defaults to `ChatAttachment.Name` and `ChatAttachment.Size` when no `children` are provided. In the media variant it renders as a hover overlay.
+
+### ChatAttachment.Name
+
+Renders the file name. Defaults to the `name` prop.
+
+### ChatAttachment.Size
+
+Renders the formatted file size from the `size` prop (bytes). Renders nothing when no size is available.
+
+### ChatAttachment.Remove
+
+Extends HeroUI `CloseButton` props. Use it to remove an attachment from composer state.
+
+### Helpers
+
+- `inferChatAttachmentFileKind(mimeType?, name?)` - Resolves the file kind used to pick the icon.
+- `formatChatAttachmentSize(bytes?)` - Formats a byte count as `B`/`KB`/`MB`/`GB`.
+
+### ChatAttachmentInput
+
+Provides file-picker and drag-and-drop behavior.
+
+| Prop              | Type                      | Default | Description                               |
+| ----------------- | ------------------------- | ------- | ----------------------------------------- |
+| `accept`          | `string`                  | -       | Native file input accept filter           |
+| `multiple`        | `boolean`                 | `true`  | Allow multiple files                      |
+| `disabled`        | `boolean`                 | `false` | Disable picker and drop behavior          |
+| `onFilesSelected` | `(files: File[]) => void` | -       | Called when files are selected or dropped |
+
+### ChatAttachmentInput.Trigger
+
+Opens the hidden file input. Use `render` to wire it to another button.
+
+### ChatAttachmentInput.Dropzone
+
+Adds drag-and-drop file handling. Use `render` to attach drop behavior to `PromptInput.Shell`.

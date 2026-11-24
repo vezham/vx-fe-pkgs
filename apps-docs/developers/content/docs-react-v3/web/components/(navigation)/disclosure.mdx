@@ -1,0 +1,295 @@
+---
+title: Disclosure
+description: A disclosure is a collapsible section with a header containing a heading and a trigger button, and a panel that wraps the content.
+links:
+  rac: Disclosure
+  source: disclosure/disclosure.tsx
+  styles: disclosure.css
+  storybook: Components/Navigation/Disclosure
+  figma: true
+---
+
+import {
+  ComponentPreview,
+  RelatedComponents,
+  RelatedShowcases
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+```tsx
+import { Disclosure } from '@heroui/react'
+```
+
+<ComponentPreview
+  name="disclosure-basic"
+  minHeight="440px">
+
+```tsx
+'use client'
+
+import { QrCode } from '@gravity-ui/icons'
+import { Icon } from '@iconify/react'
+import React from 'react'
+
+import { Button, Disclosure } from '@vezham/react-v3'
+
+export function Basic() {
+  const [isExpanded, setIsExpanded] = React.useState(true)
+
+  return (
+    <div className="w-full max-w-md text-center">
+      <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
+        <Disclosure.Heading>
+          <Button slot="trigger" variant="secondary">
+            <QrCode />
+            Preview HeroUI Native
+            <Disclosure.Indicator />
+          </Button>
+        </Disclosure.Heading>
+        <Disclosure.Content>
+          <Disclosure.Body className="shadow-panel bg-surface flex flex-col items-center rounded-3xl p-4 text-center">
+            <p className="text-muted text-sm">
+              Scan this QR code with your camera app to preview the HeroUI
+              native components.
+            </p>
+            <img
+              alt="Expo Go QR Code"
+              className="aspect-square w-full max-w-54 object-cover"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/qr-code-native.png"
+            />
+            <p className="text-muted text-sm">
+              Expo must be installed on your device.
+            </p>
+            <Button className="mt-4" variant="primary">
+              <Icon icon="tabler:brand-apple-filled" />
+              Download on App Store
+            </Button>
+          </Disclosure.Body>
+        </Disclosure.Content>
+      </Disclosure>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import { Disclosure } from '@heroui/react'
+
+export default () => (
+  <Disclosure>
+    <Disclosure.Heading>
+      <Disclosure.Trigger>
+        <Disclosure.Indicator />
+      </Disclosure.Trigger>
+    </Disclosure.Heading>
+    <Disclosure.Content />
+  </Disclosure>
+)
+```
+
+## Examples
+
+### Render Function
+
+<ComponentPreview
+  name="disclosure-render-function">
+
+```tsx
+'use client'
+
+import { QrCode } from '@gravity-ui/icons'
+import { Icon } from '@iconify/react'
+import React from 'react'
+
+import { Button, Disclosure } from '@vezham/react-v3'
+
+export function RenderFunction() {
+  const [isExpanded, setIsExpanded] = React.useState(true)
+
+  return (
+    <div className="w-full max-w-md text-center">
+      <Disclosure
+        isExpanded={isExpanded}
+        render={props => <div {...props} data-custom="foo" />}
+        onExpandedChange={setIsExpanded}>
+        <Disclosure.Heading>
+          <Button slot="trigger" variant="secondary">
+            <QrCode />
+            Preview HeroUI Native
+            <Disclosure.Indicator />
+          </Button>
+        </Disclosure.Heading>
+        <Disclosure.Content
+          render={props => <div data-custom="bar" {...props} />}>
+          <Disclosure.Body className="shadow-panel bg-surface flex flex-col items-center rounded-3xl p-4 text-center">
+            <p className="text-muted text-sm">
+              Scan this QR code with your camera app to preview the HeroUI
+              native components.
+            </p>
+            <img
+              alt="Expo Go QR Code"
+              className="aspect-square w-full max-w-54 object-cover"
+              src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/qr-code-native.png"
+            />
+            <p className="text-muted text-sm">
+              Expo must be installed on your device.
+            </p>
+            <Button className="mt-4" variant="primary">
+              <Icon icon="tabler:brand-apple-filled" />
+              Download on App Store
+            </Button>
+          </Disclosure.Body>
+        </Disclosure.Content>
+      </Disclosure>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="disclosure-custom-styles">
+
+```tsx
+'use client'
+
+import { ShoppingBag } from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Button, Disclosure } from '@vezham/react-v3'
+
+export function CustomStyles() {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  return (
+    <div className="w-full max-w-sm">
+      <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
+        <Disclosure.Heading>
+          <Button
+            className="border-border/70 text-foreground hover:bg-muted/30 w-full justify-between rounded-xl border bg-linear-to-b from-neutral-50/90 to-white px-4 py-3 font-medium shadow-sm ring-1 ring-black/5 dark:from-neutral-900/80 dark:to-neutral-900 dark:ring-white/10"
+            slot="trigger"
+            variant="ghost">
+            <span className="flex items-center gap-2">
+              <ShoppingBag className="text-muted size-4" />
+              Shipping details
+            </span>
+            <Disclosure.Indicator className="text-muted" />
+          </Button>
+        </Disclosure.Heading>
+        <Disclosure.Content>
+          <Disclosure.Body className="border-border/70 bg-surface/50 text-muted mt-2 rounded-xl border p-4 text-sm leading-relaxed dark:bg-neutral-900/50">
+            Orders ship within 2 business days. Standard delivery takes 3–5
+            days; express is available at checkout.
+          </Disclosure.Body>
+        </Disclosure.Content>
+      </Disclosure>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+### Global CSS
+
+To customize the Disclosure component classes, you can use the `@layer components` directive.
+[Learn more](https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes).
+
+```css
+@layer components {
+  .disclosure {
+    @apply relative;
+  }
+
+  .disclosure__trigger {
+    @apply cursor-pointer;
+  }
+
+  .disclosure__indicator {
+    @apply transition-transform duration-300;
+  }
+
+  .disclosure__content {
+    @apply overflow-hidden transition-all;
+  }
+}
+```
+
+## Styling Reference
+
+HeroUI follows the [BEM](https://getbem.com/) methodology to ensure component variants and states are reusable and easy to customize.
+
+### CSS Classes
+
+The Disclosure component uses these CSS classes ([View source styles](https://github.com/heroui-inc/heroui/blob/v3/packages/styles/components/disclosure.css)):
+
+#### Base Classes [!toc]
+
+- `.disclosure` - Base container styles
+- `.disclosure__heading` - Heading wrapper
+- `.disclosure__trigger` - Trigger button styles
+- `.disclosure__indicator` - Chevron indicator styles
+- `.disclosure__content` - Content container with animations
+
+### Interactive States
+
+The component supports both CSS pseudo-classes and data attributes for flexibility:
+
+- **Expanded**: `[data-expanded="true"]` on indicator for rotation
+- **Focus**: `:focus-visible` or `[data-focus-visible="true"]` on trigger
+- **Disabled**: `:disabled` or `[aria-disabled="true"]` on trigger
+- **Hidden**: `[aria-hidden="false"]` on content for visibility
+
+## API Reference
+
+### Disclosure
+
+| Prop               | Type                                                                          | Default | Description                                                      |
+| ------------------ | ----------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------- |
+| `isExpanded`       | `boolean`                                                                     | `false` | Controls the expanded state                                      |
+| `onExpandedChange` | `(isExpanded: boolean) => void`                                               | -       | Callback when expanded state changes                             |
+| `isDisabled`       | `boolean`                                                                     | `false` | Whether the disclosure is disabled                               |
+| `children`         | `ReactNode \| RenderFunction`                                                 | -       | Content to render                                                |
+| `className`        | `string`                                                                      | -       | Additional CSS classes                                           |
+| `render`           | `DOMRenderFunction<keyof React.JSX.IntrinsicElements, DisclosureRenderProps>` | -       | Overrides the default DOM element with a custom render function. |
+
+### DisclosureTrigger
+
+| Prop        | Type                          | Default | Description            |
+| ----------- | ----------------------------- | ------- | ---------------------- |
+| `children`  | `ReactNode \| RenderFunction` | -       | Trigger content        |
+| `className` | `string`                      | -       | Additional CSS classes |
+
+### DisclosureContent
+
+| Prop        | Type                                                                                 | Default | Description                                                      |
+| ----------- | ------------------------------------------------------------------------------------ | ------- | ---------------------------------------------------------------- |
+| `children`  | `ReactNode`                                                                          | -       | Content to show/hide                                             |
+| `className` | `string`                                                                             | -       | Additional CSS classes                                           |
+| `render`    | `DOMRenderFunction<keyof React.JSX.IntrinsicElements, DisclosureContentRenderProps>` | -       | Overrides the default DOM element with a custom render function. |
+
+### Render Props
+
+When using the render prop pattern, these values are provided:
+
+| Prop         | Type      | Description                    |
+| ------------ | --------- | ------------------------------ |
+| `isExpanded` | `boolean` | Current expanded state         |
+| `isDisabled` | `boolean` | Whether disclosure is disabled |
+
+## Related Showcases
+
+<RelatedShowcases component="Disclosure" />
+
+## Related Components
+
+<RelatedComponents component="disclosure" />

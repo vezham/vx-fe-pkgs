@@ -1,0 +1,99 @@
+---
+title: 'Code Block'
+description: 'Syntax-highlighted code blocks with language labels and copy actions for AI markdown.'
+sourceUrl: https://heroui.pro/docs/react/components/code-block
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `CodeBlock` for fenced code output, tool snippets, and AI-generated examples.
+
+<ComponentPreview name="pro-code-block-default">
+
+```tsx
+'use client'
+
+import { CodeBlock } from '@vezham/react-pro-v3/code-block'
+
+export function Default() {
+  const code = `function greet(name: string) {
+  return \`Hello, \${name}!\`;
+}
+
+console.log(greet("HeroUI"));`
+
+  return (
+    <div className="w-[480px]">
+      <CodeBlock>
+        <CodeBlock.Header>
+          <span className="text-muted text-xs uppercase">typescript</span>
+          <CodeBlock.CopyButton code={code} />
+        </CodeBlock.Header>
+        <CodeBlock.Code code={code} language="typescript" />
+      </CodeBlock>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+<Callout type="info">
+  `CodeBlock` is a subpath-only import (`@vezham/react-pro-v3/code-block`)
+  because it depends on the optional `shiki` peer. It is not exported from the
+  package root, so SSR apps that don't use it never need `shiki` installed.
+</Callout>
+
+```tsx
+import { CodeBlock } from '@vezham/react-pro-v3/code-block'
+
+;<CodeBlock>
+  <CodeBlock.Header>
+    <span>typescript</span>
+    <CodeBlock.CopyButton code={code} />
+  </CodeBlock.Header>
+  <CodeBlock.Code code={code} language="typescript" />
+</CodeBlock>
+```
+
+## CSS Classes
+
+- `.code-block` - Root code block surface
+- `.code-block__header` - Header row
+- `.code-block__code` - Code scroll region
+- `.code-block__copy-button` - Copy/check icon button
+
+## API Reference
+
+### CodeBlock
+
+Root container. Also supports native `div` props.
+
+### CodeBlock.Header
+
+Header slot for language labels and actions. Also supports native `div` props.
+
+### CodeBlock.Code
+
+| Prop       | Type     | Default          | Description       |
+| ---------- | -------- | ---------------- | ----------------- |
+| `code`     | `string` | -                | Code to render    |
+| `language` | `string` | `'plaintext'`    | Shiki language id |
+| `theme`    | `string` | `'github-light'` | Shiki theme       |
+
+Also supports native `div` props.
+
+### CodeBlock.CopyButton
+
+| Prop         | Type     | Default       | Description              |
+| ------------ | -------- | ------------- | ------------------------ |
+| `code`       | `string` | -             | Code copied to clipboard |
+| `aria-label` | `string` | `'Copy code'` | Accessible label         |
+| `className`  | `string` | -             | Additional class         |

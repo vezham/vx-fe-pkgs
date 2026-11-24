@@ -1,0 +1,1547 @@
+---
+title: 'Command'
+description: 'A command palette with fuzzy search, keyboard navigation, and nested groups for quick actions.'
+sourceUrl: https://heroui.pro/docs/react/components/command
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+<ComponentPreview name="pro-command-default">
+
+```tsx
+'use client'
+
+import {
+  FilePlus,
+  FolderPlus,
+  Keyboard,
+  Magnifier,
+  Palette,
+  PersonNutHex,
+  PersonPencil
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command } from '@vezham/react-pro-v3'
+import { Button, Chip, Kbd } from '@vezham/react-v3'
+
+export function Default() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Open Command Palette{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container>
+            <Command.Dialog>
+              <Command.Header>
+                <Chip size="sm">Home</Chip>
+              </Command.Header>
+              <Command.InputGroup>
+                <Command.InputGroup.Prefix>
+                  <Magnifier />
+                </Command.InputGroup.Prefix>
+                <Command.InputGroup.Input placeholder="Type a command or search..." />
+                <Command.InputGroup.ClearButton />
+                <Command.InputGroup.Suffix>
+                  <Kbd className="text-xs">
+                    <Kbd.Content>Esc</Kbd.Content>
+                  </Kbd>
+                </Command.InputGroup.Suffix>
+              </Command.InputGroup>
+              <Command.List>
+                <Command.Group heading="Actions">
+                  <Command.Item textValue="Create new file">
+                    <FilePlus />
+                    <span>Create new file...</span>
+                  </Command.Item>
+                  <Command.Item textValue="Create new folder">
+                    <FolderPlus />
+                    <span>Create new folder...</span>
+                  </Command.Item>
+                  <Command.Item textValue="Assign to me">
+                    <PersonPencil />
+                    <span>Assign to me</span>
+                  </Command.Item>
+                </Command.Group>
+                <Command.Group heading="Settings">
+                  <Command.Item textValue="Preferences">
+                    <PersonNutHex />
+                    <span>Preferences</span>
+                  </Command.Item>
+                  <Command.Item textValue="Change theme">
+                    <Palette />
+                    <span>Change theme</span>
+                  </Command.Item>
+                  <Command.Item textValue="Keyboard shortcuts">
+                    <Keyboard />
+                    <span>Keyboard shortcuts</span>
+                  </Command.Item>
+                </Command.Group>
+              </Command.List>
+              <Command.Footer className="justify-between [&_kbd]:h-5 [&_kbd]:text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-0.5">
+                      <Kbd className="text-xs">
+                        <Kbd.Abbr keyValue="up" />
+                      </Kbd>
+                      <Kbd className="text-xs">
+                        <Kbd.Abbr keyValue="down" />
+                      </Kbd>
+                    </div>
+                    <span>Navigate</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Kbd>
+                      <Kbd.Abbr keyValue="enter" />
+                    </Kbd>
+                    <span>Select</span>
+                  </div>
+                </div>
+              </Command.Footer>
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+Import the Command component and access all parts using dot notation.
+
+```tsx
+import { Command } from '@vezham/react-pro-v3'
+
+;<Command>
+  <Command.Backdrop>
+    <Command.Container>
+      <Command.Dialog>
+        <Command.Header />
+        <Command.InputGroup>
+          <Command.InputGroup.Prefix />
+          <Command.InputGroup.Input />
+          <Command.InputGroup.ClearButton />
+          <Command.InputGroup.Suffix />
+        </Command.InputGroup>
+        <Command.List>
+          <Command.Group />
+          <Command.Item />
+          <Command.Separator />
+        </Command.List>
+        <Command.Footer />
+      </Command.Dialog>
+    </Command.Container>
+  </Command.Backdrop>
+</Command>
+```
+
+## Clean
+
+<ComponentPreview name="pro-command-clean">
+
+```tsx
+'use client'
+
+import {
+  Comment,
+  Envelope,
+  FileText,
+  Persons,
+  Plus,
+  Rectangles4
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command } from '@vezham/react-pro-v3'
+import { Button, Kbd } from '@vezham/react-v3'
+
+function ShortcutKbd({ keys }: { keys: string[] }) {
+  return (
+    <div className="ml-auto flex gap-1">
+      {keys.map(k => (
+        <kbd
+          key={k}
+          className="bg-default flex size-5 items-center justify-center rounded text-[11px] text-zinc-500 uppercase dark:text-zinc-400">
+          {k}
+        </kbd>
+      ))}
+    </div>
+  )
+}
+
+export function Clean() {
+  const [isOpen, setOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const [pages, setPages] = useState<string[]>(['home'])
+  const activePage = pages[pages.length - 1]
+  const isHome = activePage === 'home'
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Clean{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop
+          isOpen={isOpen}
+          onOpenChange={open => {
+            setOpen(open)
+            if (!open) {
+              setPages(['home'])
+              setInputValue('')
+            }
+          }}>
+          <Command.Container size="lg">
+            <Command.Dialog
+              inputValue={inputValue}
+              onInputChange={setInputValue}>
+              <Command.Header className="flex flex-wrap gap-1 px-3 pt-2 pb-0">
+                {pages.map(p => (
+                  <span
+                    key={p}
+                    className="bg-default inline-flex h-5 items-center rounded px-2 text-xs font-medium text-zinc-500 capitalize dark:text-zinc-400">
+                    {p}
+                  </span>
+                ))}
+              </Command.Header>
+              <Command.InputGroup>
+                <Command.InputGroup.Input
+                  placeholder="What do you need?"
+                  onKeyDown={e => {
+                    if (e.key === 'Backspace' && !isHome && !inputValue) {
+                      e.preventDefault()
+                      setPages(prev => prev.slice(0, -1))
+                    }
+                  }}
+                />
+                <Command.InputGroup.ClearButton />
+              </Command.InputGroup>
+              <Command.List
+                renderEmptyState={() => (
+                  <div className="text-muted flex h-12 items-center justify-center text-sm">
+                    No results found.
+                  </div>
+                )}
+                onAction={key => {
+                  if (key === 'search-projects') {
+                    setPages(prev => [...prev, 'projects'])
+                    setInputValue('')
+                  }
+                }}>
+                {activePage === 'home' && (
+                  <>
+                    <Command.Group heading="Projects">
+                      <Command.Item
+                        id="search-projects"
+                        textValue="Search Projects">
+                        <Rectangles4 />
+                        <span>Search Projects...</span>
+                        <ShortcutKbd keys={['S', 'P']} />
+                      </Command.Item>
+                      <Command.Item textValue="Create New Project">
+                        <Plus />
+                        <span>Create New Project...</span>
+                      </Command.Item>
+                    </Command.Group>
+                    <Command.Group heading="Teams">
+                      <Command.Item textValue="Search Teams">
+                        <Persons />
+                        <span>Search Teams...</span>
+                        <ShortcutKbd keys={['⇧', 'P']} />
+                      </Command.Item>
+                      <Command.Item textValue="Create New Team">
+                        <Plus />
+                        <span>Create New Team...</span>
+                      </Command.Item>
+                    </Command.Group>
+                    <Command.Group heading="Help">
+                      <Command.Item textValue="Search Docs">
+                        <FileText />
+                        <span>Search Docs...</span>
+                        <ShortcutKbd keys={['⇧', 'D']} />
+                      </Command.Item>
+                      <Command.Item textValue="Send Feedback">
+                        <Comment />
+                        <span>Send Feedback...</span>
+                      </Command.Item>
+                      <Command.Item textValue="Contact Support">
+                        <Envelope />
+                        <span>Contact Support</span>
+                      </Command.Item>
+                    </Command.Group>
+                  </>
+                )}
+                {activePage === 'projects' && (
+                  <>
+                    {Array.from({ length: 6 }, (_, i) => (
+                      <Command.Item
+                        key={`project-${i}`}
+                        textValue={`Project ${i + 1}`}>
+                        <span>Project {i + 1}</span>
+                      </Command.Item>
+                    ))}
+                  </>
+                )}
+              </Command.List>
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Dev Toolbar
+
+<ComponentPreview name="pro-command-dev-toolbar">
+
+```tsx
+'use client'
+
+import {
+  Bell,
+  BranchesRight,
+  ChartLine,
+  Comment,
+  Eye,
+  Flag,
+  LayoutList,
+  Magnifier
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command, EmptyState } from '@vezham/react-pro-v3'
+import { Button, Kbd } from '@vezham/react-v3'
+
+function DevToolbarContent() {
+  return (
+    <>
+      <Command.InputGroup>
+        <Command.InputGroup.Prefix>
+          <Magnifier />
+        </Command.InputGroup.Prefix>
+        <Command.InputGroup.Input placeholder="What do you need?" />
+        <Command.InputGroup.ClearButton />
+        <Command.InputGroup.Suffix>
+          <Kbd className="text-xs">
+            <Kbd.Content>Esc</Kbd.Content>
+          </Kbd>
+        </Command.InputGroup.Suffix>
+      </Command.InputGroup>
+      <Command.List
+        renderEmptyState={() => (
+          <EmptyState size="sm">
+            <EmptyState.Header>
+              <EmptyState.Media variant="icon">
+                <Magnifier />
+              </EmptyState.Media>
+              <EmptyState.Title>No results found</EmptyState.Title>
+              <EmptyState.Description>
+                Try a different search term.
+              </EmptyState.Description>
+            </EmptyState.Header>
+          </EmptyState>
+        )}>
+        <Command.Group>
+          <Command.Item
+            className="bg-default"
+            textValue="View Environment staging">
+            <span className="bg-success size-2 shrink-0 rounded-full" />
+            <div className="flex flex-col">
+              <span className="font-medium">View Environment</span>
+              <span className="text-muted text-xs">
+                staging/feat-dashboard-redesign
+              </span>
+            </div>
+          </Command.Item>
+        </Command.Group>
+        <Command.Group heading="Collaboration">
+          <Command.Item textValue="Feedback">
+            <Comment />
+            <span>Feedback</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>C</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+          <Command.Item textValue="Notifications">
+            <Bell />
+            <span>Notifications</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>N</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+          <Command.Item textValue="Feature Flags">
+            <Flag />
+            <span>Feature Flags...</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>F</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+          <Command.Item textValue="Share Preview">
+            <Eye />
+            <span>Share Preview</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>S</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+          <Command.Item textValue="Switch Branch">
+            <BranchesRight />
+            <span>Switch Branch...</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>B</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+        </Command.Group>
+        <Command.Group heading="Development">
+          <Command.Item textValue="View Logs">
+            <LayoutList />
+            <span>View Logs</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>L</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+          <Command.Item textValue="Tracing">
+            <ChartLine />
+            <span>Tracing...</span>
+            <Kbd className="ms-auto text-xs" slot="keyboard">
+              <Kbd.Content>T</Kbd.Content>
+            </Kbd>
+          </Command.Item>
+        </Command.Group>
+      </Command.List>
+    </>
+  )
+}
+
+export function DevToolbar() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Dev Toolbar{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container>
+            <Command.Dialog>
+              <DevToolbarContent />
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Launcher
+
+<ComponentPreview name="pro-command-launcher">
+
+```tsx
+'use client'
+
+import {
+  ChartLine,
+  Comment,
+  Copy,
+  Hammer,
+  Palette,
+  Pencil,
+  Video
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command } from '@vezham/react-pro-v3'
+import { Button, Kbd } from '@vezham/react-v3'
+
+function AppLogo({
+  children,
+  color
+}: {
+  children: React.ReactNode
+  color: string
+}) {
+  return (
+    <div
+      className={`flex size-5 shrink-0 items-center justify-center rounded [&_svg]:size-3 [&_svg]:text-white ${color}`}>
+      {children}
+    </div>
+  )
+}
+
+function CommandIconWell({
+  children,
+  className
+}: {
+  children: React.ReactNode
+  className: string
+}) {
+  return (
+    <div
+      className={`flex size-5 shrink-0 items-center justify-center rounded-md [&_svg]:size-3 [&_svg]:text-white ${className}`}>
+      {children}
+    </div>
+  )
+}
+
+export function Launcher() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Launcher{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container size="lg">
+            <Command.Dialog>
+              <Command.InputGroup>
+                <Command.InputGroup.Input placeholder="Search for apps and commands..." />
+                <Command.InputGroup.ClearButton />
+              </Command.InputGroup>
+              <Command.List
+                renderEmptyState={() => (
+                  <div className="text-muted flex h-16 items-center justify-center text-sm">
+                    No results found.
+                  </div>
+                )}>
+                <Command.Group heading="Suggestions">
+                  <Command.Item className="!h-10" textValue="Design Tool">
+                    <AppLogo color="bg-violet-500">
+                      <Palette />
+                    </AppLogo>
+                    <span>Design Tool</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Application
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Project Tracker">
+                    <AppLogo color="bg-indigo-500">
+                      <ChartLine />
+                    </AppLogo>
+                    <span>Project Tracker</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Application
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Team Chat">
+                    <AppLogo color="bg-sky-500">
+                      <Comment />
+                    </AppLogo>
+                    <span>Team Chat</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Application
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Video Platform">
+                    <AppLogo color="bg-red-500">
+                      <Video />
+                    </AppLogo>
+                    <span>Video Platform</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Application
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Notes">
+                    <AppLogo color="bg-amber-500">
+                      <Pencil />
+                    </AppLogo>
+                    <span>Notes</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Application
+                    </span>
+                  </Command.Item>
+                </Command.Group>
+                <Command.Group heading="Commands">
+                  <Command.Item className="!h-10" textValue="Clipboard History">
+                    <CommandIconWell className="bg-gradient-to-b from-red-400 to-red-600">
+                      <Copy />
+                    </CommandIconWell>
+                    <span>Clipboard History</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Command
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Import Extension">
+                    <CommandIconWell className="bg-gradient-to-b from-emerald-400 to-emerald-700">
+                      <Hammer />
+                    </CommandIconWell>
+                    <span>Import Extension</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Command
+                    </span>
+                  </Command.Item>
+                  <Command.Item className="!h-10" textValue="Manage Extensions">
+                    <CommandIconWell className="bg-gradient-to-b from-emerald-400 to-emerald-700">
+                      <Hammer />
+                    </CommandIconWell>
+                    <span>Manage Extensions</span>
+                    <span className="text-muted ml-auto text-[13px]">
+                      Command
+                    </span>
+                  </Command.Item>
+                </Command.Group>
+              </Command.List>
+              <Command.Footer className="justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium">Open Application</span>
+                  <kbd className="bg-default flex h-5 items-center rounded px-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                    ↵
+                  </kbd>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-border h-3 w-px" />
+                  <span className="text-xs">Actions</span>
+                  <div className="flex gap-0.5">
+                    <kbd className="bg-default flex h-5 items-center rounded px-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                      ⌘
+                    </kbd>
+                    <kbd className="bg-default flex h-5 items-center rounded px-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                      K
+                    </kbd>
+                  </div>
+                </div>
+              </Command.Footer>
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Minimal
+
+<ComponentPreview name="pro-command-minimal">
+
+```tsx
+'use client'
+
+import {
+  ChartLine,
+  Clock,
+  Flag,
+  LayoutList,
+  PersonPencil,
+  TrashBin
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command } from '@vezham/react-pro-v3'
+import { Button, Kbd } from '@vezham/react-v3'
+
+const minimalItemClass = [
+  '!rounded-none !gap-3',
+  'before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[#5f6ad2] before:opacity-0',
+  'data-[focused=true]:before:opacity-100',
+  'data-[focused=true]:!bg-zinc-100 dark:data-[focused=true]:!bg-zinc-800/50'
+].join(' ')
+
+const items = [
+  { icon: <PersonPencil />, keys: ['A'], label: 'Assign to...' },
+  { icon: <PersonPencil />, keys: ['I'], label: 'Assign to me' },
+  { icon: <LayoutList />, keys: ['S'], label: 'Change status...' },
+  { icon: <ChartLine />, keys: ['P'], label: 'Change priority...' },
+  { icon: <Flag />, keys: ['L'], label: 'Change labels...' },
+  { icon: <TrashBin />, keys: ['⇧', 'L'], label: 'Remove label...' },
+  { icon: <Clock />, keys: ['⇧', 'D'], label: 'Set due date...' }
+]
+
+export function Minimal() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Minimal{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container size="lg">
+            <Command.Dialog>
+              <Command.Header className="px-4 pt-4 pb-0">
+                <div className="bg-default flex h-6 items-center rounded px-2 text-xs text-zinc-500 dark:text-zinc-400">
+                  Issue - FUN-343
+                </div>
+              </Command.Header>
+              <Command.InputGroup>
+                <Command.InputGroup.Input
+                  className="!text-lg caret-[#6e5ed2]"
+                  placeholder="Type a command or search..."
+                />
+                <Command.InputGroup.ClearButton />
+              </Command.InputGroup>
+              <Command.List
+                renderEmptyState={() => (
+                  <div className="text-muted flex h-16 items-center justify-center text-sm">
+                    No results found.
+                  </div>
+                )}>
+                {items.map(({ icon, keys, label }) => (
+                  <Command.Item
+                    key={label}
+                    className={minimalItemClass}
+                    textValue={label}>
+                    {icon}
+                    <span>{label}</span>
+                    <div className="ml-auto flex gap-2">
+                      {keys.map(k => (
+                        <kbd
+                          key={k}
+                          className="text-[13px] text-zinc-500 dark:text-zinc-400">
+                          {k}
+                        </kbd>
+                      ))}
+                    </div>
+                  </Command.Item>
+                ))}
+              </Command.List>
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Split View
+
+<ComponentPreview name="pro-command-split-view">
+
+```tsx
+'use client'
+
+import {
+  CircleFill,
+  FontCursor,
+  Magnifier,
+  PersonFill,
+  Sliders,
+  Square,
+  Tag,
+  ToggleOn
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command } from '@vezham/react-pro-v3'
+import {
+  Avatar,
+  Button,
+  Chip,
+  Input,
+  Kbd,
+  Radio,
+  RadioGroup,
+  Slider,
+  Switch
+} from '@vezham/react-v3'
+
+const splitItemClass = [
+  'group rounded-xl',
+  'data-[focused=true]:bg-blue-600 data-[focused=true]:text-white'
+].join(' ')
+
+function SplitViewPreview({ component }: { component: string }) {
+  switch (component) {
+    case 'Button':
+      return <Button variant="primary">Primary</Button>
+    case 'Input':
+      return <Input placeholder="Placeholder" variant="secondary" />
+    case 'Chip':
+      return (
+        <Chip color="accent" size="lg" variant="soft">
+          Chip
+        </Chip>
+      )
+    case 'Radio':
+      return (
+        <RadioGroup defaultValue="premium" name="plan" variant="secondary">
+          <Radio value="basic">
+            <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              Basic Plan
+            </Radio.Content>
+          </Radio>
+          <Radio value="premium">
+            <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              Premium Plan
+            </Radio.Content>
+          </Radio>
+          <Radio value="business">
+            <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              Business Plan
+            </Radio.Content>
+          </Radio>
+        </RadioGroup>
+      )
+    case 'Slider':
+      return (
+        <Slider className="w-full max-w-[200px]" defaultValue={30}>
+          <Slider.Track>
+            <Slider.Fill />
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider>
+      )
+    case 'Avatar':
+      return (
+        <Avatar size="md">
+          <Avatar.Image
+            alt="Medium Avatar"
+            src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
+          />
+          <Avatar.Fallback>MD</Avatar.Fallback>
+        </Avatar>
+      )
+    case 'Switch':
+      return (
+        <Switch defaultSelected aria-label="Toggle">
+          <Switch.Content>
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+          </Switch.Content>
+        </Switch>
+      )
+    default:
+      return null
+  }
+}
+
+const components = [
+  { icon: <Square />, id: 'Button', subtitle: 'Trigger actions' },
+  { icon: <FontCursor />, id: 'Input', subtitle: 'Retrieve user input' },
+  { icon: <CircleFill />, id: 'Radio', subtitle: 'Single choice input' },
+  { icon: <Tag />, id: 'Chip', subtitle: 'Annotate context' },
+  { icon: <Sliders />, id: 'Slider', subtitle: 'Free range picker' },
+  { icon: <PersonFill />, id: 'Avatar', subtitle: 'Illustrate the user' },
+  { icon: <ToggleOn />, id: 'Switch', subtitle: 'Toggle a setting' }
+]
+
+export function SplitView() {
+  const [isOpen, setOpen] = useState(false)
+  const [selected, setSelected] = useState('Button')
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Split View{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop
+          isOpen={isOpen}
+          onOpenChange={open => {
+            setOpen(open)
+            if (!open) setSelected('Button')
+          }}>
+          <Command.Container size="lg">
+            <Command.Dialog>
+              <Command.InputGroup>
+                <Command.InputGroup.Prefix>
+                  <Magnifier />
+                </Command.InputGroup.Prefix>
+                <Command.InputGroup.Input placeholder="Find components, packages, and interactions..." />
+                <Command.InputGroup.ClearButton />
+              </Command.InputGroup>
+              <div className="flex min-h-[308px]">
+                <Command.List
+                  className="!w-2/5 !flex-none"
+                  renderEmptyState={() => (
+                    <div className="text-muted flex h-16 items-center justify-center text-sm">
+                      No results found.
+                    </div>
+                  )}
+                  onAction={key => setSelected(String(key))}>
+                  <Command.Group heading="Components">
+                    {components.map(({ icon, id, subtitle }) => (
+                      <Command.Item
+                        key={id}
+                        className={splitItemClass}
+                        id={id}
+                        textValue={id}>
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-orange-500 [&_svg]:text-white">
+                          {icon}
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-sm font-medium">{id}</span>
+                          <span className="text-muted text-xs group-data-[focused=true]:text-white/70">
+                            {subtitle}
+                          </span>
+                        </div>
+                      </Command.Item>
+                    ))}
+                  </Command.Group>
+                </Command.List>
+                <div className="bg-separator w-px self-stretch" />
+                <div className="flex flex-1 items-center justify-center rounded-lg p-4">
+                  <SplitViewPreview component={selected} />
+                </div>
+              </div>
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Multiple Search Terms
+
+<ComponentPreview name="pro-command-multiple-search-terms">
+
+```tsx
+'use client'
+
+import {
+  Clock,
+  FileText,
+  Gear,
+  Magnifier,
+  Persons,
+  Sparkles
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command, EmptyState } from '@vezham/react-pro-v3'
+import { Button, Chip, CloseButton, Kbd } from '@vezham/react-v3'
+
+function MultipleSearchTermsContent() {
+  return (
+    <>
+      <Command.InputGroup>
+        <Command.InputGroup.Prefix>
+          <Magnifier />
+        </Command.InputGroup.Prefix>
+        <Command.InputGroup.Input placeholder="Search or jump to" />
+        <Command.InputGroup.ClearButton />
+        <Command.InputGroup.Suffix>
+          <Kbd className="text-xs">
+            <Kbd.Abbr keyValue="command" />
+            <Kbd.Content>K</Kbd.Content>
+          </Kbd>
+        </Command.InputGroup.Suffix>
+      </Command.InputGroup>
+      <Command.Header className="flex flex-col items-start gap-2 px-4">
+        <div className="flex flex-wrap gap-1.5">
+          {['Projects', 'Tasks', 'People', 'Documents', 'Channels'].map(
+            label => (
+              <Chip key={label} color="default" size="sm" variant="soft">
+                <Chip.Label>{label}</Chip.Label>
+                <CloseButton
+                  aria-label={`Remove ${label}`}
+                  className="-mr-px size-4 [&_svg]:size-3"
+                />
+              </Chip>
+            )
+          )}
+        </div>
+      </Command.Header>
+      <Command.List
+        renderEmptyState={() => (
+          <EmptyState size="sm">
+            <EmptyState.Header>
+              <EmptyState.Media variant="icon">
+                <Magnifier />
+              </EmptyState.Media>
+              <EmptyState.Title>No results found</EmptyState.Title>
+              <EmptyState.Description>
+                Try a different search term.
+              </EmptyState.Description>
+            </EmptyState.Header>
+          </EmptyState>
+        )}>
+        <Command.Group heading="Smart Prompt Examples">
+          <Command.Item textValue="Summarize this week's progress">
+            <Sparkles />
+            <span>Summarize this week&apos;s progress</span>
+          </Command.Item>
+          <Command.Item textValue="Create a task for the team">
+            <Sparkles />
+            <span>Create a task for the team</span>
+          </Command.Item>
+          <Command.Item textValue="Draft a project brief">
+            <Sparkles />
+            <span>Draft a project brief</span>
+          </Command.Item>
+          <Command.Item textValue="Schedule a standup meeting">
+            <Sparkles />
+            <span>Schedule a standup meeting</span>
+          </Command.Item>
+        </Command.Group>
+        <Command.Group
+          heading={
+            <span className="flex w-full items-center justify-between">
+              <span>Results (4)</span>
+              <button className="text-accent text-xs font-medium" type="button">
+                See All
+              </button>
+            </span>
+          }>
+          <Command.Item textValue="View recent activity">
+            <Clock />
+            <span>View recent activity</span>
+          </Command.Item>
+          <Command.Item textValue="Open project roadmap">
+            <FileText />
+            <span>Open project roadmap</span>
+          </Command.Item>
+          <Command.Item textValue="Browse team directory">
+            <Persons />
+            <span>Browse team directory</span>
+          </Command.Item>
+          <Command.Item textValue="Manage workspace settings">
+            <Gear />
+            <span>Manage workspace settings</span>
+          </Command.Item>
+        </Command.Group>
+      </Command.List>
+      <Command.Footer className="h-10 justify-between [&_kbd]:h-5 [&_kbd]:text-xs">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              <Kbd className="text-xs">
+                <Kbd.Abbr keyValue="up" />
+              </Kbd>
+              <Kbd className="text-xs">
+                <Kbd.Abbr keyValue="down" />
+              </Kbd>
+            </div>
+            <span>Navigate</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Kbd>
+              <Kbd.Abbr keyValue="enter" />
+            </Kbd>
+            <span>Select</span>
+          </div>
+        </div>
+        <span className="text-muted text-xs">
+          Not what you&apos;re looking for? Try the{' '}
+          <button className="text-accent font-medium" type="button">
+            Help Center
+          </button>
+        </span>
+      </Command.Footer>
+    </>
+  )
+}
+
+export function MultipleSearchTerms() {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onPress={() => setOpen(true)}>
+        Multiple Search Terms{' '}
+        <Kbd>
+          <Kbd.Abbr keyValue="command" />
+          <Kbd.Content>K</Kbd.Content>
+        </Kbd>
+      </Button>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container size="lg">
+            <Command.Dialog>
+              <MultipleSearchTermsContent />
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Sizes
+
+<ComponentPreview name="pro-command-sizes">
+
+```tsx
+'use client'
+
+import {
+  FilePlus,
+  FolderPlus,
+  Keyboard,
+  Magnifier,
+  Palette,
+  PersonNutHex,
+  PersonPencil
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command, EmptyState } from '@vezham/react-pro-v3'
+import { Button, Chip, Kbd } from '@vezham/react-v3'
+
+function CommandDialogContent() {
+  return (
+    <>
+      <Command.Header>
+        <Chip size="sm">Home</Chip>
+      </Command.Header>
+      <Command.InputGroup>
+        <Command.InputGroup.Prefix>
+          <Magnifier />
+        </Command.InputGroup.Prefix>
+        <Command.InputGroup.Input placeholder="Type a command or search..." />
+        <Command.InputGroup.ClearButton />
+        <Command.InputGroup.Suffix>
+          <Kbd className="text-xs">
+            <Kbd.Content>Esc</Kbd.Content>
+          </Kbd>
+        </Command.InputGroup.Suffix>
+      </Command.InputGroup>
+      <Command.List
+        renderEmptyState={() => (
+          <EmptyState size="sm">
+            <EmptyState.Header>
+              <EmptyState.Media variant="icon">
+                <Magnifier />
+              </EmptyState.Media>
+              <EmptyState.Title>No results found</EmptyState.Title>
+              <EmptyState.Description>
+                Try a different search term.
+              </EmptyState.Description>
+            </EmptyState.Header>
+          </EmptyState>
+        )}>
+        <Command.Group heading="Actions">
+          <Command.Item textValue="Create new file">
+            <FilePlus />
+            <span>Create new file...</span>
+          </Command.Item>
+          <Command.Item textValue="Create new folder">
+            <FolderPlus />
+            <span>Create new folder...</span>
+          </Command.Item>
+          <Command.Item textValue="Assign to me">
+            <PersonPencil />
+            <span>Assign to me</span>
+          </Command.Item>
+        </Command.Group>
+        <Command.Group heading="Settings">
+          <Command.Item textValue="Preferences">
+            <PersonNutHex />
+            <span>Preferences</span>
+          </Command.Item>
+          <Command.Item textValue="Change theme">
+            <Palette />
+            <span>Change theme</span>
+          </Command.Item>
+          <Command.Item textValue="Keyboard shortcuts">
+            <Keyboard />
+            <span>Keyboard shortcuts</span>
+          </Command.Item>
+        </Command.Group>
+      </Command.List>
+      <Command.Footer className="justify-between [&_kbd]:h-5 [&_kbd]:text-xs">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              <Kbd className="text-xs">
+                <Kbd.Abbr keyValue="up" />
+              </Kbd>
+              <Kbd className="text-xs">
+                <Kbd.Abbr keyValue="down" />
+              </Kbd>
+            </div>
+            <span>Navigate</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Kbd>
+              <Kbd.Abbr keyValue="enter" />
+            </Kbd>
+            <span>Select</span>
+          </div>
+        </div>
+      </Command.Footer>
+    </>
+  )
+}
+
+export function Sizes() {
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md')
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex gap-2">
+        {(['sm', 'md', 'lg'] as const).map(s => (
+          <Button
+            key={s}
+            variant="tertiary"
+            onPress={() => {
+              setSize(s)
+              setOpen(true)
+            }}>
+            Size: {s}
+          </Button>
+        ))}
+      </div>
+      <Command>
+        <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+          <Command.Container size={size}>
+            <Command.Dialog>
+              <CommandDialogContent />
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Backdrop Variants
+
+<ComponentPreview name="pro-command-backdrop-variants">
+
+```tsx
+'use client'
+
+import {
+  FilePlus,
+  FolderPlus,
+  Keyboard,
+  Magnifier,
+  Palette,
+  PersonNutHex,
+  PersonPencil
+} from '@gravity-ui/icons'
+import { useState } from 'react'
+
+import { Command, EmptyState } from '@vezham/react-pro-v3'
+import { Button, Chip, Kbd } from '@vezham/react-v3'
+
+function CommandDialogContent() {
+  return (
+    <>
+      <Command.Header>
+        <Chip size="sm">Home</Chip>
+      </Command.Header>
+      <Command.InputGroup>
+        <Command.InputGroup.Prefix>
+          <Magnifier />
+        </Command.InputGroup.Prefix>
+        <Command.InputGroup.Input placeholder="Type a command or search..." />
+        <Command.InputGroup.ClearButton />
+        <Command.InputGroup.Suffix>
+          <Kbd className="text-xs">
+            <Kbd.Content>Esc</Kbd.Content>
+          </Kbd>
+        </Command.InputGroup.Suffix>
+      </Command.InputGroup>
+      <Command.List
+        renderEmptyState={() => (
+          <EmptyState size="sm">
+            <EmptyState.Header>
+              <EmptyState.Media variant="icon">
+                <Magnifier />
+              </EmptyState.Media>
+              <EmptyState.Title>No results found</EmptyState.Title>
+              <EmptyState.Description>
+                Try a different search term.
+              </EmptyState.Description>
+            </EmptyState.Header>
+          </EmptyState>
+        )}>
+        <Command.Group heading="Actions">
+          <Command.Item textValue="Create new file">
+            <FilePlus />
+            <span>Create new file...</span>
+          </Command.Item>
+          <Command.Item textValue="Create new folder">
+            <FolderPlus />
+            <span>Create new folder...</span>
+          </Command.Item>
+          <Command.Item textValue="Assign to me">
+            <PersonPencil />
+            <span>Assign to me</span>
+          </Command.Item>
+        </Command.Group>
+        <Command.Group heading="Settings">
+          <Command.Item textValue="Preferences">
+            <PersonNutHex />
+            <span>Preferences</span>
+          </Command.Item>
+          <Command.Item textValue="Change theme">
+            <Palette />
+            <span>Change theme</span>
+          </Command.Item>
+          <Command.Item textValue="Keyboard shortcuts">
+            <Keyboard />
+            <span>Keyboard shortcuts</span>
+          </Command.Item>
+        </Command.Group>
+      </Command.List>
+    </>
+  )
+}
+
+export function BackdropVariants() {
+  const [variant, setVariant] = useState<'transparent' | 'opaque' | 'blur'>(
+    'opaque'
+  )
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex gap-2">
+        {(['transparent', 'opaque', 'blur'] as const).map(v => (
+          <Button
+            key={v}
+            variant="tertiary"
+            onPress={() => {
+              setVariant(v)
+              setOpen(true)
+            }}>
+            {v}
+          </Button>
+        ))}
+      </div>
+      <Command>
+        <Command.Backdrop
+          isOpen={isOpen}
+          variant={variant}
+          onOpenChange={setOpen}>
+          <Command.Container>
+            <Command.Dialog>
+              <CommandDialogContent />
+            </Command.Dialog>
+          </Command.Container>
+        </Command.Backdrop>
+      </Command>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## CSS Classes
+
+### Base & Variant Classes
+
+- `.command__backdrop` — Fixed fullscreen overlay behind the command palette. Centered flex layout with enter/exit animations.
+- `.command__backdrop--transparent` — Fully transparent backdrop.
+- `.command__backdrop--opaque` — Dark semi-transparent backdrop (`bg-black/50`).
+- `.command__backdrop--blur` — Dark backdrop with `backdrop-blur-md`.
+
+### Size Modifier Classes
+
+- `.command__dialog--sm` — Small dialog (`max-w-sm`, max-height `300px`).
+- `.command__dialog--md` — Medium dialog (`max-w-lg`, max-height `356px`). Default.
+- `.command__dialog--lg` — Large dialog (`max-w-xl`, max-height `440px`).
+
+### Element Classes
+
+- `.command__container` — Positioning wrapper centering the dialog at `15vh` from top. Has slide + zoom enter/exit animations.
+- `.command__dialog` — The command palette box. Rounded with `bg-overlay`, `shadow-overlay`, and animated height transitions.
+- `.command__input-group` — Search field container with bottom border. Flex row holding prefix, input, and suffix.
+- `.command__input-group-prefix` — Leading content area (e.g., search icon) with muted color.
+- `.command__input-group-suffix` — Trailing content area with muted color.
+- `.command__input-group-clear-button` — Clear button that hides when input is empty.
+- `.command__header` — Content area above the input (e.g., breadcrumbs or tabs).
+- `.command__list` — Scrollable command list with `overflow-y: auto` and `overscroll-contain`.
+- `.command__item` — Individual command entry. Rounded with gap for icon and keyboard shortcut.
+- `.command__group` — Section grouping with top margin between groups.
+- `.command__group-heading` — Section label with muted color and small font.
+- `.command__separator` — Horizontal divider between groups (`bg-separator`).
+- `.command__footer` — Bottom bar with border-top, muted text, and `bg-default/50` background.
+- `.command__empty` — Empty state centered text shown when no results match.
+
+### Interactive States
+
+- **Entering**: `[data-entering="true"]` on `.command__backdrop` — `fade-in` animation (150ms). On `.command__container` — `fade-in` + `zoom-in-95` + `slide-in-from-top` (200ms).
+- **Exiting**: `[data-exiting="true"]` on `.command__backdrop` — `fade-out` (100ms). On `.command__container` — `fade-out` + `zoom-out-95` (100ms).
+- **Item hover**: `[data-hovered="true"]` on `.command__item` — applies `bg-default`.
+- **Item focused**: `[data-focused="true"]` on `.command__item` — applies `bg-default`.
+- **Item pressed**: `[data-pressed="true"]` on `.command__item` — applies `bg-default-hover`.
+- **Item disabled**: `[data-disabled="true"]` on `.command__item` — reduced opacity, default cursor.
+- **Clear button hidden**: `[data-empty="true"]` on `.command__input-group` — hides the clear button.
+- **Reduced motion**: `motion-reduce:animate-none` on all animated elements.
+
+## API Reference
+
+### Command
+
+The root provider. Sets up the component context.
+
+| Prop       | Type        | Default | Description                     |
+| ---------- | ----------- | ------- | ------------------------------- |
+| `children` | `ReactNode` | —       | Content of the command palette. |
+
+### Command.Backdrop
+
+The fullscreen overlay. Must wrap `Command.Container`.
+
+| Prop            | Type                                  | Default    | Description                                       |
+| --------------- | ------------------------------------- | ---------- | ------------------------------------------------- |
+| `isDismissable` | `boolean`                             | `true`     | Whether clicking the backdrop closes the palette. |
+| `variant`       | `"opaque" \| "blur" \| "transparent"` | `"opaque"` | Backdrop visual style.                            |
+
+Also supports all RAC [ModalOverlay](https://react-spectrum.adobe.com/react-aria/Modal.html) props.
+
+### Command.Container
+
+Positioning wrapper centering the dialog. Must be placed inside `Command.Backdrop`.
+
+| Prop   | Type                   | Default | Description                 |
+| ------ | ---------------------- | ------- | --------------------------- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"`  | Size of the command dialog. |
+
+Also supports all RAC [Modal](https://react-spectrum.adobe.com/react-aria/Modal.html) props.
+
+### Command.Dialog
+
+The command palette box. Wraps an internal `Autocomplete` for filtering.
+
+| Prop                | Type                                                 | Default                   | Description                                |
+| ------------------- | ---------------------------------------------------- | ------------------------- | ------------------------------------------ |
+| `defaultInputValue` | `string`                                             | —                         | Default search input value (uncontrolled). |
+| `inputValue`        | `string`                                             | —                         | Controlled search input value.             |
+| `onInputChange`     | `(value: string) => void`                            | —                         | Callback when search input changes.        |
+| `filter`            | `(textValue: string, inputValue: string) => boolean` | Case-insensitive contains | Custom filter function.                    |
+
+Also supports all RAC [Dialog](https://react-spectrum.adobe.com/react-aria/Dialog.html) props.
+
+### Command.Header
+
+Content area above the input (e.g., breadcrumbs or navigation tabs). Renders a plain `<div>`.
+
+### Command.InputGroup
+
+The search field container wrapping prefix, input, and suffix elements.
+
+| Prop        | Type      | Default | Description                                          |
+| ----------- | --------- | ------- | ---------------------------------------------------- |
+| `autoFocus` | `boolean` | `true`  | Whether the input is focused when the palette opens. |
+
+Also supports all RAC [SearchField](https://react-spectrum.adobe.com/react-aria/SearchField.html) props.
+
+### Command.InputGroup.Prefix
+
+Leading content inside the input group (e.g., a search icon). Renders a plain `<div>`.
+
+### Command.InputGroup.Input
+
+The text input element for searching commands.
+
+| Prop          | Type     | Default                | Description       |
+| ------------- | -------- | ---------------------- | ----------------- |
+| `placeholder` | `string` | `"Search commands..."` | Placeholder text. |
+
+Also supports all RAC [Input](https://react-spectrum.adobe.com/react-aria/TextField.html) props.
+
+### Command.InputGroup.Suffix
+
+Trailing content inside the input group. Renders a plain `<div>`.
+
+### Command.InputGroup.ClearButton
+
+A close button that clears the search input. Automatically hidden when the input is empty.
+
+Also supports all [HeroUI CloseButton](https://heroui.com/docs/react/components/close-button) props.
+
+### Command.List
+
+The scrollable list of command items. Backed by RAC `Menu`.
+
+| Prop               | Type              | Default | Description                                     |
+| ------------------ | ----------------- | ------- | ----------------------------------------------- |
+| `renderEmptyState` | `() => ReactNode` | —       | Custom empty state content when no items match. |
+
+Also supports all RAC [Menu](https://react-spectrum.adobe.com/react-aria/Menu.html) props.
+
+### Command.Item
+
+An individual command entry. Supports icons, labels, and keyboard shortcuts.
+
+Also supports all RAC [MenuItem](https://react-spectrum.adobe.com/react-aria/Menu.html#menuitem) props.
+
+### Command.Group
+
+Groups related command items under a heading.
+
+| Prop      | Type        | Default | Description                  |
+| --------- | ----------- | ------- | ---------------------------- |
+| `heading` | `ReactNode` | —       | Heading label for the group. |
+
+Also supports all RAC [MenuSection](https://react-spectrum.adobe.com/react-aria/Menu.html#menusection) props.
+
+### Command.Separator
+
+A horizontal divider between groups.
+
+Also supports all RAC [Separator](https://react-spectrum.adobe.com/react-aria/Separator.html) props.
+
+### Command.Footer
+
+Content area below the list (e.g., keyboard shortcut hints). Renders a plain `<div>`.

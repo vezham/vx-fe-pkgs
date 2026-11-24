@@ -1,0 +1,271 @@
+---
+title: 'Chat Message'
+description: 'Composable user and assistant message layouts for AI chat.'
+sourceUrl: https://heroui.pro/docs/react/components/chat-message
+---
+
+import {
+  Callout,
+  ComponentPreview
+} from '../../../../../src/components/docs/heroui-mdx.tsx'
+
+## Usage
+
+Use `ChatMessage` to compose assistant and user turns with avatars, bubbles, media, markdown, actions, and attachments.
+
+<ComponentPreview name="pro-chat-message-default">
+
+```tsx
+'use client'
+
+import { ArrowsRotateLeft, Copy, ThumbsDown, ThumbsUp } from '@gravity-ui/icons'
+
+import { ChatMessage } from '@vezham/react-pro-v3'
+
+export function Default() {
+  return (
+    <div className="mx-auto flex w-full max-w-[714px] flex-col gap-8">
+      <ChatMessage.User>
+        <ChatMessage.Bubble>
+          <ChatMessage.Content>
+            Can you explain how compound components help AI chat UIs stay
+            SDK-agnostic?
+          </ChatMessage.Content>
+        </ChatMessage.Bubble>
+      </ChatMessage.User>
+
+      <ChatMessage.Assistant>
+        <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+        <ChatMessage.Body>
+          <ChatMessage.Content>
+            Compound components let you compose message layout explicitly while
+            keeping state in your app layer.
+          </ChatMessage.Content>
+          <ChatMessage.Actions>
+            <ChatMessage.Action aria-label="Copy" tooltip="Copy">
+              <Copy className="size-4" />
+            </ChatMessage.Action>
+            <ChatMessage.Action
+              aria-label="Good response"
+              tooltip="Good response">
+              <ThumbsUp className="size-4" />
+            </ChatMessage.Action>
+            <ChatMessage.Action
+              aria-label="Bad response"
+              tooltip="Bad response">
+              <ThumbsDown className="size-4" />
+            </ChatMessage.Action>
+            <ChatMessage.Action aria-label="Regenerate" tooltip="Regenerate">
+              <ArrowsRotateLeft className="size-4" />
+            </ChatMessage.Action>
+          </ChatMessage.Actions>
+        </ChatMessage.Body>
+      </ChatMessage.Assistant>
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## With Markdown
+
+Render assistant responses with rich markdown content.
+
+<ComponentPreview name="pro-chat-message-with-markdown">
+
+```tsx
+'use client'
+
+import { ChatLoader, ChatMessage, TextShimmer } from '@vezham/react-pro-v3'
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const ASSISTANT_MARKDOWN = `Here is a concise answer with **markdown** support:
+
+\`\`\`ts
+export type ChatStatus = "ready" | "streaming";
+\`\`\`
+
+The UI stays presentation-only — your SDK owns the message array.`
+
+export function WithMarkdown() {
+  return (
+    <div className="mx-auto flex w-full max-w-[714px] flex-col gap-8">
+      <ChatMessage.User>
+        <ChatMessage.Bubble>
+          <ChatMessage.Content>
+            Show me markdown inside assistant messages.
+          </ChatMessage.Content>
+        </ChatMessage.Bubble>
+      </ChatMessage.User>
+
+      <ChatMessage.Assistant>
+        <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+        <ChatMessage.Body>
+          <ChatMessage.Content>
+            <Markdown>{ASSISTANT_MARKDOWN}</Markdown>
+          </ChatMessage.Content>
+        </ChatMessage.Body>
+      </ChatMessage.Assistant>
+    </div>
+  )
+}
+
+export function Loading() {
+  return (
+    <div className="mx-auto flex w-full max-w-[714px] flex-col gap-8">
+      <ChatMessage.User>
+        <ChatMessage.Bubble>
+          <ChatMessage.Content>
+            What is the weather in San Francisco?
+          </ChatMessage.Content>
+        </ChatMessage.Bubble>
+      </ChatMessage.User>
+
+      <ChatMessage.Assistant>
+        <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+        <ChatMessage.Body>
+          <TextShimmer>Thinking...</TextShimmer>
+          <ChatLoader.Dots label="Thinking..." />
+        </ChatMessage.Body>
+      </ChatMessage.Assistant>
+
+      <ChatLoader.Skeleton label="Loading response" />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Loading
+
+Use the loading demo for pending assistant turns.
+
+<ComponentPreview name="pro-chat-message-loading">
+
+```tsx
+'use client'
+
+import { ChatLoader, ChatMessage, TextShimmer } from '@vezham/react-pro-v3'
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+
+const ASSISTANT_MARKDOWN = `Here is a concise answer with **markdown** support:
+
+\`\`\`ts
+export type ChatStatus = "ready" | "streaming";
+\`\`\`
+
+The UI stays presentation-only — your SDK owns the message array.`
+
+export function WithMarkdown() {
+  return (
+    <div className="mx-auto flex w-full max-w-[714px] flex-col gap-8">
+      <ChatMessage.User>
+        <ChatMessage.Bubble>
+          <ChatMessage.Content>
+            Show me markdown inside assistant messages.
+          </ChatMessage.Content>
+        </ChatMessage.Bubble>
+      </ChatMessage.User>
+
+      <ChatMessage.Assistant>
+        <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+        <ChatMessage.Body>
+          <ChatMessage.Content>
+            <Markdown>{ASSISTANT_MARKDOWN}</Markdown>
+          </ChatMessage.Content>
+        </ChatMessage.Body>
+      </ChatMessage.Assistant>
+    </div>
+  )
+}
+
+export function Loading() {
+  return (
+    <div className="mx-auto flex w-full max-w-[714px] flex-col gap-8">
+      <ChatMessage.User>
+        <ChatMessage.Bubble>
+          <ChatMessage.Content>
+            What is the weather in San Francisco?
+          </ChatMessage.Content>
+        </ChatMessage.Bubble>
+      </ChatMessage.User>
+
+      <ChatMessage.Assistant>
+        <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
+        <ChatMessage.Body>
+          <TextShimmer>Thinking...</TextShimmer>
+          <ChatLoader.Dots label="Thinking..." />
+        </ChatMessage.Body>
+      </ChatMessage.Assistant>
+
+      <ChatLoader.Skeleton label="Loading response" />
+    </div>
+  )
+}
+```
+
+</ComponentPreview>
+
+## Anatomy
+
+```tsx
+import {ChatMessage} from "@vezham/react-pro-v3";
+import {Markdown} from "@vezham/react-pro-v3/markdown";
+
+<ChatMessage.Assistant>
+  <ChatMessage.Avatar alt="Assistant" fallback="AI" show />
+  <ChatMessage.Body>
+    <ChatMessage.Content>
+      <Markdown>{response}</Markdown>
+    </ChatMessage.Content>
+  </ChatMessage.Body>
+</ChatMessage.Assistant>
+
+<ChatMessage.User>
+  <ChatMessage.Bubble>
+    <ChatMessage.Content>Hello</ChatMessage.Content>
+  </ChatMessage.Bubble>
+</ChatMessage.User>
+```
+
+## CSS Classes
+
+- `.chat-message--assistant` - Assistant message row
+- `.chat-message--user` - User message wrapper
+- `.chat-message__avatar` - Avatar slot
+- `.chat-message__body` - Assistant body column
+- `.chat-message__bubble` - User bubble
+- `.chat-message__content` - Message content
+- `.chat-message__actions` - Action row
+
+## API Reference
+
+### ChatMessage.Assistant
+
+Assistant message root. Supports native `div` props.
+
+### ChatMessage.User
+
+User message root. Supports native `div` props.
+
+### ChatMessage.Avatar
+
+Avatar slot for assistant messages. Extends HeroUI `Avatar` props.
+
+### ChatMessage.Body
+
+Assistant content column.
+
+### ChatMessage.Bubble
+
+User message bubble.
+
+### ChatMessage.Content
+
+Message text/content slot.
+
+### ChatMessage.Actions
+
+Container for message actions.

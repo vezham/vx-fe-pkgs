@@ -1,0 +1,53 @@
+// Adapted documented HeroUI Pro example; see ../README.md.
+'use client'
+
+import { useState } from 'react'
+
+import { CellSelect } from '@vezham/react-pro-v3'
+import type { Key } from '@vezham/react-v3'
+import { ListBox } from '@vezham/react-v3'
+
+export function Variants() {
+  const variants = ['default', 'secondary'] as const
+
+  return (
+    <div className="flex w-[252px] flex-col gap-3">
+      {variants.map(variant => {
+        const [theme, setTheme] = useState<Key | null>('default')
+
+        return (
+          <div key={variant} className="flex flex-col gap-1">
+            <span className="text-muted text-xs">{variant}</span>
+            <CellSelect
+              aria-label="Theme"
+              value={theme}
+              variant={variant}
+              onChange={v => setTheme(v as Key | null)}>
+              <CellSelect.Trigger>
+                <CellSelect.Label>Theme</CellSelect.Label>
+                <CellSelect.Value />
+                <CellSelect.Indicator />
+              </CellSelect.Trigger>
+              <CellSelect.Popover>
+                <ListBox>
+                  <ListBox.Item id="default" textValue="Default">
+                    Default
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                  <ListBox.Item id="dark" textValue="Dark">
+                    Dark
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                  <ListBox.Item id="system" textValue="System">
+                    System
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                </ListBox>
+              </CellSelect.Popover>
+            </CellSelect>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

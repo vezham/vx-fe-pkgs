@@ -1,0 +1,321 @@
+---
+title: 'Installation'
+description: 'Install HeroUI Pro for React 19 and Tailwind CSS v4, authenticate with the CLI, and add the package styles to your app.'
+sourceUrl: https://heroui.pro/docs/react/getting-started/installation
+---
+
+import {
+  Callout,
+  Tab,
+  Tabs
+} from '../../../../src/components/docs/heroui-mdx.tsx'
+
+This workspace exposes HeroUI Pro 1.0.0-beta.10 through the `@vezham/react-pro-v3` npm alias. Use this alias in workspace imports; the upstream CLI instructions apply when setting up a separate licensed project.
+
+## Requirements
+
+- [React 19+](https://reactjs.org/)
+- [Tailwind CSS v4](https://tailwindcss.com/docs/installation/framework-guides)
+- [HeroUI OSS](https://heroui.com/docs/react/getting-started/quick-start) (`@vezham/react-v3` + `@heroui/styles`)
+
+<Callout type="info">
+  If you haven't set up HeroUI OSS yet, follow the [HeroUI Quick
+  Start](https://heroui.com/docs/react/getting-started/quick-start) first.
+</Callout>
+
+## Login
+
+Run the HeroUI Pro CLI and log in with your GitHub account:
+
+<Tabs items={["npx", "bunx", "pnpm"]}>
+  <Tab value="npx">
+    ```bash
+    npx heroui-pro@latest login
+    ```
+  </Tab>
+
+<Tab value="bunx">```bash bunx heroui-pro@latest login ```</Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm dlx heroui-pro@latest login
+    ```
+  </Tab>
+</Tabs>
+
+A browser tab will open automatically. Sign in with your GitHub account, authorize the application, and wait for the terminal to confirm:
+
+```
+
+Logged in as @your-username
+
+```
+
+## Install
+
+Once logged in, run:
+
+<Tabs items={["npx", "bunx", "pnpm"]}>
+  <Tab value="npx">
+    ```bash
+    npx heroui-pro@latest install
+    ```
+  </Tab>
+
+<Tab value="bunx">```bash bunx heroui-pro@latest install ```</Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm dlx heroui-pro@latest install
+    ```
+  </Tab>
+</Tabs>
+
+The CLI handles everything automatically:
+
+1. **Adds `@vezham/react-pro-v3`** to your project (if not already present)
+2. **Downloads Pro components** from the CDN using your license
+3. **Detects missing peer dependencies** and installs them with the correct version ranges
+4. **Configures your package manager** — for pnpm and bun, offers to allowlist the postinstall script so future installs work seamlessly
+
+You'll see an interactive prompt to confirm which peer dependencies to install. Press **Enter** to install all of them:
+
+```
+
+◆  Missing peer dependencies detected. Press Enter to install all, or uncheck to skip:
+│  ↑↓ move, space select, enter confirm
+│  ◼ @vezham/react-v3 (>=3.2.7)
+│  ◼ @heroui/styles (>=3.2.7)
+│  ◼ tailwindcss (>=4.0.0)
+│  ...
+
+```
+
+<Callout type="info">
+  A handful of peers are **optional** and only needed by specific components —
+  `maplibre-gl` (Map), `@tiptap/*` (Rich Text Editor), `streamdown` /
+  `react-markdown` / `marked` / `remark-*` (Markdown), `recharts` (charts +
+  KPI), `embla-carousel` / `embla-carousel-react` (Carousel), `shiki` (Code
+  Block, Chat Tool), and `@number-flow/react` (Number Stepper). You can safely
+  skip these if you don't use those components. See [SSR and subpath
+  imports](#ssr-and-subpath-imports) below.
+</Callout>
+
+After installation completes you'll see:
+
+```
+
+└  ✓ HeroUI React Pro installed successfully.
+
+```
+
+<Callout type="info">
+  You can also use the **interactive menu** by running `npx heroui-pro` with no
+  arguments. It provides a guided flow for login, installation, and account
+  management.
+</Callout>
+
+## Import Styles
+
+Add HeroUI Pro styles to your main CSS file (e.g. `globals.css`):
+
+```css title="globals.css"
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@vezham/react-pro-v3/css'; /* [!code highlight] */
+```
+
+<Callout type="warning">
+  Import order matters. Always import `tailwindcss` first, then
+  `@heroui/styles`, then `@vezham/react-pro-v3/css`.
+</Callout>
+
+## Use a Pro Component
+
+```tsx
+import { Command } from '@vezham/react-pro-v3'
+
+function App() {
+  return (
+    <Command>
+      <Command.Backdrop />
+      <Command.Container>
+        <Command.Dialog>
+          <Command.InputGroup>
+            <Command.InputGroup.Input placeholder="Type a command..." />
+          </Command.InputGroup>
+          <Command.List>
+            <Command.Item id="profile">Profile</Command.Item>
+            <Command.Item id="settings">Settings</Command.Item>
+            <Command.Item id="logout">Logout</Command.Item>
+          </Command.List>
+        </Command.Dialog>
+      </Command.Container>
+    </Command>
+  )
+}
+```
+
+## SSR and subpath imports
+
+Most components are re-exported from the package root, so you can import them from the barrel:
+
+```tsx
+import { Command, DataGrid } from '@vezham/react-pro-v3'
+```
+
+Some components rely on heavy, opt-in peer dependencies and are **not** exported from the barrel. Import them from their subpaths instead:
+
+```tsx
+// requires @tiptap/*
+
+// Charts + KPI require recharts
+import { AreaChart } from '@vezham/react-pro-v3/area-chart'
+import { BarChart } from '@vezham/react-pro-v3/bar-chart'
+import { Carousel } from '@vezham/react-pro-v3/carousel'
+// requires shiki
+import { ChatTool } from '@vezham/react-pro-v3/chat-tool'
+// requires embla-carousel(-react)
+import { CodeBlock } from '@vezham/react-pro-v3/code-block'
+import { ComposedChart } from '@vezham/react-pro-v3/composed-chart'
+import { KPI } from '@vezham/react-pro-v3/kpi'
+import { LineChart } from '@vezham/react-pro-v3/line-chart'
+import { Map } from '@vezham/react-pro-v3/map'
+// requires maplibre-gl
+import { Markdown } from '@vezham/react-pro-v3/markdown'
+// requires shiki (via Code Block)
+import { NumberStepper } from '@vezham/react-pro-v3/number-stepper'
+import { PieChart } from '@vezham/react-pro-v3/pie-chart'
+import { RadarChart } from '@vezham/react-pro-v3/radar-chart'
+import { RadialChart } from '@vezham/react-pro-v3/radial-chart'
+// requires @number-flow/react
+import { Resizable } from '@vezham/react-pro-v3/resizable'
+// requires streamdown, react-markdown, marked, remark-*
+import { RichTextEditor } from '@vezham/react-pro-v3/rich-text-editor'
+
+// requires react-resizable-panels
+```
+
+<Callout type="warning">
+  **Why this matters for SSR.** Under server-side rendering (Next.js, TanStack
+  Start, etc.), Node evaluates the entire imported module graph up front. If the
+  barrel re-exported these components, a single `import {Sidebar} from
+  '@vezham/react-pro-v3'` would eagerly try to resolve `maplibre-gl`,
+  `@tiptap/*`, `streamdown`, `recharts`, `embla-carousel`, `shiki`, and
+  `@number-flow/react` — crashing at module load with `Cannot find package
+  '...'` even when you never use those components. Keeping them subpath-only
+  means you only pull in a heavy peer (and need it installed) when you actually
+  import that component.
+</Callout>
+
+<Callout type="info">
+  `react-resizable-panels` (used by `Resizable`) stays a **required** peer
+  because `AppLayout` — a barrel component — depends on it. `Resizable` is still
+  moved to a subpath for consistency, but you don't need to install anything
+  extra beyond the standard peer set to use it.
+</Callout>
+
+Subpath imports also tree-shake cleanly, so they're a good default even outside SSR.
+
+## CLI Reference
+
+| Command                        | Description                                            |
+| ------------------------------ | ------------------------------------------------------ |
+| `heroui-pro login`             | Log in with GitHub                                     |
+| `heroui-pro install`           | Install Pro packages, peer deps, and configure your PM |
+| `heroui-pro install --yes`     | Non-interactive install (auto-accept all prompts)      |
+| `heroui-pro install --dry-run` | Preview what would be installed without executing      |
+| `heroui-pro status`            | Show login and installed package info                  |
+| `heroui-pro logout`            | Sign out                                               |
+
+## CI/CD
+
+For automated environments (GitHub Actions, Vercel, Netlify, etc.), use a **CI/CD token** instead of interactive login. Get your token from the [dashboard](https://heroui.pro/dashboard).
+
+Set the `HEROUI_AUTH_TOKEN` environment variable in your CI pipeline:
+
+<Tabs items={["GitHub Actions", "Vercel", "Netlify", "General"]}>
+  <Tab value="GitHub Actions">
+    Add `HEROUI_AUTH_TOKEN` as a [repository secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions), then reference it in your workflow:
+
+    ```yaml title=".github/workflows/deploy.yml"
+    env:
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+    ```
+
+  </Tab>
+
+<Tab value="Vercel">
+  Add `HEROUI_AUTH_TOKEN` in your project's [Environment
+  Variables](https://vercel.com/docs/environment-variables) settings.
+</Tab>
+
+<Tab value="Netlify">
+  Add `HEROUI_AUTH_TOKEN` in **Site settings → Environment variables**.
+</Tab>
+
+  <Tab value="General">
+    ```bash
+    export HEROUI_AUTH_TOKEN=your-cicd-token
+    npm install
+    ```
+  </Tab>
+</Tabs>
+
+When `HEROUI_AUTH_TOKEN` is set, the postinstall script automatically authenticates and downloads Pro artifacts — no interactive login needed. This works with all package managers.
+
+<Callout type="warning">
+  Use your **CI/CD token** for pipelines, not your personal token. CI/CD tokens
+  are scoped to your license and can be rotated independently from the
+  [dashboard](https://heroui.pro/dashboard).
+</Callout>
+
+<Callout type="info">
+  Each install that cannot reuse a cached package counts against the daily CDN
+  download limit. Cache the package manager store and `node_modules` so
+  unchanged builds do not download HeroUI Pro again. See [CI
+  caching](https://heroui.pro/docs/react/getting-started/ci-caching).
+</Callout>
+
+## Verify Installation
+
+After installation, verify everything is working:
+
+1. Check that your app starts without errors
+2. Try importing and using a Pro component like `Command` or `Sidebar`
+3. Run the CLI to check your status:
+
+```bash
+npx heroui-pro status
+
+```
+
+## Troubleshooting
+
+**Installation fails with permission errors**
+
+Try running the CLI with elevated permissions or check that your package manager has write access to `node_modules`.
+
+**pnpm or bun: postinstall didn't run**
+
+The CLI handles this automatically — `heroui-pro install` downloads artifacts directly and offers to configure your `package.json` so future installs work natively. If you prefer to configure it manually:
+
+- **bun**: add `"trustedDependencies": ["heroui-pro", "@vezham/react-pro-v3"]` to `package.json`
+- **pnpm**: add `"pnpm": { "onlyBuiltDependencies": ["heroui-pro", "@vezham/react-pro-v3"] }` to `package.json`
+
+**Yarn Berry (PnP) not supported**
+
+HeroUI Pro requires `node_modules`. If using Yarn Berry, add `nodeLinker: node-modules` to your `.yarnrc.yml`.
+
+**Authentication expired**
+
+Run `npx heroui-pro login` to re-authenticate. Sessions are valid for 180 days.
+
+Still having issues? Contact [support@heroui.pro](mailto:support@heroui.pro) or reach out via live chat at [heroui.pro/dashboard](https://heroui.pro/dashboard).
+
+## What's Next?
+
+- [Browse Components](https://heroui.pro/docs/react/components/area-chart) — See all available Pro components
+- [Design Systems](https://heroui.pro/dashboard/pro/ds) — Create and share your own themes
+- [Colors](https://heroui.pro/docs/react/getting-started/colors) — Understand the color system
+- [Pro UI for Agents](https://heroui.pro/docs/react/getting-started/mcp-server) — Set up AI tools for HeroUI Pro
