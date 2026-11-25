@@ -20,7 +20,7 @@ export const VersionSelector = ({
 
   return (
     <>
-      {/* react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- Each docs app owns its generated package version and navigation style, so this small shared-looking menu stays local to each app. */}
+      {/* vx-bot/NOTE: react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- Each docs app owns its generated package version and navigation style, so this small shared-looking menu stays local to each app. */}
       <Popover isOpen={open} onOpenChange={setOpen}>
         <Popover.Trigger className={styles.trigger()}>
           <span className={styles.label()}>v{vxCore.version}</span>

@@ -1,4 +1,10 @@
-import { type ComponentProps, type ReactNode, useState } from 'react'
+import {
+  type ComponentProps,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useState
+} from 'react'
 
 import {
   type OrganizationAuthClient,
@@ -83,6 +89,323 @@ const isOrganizationLocalizationKey = (
   return Object.hasOwn(localization, key)
 }
 
+type OrganizationInvitationsTable = ReturnType<
+  typeof useOrganizationTable<Invitation, null>
+>
+type OrganizationInvitationsState = ReturnType<typeof useOrganizationTableState>
+
+type OrganizationInvitationsViewProps = {
+  canInvite: { data?: { success?: boolean } | null; isPending: boolean }
+  cancelInvitations: ReturnType<typeof useCancelInvitation>
+  cancelSelectedInvitations: () => Promise<void>
+  className?: string
+  columnIds: string[]
+  getStatusLabel: (status: string) => string
+  globalFilter: string
+  headerCells: Record<string, ReactNode>
+  inviteOpen: boolean
+  isPending: boolean
+  localization: ReturnType<typeof useAuth>['localization']
+  onInviteOpenChange: Dispatch<SetStateAction<boolean>>
+  organizationLocalization: OrganizationLocalization
+  props: ComponentProps<'div'>
+  roleCounts: Record<string, number>
+  roleFilter: string
+  roles: Record<string, string>
+  selectedCount: number
+  showSelection: boolean
+  statusCounts: Map<unknown, number>
+  statusFilter: string
+  table: OrganizationInvitationsTable
+  tableState: OrganizationInvitationsState
+}
+
+const renderOrganizationInvitations = ({
+  canInvite,
+  cancelInvitations,
+  cancelSelectedInvitations,
+  className,
+  columnIds,
+  getStatusLabel,
+  globalFilter,
+  headerCells,
+  inviteOpen,
+  isPending,
+  localization,
+  onInviteOpenChange,
+  organizationLocalization,
+  props,
+  roleCounts,
+  roleFilter,
+  roles,
+  selectedCount,
+  showSelection,
+  statusCounts,
+  statusFilter,
+  table,
+  tableState
+}: OrganizationInvitationsViewProps) => (
+  <div className={cn('flex flex-col gap-3', className)} {...props}>
+    <h3 className="truncate text-sm font-semibold">
+      {organizationLocalization.invitations}
+    </h3>
+
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <SearchField
+          className="min-w-0"
+          aria-label={organizationLocalization.search}
+          value={globalFilter}
+          onChange={table.setGlobalFilter}
+          isDisabled={isPending}>
+          <SearchField.Group>
+            <SearchField.SearchIcon />
+
+            <SearchField.Input
+              placeholder={organizationLocalization.search}
+              className="sm:w-[200px]"
+            />
+
+            <SearchField.ClearButton />
+          </SearchField.Group>
+        </SearchField>
+
+        <Dropdown>
+          <Button size="sm" variant="secondary" isDisabled={isPending}>
+            <Funnel size={16} />
+
+            {organizationLocalization.role}
+          </Button>
+
+          <Dropdown.Popover>
+            <Dropdown.Menu
+              selectionMode="single"
+              selectedKeys={new Set([roleFilter])}
+              onSelectionChange={keys => {
+                const [selectedKey] = keys
+                const key =
+                  selectedKey === undefined ? undefined : String(selectedKey)
+                table
+                  .getColumn('role')
+                  ?.setFilterValue(!key || key === 'all' ? undefined : key)
+              }}>
+              <Dropdown.Item id="all" textValue={organizationLocalization.all}>
+                <Label>{organizationLocalization.all}</Label>
+
+                <Dropdown.ItemIndicator />
+              </Dropdown.Item>
+
+              {Object.entries(roles).map(([key, label]) => (
+                <Dropdown.Item key={key} id={key} textValue={label}>
+                  <Label>
+                    {label} ({roleCounts[key] ?? 0})
+                  </Label>
+
+                  <Dropdown.ItemIndicator />
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown.Popover>
+        </Dropdown>
+
+        <Dropdown>
+          <Button size="sm" variant="secondary" isDisabled={isPending}>
+            <Funnel size={16} />
+
+            {organizationLocalization.status}
+          </Button>
+
+          <Dropdown.Popover>
+            <Dropdown.Menu
+              selectionMode="single"
+              selectedKeys={new Set([statusFilter])}
+              onSelectionChange={keys => {
+                const [selectedKey] = keys
+                const key =
+                  selectedKey === undefined ? undefined : String(selectedKey)
+                table
+                  .getColumn('status')
+                  ?.setFilterValue(!key || key === 'all' ? undefined : key)
+              }}>
+              <Dropdown.Item id="all" textValue={organizationLocalization.all}>
+                <Label>{organizationLocalization.all}</Label>
+
+                <Dropdown.ItemIndicator />
+              </Dropdown.Item>
+
+              {['pending', 'accepted', 'rejected', 'canceled'].map(status => (
+                <Dropdown.Item
+                  key={status}
+                  id={status}
+                  textValue={getStatusLabel(status)}>
+                  <Label>
+                    {getStatusLabel(status)} ({statusCounts.get(status) ?? 0})
+                  </Label>
+
+                  <Dropdown.ItemIndicator />
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown.Popover>
+        </Dropdown>
+
+        <div className="ms-auto">
+          <OrganizationTableViewOptions
+            columns={[
+              {
+                id: 'createdAt',
+                label: organizationLocalization.invitedAt,
+                visible: table.getColumn('createdAt')?.getIsVisible() ?? true,
+                onVisibleChange: visible =>
+                  table.getColumn('createdAt')?.toggleVisibility(visible)
+              },
+              {
+                id: 'role',
+                label: organizationLocalization.role,
+                visible: table.getColumn('role')?.getIsVisible() ?? true,
+                onVisibleChange: visible =>
+                  table.getColumn('role')?.toggleVisibility(visible)
+              },
+              {
+                id: 'status',
+                label: organizationLocalization.status,
+                visible: table.getColumn('status')?.getIsVisible() ?? true,
+                onVisibleChange: visible =>
+                  table.getColumn('status')?.toggleVisibility(visible)
+              }
+            ]}
+            disabled={isPending}
+            localization={organizationLocalization}
+          />
+        </div>
+      </div>
+
+      {(roleFilter !== 'all' || statusFilter !== 'all') && (
+        <div className="flex flex-wrap gap-2">
+          {roleFilter !== 'all' && (
+            <Chip size="sm" variant="secondary" className="w-fit">
+              <Chip.Label>
+                {organizationLocalization.role}:{' '}
+                <span className="capitalize">
+                  {roles?.[roleFilter] ?? roleFilter}
+                </span>
+              </Chip.Label>
+
+              <button
+                type="button"
+                aria-label={organizationLocalization.clear}
+                className="text-muted hover:text-foreground inline-flex cursor-pointer items-center"
+                onClick={() =>
+                  table.getColumn('role')?.setFilterValue(undefined)
+                }>
+                <Xmark size={16} className="size-3" />
+              </button>
+            </Chip>
+          )}
+
+          {statusFilter !== 'all' && (
+            <Chip size="sm" variant="secondary" className="w-fit">
+              <Chip.Label>
+                {organizationLocalization.status}:{' '}
+                {getStatusLabel(statusFilter)}
+              </Chip.Label>
+
+              <button
+                type="button"
+                aria-label={organizationLocalization.clear}
+                className="text-muted hover:text-foreground inline-flex cursor-pointer items-center"
+                onClick={() =>
+                  table.getColumn('status')?.setFilterValue(undefined)
+                }>
+                <Xmark size={16} className="size-3" />
+              </button>
+            </Chip>
+          )}
+        </div>
+      )}
+
+      <OrganizationTableBulkAction
+        cancelLabel={localization.settings.cancel}
+        confirmLabel={organizationLocalization.cancelSelectedInvitations}
+        description={
+          organizationLocalization.cancelSelectedInvitationsDescription
+        }
+        onConfirm={cancelSelectedInvitations}
+        pending={cancelInvitations.isPending}
+        selectedCount={selectedCount}
+        title={organizationLocalization.cancelSelectedInvitations}
+        localization={organizationLocalization}
+      />
+
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content
+            aria-label={organizationLocalization.invitations}
+            onSortChange={descriptor =>
+              table.setSorting(
+                getTanStackSorting(descriptor, tableState.sorting)
+              )
+            }
+            sortDescriptor={getHeroUISortDescriptor(tableState.sorting)}>
+            <Table.Header>{columnIds.map(id => headerCells[id])}</Table.Header>
+
+            <Table.Body
+              renderEmptyState={() => (
+                <OrganizationInvitationsEmpty
+                  isInvitePending={canInvite.isPending}
+                  onInvitePress={
+                    canInvite.data?.success
+                      ? () => onInviteOpenChange(true)
+                      : undefined
+                  }
+                />
+              )}>
+              {isPending ? (
+                <OrganizationTableRowSkeleton columnIds={columnIds} />
+              ) : (
+                table
+                  .getRowModel()
+                  .rows.map(row => (
+                    <OrganizationInvitationTableRow
+                      columnIds={columnIds}
+                      key={row.original.id}
+                      invitation={row.original}
+                      selectableRow={showSelection ? row : undefined}
+                    />
+                  ))
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+
+      <OrganizationTablePagination
+        canNextPage={table.getCanNextPage()}
+        canPreviousPage={table.getCanPreviousPage()}
+        disabled={isPending}
+        localization={organizationLocalization}
+        onFirstPage={() => table.firstPage()}
+        onLastPage={() => table.lastPage()}
+        onNextPage={() => table.nextPage()}
+        onPageSizeChange={size => table.setPageSize(size)}
+        onPreviousPage={() => table.previousPage()}
+        pageCount={table.getPageCount()}
+        pageIndex={tableState.pagination.pageIndex}
+        pageSize={tableState.pagination.pageSize}
+        rowCount={table.getRowCount()}
+        visibleRowCount={table.getRowModel().rows.length}
+      />
+    </div>
+
+    {canInvite.data?.success && (
+      <InviteMemberDialog
+        isOpen={inviteOpen}
+        onOpenChange={onInviteOpenChange}
+      />
+    )}
+  </div>
+)
+
 export const OrganizationInvitations = ({
   className,
   ...props
@@ -106,9 +429,9 @@ export const OrganizationInvitations = ({
     ORGANIZATION_TABLE_PAGE_SIZE,
     INVITATION_COLUMN_IDS
   )
-  const { globalFilter, pagination } = tableState
+  const { globalFilter } = tableState
 
-  const table = useOrganizationTable(
+  const table = useOrganizationTable<Invitation, null>(
     {
       atoms: tableState.atoms,
       columns: invitationColumns,
@@ -233,275 +556,42 @@ export const OrganizationInvitations = ({
     )
   }
 
-  return (
-    <div className={cn('flex flex-col gap-3', className)} {...props}>
-      <h3 className="truncate text-sm font-semibold">
-        {organizationLocalization.invitations}
-      </h3>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <SearchField
-            className="min-w-0"
-            aria-label={organizationLocalization.search}
-            value={globalFilter}
-            onChange={table.setGlobalFilter}
-            isDisabled={isPending}>
-            <SearchField.Group>
-              <SearchField.SearchIcon />
-
-              <SearchField.Input
-                placeholder={organizationLocalization.search}
-                className="sm:w-[200px]"
-              />
-
-              <SearchField.ClearButton />
-            </SearchField.Group>
-          </SearchField>
-
-          <Dropdown>
-            <Button size="sm" variant="secondary" isDisabled={isPending}>
-              <Funnel size={16} />
-
-              {organizationLocalization.role}
-            </Button>
-
-            <Dropdown.Popover>
-              <Dropdown.Menu
-                selectionMode="single"
-                selectedKeys={new Set([roleFilter])}
-                onSelectionChange={keys => {
-                  const [selectedKey] = keys
-                  const key =
-                    selectedKey === undefined ? undefined : String(selectedKey)
-                  table
-                    .getColumn('role')
-                    ?.setFilterValue(!key || key === 'all' ? undefined : key)
-                }}>
-                <Dropdown.Item
-                  id="all"
-                  textValue={organizationLocalization.all}>
-                  <Label>{organizationLocalization.all}</Label>
-
-                  <Dropdown.ItemIndicator />
-                </Dropdown.Item>
-
-                {Object.entries(roles).map(([key, label]) => (
-                  <Dropdown.Item key={key} id={key} textValue={label}>
-                    <Label>
-                      {label} (
-                      {roleFacetRows?.filter(row =>
-                        hasMemberRole(row.original.role, key)
-                      ).length ?? 0}
-                      )
-                    </Label>
-
-                    <Dropdown.ItemIndicator />
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown.Popover>
-          </Dropdown>
-
-          <Dropdown>
-            <Button size="sm" variant="secondary" isDisabled={isPending}>
-              <Funnel size={16} />
-
-              {organizationLocalization.status}
-            </Button>
-
-            <Dropdown.Popover>
-              <Dropdown.Menu
-                selectionMode="single"
-                selectedKeys={new Set([statusFilter])}
-                onSelectionChange={keys => {
-                  const [selectedKey] = keys
-                  const key =
-                    selectedKey === undefined ? undefined : String(selectedKey)
-                  table
-                    .getColumn('status')
-                    ?.setFilterValue(!key || key === 'all' ? undefined : key)
-                }}>
-                <Dropdown.Item
-                  id="all"
-                  textValue={organizationLocalization.all}>
-                  <Label>{organizationLocalization.all}</Label>
-
-                  <Dropdown.ItemIndicator />
-                </Dropdown.Item>
-
-                {['pending', 'accepted', 'rejected', 'canceled'].map(status => (
-                  <Dropdown.Item
-                    key={status}
-                    id={status}
-                    textValue={getStatusLabel(status)}>
-                    <Label>
-                      {getStatusLabel(status)} ({statusCounts?.get(status) ?? 0}
-                      )
-                    </Label>
-
-                    <Dropdown.ItemIndicator />
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown.Popover>
-          </Dropdown>
-
-          <div className="ms-auto">
-            <OrganizationTableViewOptions
-              columns={[
-                {
-                  id: 'createdAt',
-                  label: organizationLocalization.invitedAt,
-                  visible: table.getColumn('createdAt')?.getIsVisible() ?? true,
-                  onVisibleChange: visible =>
-                    table.getColumn('createdAt')?.toggleVisibility(visible)
-                },
-                {
-                  id: 'role',
-                  label: organizationLocalization.role,
-                  visible: table.getColumn('role')?.getIsVisible() ?? true,
-                  onVisibleChange: visible =>
-                    table.getColumn('role')?.toggleVisibility(visible)
-                },
-                {
-                  id: 'status',
-                  label: organizationLocalization.status,
-                  visible: table.getColumn('status')?.getIsVisible() ?? true,
-                  onVisibleChange: visible =>
-                    table.getColumn('status')?.toggleVisibility(visible)
-                }
-              ]}
-              disabled={isPending}
-              localization={organizationLocalization}
-            />
-          </div>
-        </div>
-
-        {(roleFilter !== 'all' || statusFilter !== 'all') && (
-          <div className="flex flex-wrap gap-2">
-            {roleFilter !== 'all' && (
-              <Chip size="sm" variant="secondary" className="w-fit">
-                <Chip.Label>
-                  {organizationLocalization.role}:{' '}
-                  <span className="capitalize">
-                    {roles?.[roleFilter] ?? roleFilter}
-                  </span>
-                </Chip.Label>
-
-                <button
-                  type="button"
-                  aria-label={organizationLocalization.clear}
-                  className="text-muted hover:text-foreground inline-flex cursor-pointer items-center"
-                  onClick={() =>
-                    table.getColumn('role')?.setFilterValue(undefined)
-                  }>
-                  <Xmark size={16} className="size-3" />
-                </button>
-              </Chip>
-            )}
-
-            {statusFilter !== 'all' && (
-              <Chip size="sm" variant="secondary" className="w-fit">
-                <Chip.Label>
-                  {organizationLocalization.status}:{' '}
-                  {getStatusLabel(statusFilter)}
-                </Chip.Label>
-
-                <button
-                  type="button"
-                  aria-label={organizationLocalization.clear}
-                  className="text-muted hover:text-foreground inline-flex cursor-pointer items-center"
-                  onClick={() =>
-                    table.getColumn('status')?.setFilterValue(undefined)
-                  }>
-                  <Xmark size={16} className="size-3" />
-                </button>
-              </Chip>
-            )}
-          </div>
-        )}
-
-        <OrganizationTableBulkAction
-          cancelLabel={localization.settings.cancel}
-          confirmLabel={organizationLocalization.cancelSelectedInvitations}
-          description={
-            organizationLocalization.cancelSelectedInvitationsDescription
-          }
-          onConfirm={cancelSelectedInvitations}
-          pending={cancelInvitations.isPending}
-          selectedCount={selectedInvitations.length}
-          title={organizationLocalization.cancelSelectedInvitations}
-          localization={organizationLocalization}
-        />
-
-        <Table>
-          <Table.ScrollContainer>
-            <Table.Content
-              aria-label={organizationLocalization.invitations}
-              onSortChange={descriptor =>
-                table.setSorting(
-                  getTanStackSorting(descriptor, tableState.sorting)
-                )
-              }
-              sortDescriptor={getHeroUISortDescriptor(tableState.sorting)}>
-              <Table.Header>
-                {columnIds.map(id => headerCells[id])}
-              </Table.Header>
-
-              <Table.Body
-                renderEmptyState={() => (
-                  <OrganizationInvitationsEmpty
-                    isInvitePending={canInvite.isPending}
-                    onInvitePress={
-                      canInvite.data?.success
-                        ? () => setInviteOpen(true)
-                        : undefined
-                    }
-                  />
-                )}>
-                {isPending ? (
-                  <OrganizationTableRowSkeleton columnIds={columnIds} />
-                ) : (
-                  table
-                    .getRowModel()
-                    .rows.map(row => (
-                      <OrganizationInvitationTableRow
-                        columnIds={columnIds}
-                        key={row.original.id}
-                        invitation={row.original}
-                        selectableRow={showSelection ? row : undefined}
-                      />
-                    ))
-                )}
-              </Table.Body>
-            </Table.Content>
-          </Table.ScrollContainer>
-        </Table>
-
-        <OrganizationTablePagination
-          canNextPage={table.getCanNextPage()}
-          canPreviousPage={table.getCanPreviousPage()}
-          disabled={isPending}
-          localization={organizationLocalization}
-          onFirstPage={() => table.firstPage()}
-          onLastPage={() => table.lastPage()}
-          onNextPage={() => table.nextPage()}
-          onPageSizeChange={size => table.setPageSize(size)}
-          onPreviousPage={() => table.previousPage()}
-          pageCount={table.getPageCount()}
-          pageIndex={pagination.pageIndex}
-          pageSize={pagination.pageSize}
-          rowCount={table.getRowCount()}
-          visibleRowCount={table.getRowModel().rows.length}
-        />
-      </div>
-
-      {canInvite.data?.success && (
-        <InviteMemberDialog isOpen={inviteOpen} onOpenChange={setInviteOpen} />
-      )}
-    </div>
+  const roleCounts = Object.fromEntries(
+    Object.keys(roles).map(key => [
+      key,
+      roleFacetRows?.filter(row => hasMemberRole(row.original.role, key))
+        .length ?? 0
+    ])
   )
+
+  return renderOrganizationInvitations({
+    canInvite: {
+      data: canInvite.data,
+      isPending: canInvite.isPending
+    },
+    cancelInvitations,
+    cancelSelectedInvitations,
+    className,
+    columnIds,
+    getStatusLabel,
+    globalFilter,
+    headerCells,
+    inviteOpen,
+    isPending,
+    localization,
+    onInviteOpenChange: setInviteOpen,
+    organizationLocalization,
+    props,
+    roleCounts,
+    roleFilter,
+    roles,
+    selectedCount: selectedInvitations.length,
+    showSelection,
+    statusCounts: statusCounts ?? new Map(),
+    statusFilter,
+    table,
+    tableState
+  })
 }
 
 /** Reads a primitive filter or payload value as a string, or returns the fallback. */

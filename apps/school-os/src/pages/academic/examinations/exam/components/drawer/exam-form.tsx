@@ -12,6 +12,18 @@ import { classNames } from '@pages/academic/examinations/exam/variants'
 import { AcademicInputField } from '@pages/academic/shared/input-field'
 import { AcademicTimeSelects } from '@pages/academic/shared/time-fields'
 
+const ExamCalendarHeader = () => (
+  <Calendar.Header aria-label="Exam date navigation">
+    <Calendar.YearPickerTrigger>
+      <Calendar.YearPickerTriggerHeading />
+      <Calendar.YearPickerTriggerIndicator />
+    </Calendar.YearPickerTrigger>
+
+    <Calendar.NavButton slot="previous" />
+    <Calendar.NavButton slot="next" />
+  </Calendar.Header>
+)
+
 export const ExamForm = ({
   form,
   formErrors,
@@ -48,18 +60,9 @@ export const ExamForm = ({
             </DateField.Suffix>
           </DateField.Group>
 
-          {/* react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- This calendar belongs to the app's date field; the similar package field has independent validation and form behavior. */}
           <DatePicker.Popover>
             <Calendar aria-label="Event date">
-              <Calendar.Header>
-                <Calendar.YearPickerTrigger>
-                  <Calendar.YearPickerTriggerHeading />
-                  <Calendar.YearPickerTriggerIndicator />
-                </Calendar.YearPickerTrigger>
-
-                <Calendar.NavButton slot="previous" />
-                <Calendar.NavButton slot="next" />
-              </Calendar.Header>
+              <ExamCalendarHeader />
 
               <Calendar.Grid>
                 <Calendar.GridHeader>

@@ -96,6 +96,120 @@ export interface OrganizationInvitationEmailProps {
   localization?: Partial<OrganizationInvitationEmailLocalization>
 }
 
+const InvitationEmailLogo = ({
+  logoURL,
+  alt,
+  className,
+  size
+}: {
+  logoURL?: string | { light: string; dark: string }
+  alt: string
+  className?: string
+  size: number
+}) => {
+  if (!logoURL) return null
+  if (typeof logoURL === 'string') {
+    return (
+      <Img
+        src={logoURL}
+        width={size}
+        height={size}
+        alt={alt}
+        className={cn('mx-auto mb-8', className)}
+      />
+    )
+  }
+  return (
+    <>
+      <Img
+        src={logoURL.light}
+        width={size}
+        height={size}
+        alt={alt}
+        className={cn('logo-light mx-auto mb-8', className)}
+      />
+      <Img
+        src={logoURL.dark}
+        width={size}
+        height={size}
+        alt={alt}
+        className={cn('logo-dark mx-auto mb-8 hidden', className)}
+      />
+    </>
+  )
+}
+
+const OrganizationInvitationMessage = ({
+  appName,
+  inviterEmail,
+  inviterName,
+  localization,
+  organizationName,
+  role
+}: {
+  appName?: string
+  inviterEmail?: string
+  inviterName?: string
+  localization: OrganizationInvitationEmailLocalization
+  organizationName?: string
+  role?: string
+}) => {
+  let text = localization.INVITED_TO_JOIN_ORGANIZATION.replace(
+    '{appName}',
+    appName || ''
+  )
+    .replace('{organizationName}', organizationName || '')
+    .replace('{role}', role || '')
+
+  // vx-bot/NOTE: If we have no inviter info, drop the parenthetical and name placeholders cleanly.
+  if (!inviterName && !inviterEmail) {
+    text = text
+      .replace('{inviterName} ({inviterEmail})', 'Someone')
+      .replace('{inviterName}', 'Someone')
+      .replace('({inviterEmail})', '')
+  }
+
+  const renderInviterEmail = (segment: string) => {
+    const [beforeEmail, afterEmail] = segment.split('{inviterEmail}')
+    if (!inviterEmail) {
+      return segment
+        .replace('({inviterEmail})', '')
+        .replace('{inviterEmail}', '')
+        .replaceAll(/\s{2}/g, ' ')
+        .replace(' .', '.')
+    }
+    return (
+      <>
+        {beforeEmail}
+        <Link
+          href={`mailto:${inviterEmail}`}
+          className="text-primary font-medium">
+          {inviterEmail}
+        </Link>
+        {afterEmail}
+      </>
+    )
+  }
+
+  if (!inviterName) {
+    return renderInviterEmail(
+      text
+        .replace('{inviterName}', '')
+        .replaceAll(/\s{2}/g, ' ')
+        .replace(' .', '.')
+    )
+  }
+
+  const [beforeInviterName, afterInviterName] = text.split('{inviterName}')
+  return (
+    <>
+      {beforeInviterName}
+      <span className="font-medium">{inviterName}</span>
+      {renderInviterEmail(afterInviterName ?? '')}
+    </>
+  )
+}
+
 /**
  * Email template component that invites a user to join an organization.
  *
@@ -176,39 +290,12 @@ export const OrganizationInvitationEmail = ({
                 'bg-card text-card-foreground border-border rounded-none border p-8',
                 classNames?.card
               )}>
-              {logoURL &&
-                (typeof logoURL === 'string' ? (
-                  <Img
-                    src={logoURL}
-                    width={48}
-                    height={48}
-                    alt={appName || localization.LOGO}
-                    className={cn('mx-auto mb-8', classNames?.logo)}
-                  />
-                ) : (
-                  <>
-                    <Img
-                      src={logoURL.light}
-                      width={48}
-                      height={48}
-                      alt={appName || localization.LOGO}
-                      className={cn(
-                        'logo-light mx-auto mb-8',
-                        classNames?.logo
-                      )}
-                    />
-                    <Img
-                      src={logoURL.dark}
-                      width={48}
-                      height={48}
-                      alt={appName || localization.LOGO}
-                      className={cn(
-                        'logo-dark mx-auto mb-8 hidden',
-                        classNames?.logo
-                      )}
-                    />
-                  </>
-                ))}
+              <InvitationEmailLogo
+                logoURL={logoURL}
+                alt={appName || localization.LOGO}
+                className={classNames?.logo}
+                size={48}
+              />
 
               <Heading
                 className={cn(
@@ -223,103 +310,23 @@ export const OrganizationInvitationEmail = ({
                   : localization.YOU_RE_INVITED}
               </Heading>
 
-              {organizationLogoURL &&
-                (typeof organizationLogoURL === 'string' ? (
-                  <Img
-                    src={organizationLogoURL}
-                    width={56}
-                    height={56}
-                    alt={organizationName || localization.ORGANIZATION_LOGO}
-                    className={cn('mb-5 rounded-md', classNames?.logo)}
-                  />
-                ) : (
-                  <>
-                    <Img
-                      src={organizationLogoURL.light}
-                      width={56}
-                      height={56}
-                      alt={organizationName || localization.ORGANIZATION_LOGO}
-                      className={cn(
-                        'logo-light mb-5 rounded-md',
-                        classNames?.logo
-                      )}
-                    />
-                    <Img
-                      src={organizationLogoURL.dark}
-                      width={56}
-                      height={56}
-                      alt={organizationName || localization.ORGANIZATION_LOGO}
-                      className={cn(
-                        'logo-dark mb-5 hidden rounded-md',
-                        classNames?.logo
-                      )}
-                    />
-                  </>
-                ))}
+              <InvitationEmailLogo
+                logoURL={organizationLogoURL}
+                alt={organizationName || localization.ORGANIZATION_LOGO}
+                className={cn('mb-5 rounded-md', classNames?.logo)}
+                size={56}
+              />
 
               <Text
                 className={cn('m-0 text-sm font-normal', classNames?.content)}>
-                {(() => {
-                  let text = localization.INVITED_TO_JOIN_ORGANIZATION.replace(
-                    '{appName}',
-                    appName || ''
-                  )
-                    .replace('{organizationName}', organizationName || '')
-                    .replace('{role}', role || '')
-
-                  // vx-bot/NOTE: If we have no inviter info, drop the parenthetical and name placeholders cleanly.
-                  if (!inviterName && !inviterEmail) {
-                    text = text
-                      .replace('{inviterName} ({inviterEmail})', 'Someone')
-                      .replace('{inviterName}', 'Someone')
-                      .replace('({inviterEmail})', '')
-                  }
-
-                  const [beforeInviterName, afterInviterName] =
-                    text.split('{inviterName}')
-
-                  const renderInviterEmail = (segment: string) => {
-                    const [beforeInviterEmail, afterInviterEmail] =
-                      segment.split('{inviterEmail}')
-
-                    if (!inviterEmail) {
-                      return segment
-                        .replace('({inviterEmail})', '')
-                        .replace('{inviterEmail}', '')
-                        .replaceAll(/\s{2}/g, ' ')
-                        .replace(' .', '.')
-                    }
-
-                    return (
-                      <>
-                        {beforeInviterEmail}
-                        <Link
-                          href={`mailto:${inviterEmail}`}
-                          className="text-primary font-medium">
-                          {inviterEmail}
-                        </Link>
-                        {afterInviterEmail}
-                      </>
-                    )
-                  }
-
-                  if (!inviterName) {
-                    return renderInviterEmail(
-                      text
-                        .replace('{inviterName}', '')
-                        .replaceAll(/\s{2}/g, ' ')
-                        .replace(' .', '.')
-                    )
-                  }
-
-                  return (
-                    <>
-                      {beforeInviterName}
-                      <span className="font-medium">{inviterName}</span>
-                      {renderInviterEmail(afterInviterName ?? '')}
-                    </>
-                  )
-                })()}
+                <OrganizationInvitationMessage
+                  appName={appName}
+                  inviterEmail={inviterEmail}
+                  inviterName={inviterName}
+                  localization={localization}
+                  organizationName={organizationName}
+                  role={role}
+                />
               </Text>
 
               <Section className="my-6">

@@ -161,6 +161,46 @@ export const AdditionalField = ({
   const inputVariant = variant === 'transparent' ? 'primary' : 'secondary'
   const errorMessage = getFormFieldErrorMessage(errors ?? [])
 
+  return renderAdditionalField({
+    name,
+    field,
+    value,
+    onBlur,
+    onChange,
+    isInvalid,
+    errors,
+    isPending,
+    variant,
+    inputType,
+    inputVariant,
+    errorMessage,
+    timeLabel: localization.settings.time
+  })
+}
+
+type RenderAdditionalFieldProps = AdditionalFieldProps & {
+  inputType: ReturnType<typeof resolveInputType>
+  inputVariant: 'primary' | 'secondary'
+  errorMessage: string | undefined
+  timeLabel: string
+}
+
+const renderAdditionalField = ({
+  name,
+  field,
+  value,
+  onBlur,
+  onChange,
+  isInvalid,
+  errors,
+  isPending,
+  optionalLabel,
+  variant,
+  inputType,
+  inputVariant,
+  errorMessage,
+  timeLabel
+}: RenderAdditionalFieldProps) => {
   if (field.render) {
     const FieldRenderer = field.render as ComponentType<AdditionalFieldProps>
     return (
@@ -495,10 +535,10 @@ export const AdditionalField = ({
 
               {isDateTime && (
                 <div className="flex items-center justify-between">
-                  <Label>{localization.settings.time}</Label>
+                  <Label>{timeLabel}</Label>
 
                   <TimeField
-                    aria-label={localization.settings.time}
+                    aria-label={timeLabel}
                     granularity="minute"
                     value={state.timeValue}
                     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- react-stately's setTimeValue also accepts null, which its type omits
@@ -533,7 +573,18 @@ export const AdditionalField = ({
   )
 }
 
-function HeroInputField({
+function HeroInputField({ field, ...props }: AdditionalFieldProps) {
+  if (field.prefix != null || field.suffix != null || field.copyable) {
+    return <HeroInputWithAffixes field={field} {...props} />
+  }
+
+  return <HeroInputWithoutAffixes field={field} {...props} />
+}
+
+type HeroInputProps = Omit<AdditionalFieldProps, 'field'> &
+  Pick<AdditionalFieldProps, 'field'>
+
+function HeroInputWithAffixes({
   name,
   field,
   value,
@@ -547,9 +598,6 @@ function HeroInputField({
   const inputRef = useRef<HTMLInputElement>(null)
   const inputVariant = variant === 'transparent' ? 'primary' : 'secondary'
 
-  const hasPrefix = field.prefix != null
-  const hasSuffix = field.suffix != null || field.copyable
-
   const isNumeric = field.type === 'number'
   const maxFractionDigits = field.formatOptions?.maximumFractionDigits
   const nativeInputType = isNumeric ? 'number' : undefined
@@ -560,50 +608,6 @@ function HeroInputField({
     : undefined
   const nativeStep = maxFractionDigits ? 1 / 10 ** maxFractionDigits : undefined
   const errorMessage = getFormFieldErrorMessage(errors ?? [])
-
-  if (hasPrefix || hasSuffix) {
-    return (
-      <TextField
-        name={name}
-        value={value == null ? '' : String(value)}
-        onBlur={onBlur}
-        onChange={nextValue => onChange(nextValue || null)}
-        isInvalid={isInvalid}
-        isDisabled={isPending}
-        isReadOnly={field.readOnly}
-        validationBehavior="aria">
-        <Label>{field.label}</Label>
-
-        <InputGroup variant={inputVariant}>
-          {hasPrefix && <InputGroup.Prefix>{field.prefix}</InputGroup.Prefix>}
-
-          <InputGroup.Input
-            ref={inputRef}
-            placeholder={field.placeholder}
-            aria-required={field.required}
-            type={nativeInputType}
-            inputMode={nativeInputMode}
-            step={nativeStep}
-          />
-
-          {field.copyable ? (
-            <InputGroup.Suffix className="px-0">
-              <CopyButton
-                getValue={() => inputRef.current?.value}
-                isDisabled={isPending}
-              />
-            </InputGroup.Suffix>
-          ) : (
-            field.suffix != null && (
-              <InputGroup.Suffix>{field.suffix}</InputGroup.Suffix>
-            )
-          )}
-        </InputGroup>
-
-        <FieldError>{errorMessage}</FieldError>
-      </TextField>
-    )
-  }
 
   return (
     <TextField
@@ -617,6 +621,69 @@ function HeroInputField({
       validationBehavior="aria">
       <Label>{field.label}</Label>
 
+      <InputGroup variant={inputVariant}>
+        {field.prefix != null ? (
+          <InputGroup.Prefix>{field.prefix}</InputGroup.Prefix>
+        ) : null}
+        <InputGroup.Input
+          ref={inputRef}
+          placeholder={field.placeholder}
+          aria-required={field.required}
+          type={nativeInputType}
+          inputMode={nativeInputMode}
+          step={nativeStep}
+        />
+        {field.copyable ? (
+          <InputGroup.Suffix className="px-0">
+            <CopyButton
+              getValue={() => inputRef.current?.value}
+              isDisabled={isPending}
+            />
+          </InputGroup.Suffix>
+        ) : field.suffix != null ? (
+          <InputGroup.Suffix>{field.suffix}</InputGroup.Suffix>
+        ) : null}
+      </InputGroup>
+
+      <FieldError>{errorMessage}</FieldError>
+    </TextField>
+  )
+}
+
+function HeroInputWithoutAffixes({
+  name,
+  field,
+  value,
+  onBlur,
+  onChange,
+  isInvalid,
+  errors,
+  isPending,
+  variant
+}: HeroInputProps) {
+  const inputVariant = variant === 'transparent' ? 'primary' : 'secondary'
+  const isNumeric = field.type === 'number'
+  const maxFractionDigits = field.formatOptions?.maximumFractionDigits
+  const nativeInputType = isNumeric ? 'number' : undefined
+  const nativeInputMode = isNumeric
+    ? maxFractionDigits
+      ? 'decimal'
+      : 'numeric'
+    : undefined
+  const nativeStep = maxFractionDigits ? 1 / 10 ** maxFractionDigits : undefined
+  const errorMessage = getFormFieldErrorMessage(errors ?? [])
+
+  return (
+    <TextField
+      name={name}
+      value={value == null ? '' : String(value)}
+      onBlur={onBlur}
+      onChange={nextValue => onChange(nextValue || null)}
+      isInvalid={isInvalid}
+      isDisabled={isPending}
+      isReadOnly={field.readOnly}
+      validationBehavior="aria">
+      <Label>{field.label}</Label>
       <Input
         placeholder={field.placeholder}
         aria-required={field.required}
@@ -625,7 +692,6 @@ function HeroInputField({
         inputMode={nativeInputMode}
         step={nativeStep}
       />
-
       <FieldError>{errorMessage}</FieldError>
     </TextField>
   )

@@ -42,6 +42,181 @@ export type OrganizationSwitcherProps = {
   setActive?: (organization: Organization | null) => void
 }
 
+const OrganizationSwitcherTrigger = ({
+  activeOrganization,
+  className,
+  hidePersonal,
+  hideSlug,
+  isDisabled,
+  isPending,
+  organizationLabel,
+  sessionExists,
+  size,
+  trigger,
+  variant,
+  buttonProps
+}: {
+  activeOrganization?: Organization | null
+  buttonProps: ButtonProps
+  className?: string
+  hidePersonal: boolean
+  hideSlug: boolean
+  isDisabled: boolean
+  isPending: boolean
+  organizationLabel: string
+  sessionExists: boolean
+  size: ButtonProps['size']
+  trigger?: ReactNode
+  variant: ButtonProps['variant']
+}) =>
+  trigger ? (
+    <Dropdown.Trigger>{trigger}</Dropdown.Trigger>
+  ) : (
+    <Button
+      variant={variant}
+      className={cn('h-auto px-2 py-2 text-left', className)}
+      isDisabled={isDisabled}
+      aria-label={organizationLabel}
+      {...buttonProps}>
+      {isPending ? (
+        <OrganizationView size={size} isPending hideRole hideSlug={hideSlug} />
+      ) : activeOrganization ? (
+        <OrganizationView size={size} hideRole hideSlug={hideSlug} />
+      ) : sessionExists && !hidePersonal ? (
+        <UserView size={size} hideSubtitle={hideSlug} />
+      ) : (
+        <OrganizationView
+          size={size}
+          hideRole
+          hideSlug={hideSlug}
+          organization={{ name: organizationLabel }}
+        />
+      )}
+      <ChevronsExpandVertical
+        size={16}
+        className="text-muted size-3 shrink-0"
+      />
+    </Button>
+  )
+
+const OrganizationSwitcherSummary = ({
+  activeOrganization,
+  accountHref,
+  hidePersonal,
+  hideSettings,
+  hideSlug,
+  isPending,
+  onClose,
+  organizationSettingsHref,
+  sessionExists,
+  labels
+}: {
+  activeOrganization?: Organization | null
+  accountHref: string
+  hidePersonal: boolean
+  hideSettings: boolean
+  hideSlug: boolean
+  isPending: boolean
+  onClose: () => void
+  organizationSettingsHref: string
+  sessionExists: boolean
+  labels: { manage: string; settings: string }
+}) => {
+  if (activeOrganization) {
+    return (
+      <div className="flex items-center justify-between gap-4 px-4 pt-3">
+        <OrganizationView
+          hideRole
+          hideSlug={hideSlug}
+          organization={activeOrganization}
+        />
+        {!hideSettings ? (
+          <Link
+            href={organizationSettingsHref}
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'sm' }),
+              'shrink-0 gap-2'
+            )}
+            onPress={onClose}>
+            <Gear size={16} className="text-muted" />
+            {labels.manage}
+          </Link>
+        ) : null}
+      </div>
+    )
+  }
+
+  if (!isPending && sessionExists && !hidePersonal) {
+    return (
+      <div className="flex items-center justify-between gap-4 px-4 pt-3">
+        <UserView hideSubtitle={hideSlug} />
+        {!hideSettings ? (
+          <Link
+            href={accountHref}
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'sm' }),
+              'shrink-0 gap-2'
+            )}
+            onPress={onClose}>
+            <Gear size={16} className="text-muted" />
+            {labels.settings}
+          </Link>
+        ) : null}
+      </div>
+    )
+  }
+
+  return null
+}
+
+const OrganizationSwitcherMenu = ({
+  activeOrganizationId,
+  hideCreate,
+  hidePersonal,
+  hideSlug,
+  onCreate,
+  onSelect,
+  organizations,
+  labels
+}: {
+  activeOrganizationId?: string
+  hideCreate: boolean
+  hidePersonal: boolean
+  hideSlug: boolean
+  onCreate: () => void
+  onSelect: (organization: Organization | null) => void
+  organizations?: Organization[]
+  labels: { create: string; personal: string }
+}) => (
+  <Dropdown.Menu>
+    {activeOrganizationId && !hidePersonal ? (
+      <Dropdown.Item textValue={labels.personal} onPress={() => onSelect(null)}>
+        <UserView hideSubtitle={hideSlug} />
+      </Dropdown.Item>
+    ) : null}
+    {organizations
+      ?.filter(organization => organization.id !== activeOrganizationId)
+      .map(organization => (
+        <Dropdown.Item
+          key={organization.id}
+          textValue={organization.name}
+          onPress={() => onSelect(organization)}>
+          <OrganizationView
+            hideRole
+            hideSlug={hideSlug}
+            organization={organization}
+          />
+        </Dropdown.Item>
+      ))}
+    {!hideCreate ? (
+      <Dropdown.Item textValue={labels.create} onPress={onCreate}>
+        <CirclePlus size={16} className="text-muted" />
+        <Label>{labels.create}</Label>
+      </Dropdown.Item>
+    ) : null}
+  </Dropdown.Menu>
+)
+
 /**
  * Renders an organizations dropdown with a trigger button,
  * header summary, and a menu of organizations to switch to.
@@ -103,127 +278,53 @@ export const OrganizationSwitcher = ({
   return (
     <>
       <Dropdown isOpen={dropdownOpen} onOpenChange={setDropdownOpen}>
-        {trigger ? (
-          <Dropdown.Trigger>{trigger}</Dropdown.Trigger>
-        ) : (
-          <Button
-            variant={variant}
-            className={cn('h-auto px-2 py-2 text-left', className)}
-            isDisabled={!session || isPending}
-            aria-label={organizationLocalization.organization}
-            {...props}>
-            {isPending ? (
-              <OrganizationView
-                size={size}
-                isPending
-                hideRole
-                hideSlug={hideSlug}
-              />
-            ) : activeOrganization ? (
-              <OrganizationView size={size} hideRole hideSlug={hideSlug} />
-            ) : session && !hidePersonal ? (
-              <UserView size={size} hideSubtitle={hideSlug} />
-            ) : (
-              <OrganizationView
-                size={size}
-                hideRole
-                hideSlug={hideSlug}
-                organization={{
-                  name: organizationLocalization.organization
-                }}
-              />
-            )}
-
-            <ChevronsExpandVertical
-              size={16}
-              className="text-muted size-3 shrink-0"
-            />
-          </Button>
-        )}
-
+        <OrganizationSwitcherTrigger
+          activeOrganization={activeOrganization}
+          buttonProps={props}
+          className={className}
+          hidePersonal={Boolean(hidePersonal)}
+          hideSlug={hideSlug}
+          isDisabled={!session || isPending}
+          isPending={isPending}
+          organizationLabel={organizationLocalization.organization}
+          sessionExists={Boolean(session)}
+          size={size}
+          trigger={trigger}
+          variant={variant}
+        />
         <Dropdown.Popover placement={placement} className="max-w-svw">
-          {activeOrganization ? (
-            <div className="flex items-center justify-between gap-4 px-4 pt-3">
-              <OrganizationView
-                hideRole
-                hideSlug={hideSlug}
-                organization={activeOrganization}
-              />
-
-              {!hideSettings && (
-                <Link
-                  href={
-                    slug
-                      ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.settings}`
-                      : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
-                  }
-                  className={cn(
-                    buttonVariants({ variant: 'outline', size: 'sm' }),
-                    'shrink-0 gap-2'
-                  )}
-                  onPress={() => setDropdownOpen(false)}>
-                  <Gear size={16} className="text-muted" />
-
-                  {organizationLocalization.manage}
-                </Link>
-              )}
-            </div>
-          ) : !isPending && session?.user && !hidePersonal ? (
-            <div className="flex items-center justify-between gap-4 px-4 pt-3">
-              <UserView hideSubtitle={hideSlug} />
-
-              {!hideSettings && (
-                <Link
-                  href={`${basePaths.settings}/${viewPaths.settings.account}`}
-                  className={cn(
-                    buttonVariants({ variant: 'outline', size: 'sm' }),
-                    'shrink-0 gap-2'
-                  )}
-                  onPress={() => setDropdownOpen(false)}>
-                  <Gear size={16} className="text-muted" />
-
-                  {localization.settings.settings}
-                </Link>
-              )}
-            </div>
-          ) : null}
-
-          <Dropdown.Menu>
-            {!!activeOrganization && !hidePersonal && (
-              <Dropdown.Item
-                textValue={organizationLocalization.personalAccount}
-                onPress={() => handleSetActive(null)}>
-                <UserView hideSubtitle={hideSlug} />
-              </Dropdown.Item>
-            )}
-
-            {organizations
-              ?.filter(
-                organization => organization.id !== activeOrganization?.id
-              )
-              ?.map(organization => (
-                <Dropdown.Item
-                  key={organization.id}
-                  textValue={organization.name}
-                  onPress={() => handleSetActive(organization)}>
-                  <OrganizationView
-                    hideRole
-                    hideSlug={hideSlug}
-                    organization={organization}
-                  />
-                </Dropdown.Item>
-              ))}
-
-            {!hideCreate && (
-              <Dropdown.Item
-                textValue={organizationLocalization.createOrganization}
-                onPress={() => setCreateOpen(true)}>
-                <CirclePlus size={16} className="text-muted" />
-
-                <Label>{organizationLocalization.createOrganization}</Label>
-              </Dropdown.Item>
-            )}
-          </Dropdown.Menu>
+          <OrganizationSwitcherSummary
+            activeOrganization={activeOrganization}
+            accountHref={`${basePaths.settings}/${viewPaths.settings.account}`}
+            hidePersonal={Boolean(hidePersonal)}
+            hideSettings={Boolean(hideSettings)}
+            hideSlug={hideSlug}
+            isPending={isPending}
+            onClose={() => setDropdownOpen(false)}
+            organizationSettingsHref={
+              slug
+                ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.settings}`
+                : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
+            }
+            sessionExists={Boolean(session?.user)}
+            labels={{
+              manage: organizationLocalization.manage,
+              settings: localization.settings.settings
+            }}
+          />
+          <OrganizationSwitcherMenu
+            activeOrganizationId={activeOrganization?.id}
+            hideCreate={Boolean(hideCreate)}
+            hidePersonal={Boolean(hidePersonal)}
+            hideSlug={hideSlug}
+            onCreate={() => setCreateOpen(true)}
+            onSelect={handleSetActive}
+            organizations={organizations ?? undefined}
+            labels={{
+              create: organizationLocalization.createOrganization,
+              personal: organizationLocalization.personalAccount
+            }}
+          />
         </Dropdown.Popover>
       </Dropdown>
 

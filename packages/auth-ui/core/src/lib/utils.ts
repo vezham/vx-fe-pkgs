@@ -121,7 +121,7 @@ const canvasToBlob = (
 }
 
 const loadImage = (file: File): Promise<HTMLImageElement> => {
-  // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- Both load and error handlers revoke this URL.
+  // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- Both load and error handlers revoke this URL.
   const url = URL.createObjectURL(file)
   const image = new Image()
 

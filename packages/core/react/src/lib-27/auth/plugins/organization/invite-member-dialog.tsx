@@ -49,6 +49,179 @@ export type InviteMemberDialogProps = {
 const pickDefaultRole = (keys: string[]) =>
   keys.includes('member') ? 'member' : (keys.at(-1) ?? '')
 
+type InviteMemberFormValues = {
+  additionalFields: ReturnType<typeof getAdditionalFieldDefaultValues>
+  email: string
+  roles: string[]
+  teamIds: string[]
+}
+
+const useInviteMemberForm = (options: {
+  defaultValues: InviteMemberFormValues
+  onSubmit: (props: { value: InviteMemberFormValues }) => Promise<void>
+}) => useAuthForm(options)
+
+type InviteMemberForm = ReturnType<typeof useInviteMemberForm>
+
+const InviteMemberEmailField = ({
+  form,
+  isPending,
+  labels
+}: {
+  form: InviteMemberForm
+  isPending: boolean
+  labels: { email: string; fieldRequired: string; invalidEmail: string }
+}) => (
+  <form.AppField
+    name="email"
+    validators={{
+      onChange: ({ value }) =>
+        validateEmailAddress(value, {
+          invalidMessage: labels.invalidEmail,
+          requiredMessage: labels.fieldRequired
+        })
+    }}>
+    {field => (
+      <TextField
+        id="email"
+        name={field.name}
+        type="email"
+        isDisabled={isPending}
+        isInvalid={isAuthFormFieldInvalid(field.state.meta)}
+        value={field.state.value}
+        onBlur={field.handleBlur}
+        onChange={field.handleChange}>
+        <Label>{labels.email}</Label>
+        <Input placeholder={labels.email} variant="secondary" />
+        <field.AuthFormFieldError />
+      </TextField>
+    )}
+  </form.AppField>
+)
+
+const InviteMemberRoleField = ({
+  form,
+  isPending,
+  allowMultipleRoles,
+  roles,
+  labels
+}: {
+  form: InviteMemberForm
+  isPending: boolean
+  allowMultipleRoles: boolean
+  roles: Record<string, string>
+  labels: { fieldRequired: string; role: string }
+}) => (
+  <form.AppField
+    name="roles"
+    validators={{
+      onChange: ({ value }) =>
+        value.length > 0 ? undefined : labels.fieldRequired
+    }}>
+    {field => (
+      <Select
+        name={field.name}
+        selectionMode={allowMultipleRoles ? 'multiple' : 'single'}
+        value={field.state.value}
+        onBlur={field.handleBlur}
+        onChange={keys => {
+          const next = (
+            Array.isArray(keys) ? keys : keys === null ? [] : [keys]
+          ).map(String)
+          if (next.length === 0) return
+          field.handleChange(allowMultipleRoles ? next : next.slice(0, 1))
+        }}
+        isDisabled={isPending}
+        isInvalid={isAuthFormFieldInvalid(field.state.meta)}
+        variant="secondary"
+        fullWidth>
+        <Label>{labels.role}</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox selectionMode={allowMultipleRoles ? 'multiple' : 'single'}>
+            {Object.entries(roles).map(([key, label]) => (
+              <ListBox.Item key={key} id={key} textValue={label}>
+                {label}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+        <field.AuthFormFieldError />
+      </Select>
+    )}
+  </form.AppField>
+)
+
+const InviteMemberTeamFields = ({
+  form,
+  teams,
+  labels
+}: {
+  form: InviteMemberForm
+  teams: { id: string; name: string }[]
+  labels: { teams: string }
+}) => (
+  <form.AppField name="teamIds">
+    {field => (
+      <div className="flex flex-col gap-2">
+        <Label>{labels.teams}</Label>
+        <div className="flex flex-wrap gap-3">
+          {teams.map(team => (
+            <Checkbox
+              key={team.id}
+              isSelected={field.state.value.includes(team.id)}
+              onChange={selected =>
+                field.handleChange(
+                  selected
+                    ? [...field.state.value, team.id]
+                    : field.state.value.filter(id => id !== team.id)
+                )
+              }>
+              {team.name}
+            </Checkbox>
+          ))}
+        </div>
+      </div>
+    )}
+  </form.AppField>
+)
+
+const InviteMemberAdditionalFields = ({
+  form,
+  fields,
+  isPending,
+  labels
+}: {
+  form: InviteMemberForm
+  fields: Parameters<typeof getAuthAdditionalFieldValidators>[0][]
+  isPending: boolean
+  labels: { fieldRequired: string; optional: string }
+}) => (
+  <>
+    {fields.map(configuredField => (
+      <form.AppField
+        key={configuredField.name}
+        name={`additionalFields.${configuredField.name}`}
+        validators={getAuthAdditionalFieldValidators(
+          configuredField,
+          labels.fieldRequired
+        )}>
+        {field => (
+          <field.AuthFormAdditionalField
+            field={configuredField}
+            isPending={isPending}
+            optionalLabel={labels.optional}
+          />
+        )}
+      </form.AppField>
+    ))}
+  </>
+)
+
 /**
  * Render a dialog for inviting a member to the organization.
  *
@@ -115,7 +288,7 @@ export const InviteMemberDialog = ({
     }
   )
 
-  const form = useAuthForm({
+  const form = useInviteMemberForm({
     defaultValues: {
       additionalFields: getAdditionalFieldDefaultValues(invitationFields),
       email: '',
@@ -215,137 +388,37 @@ export const InviteMemberDialog = ({
                   </p>
                 )}
 
-                <form.AppField
-                  name="email"
-                  validators={{
-                    onChange: ({ value }) =>
-                      validateEmailAddress(value, {
-                        invalidMessage: localization.auth.invalidEmail,
-                        requiredMessage: localization.auth.fieldRequired
-                      })
-                  }}>
-                  {field => (
-                    <TextField
-                      id="email"
-                      name={field.name}
-                      type="email"
-                      isDisabled={isInviting}
-                      isInvalid={isAuthFormFieldInvalid(field.state.meta)}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={field.handleChange}>
-                      <Label>{localization.auth.email}</Label>
-                      <Input
-                        placeholder={localization.auth.email}
-                        variant="secondary"
-                      />
-                      <field.AuthFormFieldError />
-                    </TextField>
-                  )}
-                </form.AppField>
-
-                <form.AppField
-                  name="roles"
-                  validators={{
-                    onChange: ({ value }) =>
-                      value.length > 0
-                        ? undefined
-                        : localization.auth.fieldRequired
-                  }}>
-                  {field => (
-                    <Select
-                      name={field.name}
-                      selectionMode={allowMultipleRoles ? 'multiple' : 'single'}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={keys => {
-                        const next = (
-                          Array.isArray(keys)
-                            ? keys
-                            : keys === null
-                              ? []
-                              : [keys]
-                        ).map(String)
-                        if (next.length === 0) return
-                        field.handleChange(
-                          allowMultipleRoles ? next : next.slice(0, 1)
-                        )
-                      }}
-                      isDisabled={isInviting}
-                      isInvalid={isAuthFormFieldInvalid(field.state.meta)}
-                      variant="secondary"
-                      fullWidth>
-                      <Label>{organizationLocalization.role}</Label>
-                      <Select.Trigger>
-                        <Select.Value />
-                        <Select.Indicator />
-                      </Select.Trigger>
-                      <Select.Popover>
-                        <ListBox
-                          selectionMode={
-                            allowMultipleRoles ? 'multiple' : 'single'
-                          }>
-                          {Object.entries(assignableRoles).map(
-                            ([key, label]) => (
-                              <ListBox.Item
-                                key={key}
-                                id={key}
-                                textValue={label}>
-                                {label}
-                                <ListBox.ItemIndicator />
-                              </ListBox.Item>
-                            )
-                          )}
-                        </ListBox>
-                      </Select.Popover>
-                      <field.AuthFormFieldError />
-                    </Select>
-                  )}
-                </form.AppField>
+                <InviteMemberEmailField
+                  form={form}
+                  isPending={isInviting}
+                  labels={localization.auth}
+                />
+                <InviteMemberRoleField
+                  form={form}
+                  isPending={isInviting}
+                  allowMultipleRoles={allowMultipleRoles}
+                  roles={assignableRoles}
+                  labels={{
+                    fieldRequired: localization.auth.fieldRequired,
+                    role: organizationLocalization.role
+                  }}
+                />
                 {teamsEnabled && (teams.data?.length ?? 0) > 0 && (
-                  <form.AppField name="teamIds">
-                    {field => (
-                      <div className="flex flex-col gap-2">
-                        <Label>{organizationLocalization.teams}</Label>
-                        <div className="flex flex-wrap gap-3">
-                          {teams.data?.map(team => (
-                            <Checkbox
-                              key={team.id}
-                              isSelected={field.state.value.includes(team.id)}
-                              onChange={selected =>
-                                field.handleChange(
-                                  selected
-                                    ? [...field.state.value, team.id]
-                                    : field.state.value.filter(
-                                        id => id !== team.id
-                                      )
-                                )
-                              }>
-                              {team.name}
-                            </Checkbox>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </form.AppField>
+                  <InviteMemberTeamFields
+                    form={form}
+                    teams={teams.data ?? []}
+                    labels={organizationLocalization}
+                  />
                 )}
-                {invitationFields.map(configuredField => (
-                  <form.AppField
-                    key={configuredField.name}
-                    name={`additionalFields.${configuredField.name}`}
-                    validators={getAuthAdditionalFieldValidators(
-                      configuredField,
-                      localization.auth.fieldRequired
-                    )}>
-                    {field => (
-                      <field.AuthFormAdditionalField
-                        field={configuredField}
-                        isPending={isInviting}
-                        optionalLabel={localization.settings.optional}
-                      />
-                    )}
-                  </form.AppField>
-                ))}
+                <InviteMemberAdditionalFields
+                  form={form}
+                  fields={invitationFields}
+                  isPending={isInviting}
+                  labels={{
+                    fieldRequired: localization.auth.fieldRequired,
+                    optional: localization.settings.optional
+                  }}
+                />
               </AlertDialog.Body>
 
               <AlertDialog.Footer>

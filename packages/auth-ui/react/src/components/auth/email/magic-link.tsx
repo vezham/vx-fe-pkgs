@@ -78,6 +78,73 @@ export interface MagicLinkEmailProps {
   localization?: Partial<MagicLinkEmailLocalization>
 }
 
+const MagicLinkLogo = ({
+  logoURL,
+  alt,
+  className
+}: {
+  logoURL?: string | { light: string; dark: string }
+  alt: string
+  className?: string
+}) => {
+  if (!logoURL) return null
+  if (typeof logoURL === 'string') {
+    return (
+      <Img
+        src={logoURL}
+        width={48}
+        height={48}
+        alt={alt}
+        className={cn('mx-auto mb-8', className)}
+      />
+    )
+  }
+
+  return (
+    <>
+      <Img
+        src={logoURL.light}
+        width={48}
+        height={48}
+        alt={alt}
+        className={cn('logo-light mx-auto mb-8', className)}
+      />
+      <Img
+        src={logoURL.dark}
+        width={48}
+        height={48}
+        alt={alt}
+        className={cn('logo-dark mx-auto mb-8 hidden', className)}
+      />
+    </>
+  )
+}
+
+const MagicLinkInstructions = ({
+  email,
+  localization
+}: {
+  email?: string
+  localization: MagicLinkEmailLocalization
+}) => {
+  if (!email) {
+    return localization.CLICK_BUTTON_TO_SIGN_IN.replace('{emailAddress}', '')
+      .replaceAll(/\s{2}/g, ' ')
+      .replace(' .', '.')
+  }
+  const [beforeEmail, afterEmail] =
+    localization.CLICK_BUTTON_TO_SIGN_IN.split('{emailAddress}')
+  return (
+    <>
+      {beforeEmail}
+      <Link href={`mailto:${email}`} className="text-primary font-medium">
+        {email}
+      </Link>
+      {afterEmail}
+    </>
+  )
+}
+
 /**
  * Email template component that sends magic link authentication emails for passwordless sign-in.
  *
@@ -145,39 +212,11 @@ export const MagicLinkEmail = ({
                 'bg-card text-card-foreground border-border rounded-none border p-8',
                 classNames?.card
               )}>
-              {logoURL &&
-                (typeof logoURL === 'string' ? (
-                  <Img
-                    src={logoURL}
-                    width={48}
-                    height={48}
-                    alt={appName || localization.LOGO}
-                    className={cn('mx-auto mb-8', classNames?.logo)}
-                  />
-                ) : (
-                  <>
-                    <Img
-                      src={logoURL.light}
-                      width={48}
-                      height={48}
-                      alt={appName || localization.LOGO}
-                      className={cn(
-                        'logo-light mx-auto mb-8',
-                        classNames?.logo
-                      )}
-                    />
-                    <Img
-                      src={logoURL.dark}
-                      width={48}
-                      height={48}
-                      alt={appName || localization.LOGO}
-                      className={cn(
-                        'logo-dark mx-auto mb-8 hidden',
-                        classNames?.logo
-                      )}
-                    />
-                  </>
-                ))}
+              <MagicLinkLogo
+                logoURL={logoURL}
+                alt={appName || localization.LOGO}
+                className={classNames?.logo}
+              />
 
               <Heading
                 className={cn(
@@ -194,29 +233,10 @@ export const MagicLinkEmail = ({
 
               <Text
                 className={cn('m-0 text-sm font-normal', classNames?.content)}>
-                {(() => {
-                  const [beforeEmailAddress, afterEmailAddress] =
-                    localization.CLICK_BUTTON_TO_SIGN_IN.split('{emailAddress}')
-
-                  return email ? (
-                    <>
-                      {beforeEmailAddress}
-                      <Link
-                        href={`mailto:${email}`}
-                        className="text-primary font-medium">
-                        {email}
-                      </Link>
-                      {afterEmailAddress}
-                    </>
-                  ) : (
-                    localization.CLICK_BUTTON_TO_SIGN_IN.replace(
-                      '{emailAddress}',
-                      ''
-                    )
-                      .replaceAll(/\s{2}/g, ' ')
-                      .replace(' .', '.')
-                  )
-                })()}
+                <MagicLinkInstructions
+                  email={email}
+                  localization={localization}
+                />
               </Text>
 
               <Section className="my-6">

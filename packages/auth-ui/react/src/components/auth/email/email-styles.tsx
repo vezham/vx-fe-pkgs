@@ -61,9 +61,7 @@ interface Props {
  * />
  * ```
  */
-export const EmailStyles = ({ colors, darkMode = true }: Props) => {
-  return (
-    <style type="text/css">{`
+const createEmailCss = (colors: EmailColors | undefined, darkMode: boolean) => `
       .bg-background {
         background-color: ${colors?.light?.background || defaultColors.light.background} !important;
       }
@@ -140,6 +138,8 @@ export const EmailStyles = ({ colors, darkMode = true }: Props) => {
       }`
           : ''
       }
-    `}</style>
-  )
-}
+    `
+
+export const EmailStyles = ({ colors, darkMode = true }: Props) => (
+  <style type="text/css">{createEmailCss(colors, darkMode)}</style>
+)

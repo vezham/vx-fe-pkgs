@@ -19,8 +19,54 @@ export type OrganizationViewProps = {
   size?: AvatarProps['size']
   hideRole?: boolean
   hideSlug?: boolean
-  organization?: Partial<Organization>
+  organization?: Partial<Organization> | null
 }
+
+const OrganizationViewContent = ({
+  className,
+  divProps,
+  hideSlug,
+  organization,
+  role,
+  size,
+  slugPrefix
+}: {
+  className?: string
+  divProps: ComponentProps<'div'>
+  hideSlug: boolean
+  organization?: Partial<Organization> | null
+  role?: string
+  size: AvatarProps['size']
+  slugPrefix: string
+}) => (
+  <div
+    className={cn('flex min-w-0 items-center gap-2', className)}
+    {...divProps}>
+    <OrganizationLogo
+      organization={organization}
+      className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
+      size={size === 'lg' ? 'md' : 'sm'}
+    />
+    <div className="flex min-w-0 flex-col">
+      <div className="flex min-w-0 items-center gap-2">
+        <p className="text-foreground truncate text-sm leading-tight font-medium">
+          {organization?.name}
+        </p>
+        {role ? (
+          <Chip className="-my-0.5 shrink-0" size="sm">
+            {role}
+          </Chip>
+        ) : null}
+      </div>
+      {!hideSlug && organization?.slug ? (
+        <p className="text-muted truncate overflow-x-hidden font-mono text-xs leading-tight">
+          {slugPrefix}
+          {organization.slug}
+        </p>
+      ) : null}
+    </div>
+  </div>
+)
 
 /**
  * Compact organization row: logo, primary name, secondary slug — analogous to {@link UserView}.
@@ -79,35 +125,16 @@ export const OrganizationView = ({
   }
 
   return (
-    <div
-      className={cn('flex min-w-0 items-center gap-2', className)}
-      {...props}>
-      <OrganizationLogo
-        organization={resolvedOrganization}
-        className={size === 'sm' ? 'size-5 [&>span]:text-xs' : undefined}
-        size={size === 'lg' ? 'md' : 'sm'}
-      />
-
-      <div className="flex min-w-0 flex-col">
-        <div className="flex min-w-0 items-center gap-2">
-          <p className="text-foreground truncate text-sm leading-tight font-medium">
-            {resolvedOrganization?.name}
-          </p>
-
-          {!hideRole && !!membership && (
-            <Chip className="-my-0.5 shrink-0" size="sm">
-              {roles?.[membership.role] ?? membership.role}
-            </Chip>
-          )}
-        </div>
-
-        {!hideSlug && !!resolvedOrganization?.slug && (
-          <p className="text-muted truncate overflow-x-hidden font-mono text-xs leading-tight">
-            {slugPrefix}
-            {resolvedOrganization.slug}
-          </p>
-        )}
-      </div>
-    </div>
+    <OrganizationViewContent
+      className={className}
+      divProps={props}
+      hideSlug={hideSlug}
+      organization={resolvedOrganization}
+      role={
+        membership ? (roles?.[membership.role] ?? membership.role) : undefined
+      }
+      size={size}
+      slugPrefix={slugPrefix}
+    />
   )
 }

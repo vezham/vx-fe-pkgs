@@ -81,6 +81,155 @@ const getErrorMessage = (error: Error | null) => {
   return typeof message === 'string' ? message : error?.message
 }
 
+type SsoProviderLabels = {
+  deleteProvider: string
+  domainVerified: string
+  editProvider: string
+  noProviders: string
+  noProvidersDescription: string
+  providerAccessDenied: string
+  providerLoadError: string
+  retry: string
+  verifyDomain: string
+}
+
+const SsoProviderItem = ({
+  labels,
+  provider,
+  onDelete,
+  onEdit,
+  onVerify
+}: {
+  labels: SsoProviderLabels
+  provider: SsoProvider
+  onDelete: (provider: SsoProvider) => void
+  onEdit: (provider: SsoProvider) => void
+  onVerify: (provider: SsoProvider) => void
+}) => (
+  <div className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex min-w-0 flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-medium">{provider.providerId}</span>
+        <Chip size="sm" variant="secondary">
+          {provider.type.toUpperCase()}
+        </Chip>
+        <Chip color={provider.domainVerified ? 'success' : 'warning'} size="sm">
+          {provider.domainVerified
+            ? labels.domainVerified
+            : labels.verifyDomain}
+        </Chip>
+      </div>
+      <span className="text-muted truncate text-sm">
+        {provider.domain} · {provider.issuer}
+      </span>
+    </div>
+    <div className="flex shrink-0 flex-wrap gap-2">
+      {!provider.domainVerified ? (
+        <Button size="sm" variant="outline" onPress={() => onVerify(provider)}>
+          {labels.verifyDomain}
+        </Button>
+      ) : null}
+      <Button
+        isIconOnly
+        aria-label={labels.editProvider}
+        size="sm"
+        variant="tertiary"
+        onPress={() => onEdit(provider)}>
+        <Pencil size={16} />
+      </Button>
+      <Button
+        isIconOnly
+        aria-label={labels.deleteProvider}
+        size="sm"
+        variant="danger-soft"
+        onPress={() => onDelete(provider)}>
+        <TrashBin size={16} />
+      </Button>
+    </div>
+  </div>
+)
+
+const SsoProviderListState = ({
+  canManage,
+  error,
+  isLoading,
+  labels,
+  providers,
+  onDelete,
+  onEdit,
+  onRetry,
+  onVerify
+}: {
+  canManage: boolean
+  error: boolean
+  isLoading: boolean
+  labels: SsoProviderLabels
+  providers: SsoProvider[]
+  onDelete: (provider: SsoProvider) => void
+  onEdit: (provider: SsoProvider) => void
+  onRetry: () => void
+  onVerify: (provider: SsoProvider) => void
+}) => {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-2">
+        {providerSkeletonIds.map(id => (
+          <Skeleton className="h-24 w-full" key={id} />
+        ))}
+      </div>
+    )
+  }
+
+  if (!canManage) {
+    return (
+      <Alert data-access-denied status="warning">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Description>{labels.providerAccessDenied}</Alert.Description>
+        </Alert.Content>
+      </Alert>
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Description>{labels.providerLoadError}</Alert.Description>
+        </Alert.Content>
+        <Button size="sm" variant="outline" onPress={onRetry}>
+          {labels.retry}
+        </Button>
+      </Alert>
+    )
+  }
+
+  if (!providers.length) {
+    return (
+      <div className="flex min-h-32 flex-col items-center justify-center gap-1 rounded-lg border border-dashed p-6 text-center">
+        <p className="text-sm font-medium">{labels.noProviders}</p>
+        <p className="text-muted text-xs">{labels.noProvidersDescription}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {providers.map(provider => (
+        <SsoProviderItem
+          key={provider.providerId}
+          labels={labels}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onVerify={onVerify}
+          provider={provider}
+        />
+      ))}
+    </div>
+  )
+}
+
 export const OrganizationSsoProviders = ({
   className,
   organizationId,
@@ -140,98 +289,19 @@ export const OrganizationSsoProviders = ({
             onRegistered={() => setCreating(false)}
           />
         ) : null}
-
-        {memberRole.isPending || (canManage && providersQuery.isPending) ? (
-          <div className="flex flex-col gap-2">
-            {providerSkeletonIds.map(id => (
-              <Skeleton className="h-24 w-full" key={id} />
-            ))}
-          </div>
-        ) : !canManage ? (
-          <Alert data-access-denied status="warning">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>
-                {localization.providerAccessDenied}
-              </Alert.Description>
-            </Alert.Content>
-          </Alert>
-        ) : providersQuery.error ? (
-          <Alert status="danger">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>
-                {localization.providerLoadError}
-              </Alert.Description>
-            </Alert.Content>
-            <Button
-              size="sm"
-              variant="outline"
-              onPress={() => void providersQuery.refetch()}>
-              {localization.retry}
-            </Button>
-          </Alert>
-        ) : providers.length ? (
-          <div className="flex flex-col gap-2">
-            {providers.map(provider => (
-              <div
-                className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between"
-                key={provider.providerId}>
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{provider.providerId}</span>
-                    <Chip size="sm" variant="secondary">
-                      {provider.type.toUpperCase()}
-                    </Chip>
-                    <Chip
-                      color={provider.domainVerified ? 'success' : 'warning'}
-                      size="sm">
-                      {provider.domainVerified
-                        ? localization.domainVerified
-                        : localization.verifyDomain}
-                    </Chip>
-                  </div>
-                  <span className="text-muted truncate text-sm">
-                    {provider.domain} · {provider.issuer}
-                  </span>
-                </div>
-                <div className="flex shrink-0 flex-wrap gap-2">
-                  {!provider.domainVerified ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onPress={() => setVerifying(provider)}>
-                      {localization.verifyDomain}
-                    </Button>
-                  ) : null}
-                  <Button
-                    isIconOnly
-                    aria-label={localization.editProvider}
-                    size="sm"
-                    variant="tertiary"
-                    onPress={() => setEditing(provider)}>
-                    <Pencil size={16} />
-                  </Button>
-                  <Button
-                    isIconOnly
-                    aria-label={localization.deleteProvider}
-                    size="sm"
-                    variant="danger-soft"
-                    onPress={() => setDeleting(provider)}>
-                    <TrashBin size={16} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex min-h-32 flex-col items-center justify-center gap-1 rounded-lg border border-dashed p-6 text-center">
-            <p className="text-sm font-medium">{localization.noProviders}</p>
-            <p className="text-muted text-xs">
-              {localization.noProvidersDescription}
-            </p>
-          </div>
-        )}
+        <SsoProviderListState
+          canManage={canManage}
+          error={Boolean(providersQuery.error)}
+          isLoading={
+            memberRole.isPending || (canManage && providersQuery.isPending)
+          }
+          labels={localization}
+          providers={providers}
+          onDelete={setDeleting}
+          onEdit={setEditing}
+          onRetry={() => void providersQuery.refetch()}
+          onVerify={setVerifying}
+        />
       </Card.Content>
 
       <EditSsoProviderDialog

@@ -43,6 +43,172 @@ export type OrganizationMemberRowProps = {
   selectableRow?: OrganizationSelectableRow<Member & { user: Partial<User> }>
 }
 
+type OrganizationRoleLabels = {
+  changeMemberRole: string
+  leaveOrganization: string
+  onlyOwnerActionDisabled: string
+  removeMember: string
+}
+
+const MemberRoleControls = ({
+  canManageTarget,
+  canUpdate,
+  member,
+  onlyOwnerActionDisabled,
+  organization,
+  protectedRole,
+  roleLabels,
+  roles,
+  updatePending
+}: {
+  canManageTarget: boolean
+  canUpdate: boolean
+  member: Member & { user: Partial<User> }
+  onlyOwnerActionDisabled: boolean
+  organization: Organization
+  protectedRole: string
+  roleLabels: Pick<OrganizationRoleLabels, 'changeMemberRole'>
+  roles: Array<[string, string]>
+  updatePending: boolean
+}) => {
+  const [roleEditorOpen, setRoleEditorOpen] = useState(false)
+  return (
+    <>
+      {canManageTarget && updatePending ? (
+        <Button
+          aria-label={roleLabels.changeMemberRole}
+          isDisabled
+          isIconOnly
+          size="sm"
+          variant="tertiary">
+          <Pencil size={16} />
+        </Button>
+      ) : null}
+      {canManageTarget && canUpdate ? (
+        <Button
+          aria-label={roleLabels.changeMemberRole}
+          isIconOnly
+          onPress={() => setRoleEditorOpen(true)}
+          size="sm"
+          variant="tertiary">
+          <Pencil size={16} />
+        </Button>
+      ) : null}
+      {canManageTarget && canUpdate ? (
+        <EditMemberRolesDialog
+          isOpen={roleEditorOpen}
+          member={member}
+          onOpenChange={setRoleEditorOpen}
+          organizationId={organization.id}
+          protectedRole={protectedRole}
+          protectedRoleRemovalDisabled={onlyOwnerActionDisabled}
+          roles={roles}
+        />
+      ) : null}
+    </>
+  )
+}
+
+const MemberDepartureControls = ({
+  canManageTarget,
+  canRemove,
+  currentUser,
+  deletePending,
+  member,
+  onlyOwnerActionDisabled,
+  organization,
+  roleLabels
+}: {
+  canManageTarget: boolean
+  canRemove: boolean
+  currentUser: boolean
+  deletePending: boolean
+  member: Member & { user: Partial<User> }
+  onlyOwnerActionDisabled: boolean
+  organization: Organization
+  roleLabels: OrganizationRoleLabels
+}) => {
+  const [removeOpen, setRemoveOpen] = useState(false)
+  const [leaveOpen, setLeaveOpen] = useState(false)
+  const disabledTitle = onlyOwnerActionDisabled
+    ? roleLabels.onlyOwnerActionDisabled
+    : undefined
+
+  return (
+    <>
+      {currentUser ? (
+        <span title={disabledTitle}>
+          <Button
+            isIconOnly
+            size="sm"
+            variant="danger-soft"
+            aria-label={roleLabels.leaveOrganization}
+            isDisabled={onlyOwnerActionDisabled}
+            onPress={() => setLeaveOpen(true)}>
+            <ArrowRightFromSquare size={16} />
+          </Button>
+        </span>
+      ) : canManageTarget && deletePending ? (
+        <Button
+          aria-label={roleLabels.removeMember}
+          isDisabled
+          isIconOnly
+          size="sm"
+          variant="danger-soft">
+          <TrashBin size={16} />
+        </Button>
+      ) : canManageTarget && canRemove ? (
+        <span title={disabledTitle}>
+          <Button
+            isIconOnly
+            size="sm"
+            variant="danger-soft"
+            aria-label={roleLabels.removeMember}
+            isDisabled={onlyOwnerActionDisabled}
+            onPress={() => setRemoveOpen(true)}>
+            <TrashBin size={16} />
+          </Button>
+        </span>
+      ) : null}
+      {currentUser && !onlyOwnerActionDisabled ? (
+        <LeaveOrganizationDialog
+          isOpen={leaveOpen}
+          onOpenChange={setLeaveOpen}
+          organization={organization}
+        />
+      ) : canManageTarget && canRemove && !onlyOwnerActionDisabled ? (
+        <RemoveMemberDialog
+          isOpen={removeOpen}
+          onOpenChange={setRemoveOpen}
+          member={member}
+        />
+      ) : null}
+    </>
+  )
+}
+
+const MemberActionsCell = (props: {
+  canManageTarget: boolean
+  canRemove: boolean
+  canUpdate: boolean
+  currentUser: boolean
+  deletePending: boolean
+  member: Member & { user: Partial<User> }
+  onlyOwnerActionDisabled: boolean
+  organization: Organization
+  protectedRole: string
+  roleLabels: OrganizationRoleLabels
+  roles: Array<[string, string]>
+  updatePending: boolean
+}) => (
+  <Table.Cell key="actions">
+    <div className="flex items-center justify-end gap-1">
+      <MemberRoleControls {...props} />
+      <MemberDepartureControls {...props} />
+    </div>
+  </Table.Cell>
+)
+
 export const OrganizationMemberRow = ({
   columnIds,
   member,
@@ -109,10 +275,6 @@ export const OrganizationMemberRow = ({
   const onlyOwnerActionDisabled =
     targetIsOwner && (ownerCount === undefined || ownerCount <= 1)
 
-  const [removeOpen, setRemoveOpen] = useState(false)
-  const [leaveOpen, setLeaveOpen] = useState(false)
-  const [roleEditorOpen, setRoleEditorOpen] = useState(false)
-
   const cells: Record<string, ReactNode> = {
     select: selectableRow && (
       <Table.Cell key="select">
@@ -153,105 +315,26 @@ export const OrganizationMemberRow = ({
       </Table.Cell>
     ),
     actions: (
-      <Table.Cell key="actions">
-        <div className="flex items-center justify-end gap-1">
-          {canManageTarget && updatePermissionPending && (
-            <Button
-              aria-label={organizationLocalization.changeMemberRole}
-              isDisabled
-              isIconOnly
-              size="sm"
-              variant="tertiary">
-              <Pencil size={16} />
-            </Button>
-          )}
-          {canManageTarget && hasUpdatePermission?.success && (
-            <Button
-              aria-label={organizationLocalization.changeMemberRole}
-              isIconOnly
-              onPress={() => setRoleEditorOpen(true)}
-              size="sm"
-              variant="tertiary">
-              <Pencil size={16} />
-            </Button>
-          )}
-
-          {canManageTarget && hasUpdatePermission?.success && (
-            <EditMemberRolesDialog
-              isOpen={roleEditorOpen}
-              member={member}
-              onOpenChange={setRoleEditorOpen}
-              organizationId={organization.id}
-              protectedRole={creatorRole}
-              protectedRoleRemovalDisabled={onlyOwnerActionDisabled}
-              roles={assignableRoles}
-            />
-          )}
-
-          {isCurrentUser ? (
-            <span
-              title={
-                onlyOwnerActionDisabled
-                  ? organizationLocalization.onlyOwnerActionDisabled
-                  : undefined
-              }>
-              <Button
-                isIconOnly
-                size="sm"
-                variant="danger-soft"
-                aria-label={organizationLocalization.leaveOrganization}
-                isDisabled={onlyOwnerActionDisabled}
-                onPress={() => setLeaveOpen(true)}>
-                <ArrowRightFromSquare size={16} />
-              </Button>
-            </span>
-          ) : canManageTarget && deletePermissionPending ? (
-            <Button
-              aria-label={organizationLocalization.removeMember}
-              isDisabled
-              isIconOnly
-              size="sm"
-              variant="danger-soft">
-              <TrashBin size={16} />
-            </Button>
-          ) : canManageTarget && hasDeletePermission?.success ? (
-            <span
-              title={
-                onlyOwnerActionDisabled
-                  ? organizationLocalization.onlyOwnerActionDisabled
-                  : undefined
-              }>
-              <Button
-                isIconOnly
-                size="sm"
-                variant="danger-soft"
-                aria-label={organizationLocalization.removeMember}
-                isDisabled={onlyOwnerActionDisabled}
-                onPress={() => setRemoveOpen(true)}>
-                <TrashBin size={16} />
-              </Button>
-            </span>
-          ) : null}
-        </div>
-
-        {isCurrentUser && organization && !onlyOwnerActionDisabled ? (
-          <LeaveOrganizationDialog
-            isOpen={leaveOpen}
-            onOpenChange={setLeaveOpen}
-            organization={organization}
-          />
-        ) : (
-          canManageTarget &&
-          hasDeletePermission?.success &&
-          !onlyOwnerActionDisabled && (
-            <RemoveMemberDialog
-              isOpen={removeOpen}
-              onOpenChange={setRemoveOpen}
-              member={member}
-            />
-          )
-        )}
-      </Table.Cell>
+      <MemberActionsCell
+        canManageTarget={canManageTarget}
+        canRemove={hasDeletePermission?.success === true}
+        canUpdate={hasUpdatePermission?.success === true}
+        currentUser={isCurrentUser}
+        deletePending={deletePermissionPending}
+        member={member}
+        onlyOwnerActionDisabled={onlyOwnerActionDisabled}
+        organization={organization}
+        protectedRole={creatorRole}
+        roleLabels={{
+          changeMemberRole: organizationLocalization.changeMemberRole,
+          leaveOrganization: organizationLocalization.leaveOrganization,
+          onlyOwnerActionDisabled:
+            organizationLocalization.onlyOwnerActionDisabled,
+          removeMember: organizationLocalization.removeMember
+        }}
+        roles={assignableRoles}
+        updatePending={updatePermissionPending}
+      />
     )
   }
 

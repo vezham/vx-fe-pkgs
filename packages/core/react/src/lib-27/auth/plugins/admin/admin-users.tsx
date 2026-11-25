@@ -946,7 +946,7 @@ function CreateUserDialog({
   )
 }
 
-function UserDrawer({
+const useUserDrawerState = ({
   canGetUser,
   isOpen,
   onOpenChange,
@@ -956,7 +956,7 @@ function UserDrawer({
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   userId?: string
-}) {
+}) => {
   const {
     additionalFields,
     authClient,
@@ -1221,6 +1221,102 @@ function UserDrawer({
         : dangerousAction === 'revokeAll'
           ? config.localization.revokeAllSessions
           : config.localization.impersonateUser
+
+  return {
+    isOpen,
+    onOpenChange,
+    localization,
+    locale,
+    config,
+    contributedTabs,
+    user,
+    sessionsPermission,
+    sessions,
+    canUpdate,
+    canSetRole,
+    canSetEmail,
+    canSetPassword,
+    canBan,
+    canImpersonate,
+    canDelete,
+    canRevoke,
+    userIdCopied,
+    copyUserId,
+    banReason,
+    setBanReason,
+    banDuration,
+    setBanDuration,
+    banDurationSeconds,
+    passwordOpen,
+    setPasswordOpen,
+    dangerousAction,
+    setDangerousAction,
+    detail,
+    targetIsAdmin,
+    canImpersonateAdmins,
+    isSelf,
+    updateUser,
+    setRoleMutation,
+    setPassword,
+    unban,
+    revokeSession,
+    configuredUserFields,
+    profileForm,
+    confirmDangerousAction,
+    closeDangerousAction,
+    dangerousMutation,
+    dangerousLabel
+  }
+}
+
+type UserDrawerState = ReturnType<typeof useUserDrawerState>
+
+const renderUserDrawer = (state: UserDrawerState) => {
+  const {
+    isOpen,
+    onOpenChange,
+    localization,
+    locale,
+    config,
+    contributedTabs,
+    user,
+    sessionsPermission,
+    sessions,
+    canUpdate,
+    canSetRole,
+    canSetEmail,
+    canSetPassword,
+    canBan,
+    canImpersonate,
+    canDelete,
+    canRevoke,
+    userIdCopied,
+    copyUserId,
+    banReason,
+    setBanReason,
+    banDuration,
+    setBanDuration,
+    banDurationSeconds,
+    passwordOpen,
+    setPasswordOpen,
+    dangerousAction,
+    setDangerousAction,
+    detail,
+    targetIsAdmin,
+    canImpersonateAdmins,
+    isSelf,
+    updateUser,
+    setRoleMutation,
+    setPassword,
+    unban,
+    revokeSession,
+    configuredUserFields,
+    profileForm,
+    confirmDangerousAction,
+    closeDangerousAction,
+    dangerousMutation,
+    dangerousLabel
+  } = state
 
   return (
     <>
@@ -1794,6 +1890,15 @@ function UserDrawer({
       </AlertDialog.Backdrop>
     </>
   )
+}
+
+function UserDrawer(props: {
+  canGetUser: boolean
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  userId?: string
+}) {
+  return renderUserDrawer(useUserDrawerState(props))
 }
 
 function PasswordDialog({

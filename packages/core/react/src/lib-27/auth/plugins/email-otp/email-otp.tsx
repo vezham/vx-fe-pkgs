@@ -1,6 +1,6 @@
 import { useSelector } from '@tanstack/react-form'
 import { useIsMutating } from '@tanstack/react-query'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 import { authMutationKeys, validateEmailAddress } from '@vezham/auth-ui-core'
 import type { EmailOtpAuthClient } from '@vezham/auth-ui-core/plugins/email-otp'
@@ -43,6 +43,191 @@ export type EmailOtpProps = {
   socialPosition?: 'top' | 'bottom'
   variant?: CardProps['variant']
 }
+
+type EmailOtpFormValues = { code: string; email: string }
+
+const useEmailOtpForm = (options: {
+  defaultValues: EmailOtpFormValues
+  onSubmit: (props: { value: EmailOtpFormValues }) => Promise<void>
+}) => useAuthForm(options)
+
+type EmailOtpFormApi = ReturnType<typeof useEmailOtpForm>
+
+const EmailOtpEntryFields = ({
+  codeSent,
+  form,
+  isDisabled,
+  labels,
+  length,
+  onComplete,
+  variant
+}: {
+  codeSent: boolean
+  form: EmailOtpFormApi
+  isDisabled: boolean
+  labels: {
+    code: string
+    email: string
+    emailPlaceholder: string
+    fieldRequired: string
+    invalidEmail: string
+  }
+  length: number
+  onComplete: (code: string) => void
+  variant: CardProps['variant']
+}) =>
+  codeSent ? (
+    <form.AppField name="code">
+      {field => (
+        <OtpField
+          isDisabled={isDisabled}
+          label={labels.code}
+          length={length}
+          name={field.name}
+          value={field.state.value}
+          variant={variant}
+          onChange={field.handleChange}
+          onComplete={onComplete}
+        />
+      )}
+    </form.AppField>
+  ) : (
+    <form.AppField
+      name="email"
+      validators={{
+        onChange: ({ value }) =>
+          validateEmailAddress(value, {
+            invalidMessage: labels.invalidEmail,
+            requiredMessage: labels.fieldRequired
+          })
+      }}>
+      {field => (
+        <TextField
+          name={field.name}
+          type="email"
+          autoComplete="email"
+          isDisabled={isDisabled}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={field.handleChange}
+          isInvalid={isAuthFormFieldInvalid(field.state.meta) || undefined}
+          validationBehavior="aria">
+          <Label>{labels.email}</Label>
+          <Input
+            placeholder={labels.emailPlaceholder}
+            required
+            variant={variant === 'transparent' ? 'primary' : 'secondary'}
+          />
+          <field.AuthFormFieldError />
+        </TextField>
+      )}
+    </form.AppField>
+  )
+
+const EmailOtpSocialOptions = ({
+  isVisible,
+  position,
+  separatorLabel,
+  showProviders,
+  showSeparator,
+  socialLayout
+}: {
+  isVisible: boolean
+  position: 'top' | 'bottom'
+  separatorLabel: string
+  showProviders: boolean
+  showSeparator: boolean
+  socialLayout?: SocialLayout
+}) => {
+  if (!isVisible) return null
+
+  const providers = showProviders ? (
+    <ProviderButtons socialLayout={socialLayout} view="emailOtp" />
+  ) : null
+  const separator = showSeparator ? (
+    <FieldSeparator>{separatorLabel}</FieldSeparator>
+  ) : null
+
+  return position === 'top' ? (
+    <>
+      {providers}
+      {separator}
+    </>
+  ) : (
+    <>
+      {separator}
+      {providers}
+    </>
+  )
+}
+
+const EmailOtpStepActions = ({
+  authButtons,
+  codeSent,
+  cooldown,
+  email,
+  isCoolingDown,
+  isDisabled,
+  localization,
+  onResend,
+  onStartOver
+}: {
+  authButtons: ReactNode
+  codeSent: boolean
+  cooldown: number
+  email: string
+  isCoolingDown: boolean
+  isDisabled: boolean
+  localization: {
+    resend: string
+    resendIn: string
+    useDifferentEmail: string
+  }
+  onResend: () => void
+  onStartOver: () => void
+}) =>
+  codeSent ? (
+    <div className="flex flex-col gap-3">
+      <OpenEmailButton email={email} variant="secondary" />
+      <Button
+        className="w-full"
+        variant="tertiary"
+        isDisabled={isDisabled || isCoolingDown}
+        onPress={onResend}>
+        {isCoolingDown
+          ? localization.resendIn.replace('{{seconds}}', String(cooldown))
+          : localization.resend}
+      </Button>
+      <Button
+        className="w-full"
+        variant="ghost"
+        isDisabled={isDisabled}
+        onPress={onStartOver}>
+        {localization.useDifferentEmail}
+      </Button>
+    </div>
+  ) : (
+    <>{authButtons}</>
+  )
+
+const EmailOtpFooter = ({
+  href,
+  labels
+}: {
+  href: string
+  labels: { needToCreateAnAccount: string; signUp: string }
+}) => (
+  <Card.Footer className="flex-col gap-3">
+    <Description className="text-sm">
+      {labels.needToCreateAnAccount}{' '}
+      <Link
+        href={href}
+        className="text-accent decoration-accent-hover no-underline hover:underline">
+        {labels.signUp}
+      </Link>
+    </Description>
+  </Card.Footer>
+)
 
 /**
  * Passwordless sign-in with an emailed one-time code.
@@ -128,7 +313,7 @@ export const EmailOtp = ({
     })
   }
 
-  const form = useAuthForm({
+  const form = useEmailOtpForm({
     defaultValues: { code: '', email: getSsoFallbackEmail() },
     onSubmit: async ({ value }) => {
       if (!codeSent) {
@@ -174,81 +359,40 @@ export const EmailOtp = ({
       </Card.Header>
 
       <Card.Content className="gap-4">
-        {socialPosition === 'top' && (
-          <>
-            {!!socialProviders?.length && (
-              <ProviderButtons socialLayout={socialLayout} view="emailOtp" />
-            )}
-
-            {showSeparator && (
-              <FieldSeparator>{localization.auth.or}</FieldSeparator>
-            )}
-          </>
-        )}
+        <EmailOtpSocialOptions
+          isVisible={socialPosition === 'top'}
+          position="top"
+          separatorLabel={localization.auth.or}
+          showProviders={Boolean(socialProviders?.length)}
+          showSeparator={Boolean(showSeparator)}
+          socialLayout={socialLayout}
+        />
 
         <form.AppForm>
           <form.AuthFormRoot className="flex flex-col gap-4">
-            {codeSent ? (
-              <form.AppField name="code">
-                {field => (
-                  <OtpField
-                    isDisabled={isPending}
-                    label={emailOtpLocalization.code}
-                    length={otpLength}
-                    name={field.name}
-                    value={field.state.value}
-                    variant={variant}
-                    onChange={field.handleChange}
-                    onComplete={completedCode =>
-                      void verifyCode(completedCode).catch(error =>
-                        setAuthFormServerError(
-                          form,
-                          error,
-                          localization.auth.callbackFailedTitle
-                        )
-                      )
-                    }
-                  />
-                )}
-              </form.AppField>
-            ) : (
-              <form.AppField
-                name="email"
-                validators={{
-                  onChange: ({ value }) =>
-                    validateEmailAddress(value, {
-                      invalidMessage: localization.auth.invalidEmail,
-                      requiredMessage: localization.auth.fieldRequired
-                    })
-                }}>
-                {field => (
-                  <TextField
-                    name={field.name}
-                    type="email"
-                    autoComplete="email"
-                    isDisabled={isPending}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={field.handleChange}
-                    isInvalid={
-                      isAuthFormFieldInvalid(field.state.meta) || undefined
-                    }
-                    validationBehavior="aria">
-                    <Label>{localization.auth.email}</Label>
-
-                    <Input
-                      placeholder={localization.auth.emailPlaceholder}
-                      required
-                      variant={
-                        variant === 'transparent' ? 'primary' : 'secondary'
-                      }
-                    />
-
-                    <field.AuthFormFieldError />
-                  </TextField>
-                )}
-              </form.AppField>
-            )}
+            <EmailOtpEntryFields
+              codeSent={codeSent}
+              form={form}
+              isDisabled={isPending}
+              labels={{
+                code: emailOtpLocalization.code,
+                email: localization.auth.email,
+                emailPlaceholder: localization.auth.emailPlaceholder,
+                fieldRequired: localization.auth.fieldRequired,
+                invalidEmail: localization.auth.invalidEmail
+              }}
+              length={otpLength}
+              onComplete={completedCode =>
+                void verifyCode(completedCode).catch(error =>
+                  setAuthFormServerError(
+                    form,
+                    error,
+                    localization.auth.callbackFailedTitle
+                  )
+                )
+              }
+              variant={variant}
+            />
 
             <form.AuthFormServerError />
 
@@ -266,78 +410,59 @@ export const EmailOtp = ({
                   : emailOtpLocalization.sendCode}
               </form.AuthFormSubmitButton>
 
-              {codeSent ? (
-                <div className="flex flex-col gap-3">
-                  <OpenEmailButton email={email} variant="secondary" />
-
-                  <Button
-                    className="w-full"
-                    variant="tertiary"
-                    isDisabled={isPending || isSigningIn || isCoolingDown}
-                    onPress={() =>
-                      void sendCode().catch(error =>
-                        setAuthFormServerError(
-                          form,
-                          error,
-                          localization.auth.callbackFailedTitle
-                        )
-                      )
-                    }>
-                    {isCoolingDown
-                      ? localization.auth.resendIn.replace(
-                          '{{seconds}}',
-                          String(cooldown)
-                        )
-                      : localization.auth.resend}
-                  </Button>
-
-                  <Button
-                    className="w-full"
-                    variant="ghost"
-                    isDisabled={isPending || isSigningIn}
-                    onPress={startOver}>
-                    {emailOtpLocalization.useDifferentEmail}
-                  </Button>
-                </div>
-              ) : (
-                plugins.flatMap(plugin =>
+              <EmailOtpStepActions
+                authButtons={plugins.flatMap(plugin =>
                   (plugin.authButtons ?? []).map((AuthButton, index) => (
                     <AuthButton
                       key={`${plugin.id}-${index.toString()}`}
                       view="emailOtp"
                     />
                   ))
-                )
-              )}
+                )}
+                codeSent={codeSent}
+                cooldown={cooldown}
+                email={email}
+                isCoolingDown={isCoolingDown}
+                isDisabled={isPending || isSigningIn}
+                localization={{
+                  resend: localization.auth.resend,
+                  resendIn: localization.auth.resendIn,
+                  useDifferentEmail: emailOtpLocalization.useDifferentEmail
+                }}
+                onResend={() =>
+                  void sendCode().catch(error =>
+                    setAuthFormServerError(
+                      form,
+                      error,
+                      localization.auth.callbackFailedTitle
+                    )
+                  )
+                }
+                onStartOver={startOver}
+              />
             </div>
           </form.AuthFormRoot>
         </form.AppForm>
 
-        {socialPosition === 'bottom' && !codeSent && (
-          <>
-            {showSeparator && (
-              <FieldSeparator>{localization.auth.or}</FieldSeparator>
-            )}
-
-            {!!socialProviders?.length && (
-              <ProviderButtons socialLayout={socialLayout} view="emailOtp" />
-            )}
-          </>
-        )}
+        <EmailOtpSocialOptions
+          isVisible={socialPosition === 'bottom' && !codeSent}
+          position="bottom"
+          separatorLabel={localization.auth.or}
+          showProviders={Boolean(socialProviders?.length)}
+          showSeparator={Boolean(showSeparator)}
+          socialLayout={socialLayout}
+        />
       </Card.Content>
 
-      {emailAndPassword?.enabled && (
-        <Card.Footer className="flex-col gap-3">
-          <Description className="text-sm">
-            {localization.auth.needToCreateAnAccount}{' '}
-            <Link
-              href={`${basePaths.auth}/${viewPaths.auth.signUp}`}
-              className="text-accent decoration-accent-hover no-underline hover:underline">
-              {localization.auth.signUp}
-            </Link>
-          </Description>
-        </Card.Footer>
-      )}
+      {emailAndPassword?.enabled ? (
+        <EmailOtpFooter
+          href={`${basePaths.auth}/${viewPaths.auth.signUp}`}
+          labels={{
+            needToCreateAnAccount: localization.auth.needToCreateAnAccount,
+            signUp: localization.auth.signUp
+          }}
+        />
+      ) : null}
     </Card>
   )
 }

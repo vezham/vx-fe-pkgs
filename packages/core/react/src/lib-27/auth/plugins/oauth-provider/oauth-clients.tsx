@@ -101,6 +101,358 @@ const getOAuthClientFormValues = (
   scope: client?.scope ?? ''
 })
 
+const useOAuthClientForm = (options: {
+  defaultValues: OAuthClientFormValues
+  onSubmit: (props: { value: OAuthClientFormValues }) => Promise<void>
+}) => useAuthForm(options)
+
+type OAuthClientFormApi = ReturnType<typeof useOAuthClientForm>
+
+type OAuthClientListLabels = {
+  application: string
+  createClient: string
+  deleteClient: string
+  disabled: string
+  editClient: string
+  enabled: string
+  noOAuthClients: string
+  noOAuthClientsDescription: string
+  redirectUrls: string
+  rotateSecret: string
+}
+
+const OAuthClientRow = ({
+  client,
+  labels,
+  managerCanSetDisabled,
+  togglePending,
+  onDelete,
+  onEdit,
+  onRotate,
+  onToggle
+}: {
+  client: ManagedOAuthClient
+  labels: OAuthClientListLabels
+  managerCanSetDisabled: boolean
+  togglePending: boolean
+  onDelete: (client: ManagedOAuthClient) => void
+  onEdit: (client: ManagedOAuthClient) => void
+  onRotate: (client: ManagedOAuthClient) => void
+  onToggle: (clientId: string, disabled: boolean) => void
+}) => (
+  <div className="flex flex-col gap-3 border-b border-dashed pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-start sm:justify-between">
+    <div className="flex min-w-0 gap-3">
+      <div className="bg-surface-secondary mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg">
+        <Code size={16} className="size-4" />
+      </div>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="truncate text-sm font-medium">
+            {client.client_name || labels.application}
+          </p>
+          <span
+            className={cn(
+              'rounded-full px-2 py-0.5 text-xs',
+              client.disabled
+                ? 'bg-danger-soft text-danger-soft-foreground'
+                : 'bg-success-soft text-success-soft-foreground'
+            )}>
+            {client.disabled ? labels.disabled : labels.enabled}
+          </span>
+        </div>
+        <p className="text-muted mt-1 truncate font-mono text-xs">
+          {client.client_id}
+        </p>
+        <p className="text-muted mt-1 text-xs">
+          {client.redirect_uris.length} {labels.redirectUrls.toLowerCase()}
+        </p>
+      </div>
+    </div>
+    <div className="flex shrink-0 flex-wrap items-center gap-1">
+      {managerCanSetDisabled ? (
+        <Switch
+          aria-label={`${client.client_name || client.client_id}: ${
+            client.disabled ? labels.disabled : labels.enabled
+          }`}
+          size="sm"
+          isSelected={!client.disabled}
+          isDisabled={togglePending}
+          onChange={enabled => onToggle(client.client_id, !enabled)}>
+          <Switch.Content>
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+          </Switch.Content>
+        </Switch>
+      ) : null}
+      <Button
+        isIconOnly
+        size="sm"
+        variant="ghost"
+        aria-label={labels.editClient}
+        onPress={() => onEdit(client)}>
+        <Pencil size={16} />
+      </Button>
+      <Button
+        isIconOnly
+        size="sm"
+        variant="ghost"
+        aria-label={labels.rotateSecret}
+        onPress={() => onRotate(client)}>
+        <ArrowRotateLeft size={16} />
+      </Button>
+      <Button
+        isIconOnly
+        size="sm"
+        variant="ghost"
+        aria-label={labels.deleteClient}
+        onPress={() => onDelete(client)}>
+        <TrashBin size={16} />
+      </Button>
+    </div>
+  </div>
+)
+
+const OAuthClientList = ({
+  clients,
+  isPending,
+  labels,
+  managerCanSetDisabled,
+  togglePending,
+  onCreate,
+  onDelete,
+  onEdit,
+  onRotate,
+  onToggle
+}: {
+  clients: ManagedOAuthClient[]
+  isPending: boolean
+  labels: OAuthClientListLabels
+  managerCanSetDisabled: boolean
+  togglePending: boolean
+  onCreate: () => void
+  onDelete: (client: ManagedOAuthClient) => void
+  onEdit: (client: ManagedOAuthClient) => void
+  onRotate: (client: ManagedOAuthClient) => void
+  onToggle: (clientId: string, disabled: boolean) => void
+}) => {
+  if (isPending) {
+    return (
+      <div className="flex min-h-28 items-center justify-center">
+        <Spinner aria-label={labels.application} />
+      </div>
+    )
+  }
+
+  if (!clients.length) {
+    return (
+      <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
+        <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
+          <Code size={16} />
+        </div>
+        <div className="flex max-w-sm flex-col gap-1">
+          <p className="text-sm font-medium">{labels.noOAuthClients}</p>
+          <p className="text-muted text-sm">
+            {labels.noOAuthClientsDescription}
+          </p>
+        </div>
+        <Button size="sm" variant="outline" onPress={onCreate}>
+          {labels.createClient}
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {clients.map(client => (
+        <OAuthClientRow
+          key={client.client_id}
+          client={client}
+          labels={labels}
+          managerCanSetDisabled={managerCanSetDisabled}
+          togglePending={togglePending}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onRotate={onRotate}
+          onToggle={onToggle}
+        />
+      ))}
+    </>
+  )
+}
+
+type OAuthClientEditorLabels = {
+  applicationType: string
+  applicationUrl: string
+  cancel: string
+  clientName: string
+  createClient: string
+  editClient: string
+  invalidUrl: string
+  logoUrl: string
+  nativeApplication: string
+  redirectUrls: string
+  redirectUrlsDescription: string
+  saveChanges: string
+  scopes: string
+  webApplication: string
+}
+
+const OAuthClientEditor = ({
+  form,
+  isOpen,
+  isEditing,
+  labels,
+  requiredMessage,
+  onOpenChange
+}: {
+  form: OAuthClientFormApi
+  isOpen: boolean
+  isEditing: boolean
+  labels: OAuthClientEditorLabels
+  requiredMessage: string
+  onOpenChange: (open: boolean) => void
+}) => (
+  <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal.Container>
+      <Modal.Dialog>
+        <form.AppForm>
+          <form.AuthFormRoot>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Icon>
+                {isEditing ? <Pencil size={16} /> : <CirclePlus size={16} />}
+              </Modal.Icon>
+              <Modal.Heading>
+                {isEditing ? labels.editClient : labels.createClient}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4 overflow-visible">
+              <form.AppField
+                name="clientName"
+                validators={{
+                  onChange: ({ value }) =>
+                    validateStringLength(value, {
+                      requiredMessage,
+                      trim: true
+                    })
+                }}>
+                {field => (
+                  <TextField
+                    isRequired
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={field.handleChange}
+                    value={field.state.value}
+                    isInvalid={
+                      isAuthFormFieldInvalid(field.state.meta) || undefined
+                    }
+                    validationBehavior="aria">
+                    <Label>{labels.clientName}</Label>
+                    <Input variant="secondary" />
+                    <field.AuthFormFieldError />
+                  </TextField>
+                )}
+              </form.AppField>
+              <form.Field name="applicationType">
+                {field => (
+                  <Select
+                    name={field.name}
+                    onChange={value =>
+                      field.handleChange(value === 'native' ? 'native' : 'web')
+                    }
+                    value={field.state.value}
+                    variant="secondary">
+                    <Label>{labels.applicationType}</Label>
+                    <Select.Trigger>
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        <ListBox.Item id="web">
+                          {labels.webApplication}
+                        </ListBox.Item>
+                        <ListBox.Item id="native">
+                          {labels.nativeApplication}
+                        </ListBox.Item>
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                )}
+              </form.Field>
+              <form.AppField
+                name="redirectUris"
+                validators={{
+                  onChange: ({ value }) =>
+                    validateAbsoluteUrlList(value, {
+                      invalidMessage: labels.invalidUrl,
+                      requiredMessage
+                    })
+                }}>
+                {field => (
+                  <TextField
+                    isRequired
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={field.handleChange}
+                    value={field.state.value}
+                    isInvalid={
+                      isAuthFormFieldInvalid(field.state.meta) || undefined
+                    }
+                    validationBehavior="aria">
+                    <Label>{labels.redirectUrls}</Label>
+                    <TextArea rows={3} variant="secondary" />
+                    <p className="text-muted text-xs">
+                      {labels.redirectUrlsDescription}
+                    </p>
+                    <field.AuthFormFieldError />
+                  </TextField>
+                )}
+              </form.AppField>
+              {(
+                [
+                  ['clientUri', labels.applicationUrl, 'url'],
+                  ['logoUri', labels.logoUrl, 'url'],
+                  ['scope', labels.scopes, 'text']
+                ] as const
+              ).map(([name, label, type]) => (
+                <form.Field key={name} name={name}>
+                  {field => (
+                    <TextField
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={field.handleChange}
+                      value={field.state.value}>
+                      <Label>{label}</Label>
+                      <Input
+                        placeholder={
+                          name === 'scope' ? 'openid profile email' : undefined
+                        }
+                        type={type}
+                        variant="secondary"
+                      />
+                    </TextField>
+                  )}
+                </form.Field>
+              ))}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="ghost" onPress={() => onOpenChange(false)}>
+                {labels.cancel}
+              </Button>
+              <form.AuthFormSubmitButton>
+                {isEditing ? labels.saveChanges : labels.createClient}
+              </form.AuthFormSubmitButton>
+            </Modal.Footer>
+          </form.AuthFormRoot>
+        </form.AppForm>
+      </Modal.Dialog>
+    </Modal.Container>
+  </Modal.Backdrop>
+)
+
 export const OAuthClients = ({
   manager,
   owner,
@@ -126,7 +478,7 @@ export const OAuthClients = ({
       toast.danger(localization.errors.copyFailed)
     }
   })
-  const form = useAuthForm({
+  const form = useOAuthClientForm({
     defaultValues: getOAuthClientFormValues(),
     onSubmit: async ({ value }) => {
       const input: OAuthClientInput = {
@@ -210,267 +562,31 @@ export const OAuthClients = ({
 
       <Card variant={variant}>
         <Card.Content className="flex flex-col gap-4">
-          {clients.isPending ? (
-            <div className="flex min-h-28 items-center justify-center">
-              <Spinner aria-label={oauthLocalization.oauthClients} />
-            </div>
-          ) : clients.data?.length ? (
-            clients.data.map(client => (
-              <div
-                key={client.client_id}
-                className="flex flex-col gap-3 border-b border-dashed pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex min-w-0 gap-3">
-                  <div className="bg-surface-secondary mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                    <Code size={16} className="size-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-medium">
-                        {client.client_name || oauthLocalization.application}
-                      </p>
-                      <span
-                        className={cn(
-                          'rounded-full px-2 py-0.5 text-xs',
-                          client.disabled
-                            ? 'bg-danger-soft text-danger-soft-foreground'
-                            : 'bg-success-soft text-success-soft-foreground'
-                        )}>
-                        {client.disabled
-                          ? oauthLocalization.disabled
-                          : oauthLocalization.enabled}
-                      </span>
-                    </div>
-                    <p className="text-muted mt-1 truncate font-mono text-xs">
-                      {client.client_id}
-                    </p>
-                    <p className="text-muted mt-1 text-xs">
-                      {client.redirect_uris.length}{' '}
-                      {oauthLocalization.redirectUrls.toLowerCase()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex shrink-0 flex-wrap items-center gap-1">
-                  {manager.setDisabled && (
-                    <Switch
-                      aria-label={`${client.client_name || client.client_id}: ${
-                        client.disabled
-                          ? oauthLocalization.disabled
-                          : oauthLocalization.enabled
-                      }`}
-                      size="sm"
-                      isSelected={!client.disabled}
-                      isDisabled={setDisabled.isPending}
-                      onChange={enabled =>
-                        setDisabled.mutate({
-                          clientId: client.client_id,
-                          disabled: !enabled
-                        })
-                      }>
-                      <Switch.Content>
-                        <Switch.Control>
-                          <Switch.Thumb />
-                        </Switch.Control>
-                      </Switch.Content>
-                    </Switch>
-                  )}
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="ghost"
-                    aria-label={oauthLocalization.editClient}
-                    onPress={() => openEdit(client)}>
-                    <Pencil size={16} />
-                  </Button>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="ghost"
-                    aria-label={oauthLocalization.rotateSecret}
-                    onPress={() => setAction({ kind: 'rotate', client })}>
-                    <ArrowRotateLeft size={16} />
-                  </Button>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="ghost"
-                    aria-label={oauthLocalization.deleteClient}
-                    onPress={() => setAction({ kind: 'delete', client })}>
-                    <TrashBin size={16} />
-                  </Button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center">
-              <div className="bg-surface-secondary flex size-10 items-center justify-center rounded-xl">
-                <Code size={16} />
-              </div>
-              <div className="flex max-w-sm flex-col gap-1">
-                <p className="text-sm font-medium">
-                  {oauthLocalization.noOAuthClients}
-                </p>
-                <p className="text-muted text-sm">
-                  {oauthLocalization.noOAuthClientsDescription}
-                </p>
-              </div>
-              <Button size="sm" variant="outline" onPress={openCreate}>
-                {oauthLocalization.createClient}
-              </Button>
-            </div>
-          )}
+          <OAuthClientList
+            clients={clients.data ?? []}
+            isPending={clients.isPending}
+            labels={oauthLocalization}
+            managerCanSetDisabled={Boolean(manager.setDisabled)}
+            togglePending={setDisabled.isPending}
+            onCreate={openCreate}
+            onDelete={client => setAction({ kind: 'delete', client })}
+            onEdit={openEdit}
+            onRotate={client => setAction({ kind: 'rotate', client })}
+            onToggle={(clientId, disabled) =>
+              setDisabled.mutate({ clientId, disabled })
+            }
+          />
         </Card.Content>
       </Card>
 
-      <Modal.Backdrop isOpen={editorOpen} onOpenChange={setEditorOpen}>
-        <Modal.Container>
-          <Modal.Dialog>
-            <form.AppForm>
-              <form.AuthFormRoot>
-                <Modal.CloseTrigger />
-                <Modal.Header>
-                  <Modal.Icon>
-                    {editingClient ? (
-                      <Pencil size={16} />
-                    ) : (
-                      <CirclePlus size={16} />
-                    )}
-                  </Modal.Icon>
-                  <Modal.Heading>
-                    {editingClient
-                      ? oauthLocalization.editClient
-                      : oauthLocalization.createClient}
-                  </Modal.Heading>
-                </Modal.Header>
-                <Modal.Body className="flex flex-col gap-4 overflow-visible">
-                  <form.AppField
-                    name="clientName"
-                    validators={{
-                      onChange: ({ value }) =>
-                        validateStringLength(value, {
-                          requiredMessage: localization.auth.fieldRequired,
-                          trim: true
-                        })
-                    }}>
-                    {field => (
-                      <TextField
-                        isRequired
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={field.handleChange}
-                        value={field.state.value}
-                        isInvalid={
-                          isAuthFormFieldInvalid(field.state.meta) || undefined
-                        }
-                        validationBehavior="aria">
-                        <Label>{oauthLocalization.clientName}</Label>
-                        <Input variant="secondary" />
-                        <field.AuthFormFieldError />
-                      </TextField>
-                    )}
-                  </form.AppField>
-                  <form.Field name="applicationType">
-                    {field => (
-                      <Select
-                        name={field.name}
-                        onChange={value =>
-                          field.handleChange(
-                            value === 'native' ? 'native' : 'web'
-                          )
-                        }
-                        value={field.state.value}
-                        variant="secondary">
-                        <Label>{oauthLocalization.applicationType}</Label>
-                        <Select.Trigger>
-                          <Select.Value />
-                          <Select.Indicator />
-                        </Select.Trigger>
-                        <Select.Popover>
-                          <ListBox>
-                            <ListBox.Item id="web">
-                              {oauthLocalization.webApplication}
-                            </ListBox.Item>
-                            <ListBox.Item id="native">
-                              {oauthLocalization.nativeApplication}
-                            </ListBox.Item>
-                          </ListBox>
-                        </Select.Popover>
-                      </Select>
-                    )}
-                  </form.Field>
-                  <form.AppField
-                    name="redirectUris"
-                    validators={{
-                      onChange: ({ value }) =>
-                        validateAbsoluteUrlList(value, {
-                          invalidMessage: oauthLocalization.invalidUrl,
-                          requiredMessage: localization.auth.fieldRequired
-                        })
-                    }}>
-                    {field => (
-                      <TextField
-                        isRequired
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={field.handleChange}
-                        value={field.state.value}
-                        isInvalid={
-                          isAuthFormFieldInvalid(field.state.meta) || undefined
-                        }
-                        validationBehavior="aria">
-                        <Label>{oauthLocalization.redirectUrls}</Label>
-                        <TextArea rows={3} variant="secondary" />
-                        <p className="text-muted text-xs">
-                          {oauthLocalization.redirectUrlsDescription}
-                        </p>
-                        <field.AuthFormFieldError />
-                      </TextField>
-                    )}
-                  </form.AppField>
-                  {(
-                    [
-                      ['clientUri', oauthLocalization.applicationUrl, 'url'],
-                      ['logoUri', oauthLocalization.logoUrl, 'url'],
-                      ['scope', oauthLocalization.scopes, 'text']
-                    ] as const
-                  ).map(([name, label, type]) => (
-                    <form.Field key={name} name={name}>
-                      {field => (
-                        <TextField
-                          name={field.name}
-                          onBlur={field.handleBlur}
-                          onChange={field.handleChange}
-                          value={field.state.value}>
-                          <Label>{label}</Label>
-                          <Input
-                            placeholder={
-                              name === 'scope'
-                                ? 'openid profile email'
-                                : undefined
-                            }
-                            type={type}
-                            variant="secondary"
-                          />
-                        </TextField>
-                      )}
-                    </form.Field>
-                  ))}
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="ghost" onPress={() => setEditorOpen(false)}>
-                    {oauthLocalization.cancel}
-                  </Button>
-                  <form.AuthFormSubmitButton>
-                    {editingClient
-                      ? oauthLocalization.saveChanges
-                      : oauthLocalization.createClient}
-                  </form.AuthFormSubmitButton>
-                </Modal.Footer>
-              </form.AuthFormRoot>
-            </form.AppForm>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+      <OAuthClientEditor
+        form={form}
+        isOpen={editorOpen}
+        isEditing={Boolean(editingClient)}
+        labels={oauthLocalization}
+        requiredMessage={localization.auth.fieldRequired}
+        onOpenChange={setEditorOpen}
+      />
 
       <AlertDialog.Backdrop
         isOpen={Boolean(action)}

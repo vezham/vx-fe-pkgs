@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import type { Account } from '@vezham/auth'
 import {
   type AuthSocialProvider,
@@ -53,6 +55,108 @@ const readAccountString = (data: unknown, key: 'login' | 'username') => {
   return typeof value === 'string' ? value : undefined
 }
 
+const LinkedAccountIdentity = ({
+  account,
+  accountName,
+  isLoadingInfo,
+  providerIcon,
+  providerName,
+  unavailableLabel
+}: {
+  account?: Account
+  accountName?: string
+  isLoadingInfo: boolean
+  providerIcon: ReactNode
+  providerName: string
+  unavailableLabel: string
+}) => (
+  <>
+    <div
+      className={cn(
+        'bg-surface-secondary flex size-10 shrink-0 items-center justify-center rounded-xl',
+        !account && 'opacity-50'
+      )}>
+      {providerIcon ?? <PlugConnection size={16} className="size-4.5" />}
+    </div>
+
+    <div className="flex min-w-0 flex-col">
+      <span className="text-sm leading-tight font-medium">{providerName}</span>
+      {account && isLoadingInfo ? (
+        <Skeleton className="my-0.5 h-3 w-24 rounded-lg" />
+      ) : (
+        <span className="text-muted truncate text-xs">
+          {account ? accountName : unavailableLabel}
+        </span>
+      )}
+    </div>
+  </>
+)
+
+const LinkedAccountAction = ({
+  account,
+  isLinking,
+  isUnlinking,
+  linkLabel,
+  onLink,
+  onUnlink,
+  providerName,
+  canUnlink,
+  localization
+}: {
+  account?: Account
+  isLinking: boolean
+  isUnlinking: boolean
+  linkLabel: string
+  onLink: () => void
+  onUnlink: () => void
+  providerName: string
+  canUnlink: boolean
+  localization: ReturnType<typeof useAuth>['localization']
+}) =>
+  account ? (
+    <span
+      className="ml-auto shrink-0"
+      title={
+        canUnlink
+          ? undefined
+          : localization.settings.lastAccountUnlinkingDisabled
+      }>
+      <Button
+        variant="outline"
+        size="sm"
+        onPress={onUnlink}
+        isPending={isUnlinking}
+        isDisabled={!canUnlink}
+        aria-label={localization.settings.unlinkProvider.replace(
+          '{{provider}}',
+          providerName
+        )}>
+        {isUnlinking ? (
+          <Spinner color="current" size="sm" />
+        ) : (
+          <LinkSlash size={16} />
+        )}
+        {localization.settings.unlinkProvider
+          .replace('{{provider}}', '')
+          .trim()}
+      </Button>
+    </span>
+  ) : (
+    <Button
+      className="ml-auto shrink-0"
+      variant="outline"
+      size="sm"
+      onPress={onLink}
+      isPending={isLinking}
+      aria-label={localization.settings.linkProvider.replace(
+        '{{provider}}',
+        providerName
+      )}>
+      {isLinking ? <Spinner color="current" size="sm" /> : <Link size={16} />}
+      {linkLabel}
+    </Button>
+  )
+
 export const LinkedAccount = ({
   account,
   canUnlink = true,
@@ -101,96 +205,40 @@ export const LinkedAccount = ({
   const needsReauthentication = isReauthenticationRequiredError(
     unlinkAccount.error
   )
+  const linkProvider = () =>
+    linkSocial({
+      provider: providerId,
+      callbackURL: getAuthCallbackURL(baseURL, window.location.pathname)
+    })
+  const unlinkProvider = () => {
+    if (account) unlinkAccount.mutate({ accountId: account.id })
+  }
 
   return (
     <>
       <div className="flex items-center gap-3">
-        <div
-          className={cn(
-            'bg-surface-secondary flex size-10 shrink-0 items-center justify-center rounded-xl',
-            !account && 'opacity-50'
-          )}>
-          {providerIcon ? (
-            providerIcon
-          ) : (
-            <PlugConnection size={16} className="size-4.5" />
+        <LinkedAccountIdentity
+          account={account}
+          accountName={displayName}
+          isLoadingInfo={isLoadingInfo}
+          providerIcon={providerIcon}
+          providerName={providerName}
+          unavailableLabel={localization.settings.linkProvider.replace(
+            '{{provider}}',
+            providerName
           )}
-        </div>
-
-        <div className="flex min-w-0 flex-col">
-          <span className="text-sm leading-tight font-medium">
-            {providerName}
-          </span>
-
-          {account && isLoadingInfo ? (
-            <Skeleton className="my-0.5 h-3 w-24 rounded-lg" />
-          ) : (
-            <span className="text-muted truncate text-xs">
-              {account
-                ? displayName
-                : localization.settings.linkProvider.replace(
-                    '{{provider}}',
-                    providerName
-                  )}
-            </span>
-          )}
-        </div>
-
-        {account ? (
-          <span
-            className="ml-auto shrink-0"
-            title={
-              canUnlink
-                ? undefined
-                : localization.settings.lastAccountUnlinkingDisabled
-            }>
-            <Button
-              variant="outline"
-              size="sm"
-              onPress={() => unlinkAccount.mutate({ accountId: account.id })}
-              isPending={unlinkAccount.isPending}
-              isDisabled={!canUnlink}
-              aria-label={localization.settings.unlinkProvider.replace(
-                '{{provider}}',
-                providerName
-              )}>
-              {unlinkAccount.isPending ? (
-                <Spinner color="current" size="sm" />
-              ) : (
-                <LinkSlash size={16} />
-              )}
-              {localization.settings.unlinkProvider
-                .replace('{{provider}}', '')
-                .trim()}
-            </Button>
-          </span>
-        ) : (
-          <Button
-            className="ml-auto shrink-0"
-            variant="outline"
-            size="sm"
-            onPress={() =>
-              linkSocial({
-                provider: providerId,
-                callbackURL: getAuthCallbackURL(
-                  baseURL,
-                  window.location.pathname
-                )
-              })
-            }
-            isPending={isLinking}
-            aria-label={localization.settings.linkProvider.replace(
-              '{{provider}}',
-              providerName
-            )}>
-            {isLinking ? (
-              <Spinner color="current" size="sm" />
-            ) : (
-              <Link size={16} />
-            )}
-            {localization.settings.link}
-          </Button>
-        )}
+        />
+        <LinkedAccountAction
+          account={account}
+          canUnlink={canUnlink}
+          isLinking={isLinking}
+          isUnlinking={unlinkAccount.isPending}
+          linkLabel={localization.settings.link}
+          localization={localization}
+          onLink={linkProvider}
+          onUnlink={unlinkProvider}
+          providerName={providerName}
+        />
       </div>
       {account && (
         <AlertDialog.Backdrop

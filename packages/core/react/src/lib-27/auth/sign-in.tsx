@@ -47,6 +47,40 @@ export interface SignInProps {
   variant?: CardProps['variant']
 }
 
+const SignInFooter = ({
+  canResetPassword,
+  canSignUp,
+  forgotPasswordHref,
+  localization,
+  signUpHref
+}: {
+  canResetPassword: boolean
+  canSignUp: boolean
+  forgotPasswordHref: string
+  localization: ReturnType<typeof useAuth>['localization']['auth']
+  signUpHref: string
+}) => (
+  <Card.Footer className="flex-col gap-3">
+    {canResetPassword && (
+      <Link
+        href={forgotPasswordHref}
+        className="text-sm no-underline hover:underline">
+        {localization.forgotPasswordLink}
+      </Link>
+    )}
+    {canSignUp && (
+      <Description className="text-sm">
+        {localization.needToCreateAnAccount}{' '}
+        <Link
+          href={signUpHref}
+          className="text-accent decoration-accent-hover no-underline hover:underline">
+          {localization.signUp}
+        </Link>
+      </Description>
+    )}
+  </Card.Footer>
+)
+
 /**
  * Render the sign-in UI using auth context for configuration and localization.
  *
@@ -330,26 +364,15 @@ export const SignIn = ({
         )}
       </Card.Content>
 
-      <Card.Footer className="flex-col gap-3">
-        {emailAndPassword?.enabled && emailAndPassword?.forgotPassword && (
-          <Link
-            href={`${basePaths.auth}/${viewPaths.auth.forgotPassword}`}
-            className="text-sm no-underline hover:underline">
-            {localization.auth.forgotPasswordLink}
-          </Link>
+      <SignInFooter
+        canResetPassword={Boolean(
+          emailAndPassword?.enabled && emailAndPassword.forgotPassword
         )}
-
-        {emailAndPassword?.enabled && (
-          <Description className="text-sm">
-            {localization.auth.needToCreateAnAccount}{' '}
-            <Link
-              href={`${basePaths.auth}/${viewPaths.auth.signUp}`}
-              className="text-accent decoration-accent-hover no-underline hover:underline">
-              {localization.auth.signUp}
-            </Link>
-          </Description>
-        )}
-      </Card.Footer>
+        canSignUp={Boolean(emailAndPassword?.enabled)}
+        forgotPasswordHref={`${basePaths.auth}/${viewPaths.auth.forgotPassword}`}
+        localization={localization.auth}
+        signUpHref={`${basePaths.auth}/${viewPaths.auth.signUp}`}
+      />
     </Card>
   )
 }

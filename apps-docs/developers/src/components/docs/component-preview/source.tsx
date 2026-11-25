@@ -154,7 +154,7 @@ export const PreviewSource = ({ children }: { children?: ReactNode }) => {
             </Tabs.List>
           </Tabs.ListContainer>
         </div>
-        {files.map((file, index) => (
+        {files.map(file => (
           <Tabs.Panel
             key={file.key}
             id={`file-${file.key}`}

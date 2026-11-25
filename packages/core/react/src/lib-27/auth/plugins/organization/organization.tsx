@@ -1,8 +1,9 @@
-import { type ComponentProps, useEffect, useMemo } from 'react'
+import { type ComponentProps, type ReactNode, useEffect, useMemo } from 'react'
 
 import type {
   OrganizationAuthClient,
-  OrganizationView
+  OrganizationView,
+  OrganizationViewPaths
 } from '@vezham/auth-ui-core/plugins/organization'
 import { organizationPlugin } from '@vezham/auth-ui-core/plugins/organization'
 import { useAuth, useAuthPlugin, useAuthenticate } from '@vezham/auth-ui-react'
@@ -30,6 +31,142 @@ export type OrganizationProps = {
   variant?: CardProps['variant']
   /** Built-in view name or a plugin-contributed organization tab id. */
   view?: OrganizationView | (string & {})
+}
+
+const resolveOrganizationView = ({
+  extensionTabs,
+  path,
+  paths,
+  rolesEnabled,
+  view
+}: {
+  extensionTabs: Array<{ id: string; path: string }>
+  path?: string
+  paths: OrganizationViewPaths
+  rolesEnabled: boolean
+  view?: string
+}) => {
+  if (view) return view === 'roles' && !rolesEnabled ? undefined : view
+
+  const routes = Object.entries(paths).filter(
+    ([name]) => rolesEnabled || name !== 'roles'
+  )
+  return [
+    ...routes,
+    ...extensionTabs.map(tab => [tab.id, tab.path] as const)
+  ].find(([, segment]) => segment === path)?.[0]
+}
+
+const getOrganizationHref = (
+  basePath: string,
+  slugPrefix: string,
+  slug: string | null | undefined,
+  path: string
+) => (slug ? `${basePath}/${slugPrefix}${slug}/${path}` : `${basePath}/${path}`)
+
+const getOrganizationSelectedView = (
+  currentView: string,
+  canReadRoles: boolean
+) => (currentView === 'roles' && !canReadRoles ? 'settings' : currentView)
+
+type OrganizationExtensionTab = {
+  id: string
+  label: ReactNode
+  path: string
+}
+
+const OrganizationNavigation = ({
+  basePath,
+  canReadRoles,
+  extensionTabs,
+  hideNav,
+  labels,
+  paths,
+  rolesEnabled,
+  slug,
+  slugPrefix,
+  teams
+}: {
+  basePath: string
+  canReadRoles: { data?: { success?: boolean } | null; isPending: boolean }
+  extensionTabs: OrganizationExtensionTab[]
+  hideNav: boolean
+  labels: { people: string; roles: string; settings: string; teams: string }
+  paths: OrganizationViewPaths
+  rolesEnabled: boolean
+  slug?: string | null
+  slugPrefix: string
+  teams: boolean
+}) => {
+  if (hideNav) return null
+
+  return (
+    <Tabs.ListContainer>
+      <Tabs.List
+        aria-label={labels.settings}
+        className="max-w-fit [scrollbar-width:none] overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <Tabs.Tab
+          id="settings"
+          href={getOrganizationHref(basePath, slugPrefix, slug, paths.settings)}
+          className="gap-2"
+          onPress={event =>
+            event.target.scrollIntoView({
+              behavior: 'smooth',
+              inline: 'center'
+            })
+          }>
+          <Gear size={16} className="text-muted" />
+          {labels.settings}
+          <Tabs.Indicator />
+        </Tabs.Tab>
+        {teams ? (
+          <Tabs.Tab
+            id="teams"
+            href={getOrganizationHref(basePath, slugPrefix, slug, paths.teams)}
+            className="gap-2">
+            <Persons size={16} className="text-muted" />
+            {labels.teams}
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        ) : null}
+        {rolesEnabled ? (
+          <Tabs.Tab
+            id="roles"
+            isDisabled={canReadRoles.isPending || !canReadRoles.data?.success}
+            href={getOrganizationHref(basePath, slugPrefix, slug, paths.roles)}
+            className="gap-2">
+            <Shield size={16} className="text-muted" />
+            {labels.roles}
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        ) : null}
+        {extensionTabs.map(tab => (
+          <Tabs.Tab
+            id={tab.id}
+            key={tab.id}
+            href={getOrganizationHref(basePath, slugPrefix, slug, tab.path)}
+            className="gap-2">
+            {tab.label}
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        ))}
+        <Tabs.Tab
+          id="people"
+          href={getOrganizationHref(basePath, slugPrefix, slug, paths.people)}
+          className="gap-2"
+          onPress={event =>
+            event.target.scrollIntoView({
+              behavior: 'smooth',
+              inline: 'center'
+            })
+          }>
+          <Person size={16} className="text-muted" />
+          {labels.people}
+          <Tabs.Indicator />
+        </Tabs.Tab>
+      </Tabs.List>
+    </Tabs.ListContainer>
+  )
 }
 
 /**
@@ -90,24 +227,23 @@ export const Organization = ({
     activeOrganization
   ])
 
-  const currentView = useMemo(() => {
-    if (view) return view === 'roles' && !rolesEnabled ? undefined : view
-
-    const match = [
-      ...Object.entries(organizationViewPaths.organization).filter(
-        ([name]) => rolesEnabled || name !== 'roles'
-      ),
-      ...extensionTabs.map(tab => [tab.id, tab.path] as const)
-    ].find(([, segment]) => segment === path)
-
-    return match?.[0]
-  }, [
-    extensionTabs,
-    view,
-    path,
-    organizationViewPaths.organization,
-    rolesEnabled
-  ])
+  const currentView = useMemo(
+    () =>
+      resolveOrganizationView({
+        extensionTabs,
+        path,
+        paths: organizationViewPaths.organization,
+        rolesEnabled,
+        view
+      }),
+    [
+      extensionTabs,
+      view,
+      path,
+      organizationViewPaths.organization,
+      rolesEnabled
+    ]
+  )
 
   if (!currentView) {
     const validPaths = Object.entries(organizationViewPaths.organization)
@@ -123,12 +259,10 @@ export const Organization = ({
     return null
   }
 
-  const selectedView =
-    currentView === 'roles' &&
-    !canReadRoles.isPending &&
-    !canReadRoles.data?.success
-      ? 'settings'
-      : currentView
+  const selectedView = getOrganizationSelectedView(
+    currentView,
+    canReadRoles.isPending || canReadRoles.data?.success === true
+  )
 
   return (
     <Tabs
@@ -136,100 +270,23 @@ export const Organization = ({
       orientation="horizontal"
       selectedKey={selectedView}
       {...props}>
-      {!hideNav && (
-        <Tabs.ListContainer>
-          <Tabs.List
-            aria-label={localization.settings.settings}
-            className="max-w-fit [scrollbar-width:none] overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <Tabs.Tab
-              id="settings"
-              href={
-                slug
-                  ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.settings}`
-                  : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
-              }
-              className="gap-2"
-              onPress={e =>
-                e.target.scrollIntoView({
-                  behavior: 'smooth',
-                  inline: 'center'
-                })
-              }>
-              <Gear size={16} className="text-muted" />
-
-              {localization.settings.settings}
-
-              <Tabs.Indicator />
-            </Tabs.Tab>
-            {teams && (
-              <Tabs.Tab
-                id="teams"
-                href={
-                  slug
-                    ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.teams}`
-                    : `${basePaths.organization}/${organizationViewPaths.organization.teams}`
-                }
-                className="gap-2">
-                <Persons size={16} className="text-muted" />
-                {organizationLocalization.teams}
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            )}
-            {rolesEnabled && (
-              <Tabs.Tab
-                id="roles"
-                isDisabled={
-                  canReadRoles.isPending || !canReadRoles.data?.success
-                }
-                href={
-                  slug
-                    ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.roles}`
-                    : `${basePaths.organization}/${organizationViewPaths.organization.roles}`
-                }
-                className="gap-2">
-                <Shield size={16} className="text-muted" />
-                {organizationLocalization.roles}
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            )}
-            {extensionTabs.map(tab => (
-              <Tabs.Tab
-                id={tab.id}
-                key={tab.id}
-                href={
-                  slug
-                    ? `${basePaths.organization}/${slugPrefix}${slug}/${tab.path}`
-                    : `${basePaths.organization}/${tab.path}`
-                }
-                className="gap-2">
-                {tab.label}
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            ))}
-
-            <Tabs.Tab
-              id="people"
-              href={
-                slug
-                  ? `${basePaths.organization}/${slugPrefix}${slug}/${organizationViewPaths.organization.people}`
-                  : `${basePaths.organization}/${organizationViewPaths.organization.people}`
-              }
-              className="gap-2"
-              onPress={e =>
-                e.target.scrollIntoView({
-                  behavior: 'smooth',
-                  inline: 'center'
-                })
-              }>
-              <Person size={16} className="text-muted" />
-
-              {organizationLocalization.people}
-
-              <Tabs.Indicator />
-            </Tabs.Tab>
-          </Tabs.List>
-        </Tabs.ListContainer>
-      )}
+      <OrganizationNavigation
+        basePath={basePaths.organization}
+        canReadRoles={canReadRoles}
+        extensionTabs={extensionTabs}
+        hideNav={Boolean(hideNav)}
+        labels={{
+          people: organizationLocalization.people,
+          roles: organizationLocalization.roles,
+          settings: localization.settings.settings,
+          teams: organizationLocalization.teams
+        }}
+        paths={organizationViewPaths.organization}
+        rolesEnabled={rolesEnabled}
+        slug={slug}
+        slugPrefix={slugPrefix}
+        teams={Boolean(teams)}
+      />
 
       <Tabs.Panel id="settings" className="px-0">
         {activeOrganization && (

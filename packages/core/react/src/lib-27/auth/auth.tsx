@@ -130,7 +130,7 @@ export const Auth = ({
     return null
   }
 
-  // Plugin overrides have priority over built-in views.
+  // vx-bot/INFO: Plugin overrides have priority over built-in views.
   const PluginView = resolvePluginAuthView(plugins, view, authView, path)
   if (PluginView) {
     return (

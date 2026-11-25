@@ -1,5 +1,5 @@
 import { useSelector } from '@tanstack/react-form'
-import { useEffect, useState } from 'react'
+import { type ComponentType, useEffect, useState } from 'react'
 
 import {
   getAuthLinkURL,
@@ -43,6 +43,155 @@ export type ResetPasswordOtpProps = {
   className?: string
   variant?: CardProps['variant']
 }
+
+type ResetPasswordField<Value> = {
+  AuthFormFieldError: ComponentType
+  handleBlur: () => void
+  handleChange: (value: Value) => void
+  name: string
+  state: {
+    meta: { isTouched: boolean; isValid: boolean }
+    value: Value
+  }
+}
+
+const PasswordOtpField = ({
+  field,
+  isDisabled,
+  isVisible,
+  labels,
+  onVisibilityChange,
+  variant
+}: {
+  field: ResetPasswordField<string>
+  isDisabled: boolean
+  isVisible: boolean
+  labels: {
+    hidePassword: string
+    newPassword: string
+    newPasswordPlaceholder: string
+    passwordCompromised: string
+    showPassword: string
+  }
+  onVisibilityChange: () => void
+  variant: CardProps['variant']
+}) => (
+  <TextField
+    name={field.name}
+    autoComplete="new-password"
+    value={field.state.value}
+    onBlur={field.handleBlur}
+    onChange={field.handleChange}
+    isInvalid={isAuthFormFieldInvalid(field.state.meta)}
+    isDisabled={isDisabled}
+    validationBehavior="aria">
+    <Label>{labels.newPassword}</Label>
+    <InputGroup variant={variant === 'transparent' ? 'primary' : 'secondary'}>
+      <InputGroup.Input
+        placeholder={labels.newPasswordPlaceholder}
+        type={isVisible ? 'text' : 'password'}
+      />
+      <InputGroup.Suffix className="px-0">
+        <Button
+          isIconOnly
+          aria-label={isVisible ? labels.hidePassword : labels.showPassword}
+          size="sm"
+          variant="ghost"
+          onPress={onVisibilityChange}
+          isDisabled={isDisabled}>
+          {isVisible ? <EyeSlash size={16} /> : <Eye size={16} />}
+        </Button>
+      </InputGroup.Suffix>
+    </InputGroup>
+    <field.AuthFormFieldError />
+    <PasswordStrengthMeter password={field.state.value} />
+  </TextField>
+)
+
+const ConfirmPasswordOtpField = ({
+  field,
+  isDisabled,
+  isVisible,
+  labels,
+  onVisibilityChange,
+  variant
+}: {
+  field: ResetPasswordField<string>
+  isDisabled: boolean
+  isVisible: boolean
+  labels: {
+    confirmPassword: string
+    confirmPasswordPlaceholder: string
+    hidePassword: string
+    showPassword: string
+  }
+  onVisibilityChange: () => void
+  variant: CardProps['variant']
+}) => (
+  <TextField
+    name={field.name}
+    autoComplete="new-password"
+    isDisabled={isDisabled}
+    isInvalid={isAuthFormFieldInvalid(field.state.meta)}
+    validationBehavior="aria"
+    value={field.state.value}
+    onBlur={field.handleBlur}
+    onChange={field.handleChange}>
+    <Label>{labels.confirmPassword}</Label>
+    <InputGroup variant={variant === 'transparent' ? 'primary' : 'secondary'}>
+      <InputGroup.Input
+        placeholder={labels.confirmPasswordPlaceholder}
+        type={isVisible ? 'text' : 'password'}
+      />
+      <InputGroup.Suffix className="px-0">
+        <Button
+          isIconOnly
+          aria-label={isVisible ? labels.hidePassword : labels.showPassword}
+          size="sm"
+          variant="ghost"
+          onPress={onVisibilityChange}
+          isDisabled={isDisabled}>
+          {isVisible ? <EyeSlash size={16} /> : <Eye size={16} />}
+        </Button>
+      </InputGroup.Suffix>
+    </InputGroup>
+    <field.AuthFormFieldError />
+  </TextField>
+)
+
+const ResetPasswordOtpHeader = ({
+  codeSentTo,
+  title
+}: {
+  codeSentTo?: string
+  title: string
+}) => (
+  <Card.Header>
+    <Card.Title className="mb-1 text-xl font-semibold">{title}</Card.Title>
+    {codeSentTo ? <Card.Description>{codeSentTo}</Card.Description> : null}
+  </Card.Header>
+)
+
+const ResetPasswordOtpFooter = ({
+  href,
+  rememberPassword,
+  signIn
+}: {
+  href: string
+  rememberPassword: string
+  signIn: string
+}) => (
+  <Card.Footer className="flex-col gap-3">
+    <Description className="text-sm">
+      {rememberPassword}{' '}
+      <Link
+        href={href}
+        className="text-accent decoration-accent-hover no-underline hover:underline">
+        {signIn}
+      </Link>
+    </Description>
+  </Card.Footer>
+)
 
 /**
  * Reset a password with an emailed code.
@@ -139,17 +288,14 @@ const ResetPasswordOtpForm = ({
     <Card
       className={cn('w-full max-w-sm gap-4 md:p-6', className)}
       variant={variant}>
-      <Card.Header>
-        <Card.Title className="mb-1 text-xl font-semibold">
-          {localization.auth.resetPassword}
-        </Card.Title>
-
-        {hasStoredEmail && email && (
-          <Card.Description>
-            {emailOtpLocalization.codeSentTo.replace('{{email}}', email)}
-          </Card.Description>
-        )}
-      </Card.Header>
+      <ResetPasswordOtpHeader
+        codeSentTo={
+          hasStoredEmail && email
+            ? emailOtpLocalization.codeSentTo.replace('{{email}}', email)
+            : undefined
+        }
+        title={localization.auth.resetPassword}
+      />
 
       <Card.Content className="gap-4">
         <form.AppForm>
@@ -219,51 +365,16 @@ const ResetPasswordOtpForm = ({
               name="password"
               validators={{ onChange: ({ value }) => validatePassword(value) }}>
               {field => (
-                <TextField
-                  name={field.name}
-                  autoComplete="new-password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={field.handleChange}
-                  isInvalid={isAuthFormFieldInvalid(field.state.meta)}
+                <PasswordOtpField
+                  field={field}
                   isDisabled={isPending}
-                  validationBehavior="aria">
-                  <Label>{localization.auth.newPassword}</Label>
-
-                  <InputGroup
-                    variant={
-                      variant === 'transparent' ? 'primary' : 'secondary'
-                    }>
-                    <InputGroup.Input
-                      placeholder={localization.auth.newPasswordPlaceholder}
-                      type={isPasswordVisible ? 'text' : 'password'}
-                    />
-
-                    <InputGroup.Suffix className="px-0">
-                      <Button
-                        isIconOnly
-                        aria-label={
-                          isPasswordVisible
-                            ? localization.auth.hidePassword
-                            : localization.auth.showPassword
-                        }
-                        size="sm"
-                        variant="ghost"
-                        onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                        isDisabled={isPending}>
-                        {isPasswordVisible ? (
-                          <EyeSlash size={16} />
-                        ) : (
-                          <Eye size={16} />
-                        )}
-                      </Button>
-                    </InputGroup.Suffix>
-                  </InputGroup>
-
-                  <field.AuthFormFieldError />
-
-                  <PasswordStrengthMeter password={field.state.value} />
-                </TextField>
+                  isVisible={isPasswordVisible}
+                  labels={localization.auth}
+                  onVisibilityChange={() =>
+                    setIsPasswordVisible(!isPasswordVisible)
+                  }
+                  variant={variant}
+                />
               )}
             </form.AppField>
 
@@ -279,55 +390,16 @@ const ResetPasswordOtpForm = ({
                       : localization.auth.passwordsDoNotMatch)
                 }}>
                 {field => (
-                  <TextField
-                    name={field.name}
-                    autoComplete="new-password"
+                  <ConfirmPasswordOtpField
+                    field={field}
                     isDisabled={isPending}
-                    isInvalid={isAuthFormFieldInvalid(field.state.meta)}
-                    validationBehavior="aria"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={field.handleChange}>
-                    <Label>{localization.auth.confirmPassword}</Label>
-
-                    <InputGroup
-                      variant={
-                        variant === 'transparent' ? 'primary' : 'secondary'
-                      }>
-                      <InputGroup.Input
-                        placeholder={
-                          localization.auth.confirmPasswordPlaceholder
-                        }
-                        type={isConfirmPasswordVisible ? 'text' : 'password'}
-                      />
-
-                      <InputGroup.Suffix className="px-0">
-                        <Button
-                          isIconOnly
-                          aria-label={
-                            isConfirmPasswordVisible
-                              ? localization.auth.hidePassword
-                              : localization.auth.showPassword
-                          }
-                          size="sm"
-                          variant="ghost"
-                          onPress={() =>
-                            setIsConfirmPasswordVisible(
-                              !isConfirmPasswordVisible
-                            )
-                          }
-                          isDisabled={isPending}>
-                          {isConfirmPasswordVisible ? (
-                            <EyeSlash size={16} />
-                          ) : (
-                            <Eye size={16} />
-                          )}
-                        </Button>
-                      </InputGroup.Suffix>
-                    </InputGroup>
-
-                    <field.AuthFormFieldError />
-                  </TextField>
+                    isVisible={isConfirmPasswordVisible}
+                    labels={localization.auth}
+                    onVisibilityChange={() =>
+                      setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+                    }
+                    variant={variant}
+                  />
                 )}
               </form.AppField>
             )}
@@ -347,19 +419,14 @@ const ResetPasswordOtpForm = ({
         </form.AppForm>
       </Card.Content>
 
-      <Card.Footer className="flex-col gap-3">
-        <Description className="text-sm">
-          {localization.auth.rememberYourPassword}{' '}
-          <Link
-            href={getAuthLinkURL(
-              `${basePaths.auth}/${viewPaths.auth.signIn}`,
-              redirectTo
-            )}
-            className="text-accent decoration-accent-hover no-underline hover:underline">
-            {localization.auth.signIn}
-          </Link>
-        </Description>
-      </Card.Footer>
+      <ResetPasswordOtpFooter
+        href={getAuthLinkURL(
+          `${basePaths.auth}/${viewPaths.auth.signIn}`,
+          redirectTo
+        )}
+        rememberPassword={localization.auth.rememberYourPassword}
+        signIn={localization.auth.signIn}
+      />
     </Card>
   )
 }

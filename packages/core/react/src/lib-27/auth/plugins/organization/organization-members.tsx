@@ -266,7 +266,7 @@ const useClampMemberPage = ({
     if (!isPaged || !isReady || !hasData) return
     const lastPageIndex = getClampedTablePageIndex(pageIndex, pageSize, total)
     if (pageIndex > lastPageIndex) {
-      // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent -- Clamp URL-backed pagination after the server total arrives so the table does not remain on an empty page.
+      // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-pass-data-to-parent -- Clamp URL-backed pagination after the server total arrives so the table does not remain on an empty page.
       setPagination(current => ({ ...current, pageIndex: lastPageIndex }))
     }
   }, [hasData, isPaged, isReady, pageIndex, pageSize, setPagination, total])

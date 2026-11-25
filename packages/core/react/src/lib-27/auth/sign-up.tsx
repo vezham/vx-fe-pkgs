@@ -1,7 +1,9 @@
 import { useIsMutating } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { type ComponentType, useMemo, useState } from 'react'
 
 import {
+  type AdditionalFieldFormValues,
+  type AdditionalFields,
   authMutationKeys,
   getAdditionalFieldDefaultValues,
   getAdditionalFieldSubmitValues,
@@ -54,6 +56,348 @@ export type SignUpProps = {
    */
   onSignUpSuccess?: () => void
 }
+
+type SignUpFormValues = {
+  additionalFields: AdditionalFieldFormValues
+  confirmPassword: string
+  email: string
+  name: string
+  password: string
+}
+
+const useSignUpForm = (options: {
+  defaultValues: SignUpFormValues
+  onSubmit: (props: { value: SignUpFormValues }) => Promise<void>
+}) => useAuthForm(options)
+
+type SignUpFormApi = ReturnType<typeof useSignUpForm>
+
+const SignUpIdentityFields = ({
+  emailLabels,
+  form,
+  isDisabled,
+  showName,
+  variant
+}: {
+  emailLabels: {
+    email: string
+    emailPlaceholder: string
+    fieldRequired: string
+    invalidEmail: string
+    name: string
+    namePlaceholder: string
+  }
+  form: SignUpFormApi
+  isDisabled: boolean
+  showName: boolean
+  variant: CardProps['variant']
+}) => (
+  <>
+    {showName ? (
+      <form.AppField
+        name="name"
+        validators={{
+          onChange: ({ value }) =>
+            validateStringLength(value, {
+              requiredMessage: emailLabels.fieldRequired,
+              trim: true
+            })
+        }}>
+        {field => (
+          <TextField
+            name={field.name}
+            type="text"
+            autoComplete="name"
+            isDisabled={isDisabled}
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={field.handleChange}
+            isInvalid={isAuthFormFieldInvalid(field.state.meta) || undefined}
+            validationBehavior="aria">
+            <Label>{emailLabels.name}</Label>
+            <Input
+              placeholder={emailLabels.namePlaceholder}
+              required
+              variant={variant === 'transparent' ? 'primary' : 'secondary'}
+            />
+            <field.AuthFormFieldError />
+          </TextField>
+        )}
+      </form.AppField>
+    ) : null}
+
+    <form.AppField
+      name="email"
+      validators={{
+        onChange: ({ value }) =>
+          validateEmailAddress(value, {
+            invalidMessage: emailLabels.invalidEmail,
+            requiredMessage: emailLabels.fieldRequired
+          })
+      }}>
+      {field => (
+        <TextField
+          name={field.name}
+          type="email"
+          autoComplete="email"
+          isDisabled={isDisabled}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={field.handleChange}
+          isInvalid={isAuthFormFieldInvalid(field.state.meta) || undefined}
+          validationBehavior="aria">
+          <Label>{emailLabels.email}</Label>
+          <Input
+            placeholder={emailLabels.emailPlaceholder}
+            required
+            variant={variant === 'transparent' ? 'primary' : 'secondary'}
+          />
+          <field.AuthFormFieldError />
+        </TextField>
+      )}
+    </form.AppField>
+  </>
+)
+
+const SignUpAdditionalFields = ({
+  fields,
+  form,
+  isDisabled,
+  position,
+  requiredMessage,
+  optionalLabel,
+  variant
+}: {
+  fields: AdditionalFields
+  form: SignUpFormApi
+  isDisabled: boolean
+  position: 'above' | 'below'
+  requiredMessage: string
+  optionalLabel: string
+  variant: CardProps['variant']
+}) => (
+  <>
+    {fields
+      .filter(field =>
+        position === 'above'
+          ? field.signUp === 'above'
+          : field.signUp !== 'above'
+      )
+      .map(configuredField => (
+        <form.AppField
+          key={configuredField.name}
+          name={`additionalFields.${configuredField.name}`}
+          validators={getAuthAdditionalFieldValidators(
+            configuredField,
+            requiredMessage
+          )}>
+          {field => (
+            <field.AuthFormAdditionalField
+              field={configuredField}
+              isPending={isDisabled}
+              optionalLabel={optionalLabel}
+              variant={variant}
+            />
+          )}
+        </form.AppField>
+      ))}
+  </>
+)
+
+type SignUpField<Value> = {
+  AuthFormFieldError: ComponentType
+  handleBlur: () => void
+  handleChange: (value: Value) => void
+  name: string
+  state: {
+    meta: { isTouched: boolean; isValid: boolean }
+    value: Value
+  }
+}
+
+const SignUpPasswordField = ({
+  field,
+  isCompromised,
+  isDisabled,
+  isVisible,
+  labels,
+  onChange,
+  onVisibilityChange,
+  passwordLimits,
+  variant
+}: {
+  field: SignUpField<string>
+  isCompromised: boolean
+  isDisabled: boolean
+  isVisible: boolean
+  labels: {
+    hidePassword: string
+    password: string
+    passwordCompromised: string
+    passwordPlaceholder: string
+    showPassword: string
+  }
+  onChange: (value: string) => void
+  onVisibilityChange: () => void
+  passwordLimits: { max?: number; min?: number }
+  variant: CardProps['variant']
+}) => (
+  <TextField
+    minLength={passwordLimits.min}
+    maxLength={passwordLimits.max}
+    name={field.name}
+    autoComplete="new-password"
+    isDisabled={isDisabled}
+    onBlur={field.handleBlur}
+    value={field.state.value}
+    onChange={onChange}
+    isInvalid={
+      isAuthFormFieldInvalid(field.state.meta) || isCompromised || undefined
+    }
+    validationBehavior="aria">
+    <Label>{labels.password}</Label>
+    <InputGroup variant={variant === 'transparent' ? 'primary' : 'secondary'}>
+      <InputGroup.Input
+        placeholder={labels.passwordPlaceholder}
+        type={isVisible ? 'text' : 'password'}
+        name="password"
+        required
+      />
+      <InputGroup.Suffix className="px-0">
+        <Button
+          isIconOnly
+          aria-label={isVisible ? labels.hidePassword : labels.showPassword}
+          size="sm"
+          variant="ghost"
+          onPress={onVisibilityChange}
+          isDisabled={isDisabled}>
+          {isVisible ? <EyeSlash size={16} /> : <Eye size={16} />}
+        </Button>
+      </InputGroup.Suffix>
+    </InputGroup>
+    {isCompromised ? (
+      <FieldError>{labels.passwordCompromised}</FieldError>
+    ) : (
+      <field.AuthFormFieldError />
+    )}
+    <PasswordStrengthMeter password={field.state.value} />
+  </TextField>
+)
+
+const SignUpConfirmPasswordField = ({
+  field,
+  isDisabled,
+  isVisible,
+  labels,
+  onVisibilityChange,
+  passwordLimits,
+  variant
+}: {
+  field: SignUpField<string>
+  isDisabled: boolean
+  isVisible: boolean
+  labels: {
+    confirmPassword: string
+    confirmPasswordPlaceholder: string
+    hidePassword: string
+    showPassword: string
+  }
+  onVisibilityChange: () => void
+  passwordLimits: { max?: number; min?: number }
+  variant: CardProps['variant']
+}) => (
+  <TextField
+    minLength={passwordLimits.min}
+    maxLength={passwordLimits.max}
+    name={field.name}
+    autoComplete="new-password"
+    isDisabled={isDisabled}
+    value={field.state.value}
+    onBlur={field.handleBlur}
+    onChange={field.handleChange}
+    isInvalid={isAuthFormFieldInvalid(field.state.meta) || undefined}
+    validationBehavior="aria">
+    <Label>{labels.confirmPassword}</Label>
+    <InputGroup variant={variant === 'transparent' ? 'primary' : 'secondary'}>
+      <InputGroup.Input
+        name="confirmPassword"
+        placeholder={labels.confirmPasswordPlaceholder}
+        type={isVisible ? 'text' : 'password'}
+        required
+      />
+      <InputGroup.Suffix className="px-0">
+        <Button
+          isIconOnly
+          aria-label={isVisible ? labels.hidePassword : labels.showPassword}
+          size="sm"
+          variant="ghost"
+          onPress={onVisibilityChange}
+          isDisabled={isDisabled}>
+          {isVisible ? <EyeSlash size={16} /> : <Eye size={16} />}
+        </Button>
+      </InputGroup.Suffix>
+    </InputGroup>
+    <field.AuthFormFieldError />
+  </TextField>
+)
+
+const SignUpSocialOptions = ({
+  isVisible,
+  position,
+  separatorLabel,
+  showProviders,
+  showSeparator,
+  socialLayout
+}: {
+  isVisible: boolean
+  position: 'top' | 'bottom'
+  separatorLabel: string
+  showProviders: boolean
+  showSeparator: boolean
+  socialLayout?: SocialLayout
+}) =>
+  isVisible ? (
+    <>
+      {position === 'top' ? (
+        <>
+          {showProviders && (
+            <ProviderButtons socialLayout={socialLayout} view="signUp" />
+          )}
+          {showSeparator ? (
+            <FieldSeparator>{separatorLabel}</FieldSeparator>
+          ) : null}
+        </>
+      ) : (
+        <>
+          {showSeparator ? (
+            <FieldSeparator>{separatorLabel}</FieldSeparator>
+          ) : null}
+          {showProviders && (
+            <ProviderButtons socialLayout={socialLayout} view="signUp" />
+          )}
+        </>
+      )}
+    </>
+  ) : null
+
+const SignUpFooter = ({
+  href,
+  labels
+}: {
+  href: string
+  labels: { alreadyHaveAnAccount: string; signIn: string }
+}) => (
+  <Card.Footer className="flex-col gap-3">
+    <Description className="text-sm">
+      {labels.alreadyHaveAnAccount}{' '}
+      <Link
+        href={href}
+        className="text-accent decoration-accent-hover no-underline hover:underline">
+        {labels.signIn}
+      </Link>
+    </Description>
+  </Card.Footer>
+)
 
 /**
  * Render a sign-up form with name, email, password (and optional confirm password) fields, optional social provider buttons, and password visibility controls.
@@ -135,7 +479,7 @@ export const SignUp = ({
     () => additionalFields?.filter(field => field.signUp) ?? [],
     [additionalFields]
   )
-  const form = useAuthForm({
+  const form = useSignUpForm({
     defaultValues: {
       additionalFields: getAdditionalFieldDefaultValues(signUpFields),
       confirmPassword: '',
@@ -176,118 +520,42 @@ export const SignUp = ({
       </Card.Header>
 
       <Card.Content className="gap-4">
-        {socialPosition === 'top' && (
-          <>
-            {!!socialProviders?.length && (
-              <ProviderButtons socialLayout={socialLayout} view="signUp" />
-            )}
-
-            {showSeparator && (
-              <FieldSeparator>{localization.auth.or}</FieldSeparator>
-            )}
-          </>
-        )}
+        <SignUpSocialOptions
+          isVisible={socialPosition === 'top'}
+          position="top"
+          separatorLabel={localization.auth.or}
+          showProviders={Boolean(socialProviders?.length)}
+          showSeparator={Boolean(showSeparator)}
+          socialLayout={socialLayout}
+        />
 
         {emailAndPassword?.enabled && (
           <form.AppForm>
             <form.AuthFormRoot className="flex flex-col gap-4">
-              {emailAndPassword.name !== false && (
-                <form.AppField
-                  name="name"
-                  validators={{
-                    onChange: ({ value }) =>
-                      validateStringLength(value, {
-                        requiredMessage: localization.auth.fieldRequired,
-                        trim: true
-                      })
-                  }}>
-                  {field => (
-                    <TextField
-                      name={field.name}
-                      type="text"
-                      autoComplete="name"
-                      isDisabled={isPending}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={field.handleChange}
-                      isInvalid={
-                        isAuthFormFieldInvalid(field.state.meta) || undefined
-                      }
-                      validationBehavior="aria">
-                      <Label>{localization.auth.name}</Label>
+              <SignUpIdentityFields
+                emailLabels={{
+                  email: localization.auth.email,
+                  emailPlaceholder: localization.auth.emailPlaceholder,
+                  fieldRequired: localization.auth.fieldRequired,
+                  invalidEmail: localization.auth.invalidEmail,
+                  name: localization.auth.name,
+                  namePlaceholder: localization.auth.namePlaceholder
+                }}
+                form={form}
+                isDisabled={isPending}
+                showName={emailAndPassword.name !== false}
+                variant={variant}
+              />
 
-                      <Input
-                        placeholder={localization.auth.namePlaceholder}
-                        required
-                        variant={
-                          variant === 'transparent' ? 'primary' : 'secondary'
-                        }
-                      />
-
-                      <field.AuthFormFieldError />
-                    </TextField>
-                  )}
-                </form.AppField>
-              )}
-
-              <form.AppField
-                name="email"
-                validators={{
-                  onChange: ({ value }) =>
-                    validateEmailAddress(value, {
-                      invalidMessage: localization.auth.invalidEmail,
-                      requiredMessage: localization.auth.fieldRequired
-                    })
-                }}>
-                {field => (
-                  <TextField
-                    name={field.name}
-                    type="email"
-                    autoComplete="email"
-                    isDisabled={isPending}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={field.handleChange}
-                    isInvalid={
-                      isAuthFormFieldInvalid(field.state.meta) || undefined
-                    }
-                    validationBehavior="aria">
-                    <Label>{localization.auth.email}</Label>
-
-                    <Input
-                      placeholder={localization.auth.emailPlaceholder}
-                      required
-                      variant={
-                        variant === 'transparent' ? 'primary' : 'secondary'
-                      }
-                    />
-
-                    <field.AuthFormFieldError />
-                  </TextField>
-                )}
-              </form.AppField>
-
-              {signUpFields.map(
-                configuredField =>
-                  configuredField.signUp === 'above' && (
-                    <form.AppField
-                      key={configuredField.name}
-                      name={`additionalFields.${configuredField.name}`}
-                      validators={getAuthAdditionalFieldValidators(
-                        configuredField,
-                        localization.auth.fieldRequired
-                      )}>
-                      {field => (
-                        <field.AuthFormAdditionalField
-                          field={configuredField}
-                          isPending={isPending}
-                          optionalLabel={localization.auth.optional}
-                          variant={variant}
-                        />
-                      )}
-                    </form.AppField>
-                  )
-              )}
+              <SignUpAdditionalFields
+                fields={signUpFields}
+                form={form}
+                isDisabled={isPending}
+                position="above"
+                requiredMessage={localization.auth.fieldRequired}
+                optionalLabel={localization.auth.optional}
+                variant={variant}
+              />
 
               <form.AppField
                 name="password"
@@ -307,73 +575,27 @@ export const SignUp = ({
                       requiredMessage: localization.auth.fieldRequired
                     })
                 }}>
-                {field => {
-                  const isInvalid =
-                    isAuthFormFieldInvalid(field.state.meta) || isCompromised
-
-                  return (
-                    <TextField
-                      minLength={emailAndPassword?.minPasswordLength}
-                      maxLength={emailAndPassword?.maxPasswordLength}
-                      name={field.name}
-                      autoComplete="new-password"
-                      isDisabled={isPending}
-                      onBlur={field.handleBlur}
-                      value={field.state.value}
-                      onChange={value => {
-                        field.handleChange(value)
-                        setIsCompromised(false)
-                      }}
-                      isInvalid={isInvalid || undefined}
-                      validationBehavior="aria">
-                      <Label>{localization.auth.password}</Label>
-
-                      <InputGroup
-                        variant={
-                          variant === 'transparent' ? 'primary' : 'secondary'
-                        }>
-                        <InputGroup.Input
-                          placeholder={localization.auth.passwordPlaceholder}
-                          type={isPasswordVisible ? 'text' : 'password'}
-                          name="password"
-                          required
-                        />
-
-                        <InputGroup.Suffix className="px-0">
-                          <Button
-                            isIconOnly
-                            aria-label={
-                              isPasswordVisible
-                                ? localization.auth.hidePassword
-                                : localization.auth.showPassword
-                            }
-                            size="sm"
-                            variant="ghost"
-                            onPress={() =>
-                              setIsPasswordVisible(!isPasswordVisible)
-                            }
-                            isDisabled={isPending}>
-                            {isPasswordVisible ? (
-                              <EyeSlash size={16} />
-                            ) : (
-                              <Eye size={16} />
-                            )}
-                          </Button>
-                        </InputGroup.Suffix>
-                      </InputGroup>
-
-                      {isCompromised ? (
-                        <FieldError>
-                          {localization.auth.passwordCompromised}
-                        </FieldError>
-                      ) : (
-                        <field.AuthFormFieldError />
-                      )}
-
-                      <PasswordStrengthMeter password={field.state.value} />
-                    </TextField>
-                  )
-                }}
+                {field => (
+                  <SignUpPasswordField
+                    field={field}
+                    isCompromised={isCompromised}
+                    isDisabled={isPending}
+                    isVisible={isPasswordVisible}
+                    labels={localization.auth}
+                    onChange={value => {
+                      field.handleChange(value)
+                      setIsCompromised(false)
+                    }}
+                    onVisibilityChange={() =>
+                      setIsPasswordVisible(!isPasswordVisible)
+                    }
+                    passwordLimits={{
+                      max: emailAndPassword?.maxPasswordLength,
+                      min: emailAndPassword?.minPasswordLength
+                    }}
+                    variant={variant}
+                  />
+                )}
               </form.AppField>
 
               {emailAndPassword?.confirmPassword && (
@@ -402,86 +624,33 @@ export const SignUp = ({
                       )
                   }}>
                   {field => (
-                    <TextField
-                      minLength={emailAndPassword?.minPasswordLength}
-                      maxLength={emailAndPassword?.maxPasswordLength}
-                      name={field.name}
-                      autoComplete="new-password"
+                    <SignUpConfirmPasswordField
+                      field={field}
                       isDisabled={isPending}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={field.handleChange}
-                      isInvalid={
-                        isAuthFormFieldInvalid(field.state.meta) || undefined
+                      isVisible={isConfirmPasswordVisible}
+                      labels={localization.auth}
+                      onVisibilityChange={() =>
+                        setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
                       }
-                      validationBehavior="aria">
-                      <Label>{localization.auth.confirmPassword}</Label>
-
-                      <InputGroup
-                        variant={
-                          variant === 'transparent' ? 'primary' : 'secondary'
-                        }>
-                        <InputGroup.Input
-                          name="confirmPassword"
-                          placeholder={
-                            localization.auth.confirmPasswordPlaceholder
-                          }
-                          type={isConfirmPasswordVisible ? 'text' : 'password'}
-                          required
-                        />
-
-                        <InputGroup.Suffix className="px-0">
-                          <Button
-                            isIconOnly
-                            aria-label={
-                              isConfirmPasswordVisible
-                                ? localization.auth.hidePassword
-                                : localization.auth.showPassword
-                            }
-                            size="sm"
-                            variant="ghost"
-                            onPress={() =>
-                              setIsConfirmPasswordVisible(
-                                !isConfirmPasswordVisible
-                              )
-                            }
-                            isDisabled={isPending}>
-                            {isConfirmPasswordVisible ? (
-                              <EyeSlash size={16} />
-                            ) : (
-                              <Eye size={16} />
-                            )}
-                          </Button>
-                        </InputGroup.Suffix>
-                      </InputGroup>
-
-                      <field.AuthFormFieldError />
-                    </TextField>
+                      passwordLimits={{
+                        max: emailAndPassword?.maxPasswordLength,
+                        min: emailAndPassword?.minPasswordLength
+                      }}
+                      variant={variant}
+                    />
                   )}
                 </form.AppField>
               )}
 
-              {signUpFields.map(
-                configuredField =>
-                  configuredField.signUp !== 'above' && (
-                    <form.AppField
-                      key={configuredField.name}
-                      name={`additionalFields.${configuredField.name}`}
-                      validators={getAuthAdditionalFieldValidators(
-                        configuredField,
-                        localization.auth.fieldRequired
-                      )}>
-                      {field => (
-                        <field.AuthFormAdditionalField
-                          field={configuredField}
-                          isPending={isPending}
-                          optionalLabel={localization.auth.optional}
-                          variant={variant}
-                        />
-                      )}
-                    </form.AppField>
-                  )
-              )}
+              <SignUpAdditionalFields
+                fields={signUpFields}
+                form={form}
+                isDisabled={isPending}
+                position="below"
+                requiredMessage={localization.auth.fieldRequired}
+                optionalLabel={localization.auth.optional}
+                variant={variant}
+              />
 
               {Captcha && <div className="flex justify-center">{Captcha}</div>}
 
@@ -505,32 +674,23 @@ export const SignUp = ({
           </form.AppForm>
         )}
 
-        {socialPosition === 'bottom' && (
-          <>
-            {showSeparator && (
-              <FieldSeparator>{localization.auth.or}</FieldSeparator>
-            )}
-
-            {!!socialProviders?.length && (
-              <ProviderButtons socialLayout={socialLayout} view="signUp" />
-            )}
-          </>
-        )}
+        <SignUpSocialOptions
+          isVisible={socialPosition === 'bottom'}
+          position="bottom"
+          separatorLabel={localization.auth.or}
+          showProviders={Boolean(socialProviders?.length)}
+          showSeparator={Boolean(showSeparator)}
+          socialLayout={socialLayout}
+        />
       </Card.Content>
 
-      <Card.Footer className="flex-col gap-3">
-        <Description className="text-sm">
-          {localization.auth.alreadyHaveAnAccount}{' '}
-          <Link
-            href={getAuthLinkURL(
-              `${basePaths.auth}/${viewPaths.auth.signIn}`,
-              redirectTo
-            )}
-            className="text-accent decoration-accent-hover no-underline hover:underline">
-            {localization.auth.signIn}
-          </Link>
-        </Description>
-      </Card.Footer>
+      <SignUpFooter
+        href={getAuthLinkURL(
+          `${basePaths.auth}/${viewPaths.auth.signIn}`,
+          redirectTo
+        )}
+        labels={localization.auth}
+      />
     </Card>
   )
 }

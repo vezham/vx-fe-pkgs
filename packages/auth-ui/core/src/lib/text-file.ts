@@ -30,7 +30,7 @@ export const downloadTextFile = (text: string, filename: `${string}.txt`) => {
  * @param text - Exact text content to print.
  */
 export const printTextFile = (text: string) => {
-  // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- The URL is revoked by cleanup after printing or on error.
+  // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- The URL is revoked by cleanup after printing or on error.
   const url = URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
   const frame = document.createElement('iframe')
   const viewportWidth = document.documentElement.clientWidth
