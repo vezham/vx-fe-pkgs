@@ -15,9 +15,7 @@ import {
 } from '@vezham/react-v3'
 
 import { isAuthFormFieldInvalid, useAuthForm } from '../../auth-form'
-
-/** `sessionStorage` key the reset-code form reads the pending address from. */
-export const RESET_PASSWORD_OTP_STORAGE_KEY = 'vezham.auth.reset-password-otp'
+import { RECOVERY_EMAIL_STORAGE_KEY } from '../../lib/recovery-email'
 
 export type ForgotPasswordOtpProps = {
   className?: string
@@ -57,8 +55,7 @@ export const ForgotPasswordOtp = ({
       meta: { errorPresentation: 'inline' },
       onError: () => resetFetchOptions(),
       onSuccess: (_data, { email }) => {
-        // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/auth-token-in-web-storage -- This stores only the submitted email to prefill the next screen, not a credential or token.
-        sessionStorage.setItem(RESET_PASSWORD_OTP_STORAGE_KEY, email)
+        sessionStorage.setItem(RECOVERY_EMAIL_STORAGE_KEY, email)
         navigate({ to: `${basePaths.auth}/${viewPaths.auth.resetPassword}` })
       }
     })

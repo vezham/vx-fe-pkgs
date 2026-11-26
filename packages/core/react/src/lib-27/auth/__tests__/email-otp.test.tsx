@@ -240,7 +240,7 @@ describe('<ChangeEmailOtp />', () => {
 
 describe('<ResetPasswordOtp />', () => {
   it('opens the inbox and submits once the form and code are complete', async () => {
-    sessionStorage.setItem('vezham.auth.reset-password-otp', 'user@gmail.com')
+    sessionStorage.setItem('vezham.forms.recovery-email', 'user@gmail.com')
 
     const user = userEvent.setup()
     const { authClient, navigate } = renderWithProvider(<ResetPasswordOtp />, {
@@ -263,7 +263,7 @@ describe('<ResetPasswordOtp />', () => {
         })
       )
     })
-    expect(sessionStorage.getItem('vezham.auth.reset-password-otp')).toBeNull()
+    expect(sessionStorage.getItem('vezham.forms.recovery-email')).toBeNull()
     expect(navigate).toHaveBeenCalledWith({ to: '/auth/sign-in' })
   })
 })

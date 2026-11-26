@@ -638,9 +638,17 @@ describe('<AuthorizedApplications />', () => {
     expect(screen.getByText('View your email address')).toBeInTheDocument()
   })
 
-  it('removes every consent record grouped under the application', async () => {
+  it('removes every consent record without overlapping mutations', async () => {
+    let activeRequests = 0
+    let maxActiveRequests = 0
     const deleteConsent = vi.fn<(params: { id: string }) => Promise<undefined>>(
-      async () => undefined
+      async () => {
+        activeRequests += 1
+        maxActiveRequests = Math.max(maxActiveRequests, activeRequests)
+        await new Promise(resolve => setTimeout(resolve, 1))
+        activeRequests -= 1
+        return undefined
+      }
     )
     const user = userEvent.setup()
     const { authClient } = renderWithAuth(<AuthorizedApplications />, {
@@ -681,6 +689,7 @@ describe('<AuthorizedApplications />', () => {
       'consent-1',
       'consent-2'
     ])
+    expect(maxActiveRequests).toBe(1)
     expect(authClient.oauth2.getConsents).toHaveBeenCalled()
   })
 

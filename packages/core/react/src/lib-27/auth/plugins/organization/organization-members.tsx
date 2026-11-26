@@ -245,33 +245,6 @@ const useResetMemberPageOnOrganizationChange = (
   }, [organizationId, setPagination])
 }
 
-const useClampMemberPage = ({
-  hasData,
-  isReady,
-  isPaged,
-  pageIndex,
-  pageSize,
-  setPagination,
-  total
-}: {
-  hasData: boolean
-  isReady: boolean
-  isPaged: boolean
-  pageIndex: number
-  pageSize: number
-  setPagination: (updater: (state: PaginationState) => PaginationState) => void
-  total: number
-}) => {
-  useEffect(() => {
-    if (!isPaged || !isReady || !hasData) return
-    const lastPageIndex = getClampedTablePageIndex(pageIndex, pageSize, total)
-    if (pageIndex > lastPageIndex) {
-      // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-pass-data-to-parent -- Clamp URL-backed pagination after the server total arrives so the table does not remain on an empty page.
-      setPagination(current => ({ ...current, pageIndex: lastPageIndex }))
-    }
-  }, [hasData, isPaged, isReady, pageIndex, pageSize, setPagination, total])
-}
-
 /**
  * Organization members table with title, invite control, and per-row actions.
  */
@@ -303,18 +276,21 @@ const useOrganizationMembersState = (pageSize?: number) => {
   )
   useResetMemberPageOnOrganizationChange(activeOrganization?.id, setPagination)
 
-  const { data: membersData, isPending: membersPending } =
-    useListOrganizationMembers(authClient, {
-      enabled: !paged || tableState.ready,
-      placeholderData: paged ? keepPreviousData : undefined,
-      query: getMemberListQuery({
-        isPaged: paged,
-        pageIndex: pagination.pageIndex,
-        pageSize: pagination.pageSize,
-        roleFilter,
-        sorting
-      })
+  const {
+    data: membersData,
+    isPending: membersPending,
+    isPlaceholderData: membersPlaceholder
+  } = useListOrganizationMembers(authClient, {
+    enabled: !paged || tableState.ready,
+    placeholderData: paged ? keepPreviousData : undefined,
+    query: getMemberListQuery({
+      isPaged: paged,
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      roleFilter,
+      sorting
     })
+  })
 
   // vx-bot/NOTE: The signed-in user need not be on the loaded page, so their own role comes
   // vx-bot/NOTE: from a dedicated endpoint rather than from the member list.
@@ -358,15 +334,30 @@ const useOrganizationMembersState = (pageSize?: number) => {
 
   const total = membersData?.total ?? membersData?.members.length ?? 0
 
-  useClampMemberPage({
-    hasData: Boolean(membersData),
-    isReady: tableState.ready,
-    isPaged: paged,
-    pageIndex: pagination.pageIndex,
-    pageSize: pagination.pageSize,
-    setPagination,
+  useEffect(() => {
+    if (!paged || !tableState.ready || !membersData || membersPlaceholder)
+      return
+    const lastPageIndex = getClampedTablePageIndex(
+      pagination.pageIndex,
+      pagination.pageSize,
+      total
+    )
+    if (pagination.pageIndex > lastPageIndex) {
+      tableState.atoms.pagination.set(current => ({
+        ...current,
+        pageIndex: lastPageIndex
+      }))
+    }
+  }, [
+    membersData,
+    membersPlaceholder,
+    paged,
+    pagination.pageIndex,
+    pagination.pageSize,
+    tableState.atoms.pagination,
+    tableState.ready,
     total
-  })
+  ])
   const isOwner = hasMemberRole(activeMemberRole?.role, creatorRole)
   const ownerCount = owners.data?.total ?? owners.data?.members.length
   const showTeams = teams && canListMemberTeams.data?.success === true

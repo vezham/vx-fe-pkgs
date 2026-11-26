@@ -29,56 +29,52 @@ export const downloadTextFile = (text: string, filename: `${string}.txt`) => {
  *
  * @param text - Exact text content to print.
  */
-export const printTextFile = (text: string) => {
-  // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- The URL is revoked by cleanup after printing or on error.
-  const url = URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
+export const printTextFile = async (text: string) => {
   const frame = document.createElement('iframe')
-  const viewportWidth = document.documentElement.clientWidth
-  const viewportHeight = document.documentElement.clientHeight
-  let cleanupTimeout: ReturnType<typeof setTimeout> | null = null
-  let removed = false
+  frame.ariaHidden = 'true'
+  frame.title = 'Print text file'
+  frame.width = `${document.documentElement.clientWidth}px`
+  frame.height = `${document.documentElement.clientHeight}px`
+  frame.style.position = 'absolute'
+  frame.style.top = `-${document.documentElement.clientHeight + 100}px`
+  frame.style.left = `-${document.documentElement.clientWidth + 100}px`
+  frame.style.border = '0'
 
-  const cleanup = () => {
-    if (removed) return
+  let cleanupTimeout: ReturnType<typeof setTimeout> | undefined
+  let onPrinted: () => void = () => undefined
+  const url = URL.createObjectURL(new Blob([text], { type: TEXT_FILE_TYPE }))
 
-    removed = true
-    if (cleanupTimeout !== null) clearTimeout(cleanupTimeout)
+  try {
+    await new Promise<void>(resolve => {
+      onPrinted = resolve
+      // vx-bot/NOTE: Bound the lifetime even when the frame never finishes loading.
+      cleanupTimeout = setTimeout(resolve, PRINT_FRAME_CLEANUP_DELAY)
+      frame.addEventListener('error', () => resolve(), { once: true })
+      frame.addEventListener(
+        'load',
+        () => {
+          const printWindow = frame.contentWindow
+          if (!printWindow) {
+            resolve()
+            return
+          }
+          printWindow.addEventListener('afterprint', onPrinted, { once: true })
+          try {
+            printWindow.focus()
+            printWindow.print()
+          } catch {
+            resolve()
+          }
+        },
+        { once: true }
+      )
+      frame.src = url
+      document.body.appendChild(frame)
+    })
+  } finally {
+    clearTimeout(cleanupTimeout)
+    frame.contentWindow?.removeEventListener('afterprint', onPrinted)
     frame.remove()
     URL.revokeObjectURL(url)
   }
-
-  frame.ariaHidden = 'true'
-  frame.title = 'Print text file'
-  frame.width = `${viewportWidth}px`
-  frame.height = `${viewportHeight}px`
-  frame.style.position = 'absolute'
-  frame.style.top = `-${viewportHeight + 100}px`
-  frame.style.left = `-${viewportWidth + 100}px`
-  frame.style.border = '0'
-
-  frame.addEventListener(
-    'load',
-    () => {
-      const printWindow = frame.contentWindow
-
-      if (!printWindow) {
-        cleanup()
-        return
-      }
-
-      printWindow.addEventListener('afterprint', cleanup, { once: true })
-      cleanupTimeout = setTimeout(cleanup, PRINT_FRAME_CLEANUP_DELAY)
-
-      try {
-        printWindow.focus()
-        printWindow.print()
-      } catch {
-        cleanup()
-      }
-    },
-    { once: true }
-  )
-  frame.addEventListener('error', cleanup, { once: true })
-  frame.src = url
-  document.body.appendChild(frame)
 }

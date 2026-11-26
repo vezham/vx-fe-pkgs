@@ -120,25 +120,24 @@ const canvasToBlob = (
   })
 }
 
-const loadImage = (file: File): Promise<HTMLImageElement> => {
-  // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- Both load and error handlers revoke this URL.
-  const url = URL.createObjectURL(file)
+const loadImage = async (file: File): Promise<HTMLImageElement> => {
   const image = new Image()
+  const url = URL.createObjectURL(file)
 
-  return new Promise((resolve, reject) => {
-    const onLoad = () => {
-      URL.revokeObjectURL(url)
-      resolve(image)
-    }
-    const onError = () => {
-      URL.revokeObjectURL(url)
-      reject(new Error('Failed to load image'))
-    }
-
-    image.addEventListener('load', onLoad)
-    image.addEventListener('error', onError)
-    image.src = url
-  })
+  try {
+    await new Promise<void>((resolve, reject) => {
+      image.addEventListener('load', () => resolve(), { once: true })
+      image.addEventListener(
+        'error',
+        () => reject(new Error('Failed to load image')),
+        { once: true }
+      )
+      image.src = url
+    })
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+  return image
 }
 
 const embeddedAvatarDimensions = (maxDimension: number) => {

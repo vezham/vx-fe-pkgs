@@ -143,7 +143,7 @@ it('uses the configured OTP reset flow for social-only password setup', async ()
     })
   )
   expect(authClient.requestPasswordReset).not.toHaveBeenCalled()
-  expect(sessionStorage.getItem('vezham.auth.reset-password-otp')).toBe(
+  expect(sessionStorage.getItem('vezham.forms.recovery-email')).toBe(
     'user@gmail.com'
   )
 })

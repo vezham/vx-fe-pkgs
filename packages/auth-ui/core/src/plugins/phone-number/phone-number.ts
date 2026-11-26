@@ -41,7 +41,6 @@ const getDisplayNames = (locale?: string) => {
 
   let displayNames: Intl.DisplayNames
   try {
-    // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/js-hoist-intl -- This formatter is cached by locale below.
     displayNames = new Intl.DisplayNames(locale ? [locale] : undefined, {
       type: 'region'
     })

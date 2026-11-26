@@ -33,11 +33,11 @@ import {
   submitAuthForm,
   useAuthForm
 } from '../../auth-form'
+import { RECOVERY_EMAIL_STORAGE_KEY } from '../../lib/recovery-email'
 import { useSessionStorageValue } from '../../lib/use-session-storage-value'
 import { OpenEmailButton } from '../../open-email-button'
 import { OtpField } from '../../otp-field'
 import { PasswordStrengthMeter } from '../../password-strength-meter'
-import { RESET_PASSWORD_OTP_STORAGE_KEY } from './forgot-password-otp'
 
 export type ResetPasswordOtpProps = {
   className?: string
@@ -221,7 +221,7 @@ const ResetPasswordOtpForm = ({
   const { localization: emailOtpLocalization, otpLength } =
     useAuthPlugin(emailOtpPlugin)
 
-  const initialEmail = useSessionStorageValue(RESET_PASSWORD_OTP_STORAGE_KEY)
+  const initialEmail = useSessionStorageValue(RECOVERY_EMAIL_STORAGE_KEY)
   const hasStoredEmail = Boolean(initialEmail)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -242,7 +242,7 @@ const ResetPasswordOtpForm = ({
         form.setFieldValue('code', '')
       },
       onSuccess: () => {
-        sessionStorage.removeItem(RESET_PASSWORD_OTP_STORAGE_KEY)
+        sessionStorage.removeItem(RECOVERY_EMAIL_STORAGE_KEY)
         toast.success(localization.auth.passwordResetSuccess)
         navigate({ to: `${basePaths.auth}/${viewPaths.auth.signIn}` })
       }

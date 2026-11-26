@@ -37,6 +37,7 @@ import {
 } from '@vezham/react-v3'
 
 import { isAuthFormFieldInvalid, useAuthForm } from '../../auth-form'
+import { RECOVERY_EMAIL_STORAGE_KEY } from '../../lib/recovery-email'
 import { OpenEmailButton } from '../../open-email-button'
 import { PasswordStrengthMeter } from '../../password-strength-meter'
 
@@ -122,8 +123,7 @@ function SetPassword({
     useRequestPasswordResetOtp(authClient, {
       onError: () => resetFetchOptions(),
       onSuccess: (_data, { email }) => {
-        // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/auth-token-in-web-storage -- This stores only the submitted email to prefill the next screen, not a credential or token.
-        sessionStorage.setItem('vezham.auth.reset-password-otp', email)
+        sessionStorage.setItem(RECOVERY_EMAIL_STORAGE_KEY, email)
         navigate({
           to: getAuthLinkURL(
             getViewURL('', basePaths.auth, viewPaths.auth.resetPassword),

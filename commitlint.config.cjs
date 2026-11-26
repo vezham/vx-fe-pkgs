@@ -37,7 +37,15 @@ module.exports = async () => {
     'e2e',
     ...Array.from(
       new Set(
-        Object.keys(graph.nodes).map(name => name.replace(/^@[^/]+\//, ''))
+        Object.entries(graph.nodes).flatMap(([name, project]) => {
+          const segments = project.data.root.split('/').filter(Boolean)
+          const parentScope =
+            segments.length > 1 ? segments.slice(-2).join('/') : null
+          return [
+            name.replace(/^@[^/]+\//, ''),
+            ...(parentScope ? [parentScope] : [])
+          ]
+        })
       )
     ).sort()
   ]
@@ -91,9 +99,9 @@ module.exports = async () => {
       'scope-case': [
         2,
         'always',
-        { cases: ['lower-case'], delimiters: [scopeDelimiter] }
+        { cases: ['lower-case'], delimiters: [scopeDelimiter, '/'] }
       ],
-      'scope-delimiter-style': [2, 'always', [scopeDelimiter]],
+      'scope-delimiter-style': [2, 'always', [scopeDelimiter, '/']],
       'scope-empty': [2, 'never'],
       'header-max-length': [2, 'always', 120],
       'subject-case': [2, 'never', []],

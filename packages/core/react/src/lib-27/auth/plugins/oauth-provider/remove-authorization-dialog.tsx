@@ -37,18 +37,19 @@ export const RemoveAuthorizationDialog = ({
   const { localization: oauthLocalization } = useAuthPlugin(oauthProviderPlugin)
   const [isRemoving, setIsRemoving] = useState(false)
 
-  const { mutateAsync: deleteConsent } = useDeleteOAuthConsent(authClient)
+  const { mutateAsync: deleteConsent } = useDeleteOAuthConsent(authClient, {
+    scope: { id: 'oauth-consent-removal' }
+  })
 
   const removeAuthorization = async () => {
     setIsRemoving(true)
 
     try {
-      // vx-bot/NOTE: Sequential so a mid-list failure leaves a predictable server state
-      // vx-bot/NOTE: that the refetched list reflects accurately.
-      for (const id of application.consentIds) {
-        // vx-bot/NOTE: react-doctor-disable-next-line react-doctor/async-await-in-loop -- Revoke records sequentially to avoid racing independent mutations that update the active application list.
-        await deleteConsent({ id })
-      }
+      const results = await Promise.allSettled(
+        application.consentIds.map(id => deleteConsent({ id }))
+      )
+      const failure = results.find(result => result.status === 'rejected')
+      if (failure?.status === 'rejected') throw failure.reason
 
       onOpenChange(false)
     } catch {

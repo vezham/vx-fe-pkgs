@@ -35,6 +35,12 @@
       {
         "files": ["packages/config/src/lib/metadata/templates/*.html"],
         "rules": ["react-doctor/no-unguarded-browser-global-at-module-scope"]
+      },
+      {
+        "files": [
+          "packages/auth-ui/core/src/plugins/oauth-provider/oauth-provider-plugin.ts"
+        ],
+        "rules": ["react-doctor/url-prefilled-privileged-action"]
       }
     ]
   }

@@ -3,6 +3,8 @@ import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 
+import { generateMetadata } from '@vezham/config/metadata'
+
 export const generateReleaseMetadata = async (
   names: string[]
 ): Promise<void> => {
@@ -10,27 +12,7 @@ export const generateReleaseMetadata = async (
   for (const name of names) {
     const projectRoot = graph.nodes[name].data.root
     if (!existsSync(path.join(projectRoot, 'vx.app.yaml'))) continue
-    // vx-bot/NOTE: Execute the fixed repository CLI with argv; metadata contents are never evaluated as code.
-    // react-doctor-disable-next-line react-doctor/import-metadata-execution-risk
-    const output = execFileSync(
-      process.execPath,
-      [
-        '--import',
-        'tsx',
-        'packages/config/src/lib/metadata/cli.ts',
-        'generate',
-        projectRoot,
-        '--json'
-      ],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] }
-    )
-    const files: unknown = JSON.parse(output)
-    if (
-      !Array.isArray(files) ||
-      !files.every(file => typeof file === 'string')
-    ) {
-      throw new Error(`Invalid metadata CLI output for ${name}`)
-    }
+    const files = generateMetadata({ projectRoot })
     const trackedFiles = execFileSync(
       'git',
       ['ls-files', '-z', '--', ...files],

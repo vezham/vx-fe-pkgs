@@ -101,7 +101,7 @@ describe('text file browser actions', () => {
   })
 
   it('prints only the exact plain-text file in an isolated frame', async () => {
-    printTextFile('code-1\ncode-2')
+    const printing = printTextFile('code-1\ncode-2')
 
     expect(appendedElement?.src).toBe('blob:text-file')
     expect(appendedElement).toMatchObject({
@@ -117,8 +117,29 @@ describe('text file browser actions', () => {
     expect(printWindow.print).toHaveBeenCalledOnce()
 
     printWindow.dispatchEvent(new Event('afterprint'))
+    await printing
 
     expect(appendedElement?.remove).toHaveBeenCalledOnce()
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:text-file')
+  })
+  it('releases the print frame when loading fails', async () => {
+    const printing = printTextFile('backup')
+    appendedElement?.dispatchEvent(new Event('error'))
+    await printing
+    expect(appendedElement?.remove).toHaveBeenCalledOnce()
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:text-file')
+  })
+
+  it('releases a print frame that never loads', async () => {
+    vi.useFakeTimers()
+    try {
+      const printing = printTextFile('backup')
+      await vi.runAllTimersAsync()
+      await printing
+      expect(appendedElement?.remove).toHaveBeenCalledOnce()
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:text-file')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

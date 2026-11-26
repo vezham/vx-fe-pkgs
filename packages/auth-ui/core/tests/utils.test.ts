@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { deepmerge } from '../src/lib/utils'
+import { deepmerge, fileToAvatarDataUrl } from '../src/lib/utils'
 
 describe('deepmerge', () => {
   describe('basic merging', () => {
@@ -325,5 +325,41 @@ describe('deepmerge', () => {
       expect(typeof result.a).toBe('boolean')
       expect(typeof result.b).toBe('boolean')
     })
+  })
+})
+
+describe('avatar image URL cleanup', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  it.each(['load', 'error'])('revokes the URL after image %s', async event => {
+    vi.stubGlobal(
+      'Image',
+      class extends EventTarget {
+        naturalWidth = 64
+        naturalHeight = 64
+        set src(_value: string) {
+          queueMicrotask(() => this.dispatchEvent(new Event(event)))
+        }
+      }
+    )
+    vi.stubGlobal('document', {
+      createElement: () => ({ getContext: () => null })
+    })
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:avatar')
+    const revoke = vi
+      .spyOn(URL, 'revokeObjectURL')
+      .mockImplementation(() => undefined)
+
+    await expect(
+      fileToAvatarDataUrl(new File(['image'], 'avatar.png'))
+    ).rejects.toThrow(
+      event === 'error'
+        ? 'Failed to load image'
+        : 'Could not get canvas context'
+    )
+    expect(revoke).toHaveBeenCalledExactlyOnceWith('blob:avatar')
   })
 })
